@@ -1,19 +1,28 @@
-import type { ImageMetadata } from "astro";
-import { usePalette } from "react-palette";
-import { hexToRgb } from "../helpers";
+import { RgbColor } from "../shared/helpers";
+import { useCallback, useEffect, useState } from "react";
 
 interface BackgroundColorProps {
-  image: ImageMetadata;
+  image: string;
 }
 
 export function BackgroundColor({ image }: BackgroundColorProps) {
-  const { data, loading, error } = usePalette(image.src);
-  let color = hexToRgb(data.lightMuted);
-  const rgbColor = `${color.r},${color.g},${color.b}`;
+  /* const [color, setColor] = useState<string>();
+   */
+  const color = useCallback(() => RgbColor(image), []);
+  /* useEffect(() => {
+    hendleColor();
+  }, [colorData]);
+
+  function hendleColor() {
+    setColor(colorData.color);
+  } */
+
   return (
     <div
       style={{
-        background: `linear-gradient(to bottom,rgba(${rgbColor},0.7) 10%,#040b17 )`,
+        background: `linear-gradient(to bottom,rgba(${
+          color().color
+        },0.7) 10%,#040b17 )`,
         top: "0",
         height: "50vh",
       }}

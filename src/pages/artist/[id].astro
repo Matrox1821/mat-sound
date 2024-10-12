@@ -1,36 +1,87 @@
 ---
-import { Image } from "astro:assets" 
-import { ARTISTS,TracksByArtistName } from "../../mock";
 import Layout from "../../layouts/Layout.astro";
 import BackButton from "../../components/BackButton.astro";
 import { BackgroundColor } from "../../components/BackgroundColor";
-import List from "../../components/List.astro";
-import type { AlbumProps, TrackProps } from "../../helpers/types";
 
-export async function getStaticPaths(){
-  return ARTISTS.map(artist=>({
-    params:{id:artist.id},
-    props:{...artist}
-  }))
+import List from "../../components/List.astro";
+import type { ArtistPropsData } from "../../shared/types";
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const artists: ArtistPropsData[] = await fetch(
+    "http://localhost:4321/api/get-artists.json"
+  )
+    .then((data) => data.json())
+    .then(({ artists }) => artists);
+  /* const { data: artists } = await supabase
+    .from("artists")
+    .select("*, albums(*), tracks(*)");
+  if (!artists) return;
+  const newArtists = artists.map((artist) => {
+    const { tracks, albums, ...restArtist } = artist;
+
+    const newTracks = tracks.map((track) => {
+      const { album_id, artist_id, image, ...restOfTrack } = track;
+      const album = albums.find((album) => album.id === track.album_id);
+
+      return {
+        ...restOfTrack,
+        image: image ? image : album?.image || null,
+        artist: artist.name || null,
+        album: album?.name || null,
+      };
+    });
+
+    const newAlbums = albums.map((album) => {
+      const { artist_id, ...restAlbum } = album;
+      return { ...restAlbum, artist: artist.name || null };
+    });
+
+    return { ...restArtist, albums: newAlbums, tracks: newTracks };
+  });
+ */
+  return artists.map((artist) => ({
+    params: { id: artist.id },
+    props: { artist },
+  }));
 }
-const { image, name, id,albums } = Astro.props;
-const artistAlbums=albums.filter((album) => album);
-const artistSongs=TracksByArtistName(name) as TrackProps[]
+const { artist } = Astro.props;
 ---
-<Layout title={`${name} - MatSound`}>
-  <div class="absolute w-screen ">
-  </div>
+
+<Layout title={`${artist.name} - MatSound`}>
+  <div class="absolute w-screen"></div>
   <main class="w-screen relative p-4 pb-20 z-10 overflow-x-hidden">
-    <BackgroundColor image={image} client:load/>
-    <BackButton/>
-      <div class="w-full flex justify-center items-center z-20">
-        <Image src={image} alt={name} class="w-52 rounded-full shadow-[0_0_80px_0_rgba(0,0,0,0.8)]" transition:name={id+"-to-page"} id="image"></Image>
-      </div>
-      <h1 class="relative font-extrabold text-5xl mt-3 text-ellipsis overflow-hidden h-[3rem] z-20">{name}</h1>
-      <div class="w-full flex flex-col z-20 pt-10 gap-6">
-        {artistSongs.length>0&&<List type="Tracks" data={artistSongs as TrackProps[]} title="Canciones" playlistStyle/> }
-        {artistAlbums.length>0&&<List type="Albums" data={artistAlbums as AlbumProps[]} title="Álbumes"/> }
-      </div>
+    <BackgroundColor image={artist.image} client:load />
+    <BackButton />
+    <div class="w-full flex justify-center items-center z-20">
+      <img
+        src={artist.image}
+        alt={artist.name}
+        class="w-52 rounded-full shadow-[0_0_80px_0_rgba(0,0,0,0.8)]"
+        transition:name={artist.id + "-to-page"}
+        id="image"
+      />
+    </div>
+    <h1
+      class="relative font-extrabold text-5xl mt-3 text-ellipsis overflow-hidden h-[3rem] z-20"
+    >
+      {artist.name}
+    </h1>
+    <div class="w-full flex flex-col z-20 pt-10 gap-6">
+      <!-- {
+        artist.tracks > 0 && (
+          <List
+            type="Artist Tracks"
+            artistTracks={artist.tracks}
+            title="Canciones"
+          />
+        )
+      }
+      {
+        artist.albums > 0 && (
+          <List type="Albums" albums={artist.albums} title="Álbumes" />
+        )
+      } -->
+    </div>
   </main>
 </Layout>
-

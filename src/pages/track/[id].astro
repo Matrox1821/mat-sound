@@ -1,37 +1,83 @@
 ---
-import { Image } from "astro:assets" 
-import { TRACKS } from "../../mock";
 import Layout from "../../layouts/Layout.astro";
-import BackButton from "../../components/BackButton.astro";
 import { BackgroundColor } from "../../components/BackgroundColor";
 import { PlayButton } from "../../components/PlayButton";
-export async function getStaticPaths(){
-  return TRACKS.map(track=>({
-    params:{id:track.id},
-    props:{...track,track}
-  }))
+import { GoBack } from "../../components/GoBack";
+import { supabase } from "../../lib/supabase";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const { data: tracks } = await supabase.from("tracks").select("*");
+  const { data: albums } = await supabase
+    .from("albums")
+    .select("id, image, name");
+
+  const { data: artists } = await supabase
+    .from("artists")
+    .select("id, name, image");
+
+  if (tracks && albums && artists) {
+    const newTracks = tracks.map((track) => {
+      const { album_id, artist_id, image, ...restOfTrack } = track;
+      const album = albums.find((album) => album.id === track.album_id);
+      const artist = artists.find((artist) => artist.id === artist_id);
+
+      return {
+        ...restOfTrack,
+        image: album?.image ? album.image : (image as string),
+        artist: artist || null,
+        album: album || null,
+      };
+    });
+
+    return newTracks.map((track) => {
+      return {
+        params: { id: track.id },
+        props: { track },
+      };
+    });
+  }
 }
 
-const { image, name, artist, id,track } = Astro.props;
-
+const { track } = Astro.props;
 ---
-<Layout title={`${name} - MatSound`}>
-  <main class="w-screen relative p-4" transition:name={id+"-to-background"}>
-    <BackgroundColor image={image} client:load/>
+
+<Layout title={`${track.name} - MatSound`}>
+  <main
+    class="w-screen relative p-4 flex"
+    transition:name={track.id + "-to-background"}
+  >
+    <BackgroundColor image={track.image} client:load />
     <div class="w-full flex flex-col z-10 relative gap-4">
-      <BackButton/>
-      <div class="w-full flex justify-center items-center ">
-        <Image src={image} alt={name} class="w-52 rounded-[1px] shadow-[0_0_80px_0_rgba(0,0,0,0.8)]" transition:name={id+"-to-page"} id="image">
-      </div>
-      <div class="flex justify-between">
-        <div>
-          <h1 transition:name={id+"-to-title"} class="font-bold text-3xl m-0 leading-5">{name}</h1>
-          <h2 transition:name={id+"-to-artist"} class="font-normal text-md m-0 leading-5">{artist}</h2>
+      <GoBack client:load />
+      <div class="w-full flex flex-col justify-center items-center gap-8">
+        <img
+          src={track.image}
+          alt={track.name}
+          class="w-52 rounded-[1px] shadow-[0_0_80px_0_rgba(0,0,0,0.8)]"
+          transition:name={track.id + "-to-page"}
+          id="image"
+        />
+        <div class="flex justify-between w-full">
+          <div class="flex flex-col gap-2">
+            <h1
+              transition:name={track.id + "-to-title"}
+              class="font-bold text-3xl m-0 leading-5"
+            >
+              {track.name}
+            </h1>
+            <h2
+              transition:name={track.id + "-to-artist"}
+              class="font-normal text-md m-0 leading-5"
+            >
+              {track.artist?.name}
+            </h2>
+          </div>
+
+          <PlayButton song={track} client:load />
         </div>
-        
-        <PlayButton song={track} client:load/>
       </div>
     </div>
   </main>
 </Layout>
-

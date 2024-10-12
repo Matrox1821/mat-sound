@@ -1,10 +1,16 @@
 import { IoPlay } from "react-icons/io5";
 import { IoIosPause } from "react-icons/io";
 
-import { usePlayerStore } from "../assets/store/playerStore";
-import type { TrackProps } from "../helpers/types";
+import { usePlayerStore } from "../store/playerStore";
+import type { TrackProps, TrackPropsEndpoint } from "../shared/types";
 
-export function PlayButton({ song }: { song: TrackProps }) {
+export function PlayButton({
+  song,
+  tracks,
+}: {
+  song: TrackPropsEndpoint;
+  tracks?: TrackProps[];
+}) {
   const {
     isPlaying,
     currentMusic,
@@ -14,24 +20,21 @@ export function PlayButton({ song }: { song: TrackProps }) {
   } = usePlayerStore((state) => state);
 
   const isPlayingComponent = isPlaying && currentMusic.track?.id === song.id;
-
-  const songId = song.id;
-
   const handleClick = () => {
     if (isPlayingComponent) {
       setIsPlaying(false);
       return;
     }
-    fetch(`/api/get-info-track/${songId}.json`)
+    fetch(`/api/get-info-track/${song.id}.json`)
       .then((res) => res.json())
       .then((data) => {
         const { track } = data;
         setIsPlaying(true);
         setCurrentMusic({ track });
         setIsActive(true);
-      });
+      })
+      .catch((error) => console.log({ error }));
   };
-
   return (
     <button
       onClick={handleClick}

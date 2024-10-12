@@ -4,6 +4,8 @@ import { ALBUMS } from "../../mock";
 import Layout from "../../layouts/Layout.astro";
 import BackButton from "../../components/BackButton.astro";
 import { BackgroundColor } from "../../components/BackgroundColor";
+import type { TrackProps } from "../../shared/types";
+import List from "../../components/List.astro";
 
 export async function getStaticPaths(){
   return ALBUMS.map(album=>({
@@ -12,7 +14,7 @@ export async function getStaticPaths(){
   }))
 }
 
-const { image, name, artist, id } = Astro.props;
+const { image, name, artist, id,tracks } = Astro.props;
 
 ---
 <Layout title={`${name} - MatSound`}>
@@ -25,6 +27,9 @@ const { image, name, artist, id } = Astro.props;
     </div>
     <h1>{name}</h1>
     <h2>{artist}</h2>
+    <div class="w-full flex flex-col z-20 pt-10 gap-6">
+        {tracks.length>0&&<List type="Tracks" data={tracks as TrackProps[]} title="Canciones" playlistStyle/> }
+      </div>
   </div>
   </main>
 </Layout>

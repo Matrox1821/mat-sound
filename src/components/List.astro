@@ -1,59 +1,90 @@
 ---
-import type {TrackProps,AlbumProps,ArtistProps} from "../helpers/types.ts"
-import {isTrack,isAlbum,isArtist} from "../helpers/index.ts"
+import type {
+  TrackPropsEndpoint,
+  AlbumProps,
+  ArtistProps,
+  TrackProps,
+  ArtistPropsEndpoint,
+  ArtistTracks,
+  Album as AlbumPropsEndpoint,
+} from "../shared/types.ts";
+import { isTrack, isAlbum, isArtist } from "../mock";
 import Track from "./Track.astro";
 import Album from "./Album.astro";
 import Artist from "./Artist.astro";
-import PlaylistTrack from "./PlaylistTrack.astro";
-interface Props{
-  data:TrackProps[]|AlbumProps[]|ArtistProps[];
-  type:"Tracks"|"Albums"|"Artists";
-  title:string
-  transition?:"to-page"
-  playlistStyle?:boolean
+import { PlaylistTrack } from "./PlaylistTrack.tsx";
+interface Props {
+  tracks?: TrackPropsEndpoint[] | null;
+  albums?: AlbumPropsEndpoint[];
+  artists?: ArtistPropsEndpoint[];
+  artistTracks?: ArtistTracks[] | null;
+  type: "Tracks" | "Albums" | "Artists" | "Artist Tracks";
+  title: string;
+  transition?: "to-page";
 }
-const {data, type, title,transition,playlistStyle} = Astro.props
+const { tracks, albums, artistTracks, artists, type, title, transition } =
+  Astro.props;
 
-let dataList=data as any
-
-if(isTrack(data))dataList=data as TrackProps
-if(isAlbum(data))dataList=data as AlbumProps
-if(isArtist(data))dataList=data as ArtistProps
-
+/* if (isTrack(data)) dataList = data as TrackPropsEndpoint;
+if (isAlbum(data)) dataList = data as AlbumProps;
+if (isArtist(data)) dataList = data as ArtistProps; */
 ---
-{
-  type==="Tracks"&&
-  (<div class="flex flex-col gap-2 z-20">
-    <h2 class="text-2xl font-semibold">{title}</h2>
-    <ul class={playlistStyle?"flex flex-col overflow-y-auto overflow-x-hidden gap-4 p-2":"flex overflow-x-auto overflow-y-hidden gap-4 p-2"}>
-      {dataList.map((track:TrackProps)=>
-        playlistStyle
-          ?<PlaylistTrack title={track.name} artist={track.artist} image={track.image} song={track.song} id={track.id} transition={transition}/>
-          :<Track title={track.name} artist={track.artist} image={track.image} song={track.song} id={track.id} transition={transition}/>
-      )}
-    </ul>
-  </div>
-  )
-}
-{
-  type==="Albums"&&
-  (<div class="flex flex-col gap-2 z-20">
-    <h2 class="text-2xl font-semibold">{title}</h2>
-    <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
-      {dataList.map((album:AlbumProps)=><Album name={album.name} artist={album.artist} image={album.image} id={album.id} transition={transition}/>)}
-    </ul>
-  </div>
-  )
-}
-{
-  type==="Artists"&&
-  (<div class="flex flex-col gap-2 z-20">
-    <h2 class="text-2xl font-semibold">{title}</h2>
-    <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
-      {dataList.map((artist:ArtistProps)=><Artist name={artist.name} albums={artist.albums} image={artist.image} id={artist.id} transition={transition}/>)}
-    </ul>
-  </div>
-  )
-}
 
-
+{
+  type === "Tracks" && (
+    <div class="flex flex-col gap-2 z-20">
+      <h2 class="text-2xl font-semibold">{title}</h2>
+      <ul class={"flex overflow-x-auto overflow-y-hidden gap-4 p-2"}>
+        {tracks?.map((track: TrackPropsEndpoint) => (
+          <Track track={track} transition={transition} />
+        ))}
+      </ul>
+    </div>
+  )
+}{
+  type === "Albums" && (
+    <div class="flex flex-col gap-2 z-20">
+      <h2 class="text-2xl font-semibold">{title}</h2>
+      <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
+        {albums?.map((album: AlbumPropsEndpoint) => (
+          <Album
+            name={album.name}
+            artist={album.artist || ""}
+            image={album.image}
+            id={album.id}
+            transition={transition}
+          />
+        ))}
+      </ul>
+    </div>
+  )
+}
+{
+  type === "Artists" && (
+    <div class="flex flex-col gap-2 z-20">
+      <h2 class="text-2xl font-semibold">{title}</h2>
+      <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
+        {artists?.map((artist: ArtistPropsEndpoint) => (
+          <Artist
+            name={artist.name}
+            image={artist.image}
+            id={artist.id}
+            transition={transition}
+          />
+        ))}
+      </ul>
+    </div>
+  )
+}
+{
+  type === "Artist Tracks" && (
+    <div class="flex flex-col gap-2 z-20">
+      <h2 class="text-2xl font-semibold">{title}</h2>
+      <ul class={"flex flex-col overflow-y-auto overflow-x-hidden gap-4 p-2"}>
+        {artistTracks?.map((track: ArtistTracks) => (
+          <PlaylistTrack track={track} playlist={artistTracks} client:load />
+        ))}
+      </ul>
+    </div>
+  )
+}

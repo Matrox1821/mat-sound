@@ -6,21 +6,37 @@ import LibrarySolid from "./icons/LibrarySolid.astro";
 import Search from "./icons/Search.astro";
 import SearchSolid from "./icons/SearchSolid.astro";
 
-console.log(Astro.url.pathname)
-
-const elements=[
-  {label:"Inicio",Icon:Home,IconSolid:HomeSolid,href:"/"},
-  {label:"Buscar",Icon:Search,IconSolid:SearchSolid,href:"/search"},
-  {label:"Biblioteca",Icon:Library,IconSolid:LibrarySolid,href:"/library"}
-]
-
----
-<nav class="w-screen h-16 bg-gradient-to-t from-black from-0% via-black/70 via-60% to-transparent bottom-0 fixed flex items-end justify-around z-50">
+const elements = [
+  { label: "Inicio", Icon: Home, IconSolid: HomeSolid, href: "/" },
+  { label: "Buscar", Icon: Search, IconSolid: SearchSolid, href: "/search" },
   {
-    elements.map(element=>{
-      const {Icon,IconSolid,label,href} = element;
-      const isActive=Astro.url.pathname===href||(href!=="/"&&Astro.url.pathname.includes(href))
-      const IconElement=isActive?IconSolid:Icon
-      return (<a class="flex flex-col items-center w-20 gap-1 text-[rgba(var(--content),.9)] text-sm font-medium" href={href}><IconElement />{label}</a>)})
+    label: "Biblioteca",
+    Icon: Library,
+    IconSolid: LibrarySolid,
+    href: "/library",
+  },
+];
+---
+
+<nav
+  class="w-screen h-16 bg-gradient-to-t from-black from-0% via-black/80 via-60% to-transparent bottom-0 fixed flex items-end justify-around z-50"
+>
+  {
+    elements.map((element) => {
+      const { Icon, IconSolid, label, href } = element;
+      const isActive =
+        Astro.url.pathname === href ||
+        (href !== "/" && Astro.url.pathname.includes(href));
+      const IconElement = isActive ? IconSolid : Icon;
+      return (
+        <a
+          class="flex flex-col items-center w-20 gap-1 text-[rgba(var(--content),.9)] text-sm font-medium"
+          href={href}
+        >
+          <IconElement />
+          {label}
+        </a>
+      );
+    })
   }
 </nav>

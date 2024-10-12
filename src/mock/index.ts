@@ -1,3 +1,4 @@
+import { supabase } from "../lib/supabase";
 import type {
   AlbumObject,
   AlbumProps,
@@ -5,7 +6,8 @@ import type {
   ArtistProps,
   TrackObject,
   TrackProps,
-} from "../helpers/types";
+  TrackPropsEndpoint,
+} from "../shared/types";
 
 import {
   undeadMp3,
@@ -94,7 +96,7 @@ const TRACKS = tracks.map((track) => {
     ...rest,
     name,
     artist,
-    album: albumId,
+    album: albumObject && { id: albumObject.id, name: albumObject.name },
     id,
     image: imageTrack,
   } as TrackProps;
@@ -126,4 +128,18 @@ const ARTISTS = artists.map((artist) => {
 const TracksByArtistName = (artistName: string) =>
   TRACKS.filter((track) => track.artist === artistName);
 
-export { TRACKS, ALBUMS, ARTISTS, TracksByArtistName };
+const { data: dataTracks } = await supabase.from("tracks").select("*");
+
+const isTrack = (x: any): x is TrackPropsEndpoint => dataTracks!.includes(x);
+const isAlbum = (x: any): x is AlbumProps => ALBUMS.includes(x);
+const isArtist = (x: any): x is ArtistProps => ARTISTS.includes(x);
+
+export {
+  TRACKS,
+  isTrack,
+  ALBUMS,
+  isAlbum,
+  ARTISTS,
+  isArtist,
+  TracksByArtistName,
+};
