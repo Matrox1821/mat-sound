@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useRef } from "react";
 import { IoPlay } from "react-icons/io5";
 import { IoIosPause } from "react-icons/io";
 import { rgbColor } from "../../shared/helpers";
@@ -6,7 +6,6 @@ import { usePlayerStore } from "../../store/playerStore";
 import { CurrentTrack } from "./CurrentTrack";
 import { ProgressBar } from "./ProgressBar";
 import { PlayerScreen } from "./PlayerScreen";
-import type { trackProps } from "src/types";
 import { usePlayer } from "src/hooks/usePlayer";
 function Background({
   image,
@@ -41,7 +40,7 @@ export function PlayerBar() {
 
   const { handlePlay, openPlayerScreen } = usePlayer(audioRef);
 
-  const { track, tracks } = currentMusic;
+  const { track } = currentMusic;
 
   return (
     <Fragment>

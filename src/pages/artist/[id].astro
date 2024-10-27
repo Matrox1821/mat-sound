@@ -12,8 +12,8 @@ import {
 import Tracks from "@components/lists/Tracks.astro";
 import Albums from "@components/lists/Albums.astro";
 import type { trackProps, albumProps, artistProps } from "../../types";
-import { HttpStatusCode } from "../../types/httpStatusCode";
 import { IoIosArrowForward } from "react-icons/io";
+import { HttpStatusCode } from "src/types/httpStatusCode";
 
 import NewRelease from "@components/cards/NewRelease.astro";
 import { PlayButton } from "@components/ui/PlayButton";
@@ -26,7 +26,7 @@ export const prerender = false;
 
 const { id } = Astro.params;
 
-if (!id) return Astro.redirect("/404", HttpStatusCode.BAD_REQUEST);
+if (!id) return Astro.redirect("/400", HttpStatusCode.BAD_REQUEST);
 
 const { data, errors } = await getArtistById(id);
 const { data: albumsData, errors: err } = await getAlbumsByArtistId(id);

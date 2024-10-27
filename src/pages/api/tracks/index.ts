@@ -106,7 +106,7 @@ export const POST: APIRoute = async ({ request }) => {
         seconds,
       })
       .select("*");
-    if (!data)
+    if (!data || error)
       return customError({
         message: "Data error",
         httpStatusCode: HttpStatusCode.BAD_REQUEST,

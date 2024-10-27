@@ -44,7 +44,7 @@ const sectionStyles = `flex flex-col gap-2 z-20 ${styles}`;
         style={{ padding: isPlaylist ? "0" : "0.5rem" }}
         class={"flex flex-col overflow-y-auto overflow-x-hidden gap-4"}
       >
-        {tracks?.map((track: trackProps, index) => (
+        {tracks?.map((track: trackProps) => (
           <ColumnCard track={track} tracks={tracks} isPlaylist client:load />
         ))}
       </ul>

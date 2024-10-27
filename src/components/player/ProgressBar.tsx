@@ -1,5 +1,4 @@
 import { type RefObject } from "react";
-import { useProgress } from "src/hooks/usePogress";
 import { parseAudioProgress } from "src/shared/helpers";
 
 export function ProgressBar({ audio }: { audio: RefObject<HTMLAudioElement> }) {

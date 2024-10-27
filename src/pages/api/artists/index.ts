@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { supabase } from "../../../lib/supabase";
 import { HttpStatusCode } from "../../../types/httpStatusCode";
 import { customError, onSuccessRequest, onThrowError } from "../apiService";
-import type { Json } from "src/lib/database.types";
 
 export const GET: APIRoute = async () => {
   const { data: artists } = await supabase

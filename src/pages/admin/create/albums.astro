@@ -5,6 +5,7 @@ import { CustomSelect } from "@components/ui/inputs/CustomSelect";
 import { GoBack } from "@components/ui/GoBack";
 import CustomInput from "@components/ui/inputs/CustomInput.astro";
 import { ListInput } from "@components/ui/inputs/ListInput";
+import { Toast } from "@components/ui/Toast";
 
 const { data: artists } = await supabase
   .from("artists")
@@ -71,4 +72,5 @@ if (Astro.request.method === "POST") {
       Ingresar
     </button>
   </form>
+  <Toast status={status} client:load />
 </AdminLayout>

@@ -4,6 +4,7 @@ import { supabase } from "src/lib/supabase";
 import { CustomSelect } from "@components/ui/inputs/CustomSelect";
 import { GoBack } from "@components/ui/GoBack";
 import { ListInput } from "@components/ui/inputs/ListInput";
+import { Toast } from "@components/ui/Toast";
 
 const { data: albums } = await supabase
   .from("albums")
@@ -129,6 +130,7 @@ if (Astro.request.method === "POST") {
       Ingresar
     </button>
   </form>
+  <Toast status={status} client:load />
 </AdminLayout>
 <style>
   .date-input {

@@ -1,6 +1,6 @@
 import { usePlayerStore } from "../../store/playerStore";
 import { IoIosArrowDown } from "react-icons/io";
-import { useEffect, useState, type RefObject } from "react";
+import { type RefObject } from "react";
 import { Slider } from "../ui/Slider";
 import { formatTime, rgbColor } from "../../shared/helpers";
 import { BsSkipStartFill } from "react-icons/bs";

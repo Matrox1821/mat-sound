@@ -1,7 +1,4 @@
-import { supabase } from "../../../lib/supabase";
 import { HttpStatusCode } from "../../../types/httpStatusCode";
-
-const validateOrReject = async (input: any) => {};
 
 const generateErrorMessage = <E = any>({
   httpStatusCode,
@@ -84,7 +81,6 @@ const onThrowError = (error: any) => {
 };
 
 export {
-  validateOrReject,
   generateErrorMessage,
   onThrowError,
   generateSuccessMessage,

@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { usePlayerStore } from "../../store/playerStore";
 import type { trackProps } from "../../types";
-import { useProgress } from "src/hooks/usePogress";
 import { formatTime, parseNumberListeners } from "src/shared/helpers";
 import { HiOutlineEllipsisVertical } from "react-icons/hi2";
 
