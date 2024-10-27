@@ -20,8 +20,6 @@ export function ColumnCard({ track, tracks, isPlaylist }: Props) {
     setCurrentMusic,
     setIsActive,
   } = usePlayerStore((state) => state);
-  const [duration, setDuration] = useState(0);
-  const trackRef = useRef<HTMLAudioElement>(null);
 
   const isPlayingComponent = isPlaying && currentMusic.track?.id === track.id;
 
