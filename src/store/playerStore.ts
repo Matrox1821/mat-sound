@@ -1,14 +1,10 @@
 import { create } from "zustand";
-import type {
-  AlbumProps,
-  TrackProps,
-  TrackPropsEndpoint,
-} from "../shared/types";
+import type { albumProps, trackProps } from "../types";
 
 interface CurrentMusic {
-  type?: null | AlbumProps;
-  track: null | TrackPropsEndpoint;
-  tracks?: TrackPropsEndpoint[];
+  type?: null | albumProps;
+  track: null | trackProps;
+  tracks?: trackProps[];
 }
 interface PlayerState {
   isPlaying: boolean;

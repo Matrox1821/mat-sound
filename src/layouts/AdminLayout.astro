@@ -1,66 +1,106 @@
 ---
-import { ClientRouter } from 'astro:transitions';
+import { ClientRouter } from "astro:transitions";
+import { Toaster } from "sonner";
+
 interface Props {
-	title: string;
+  title: string;
 }
 const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-    <ClientRouter/>
-	</head>
-	<body>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <Toaster client:load />
     <slot />
-	</body>
+  </body>
 </html>
 
 <style is:global>
-	:root {
-    --content:250, 250, 255;
-		--accent: 103, 125, 255;
-    --bg:4, 11, 23;
-    --bg-contrast:34, 35, 84;
-	}
-  *{
+  @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+  :root {
+    --content: 250, 250, 255;
+    --accent: 103, 125, 255;
+    --bg: 4, 11, 23;
+    --bg-contrast: 34, 35, 84;
+  }
+  * {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-optical-sizing: auto;
     box-sizing: border-box;
   }
-  li,ul{
+  li,
+  ul {
     list-style: none;
   }
-  h1,h2,h3,h4{
+  h1,
+  h2,
+  h3,
+  h4 {
     text-wrap: balance;
   }
-  p{
+  p {
     text-wrap: pretty;
   }
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
-	}
-  body{
+  code {
+    font-family:
+      Menlo,
+      Monaco,
+      Lucida Console,
+      Liberation Mono,
+      DejaVu Sans Mono,
+      Bitstream Vera Sans Mono,
+      Courier New,
+      monospace;
+  }
+  body {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
     font-family: system-ui, sans-serif;
-		background: rgba(var(--bg),1);
+    background: rgba(var(--bg), 1);
     color: rgba(var(--content));
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .select-button-album_id {
+    &:active,
+    &:focus {
+      .select-options {
+        transform: translate(0, -18px);
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+    .select-options {
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s ease;
+    }
+  }
+  .select-button-artist_id {
+    &:active,
+    &:focus {
+      .select-options {
+        transform: translate(0, -18px);
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+    .select-options {
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s ease;
+    }
   }
 </style>

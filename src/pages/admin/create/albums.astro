@@ -1,0 +1,74 @@
+---
+import AdminLayout from "@layouts/AdminLayout.astro";
+import { supabase } from "src/lib/supabase";
+import { CustomSelect } from "@components/ui/inputs/CustomSelect";
+import { GoBack } from "@components/ui/GoBack";
+import CustomInput from "@components/ui/inputs/CustomInput.astro";
+import { ListInput } from "@components/ui/inputs/ListInput";
+
+const { data: artists } = await supabase
+  .from("artists")
+  .select("id,name,image:avatar");
+if (!artists) return;
+
+let status = null;
+if (Astro.request.method === "POST") {
+  try {
+    const form = await Astro.request.formData();
+    const name = form.get("name");
+    const image = form.get("image");
+    const release_date = form.get("release_date");
+    const copyright = form.get("copyright");
+    const artist_id = form.get("artist_id");
+    const data = await fetch("http://localhost:4321/api/albums", {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        image,
+        release_date,
+        copyright,
+        artist_id,
+      }),
+    }).then((data) => data);
+    status = data.status;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
+---
+
+<AdminLayout title="Manager - Mat Sound">
+  <div class="top-4 left-4 absolute">
+    <GoBack client:load />
+  </div>
+  <form
+    method="POST"
+    class="w-[350px] rounded-lg border-2 border-[rgba(var(--accent),.4)] p-8 flex flex-col gap-8"
+  >
+    <CustomInput title="Nombre del álbum:" name="name" type="text" isRequired />
+    <CustomInput title="Imágen:" name="image" type="text" isRequired />
+
+    <label class="flex flex-col gap-2">
+      Fecha de lanzamiento:
+      <input
+        type="date"
+        name="release_date"
+        class="date-input text-white rounded-md bg-[rgba(var(--bg),1)] border-2 border-[rgba(var(--content),.7)] h-10 p-2"
+        required
+      />
+    </label>
+    <div class="flex flex-col gap-2">
+      <h2 class="flex">Copyrights:</h2>
+      <ListInput name="copyright" client:load />
+    </div>
+    <CustomSelect items={artists} name="artist_id" client:load />
+    <button
+      type="submit"
+      class="bg-[rgba(var(--accent),.6)] text-[rgba(var(--content),.9)] font-normal text-xl rounded-md h-10 hover:bg-[rgba(var(--accent),.8)] hover:text-[rgba(var(--content))]"
+    >
+      Ingresar
+    </button>
+  </form>
+</AdminLayout>

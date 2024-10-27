@@ -1,0 +1,28 @@
+---
+import { sortArray } from "src/shared/helpers";
+
+interface Props {
+  artist?: string;
+  names: string[];
+  styles: string;
+}
+const { artist, names, styles = "" } = Astro.props;
+
+const sectionStyles = `text-white/60 ${styles}`;
+
+const nameList = sortArray(names);
+---
+
+<section class={sectionStyles}>
+  {
+    nameList &&
+      nameList.slice(0, 8).map((name) => (
+        <span>
+          {artist && <span class="text-white">{artist} &nbsp;</span>}
+          {name}
+          &nbsp; • &nbsp;
+        </span>
+      ))
+  }
+  y más
+</section>

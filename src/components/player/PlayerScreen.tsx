@@ -1,113 +1,26 @@
 import { usePlayerStore } from "../../store/playerStore";
 import { IoIosArrowDown } from "react-icons/io";
 import { useEffect, useState, type RefObject } from "react";
-import { Slider } from "../Slider";
-import { RgbColor } from "../../shared/helpers";
+import { Slider } from "../ui/Slider";
+import { formatTime, rgbColor } from "../../shared/helpers";
 import { BsSkipStartFill } from "react-icons/bs";
 import { IoIosPlay } from "react-icons/io";
 import { HiMiniPause } from "react-icons/hi2";
+import { useProgress } from "src/hooks/usePogress";
+import { usePlayer } from "src/hooks/usePlayer";
 
 interface Props {
-  audioElement?: RefObject<HTMLAudioElement>;
+  audioElement: RefObject<HTMLAudioElement>;
 }
 
 export function PlayerScreen({ audioElement }: Props) {
-  const {
-    currentMusic,
-    setCurrentMusic,
-    playerScreenIsOpen,
-    setPlayerScreenIsOpen,
-    setIsPlaying,
-    isPlaying,
-  } = usePlayerStore((state) => state);
-
-  const { color, accentColor } = RgbColor(currentMusic.track?.image);
-
-  const [currentTime, setCurrentTime] = useState(0);
-
-  const [playlistManager, setPlaylistManager] = useState<{
-    hasPrevious: boolean;
-    hasNext: boolean;
-  }>();
-  /* console.log(playlistManager); */
-  useEffect(() => {
-    if (audioElement && audioElement.current) {
-      audioElement.current.addEventListener("timeupdate", handleTimeUpdate);
-      return () => {
-        audioElement.current?.removeEventListener(
-          "timeupdate",
-          handleTimeUpdate
-        );
-      };
-    }
-  }, [currentTime]);
-
-  useEffect(() => {
-    if (currentMusic.track) {
-      const indexTrack = currentMusic.tracks?.findIndex(
-        (track) => track.id === currentMusic.track?.id
-      );
-      if (!indexTrack) return;
-      setPlaylistManager({
-        hasPrevious: indexTrack !== 0,
-        hasNext: !!(
-          indexTrack &&
-          currentMusic.tracks &&
-          indexTrack + 1 < currentMusic.tracks.length
-        ),
-      });
-    }
-  }, [currentMusic.track]);
-
-  const handlePreviousNext = (type: "previous" | "next") => {
-    if (currentMusic.track) {
-      const indexTrack = currentMusic.tracks?.findIndex(
-        (track) => track.id === currentMusic.track?.id
-      );
-
-      if (type === "previous" && playlistManager?.hasPrevious) {
-        const { track, ...rest } = currentMusic;
-        setCurrentMusic({
-          track: rest.tracks![indexTrack ? indexTrack - 1 : 0],
-          ...rest,
-        });
-        setIsPlaying(true);
-        return;
-      }
-
-      if (type === "next" && playlistManager?.hasNext) {
-        const { track, ...rest } = currentMusic;
-        setCurrentMusic({
-          track: rest.tracks![indexTrack ? indexTrack + 1 : 0],
-          ...rest,
-        });
-        setIsPlaying(true);
-        return;
-      }
-    }
-  };
-
-  const handleTimeUpdate = () => {
-    setCurrentTime(
-      audioElement?.current ? audioElement.current.currentTime : 0
-    );
-  };
-
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-
+  const { currentMusic, playerScreenIsOpen, setPlayerScreenIsOpen, isPlaying } =
+    usePlayerStore((state) => state);
+  const { handleNext, handlePlay, handlePrevious, playlistManager } =
+    usePlayer(audioElement);
+  const { currentTime } = useProgress(audioElement);
   const duration = audioElement?.current?.duration;
-
-  const formatTime = (time: number | undefined) => {
-    if (!time) return "0:00";
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60)
-      .toString()
-      .padStart(2, "0");
-    return `${minutes ?? "0"}:${seconds ?? "00"}`;
-  };
-
+  const { color, accentColor } = rgbColor(currentMusic.track?.image);
   return (
     <div
       style={{
@@ -134,9 +47,12 @@ export function PlayerScreen({ audioElement }: Props) {
               {currentMusic.track?.name}
             </h2>
             <span className="text-xs font-medium opacity-80">
-              {currentMusic.track?.album && currentMusic.track?.artist
-                ? `${currentMusic.track?.artist.name} - ${currentMusic.track?.album.name}`
-                : currentMusic.track?.artist?.name}
+              {currentMusic.track?.album?.name &&
+              currentMusic.track?.artist?.name
+                ? `${currentMusic.track.artist?.name || ""} - ${
+                    currentMusic.track.album?.name || ""
+                  }`
+                : currentMusic.track?.artist?.name || ""}
             </span>
           </div>
           <div className="w-full flex flex-col gap-1">
@@ -157,7 +73,7 @@ export function PlayerScreen({ audioElement }: Props) {
             </div>
           </div>
           <div className="flex w-full justify-center gap-10">
-            <button onClick={() => handlePreviousNext("previous")}>
+            <button onClick={handlePrevious}>
               <BsSkipStartFill
                 className={
                   playlistManager?.hasPrevious
@@ -168,7 +84,7 @@ export function PlayerScreen({ audioElement }: Props) {
             </button>
             <button
               className="w-14 h-14 bg-[rgba(var(--content),1)] rounded-full text-[rgba(var(--bg),1)] flex items-center justify-center"
-              onClick={handlePlayPause}
+              onClick={handlePlay}
             >
               {isPlaying ? (
                 <HiMiniPause className="w-8 h-8" />
@@ -176,7 +92,7 @@ export function PlayerScreen({ audioElement }: Props) {
                 <IoIosPlay className="w-8 h-8 ml-1" />
               )}
             </button>
-            <button onClick={() => handlePreviousNext("next")}>
+            <button onClick={handleNext}>
               <BsSkipStartFill
                 className={
                   playlistManager?.hasNext

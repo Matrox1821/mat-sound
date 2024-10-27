@@ -1,0 +1,106 @@
+---
+import type { artistByIdProps } from "src/types";
+import { IoIosArrowForward } from "react-icons/io";
+interface Props {
+  artist: artistByIdProps;
+}
+const { artist } = Astro.props;
+---
+
+<section class="pt-6">
+  <h2 class="text-lg font-extrabold pb-4">Acerca de</h2>
+  <a href={`/artist/about/${artist.id}`} class="relative w-full">
+    <img
+      src={artist.covers ? artist.covers[0] : artist.avatar}
+      alt={artist.name}
+      class="w-full aspect-square object-cover rounded-md"
+    />
+    {
+      artist.is_verified && (
+        <span class="text-xs flex items-center gap-2 absolute top-5 left-5">
+          <span class="star">
+            <span class="accent" />
+          </span>
+          Artista verificado
+        </span>
+      )
+    }
+    <footer class="p-4 flex flex-col gap-3 absolute bottom-0 justify-end">
+      <h2 class="flex items-end">
+        <span class="text-xl leading-none font-bold"
+          >{artist.listeners.toLocaleString("es-ES")}</span
+        >
+        &nbsp;
+        <span class="uppercase text-sm leading-none">oyentes mensuales</span>
+      </h2>
+      {
+        artist.description && (
+          <div class="flex items-center">
+            <p class="description">{artist.description}</p>
+            <IoIosArrowForward className="w-8 h-8" />
+          </div>
+        )
+      }
+    </footer>
+  </a>
+</section>
+<style>
+  .description {
+    width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  .accent {
+    background: white;
+    width: 1px;
+    height: 10px;
+    position: absolute;
+    transform: rotate(45deg);
+    z-index: 20;
+    top: 3px;
+    left: 9px;
+  }
+  .accent::before {
+    content: "";
+    position: absolute;
+    background: white;
+    width: 1px;
+    height: 4px;
+    transform: rotate(-90deg);
+    z-index: 20;
+    top: 7px;
+    left: -2px;
+  }
+  .star {
+    background: #3a84fa;
+    width: 1rem;
+    height: 1rem;
+    position: relative;
+    text-align: center;
+    z-index: 10;
+  }
+  .star:before,
+  .star:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1rem;
+    width: 1rem;
+    background: #3a84fa;
+  }
+  .star:before {
+    -webkit-transform: rotate(30deg);
+    -moz-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    -o-transform: rotate(30deg);
+  }
+  .star:after {
+    -webkit-transform: rotate(60deg);
+    -moz-transform: rotate(60deg);
+    -ms-transform: rotate(60deg);
+    -o-transform: rotate(60deg);
+  }
+</style>

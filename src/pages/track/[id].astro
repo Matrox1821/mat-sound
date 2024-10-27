@@ -1,83 +1,131 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { BackgroundColor } from "../../components/BackgroundColor";
-import { PlayButton } from "../../components/PlayButton";
-import { GoBack } from "../../components/GoBack";
-import { supabase } from "../../lib/supabase";
+import Layout from "@layouts/Layout.astro";
+import { BackgroundColor } from "@components/ui/BackgroundColor";
+import { PlayButton } from "@components/ui/PlayButton";
+import { GoBack } from "@components/ui/GoBack";
+import { getTrackById, getTracksByArtistId } from "../../queryFn";
+import { HttpStatusCode } from "src/types/httpStatusCode";
+import { TrackImage } from "@components/player/TrackImage";
+import type { trackProps } from "src/types";
+import RelacionatedTracks from "@components/ui/RelacionatedTracks.astro";
+import { parseDateTime } from "src/shared/helpers";
+import Tracks from "@components/lists/Tracks.astro";
+export const prerender = false;
 
-export const prerender = true;
+const { id } = Astro.params;
+if (!id) return redirect("/404", HttpStatusCode.NOT_FOUND);
 
-export async function getStaticPaths() {
-  const { data: tracks } = await supabase.from("tracks").select("*");
-  const { data: albums } = await supabase
-    .from("albums")
-    .select("id, image, name");
+const { data, errors } = await getTrackById(id);
 
-  const { data: artists } = await supabase
-    .from("artists")
-    .select("id, name, image");
+if (!data) return redirect("/404", HttpStatusCode.NOT_FOUND);
+if (errors.length > 0)
+  return redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
 
-  if (tracks && albums && artists) {
-    const newTracks = tracks.map((track) => {
-      const { album_id, artist_id, image, ...restOfTrack } = track;
-      const album = albums.find((album) => album.id === track.album_id);
-      const artist = artists.find((artist) => artist.id === artist_id);
+const { track } = data;
 
-      return {
-        ...restOfTrack,
-        image: album?.image ? album.image : (image as string),
-        artist: artist || null,
-        album: album || null,
-      };
-    });
+const { data: tracksData, errors: err } = await getTracksByArtistId(
+  track.artist?.id || ""
+);
 
-    return newTracks.map((track) => {
-      return {
-        params: { id: track.id },
-        props: { track },
-      };
-    });
-  }
-}
+if (!tracksData) return redirect("/404", HttpStatusCode.NOT_FOUND);
+if (err.length > 0)
+  return redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
 
-const { track } = Astro.props;
+const moreArtistTracks = tracksData.tracks.filter(
+  (newTrack) => track.id !== newTrack.id
+);
+const tracksNames = moreArtistTracks.map((track) => track.name);
 ---
 
 <Layout title={`${track.name} - MatSound`}>
   <main
-    class="w-screen relative p-4 flex"
-    transition:name={track.id + "-to-background"}
+    class="w-screen relative p-4 pb-32 flex flex-col"
+    transition:name={`${track.id}-to-background`}
   >
     <BackgroundColor image={track.image} client:load />
-    <div class="w-full flex flex-col z-10 relative gap-4">
+    <div class="absolute left-4 z-50">
       <GoBack client:load />
-      <div class="w-full flex flex-col justify-center items-center gap-8">
+    </div>
+    <section class="w-full flex flex-col">
+      <figure class="w-full flex justify-center">
         <img
           src={track.image}
           alt={track.name}
-          class="w-52 rounded-[1px] shadow-[0_0_80px_0_rgba(0,0,0,0.8)]"
-          transition:name={track.id + "-to-page"}
+          class="w-52 rounded-md shadow-[0_0_40px_0_rgba(0,0,0,0.2)]"
+          transition:name={`${track.id}-to-page`}
           id="image"
         />
-        <div class="flex justify-between w-full">
-          <div class="flex flex-col gap-2">
-            <h1
-              transition:name={track.id + "-to-title"}
-              class="font-bold text-3xl m-0 leading-5"
-            >
-              {track.name}
-            </h1>
-            <h2
-              transition:name={track.id + "-to-artist"}
-              class="font-normal text-md m-0 leading-5"
-            >
-              {track.artist?.name}
-            </h2>
-          </div>
-
-          <PlayButton song={track} client:load />
-        </div>
+      </figure>
+      <h2
+        transition:name={`${track.id}-to-title`}
+        class="font-bold text-2xl m-0"
+      >
+        {track.name}
+      </h2>
+    </section>
+    <section class="flex flex-col gap-2 w-full relative z-10 pt-3">
+      <a class="flex items-center gap-2" href={`/artist/${track.artist?.id}`}>
+        <img
+          src={track.artist?.avatar}
+          alt={track.artist?.name}
+          class="h-5 w-5 object-cover rounded-full"
+        />
+        <figcaption
+          transition:name={`${track.id}-to-artist`}
+          class="font-semibold text-xs m-0 leading-5"
+        >
+          {track.artist?.name}
+        </figcaption>
+      </a>
+      <h4 class="opacity-60 text-xs pt-1">
+        Sencillo • {parseDateTime(track.release_date).year}
+      </h4>
+      <div class="flex justify-between items-center">
+        <TrackImage track={track as trackProps} client:load />
+        <PlayButton
+          song={track}
+          styleContainer="h-14 w-14"
+          styleIcon="h-8 w-8"
+          client:load
+        />
       </div>
-    </div>
+    </section>
+    {
+      tracksNames.length > 0 && (
+        <RelacionatedTracks
+          names={tracksNames}
+          styles="pt-8 relative z-10 w-full"
+        />
+      )
+    }
+    <section class="pt-8 flex flex-col gap-6 relative z-10">
+      <h3 class="text-sm">{parseDateTime(track.release_date).fullDate}</h3>
+      <a class="flex items-center gap-3" href={`/artist/${track.artist?.id}`}>
+        <img
+          src={track.artist?.avatar}
+          alt={track.artist?.name}
+          class="h-12 w-12 object-cover rounded-full"
+        />
+        <figcaption
+          transition:name={`${track.id}-to-artist`}
+          class="font-semibold text-base m-0 leading-5"
+        >
+          {track.artist?.name}
+        </figcaption>
+      </a>
+    </section>
+    {
+      moreArtistTracks.length > 0 && (
+        <Tracks
+          tracks={moreArtistTracks as trackProps[]}
+          title={`Más de ${track.artist?.name || ""}`}
+          type="row"
+          styles="pt-8"
+        />
+      )
+    }
+    <section class="pt-8">
+      {track.copyright.map((text) => <h6 class="text-xs">{text}</h6>)}
+    </section>
   </main>
 </Layout>

@@ -17,6 +17,8 @@ export type Database = {
           image: string;
           name: string;
           updated_at: string;
+          copyright: string[];
+          release_date: string;
         };
         Insert: {
           artist_id?: string;
@@ -25,6 +27,8 @@ export type Database = {
           image?: string;
           name?: string;
           updated_at?: string;
+          copyright?: string[];
+          release_date?: string;
         };
         Update: {
           artist_id?: string;
@@ -33,6 +37,8 @@ export type Database = {
           image?: string;
           name?: string;
           updated_at?: string;
+          copyright?: string[];
+          release_date?: string;
         };
         Relationships: [
           {
@@ -48,23 +54,38 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
-          image: string;
           name: string;
           updated_at: string;
+          description: string | null;
+          listeners: number;
+          social: JSON | null;
+          is_verified: boolean;
+          avatar: string;
+          covers: string[] | null;
         };
         Insert: {
           created_at?: string;
           id?: string;
-          image?: string;
           name?: string;
           updated_at?: string;
+          description?: string | null;
+          listeners?: number;
+          social?: JSON | null;
+          is_verified?: boolean;
+          avatar?: string;
+          covers?: string[] | null;
         };
         Update: {
           created_at?: string;
           id?: string;
-          image?: string;
           name?: string;
           updated_at?: string;
+          description?: string | null;
+          listeners?: number;
+          social?: JSON | null;
+          is_verified?: boolean;
+          avatar?: string;
+          covers?: string[] | null;
         };
         Relationships: [];
       };
@@ -74,33 +95,45 @@ export type Database = {
           artist_id: string;
           created_at: string;
           id: string;
-          image: string | null;
+          image: string;
           name: string;
           order_in_album: number | null;
           song_url: string;
           updated_at: string;
+          copyright: string[];
+          release_date: string;
+          reproductions: number;
+          seconds: number;
         };
         Insert: {
           album_id?: string | null;
           artist_id?: string;
           created_at?: string;
           id?: string;
-          image?: string | null;
+          image?: string;
           name?: string;
           order_in_album?: number | null;
           song_url?: string;
           updated_at?: string;
+          copyright?: string[];
+          release_date?: string;
+          reproductions?: number;
+          seconds?: number;
         };
         Update: {
           album_id?: string | null;
           artist_id?: string;
           created_at?: string;
           id?: string;
-          image?: string | null;
+          image?: string;
           name?: string;
           order_in_album?: number | null;
           song_url?: string;
           updated_at?: string;
+          copyright?: string[];
+          release_date?: string;
+          reproductions?: number;
+          seconds?: number;
         };
         Relationships: [
           {

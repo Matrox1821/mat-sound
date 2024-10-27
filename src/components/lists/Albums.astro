@@ -1,0 +1,30 @@
+---
+import Album from "../cards/Album.astro";
+import type { albumProps } from "../../types";
+
+interface Props {
+  albums?: albumProps[];
+  title: string;
+  hasTransition?: boolean;
+  styles?: string;
+}
+const { albums, title, hasTransition = false, styles = "" } = Astro.props;
+const sectionStyles = `flex flex-col gap-2 z-20 ${styles}`;
+---
+
+<section class={sectionStyles}>
+  <h2 class="text-2xl font-semibold">{title}</h2>
+  <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
+    {
+      albums?.map((album: albumProps) => (
+        <Album
+          name={album.name || ""}
+          artist={album.artist?.name || ""}
+          image={album.image || ""}
+          id={album.id || ""}
+          hasTransition={hasTransition}
+        />
+      ))
+    }
+  </ul>
+</section>

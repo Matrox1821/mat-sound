@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
 import { supabase } from "../../../lib/supabase";
+import { customError } from "../apiService";
+import { HttpStatusCode } from "../../../types/httpStatusCode";
 
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const formData = await request.formData();
@@ -7,14 +9,11 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
 
-  /*  const command = new ListObjectsCommand({ Bucket: "mat-sound" });
-
-  const resp = await r2.send(command);
-  const element = resp.Contents;
- */
-
   if (!email || !password) {
-    return new Response("Email and password are required", { status: 400 });
+    return customError({
+      httpStatusCode: HttpStatusCode.BAD_REQUEST,
+      message: "Email and password are required",
+    });
   }
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -22,7 +21,11 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     password,
   });
   if (error) {
-    return new Response(error.message, { status: 500 });
+    return customError({
+      httpStatusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
+      errors: [error],
+      message: error.message,
+    });
   }
 
   const { access_token, refresh_token } = data.session;
@@ -34,5 +37,5 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     path: "/",
   });
 
-  return redirect("/");
+  return redirect("/admin");
 };

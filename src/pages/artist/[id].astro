@@ -1,87 +1,214 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import BackButton from "../../components/BackButton.astro";
-import { BackgroundColor } from "../../components/BackgroundColor";
+import Layout from "@layouts/Layout.astro";
+import { GoBack } from "@components/ui/GoBack";
+import { BackgroundColor } from "@components/ui/BackgroundColor";
+import {
+  getArtistById,
+  getAlbumsByArtistId,
+  getTracksByArtistId,
+  getArtists,
+  getTracks,
+} from "../../queryFn";
+import Tracks from "@components/lists/Tracks.astro";
+import Albums from "@components/lists/Albums.astro";
+import type { trackProps, albumProps, artistProps } from "../../types";
+import { HttpStatusCode } from "../../types/httpStatusCode";
+import { IoIosArrowForward } from "react-icons/io";
 
-import List from "../../components/List.astro";
-import type { ArtistPropsData } from "../../shared/types";
-export const prerender = true;
+import NewRelease from "@components/cards/NewRelease.astro";
+import { PlayButton } from "@components/ui/PlayButton";
+import { parseNumberListeners, sortArray } from "src/shared/helpers";
+import About from "@components/cards/About.astro";
+import Artists from "@components/lists/Artists.astro";
+import RelacionatedTracks from "@components/ui/RelacionatedTracks.astro";
+import { TrackImage } from "@components/player/TrackImage";
+export const prerender = false;
 
-export async function getStaticPaths() {
-  const artists: ArtistPropsData[] = await fetch(
-    "http://localhost:4321/api/get-artists.json"
-  )
-    .then((data) => data.json())
-    .then(({ artists }) => artists);
-  /* const { data: artists } = await supabase
-    .from("artists")
-    .select("*, albums(*), tracks(*)");
-  if (!artists) return;
-  const newArtists = artists.map((artist) => {
-    const { tracks, albums, ...restArtist } = artist;
+const { id } = Astro.params;
 
-    const newTracks = tracks.map((track) => {
-      const { album_id, artist_id, image, ...restOfTrack } = track;
-      const album = albums.find((album) => album.id === track.album_id);
+if (!id) return Astro.redirect("/404", HttpStatusCode.BAD_REQUEST);
 
-      return {
-        ...restOfTrack,
-        image: image ? image : album?.image || null,
-        artist: artist.name || null,
-        album: album?.name || null,
-      };
-    });
+const { data, errors } = await getArtistById(id);
+const { data: albumsData, errors: err } = await getAlbumsByArtistId(id);
+const { data: otherTracks, errors: dataErr } = await getTracks();
 
-    const newAlbums = albums.map((album) => {
-      const { artist_id, ...restAlbum } = album;
-      return { ...restAlbum, artist: artist.name || null };
-    });
+const { data: tracksData, errors: dataError } = await getTracksByArtistId(id);
+const { data: dataArtists, errors: errs } = await getArtists();
 
-    return { ...restArtist, albums: newAlbums, tracks: newTracks };
-  });
- */
-  return artists.map((artist) => ({
-    params: { id: artist.id },
-    props: { artist },
-  }));
-}
-const { artist } = Astro.props;
+if (!data || !albumsData || !tracksData || !dataArtists)
+  return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
+
+if (
+  errors.length > 0 ||
+  err.length > 0 ||
+  dataError.length > 0 ||
+  errs.length > 0
+)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+const { artist } = data;
+const { albums } = albumsData;
+const { tracks } = tracksData;
+
+const mostRecentTrack = tracks.reduce((previous, current) => {
+  const currentDate = Date.parse(current.created_at);
+  const previousDate = Date.parse(previous.created_at);
+  return currentDate > previousDate ? current : previous;
+});
+const daysOfRelease =
+  (new Date().getTime() - Date.parse(mostRecentTrack.created_at)) / 86400000;
+
+const artists = dataArtists.artists.filter(
+  (newArtist) => newArtist.id !== artist.id
+);
+const recomendatedTracks = otherTracks?.tracks.filter(
+  (newTrack) => newTrack.artist?.id !== artist.id
+);
+const sortedTracks = sortArray<trackProps>(recomendatedTracks as trackProps[]);
+
+const sortedArtists = sortArray<artistProps>(artists as artistProps[]);
+
+const relacionatedTracks = tracks.map((track) => track.name);
 ---
 
 <Layout title={`${artist.name} - MatSound`}>
-  <div class="absolute w-screen"></div>
-  <main class="w-screen relative p-4 pb-20 z-10 overflow-x-hidden">
-    <BackgroundColor image={artist.image} client:load />
-    <BackButton />
-    <div class="w-full flex justify-center items-center z-20">
+  <main class="w-screen relative p-4 pb-40 z-10 overflow-x-hidden">
+    <BackgroundColor image={artist.avatar} client:load />
+    <div
+      class="z-40 absolute bg-black/50 rounded-full h-10 w-10 flex pl-1 items-center content-center"
+    >
+      <GoBack client:load />
+    </div>
+    <!--  <div class="w-full flex justify-center items-center z-20">
       <img
         src={artist.image}
         alt={artist.name}
-        class="w-52 rounded-full shadow-[0_0_80px_0_rgba(0,0,0,0.8)]"
+        class="w-52 h-52 object-cover rounded-full shadow-[0_0_80px_0_rgba(0,0,0,0.8)]"
         transition:name={artist.id + "-to-page"}
         id="image"
       />
-    </div>
-    <h1
-      class="relative font-extrabold text-5xl mt-3 text-ellipsis overflow-hidden h-[3rem] z-20"
-    >
-      {artist.name}
-    </h1>
-    <div class="w-full flex flex-col z-20 pt-10 gap-6">
-      <!-- {
-        artist.tracks > 0 && (
-          <List
-            type="Artist Tracks"
-            artistTracks={artist.tracks}
-            title="Canciones"
+    </div> -->
+    <section class="absolute left-0 top-0 w-full h-72 z-0">
+      <div
+        class="from-[rgba(0,0,0,0.5)] to-transparent absolute bg-gradient-to-t z-10 w-full h-72"
+      >
+      </div>
+      <img
+        src={artist.avatar}
+        alt={artist.name}
+        class="w-full h-72 object-cover absolute z-0"
+        transition:name={artist.id + "-to-page"}
+        id="image"
+      />
+      <h1
+        class="absolute font-extrabold text-5xl mt-3 text-ellipsis overflow-hidden h-[3rem] z-20 bottom-2 left-4"
+      >
+        {artist.name}
+      </h1>
+    </section>
+    <section class="relative pt-72 w-full flex flex-col z-10">
+      <span class="text-xs opacity-70 pb-2"
+        >{parseNumberListeners(artist.listeners)} oyentes mensuales</span
+      >
+    </section>
+
+    <section class="flex flex-col gap-4 relative z-10">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center gap-6">
+          <TrackImage
+            track={mostRecentTrack as trackProps}
+            tracks={tracks as trackProps[]}
+            client:load
           />
+          <!-- <figure
+            class="h-11 w-8 border-2 rounded-[7px] flex justify-center items-center"
+          >
+            <img
+              src={mostRecentTrack.image}
+              alt={mostRecentTrack.name}
+              class="h-9 w-6 object-cover rounded-md"
+            />
+          </figure> -->
+          <button class="px-3 py-2 border-2 rounded-[4px] flex items-center">
+            <span class="leading-none text-xs font-bold">Siguiendo</span>
+          </button>
+        </div>
+        <PlayButton
+          song={mostRecentTrack as trackProps}
+          tracks={tracks as trackProps[]}
+          styleContainer="h-12 w-12"
+          styleIcon="h-7 w-7"
+          client:load
+        />
+      </div>
+      {
+        daysOfRelease < 30 && (
+          <a
+            class="flex items-center justify-between p-2 bg-white/15 rounded-[4px]"
+            href={`/track/${mostRecentTrack.id}`}
+          >
+            <div class="flex items-center gap-2">
+              <img
+                src={mostRecentTrack.image}
+                alt={mostRecentTrack.name}
+                class="h-6 w-6 object-cover rounded-[3px]"
+              />
+              <span class="text-xs font-bold">Escucha la nueva canción</span>
+            </div>
+            <IoIosArrowForward className="h-6 w-6" />
+          </a>
         )
       }
-      {
-        artist.albums > 0 && (
-          <List type="Albums" albums={artist.albums} title="Álbumes" />
-        )
-      } -->
-    </div>
+    </section>
+    <RelacionatedTracks
+      artist={artist.name}
+      names={relacionatedTracks}
+      styles="pt-8"
+    />
+    {
+      daysOfRelease < 30 && (
+        <NewRelease
+          artist={{ name: artist.name, image: artist.avatar }}
+          newRelease={{
+            name: mostRecentTrack.name,
+            image: mostRecentTrack.image,
+            id: mostRecentTrack.id,
+            type: "track",
+          }}
+        />
+      )
+    }
+    <Tracks
+      tracks={tracks as trackProps[]}
+      title="Canciones"
+      type="column"
+      styles="pt-8"
+    />
+    {
+      albums.length > 0 && (
+        <Albums albums={albums as albumProps[]} title="Álbumes" styles="pt-8" />
+      )
+    }
+    {
+      sortedTracks && (
+        <Tracks
+          tracks={sortedTracks as trackProps[]}
+          title="Canciones recomendadas"
+          type="row"
+          styles="pt-8"
+        />
+      )
+    }
+    <About artist={artist} />
+    {
+      sortedArtists && (
+        <Artists
+          artists={sortedArtists as artistProps[]}
+          title="Artistas relacionados"
+          type="row"
+          styles="pt-8"
+        />
+      )
+    }
   </main>
 </Layout>

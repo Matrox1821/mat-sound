@@ -1,0 +1,65 @@
+---
+import { IoLogoInstagram } from "react-icons/io";
+import { BsTwitterX } from "react-icons/bs";
+import { IoLogoFacebook } from "react-icons/io5";
+import { PiLinkBold } from "react-icons/pi";
+
+interface Props {
+  socials: { [key: string]: string };
+}
+const { socials } = Astro.props;
+const socialKeys = Object.keys(socials);
+---
+
+<section class="flex flex-col gap-6 capitalize p-4 pt-10 text-sm">
+  {
+    socialKeys.map((socialName) => {
+      switch (socialName) {
+        case "instagram":
+          return (
+            <a
+              href={socials[socialName]}
+              target="_blank"
+              class="flex items-center gap-3"
+            >
+              <IoLogoInstagram className="w-6 h-6" />
+              <span>{socialName}</span>
+            </a>
+          );
+        case "x":
+          return (
+            <a
+              href={socials[socialName]}
+              target="_blank"
+              class="flex items-center gap-3"
+            >
+              <BsTwitterX className="w-6 h-6" />
+              <span>{socialName}</span>
+            </a>
+          );
+        case "facebook":
+          return (
+            <a
+              href={socials[socialName]}
+              target="_blank"
+              class="flex items-center gap-3"
+            >
+              <IoLogoFacebook className="w-6 h-6" />
+              <span>{socialName}</span>
+            </a>
+          );
+        default:
+          return (
+            <a
+              href={socials[socialName]}
+              target="_blank"
+              class="flex items-center gap-3"
+            >
+              <PiLinkBold className="w-6 h-6" />
+              <span>{socialName}</span>
+            </a>
+          );
+      }
+    })
+  }
+</section>

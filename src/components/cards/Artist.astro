@@ -1,0 +1,36 @@
+---
+interface Props {
+  image: string;
+  name: string;
+  id: string;
+  hasTransition: boolean;
+}
+const { image, name, id, hasTransition } = Astro.props;
+---
+
+<li
+  class="flex-[0_0_9rem] w-96 rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
+>
+  <a
+    class="flex flex-col rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
+    href={`/artist/${id}`}
+  >
+    <img
+      src={image}
+      alt="yoasobi song"
+      class="object-cover aspect-square w-full rounded-full"
+      transition:name={hasTransition ? `${id}-to-page` : undefined}
+    />
+    <h2 class="font-normal text-[18px] m-0 leading-5">
+      {name}
+    </h2>
+  </a>
+</li>
+
+<style>
+  @media (hover: hover) {
+    li:hover {
+      background-color: rgba(var(--bg-contrast), 0.4);
+    }
+  }
+</style>

@@ -1,36 +1,94 @@
 ---
-import { Image } from "astro:assets" 
-import { ALBUMS } from "../../mock";
-import Layout from "../../layouts/Layout.astro";
-import BackButton from "../../components/BackButton.astro";
-import { BackgroundColor } from "../../components/BackgroundColor";
-import type { TrackProps } from "../../shared/types";
-import List from "../../components/List.astro";
+import Layout from "@layouts/Layout.astro";
+import { BackgroundColor } from "@components/ui/BackgroundColor";
+import { GoBack } from "@components/ui/GoBack";
+import Tracks from "@components/lists/Tracks.astro";
+import { getAlbumById } from "../../queryFn";
+import type { trackProps } from "src/types";
+import { parseDateTime } from "src/shared/helpers";
+import { PlayButton } from "@components/ui/PlayButton";
+export const prerender = false;
 
-export async function getStaticPaths(){
-  return ALBUMS.map(album=>({
-    params:{id:album.id},
-    props:{...album}
-  }))
-}
+const { id } = Astro.params;
 
-const { image, name, artist, id,tracks } = Astro.props;
+if (!id) return Astro.redirect("/404", HttpStatusCode.BAD_REQUEST);
 
+const { data, errors } = await getAlbumById(id);
+
+if (errors.length > 0 || !data)
+  return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
+
+const { album } = data;
 ---
-<Layout title={`${name} - MatSound`}>
-  <main class="w-screen relative p-4">
-  <BackgroundColor image={image} client:load/>
-  <div class="w-full flex flex-col z-10 relative">
-    <BackButton/>
-    <div class="w-full flex justify-center items-center ">
-      <Image src={image} alt={name} class="w-52 rounded-[1px] shadow-[0_0_80px_0_rgba(0,0,0,0.8)]" transition:name={id+"-to-page"} id="image">
-    </div>
-    <h1>{name}</h1>
-    <h2>{artist}</h2>
-    <div class="w-full flex flex-col z-20 pt-10 gap-6">
-        {tracks.length>0&&<List type="Tracks" data={tracks as TrackProps[]} title="Canciones" playlistStyle/> }
-      </div>
-  </div>
+
+<Layout title={`${album.name} - MatSound`}>
+  <main class="w-screen relative py-4 mb-28">
+    <header class="h-14 flex items-start w-full justify-center">
+      <span class="absolute top-4 left-4 z-50">
+        <GoBack client:load />
+      </span>
+      <span class="flex flex-col items-center justify-center gap-1">
+        <figure class="relative flex items-center gap-2 z-10">
+          <img
+            src={album.artist?.avatar}
+            alt={album.artist?.name}
+            class="h-4 w-4 rounded-full object-cover"
+          />
+          <figcaption class="text-xs">
+            {album.artist?.name}
+          </figcaption>
+        </figure>
+        <h3 class="text-xs relative z-10 opacity-90">
+          Álbum • {parseDateTime(album.release_date).year}
+        </h3>
+      </span>
+    </header>
+    <figure class="absolute w-full left-0 flex justify-center -top-24">
+      <BackgroundColor
+        image={album.image}
+        styles="!h-80 opacity-30"
+        client:load
+      />
+      <img
+        src={album.image}
+        alt={album.name}
+        class="w-10/12 rounded-lg blur-xl opacity-60"
+      />
+    </figure>
+
+    <section
+      class="w-full flex flex-col justify-center items-center gap-3 pb-4"
+    >
+      <img
+        src={album.image}
+        alt={album.name}
+        class="w-52 rounded-[4px] shadow-[0_0_80px_0_rgba(0,0,0,0.8)]"
+        transition:name={id + "-to-page"}
+        id="image"
+      />
+      <h1 class="text-2xl font-semibold relative z-10">{album.name}</h1>
+    </section>
+
+    <section
+      class="w-full flex flex-col justify-center items-center gap-3 pb-8"
+    >
+      <PlayButton
+        song={album.tracks[0] as trackProps}
+        tracks={album.tracks as trackProps[]}
+        styleContainer="w-16 h-16"
+        styleIcon="w-8 h-8"
+        client:load
+      />
+    </section>
+
+    {
+      album.tracks.length > 0 && (
+        <Tracks
+          tracks={album.tracks as trackProps[]}
+          type="column"
+          isPlaylist
+        />
+      )
+    }
   </main>
 </Layout>
-

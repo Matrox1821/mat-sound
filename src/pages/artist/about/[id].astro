@@ -1,0 +1,111 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { GoBack } from "@components/ui/GoBack";
+import { getArtistById } from "src/queryFn";
+import { HttpStatusCode } from "src/types/httpStatusCode";
+import Socials from "@components/ui/Socials.astro";
+export const prerender = false;
+
+const { id } = Astro.params;
+
+if (!id) return Astro.redirect("/404", HttpStatusCode.BAD_REQUEST);
+
+const { data, errors } = await getArtistById(id);
+
+if (!data) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
+if (errors.length > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+const { artist } = data;
+---
+
+<Layout title={`${artist.name} - Matsound`}>
+  <header
+    class="relative w-full p-4 flex justify-center items-center bg-gray-400/15"
+  >
+    <span class="absolute left-4 top-4"> <GoBack client:load /></span>
+    <h1 class="font-bold">
+      {artist.name}
+    </h1>
+  </header>
+  <section class="py-6">
+    <figure class="h-80 flex w-screen carousell">
+      {
+        artist.covers ? (
+          artist.covers.map((cover) => (
+            <img src={cover} alt={artist.name} class="w-80 object-cover" />
+          ))
+        ) : (
+          <img
+            src={artist.avatar}
+            alt={artist.name}
+            class="w-80 object-cover"
+          />
+        )
+      }
+    </figure>
+  </section>
+  <section class="px-4">
+    <h2 class="text-4xl font-extrabold leading-none">
+      {artist.listeners.toLocaleString("es-ES")}
+    </h2>
+    <h3 class="uppercase text-xs">oyentes mensuales</h3>
+   {artist.description&& <p class="pt-16">
+      {artist.description}
+    </p>
+    <figure class="flex items-center gap-2 pt-4">
+      <img
+        src={artist.avatar}
+        alt={artist.name}
+        class="w-10 h-10 object-cover rounded-full"
+      />
+      <figcaption>Publicado por {artist.name}</figcaption>
+    </figure>}
+  </section>
+  <section class="pb-32">
+    {artist.social && <Socials socials={artist.social} />}
+  </section>
+</Layout>
+<style>
+  .carousell {
+    overflow-x: scroll;
+    overscroll-behavior-x: contain;
+    white-space: nowrap;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    img {
+      view-timeline-name: --image;
+      view-timeline-axis: inline;
+      animation-timeline: --image;
+      animation-name: fade;
+      /* animation-range: entry 0% end 10%; */
+      animation-fill-mode: both;
+      scroll-snap-align: center;
+    }
+
+    &::-webkit-scrollbar {
+      background: transparent;
+      width: 0px;
+    }
+    & :first-child {
+      margin-left: calc((100vw - 320px) / 2);
+    }
+    & :last-child {
+      margin-right: calc((100vw - 320px) / 2);
+    }
+  }
+  @keyframes fade {
+    0%,
+    100% {
+      opacity: 0.3;
+      scale: 0.9;
+    }
+    50% {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+</style>

@@ -1,30 +1,146 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import List from "../components/List.astro";
+import Albums from "@components/lists/Albums.astro";
+import Artists from "@components/lists/Artists.astro";
+import Tracks from "@components/lists/Tracks.astro";
+import Layout from "@layouts/Layout.astro";
+import { getAlbums, getArtists, getTracks } from "../queryFn";
+import type { trackProps } from "../types";
+export const prerender = false;
+const { data: tracksData } = await getTracks();
+const { data: albumsData } = await getAlbums();
+const { data: artistsData } = await getArtists();
+if (!tracksData || !albumsData || !artistsData) return redirect("/404", 404);
 
-const { tracks } = await fetch(
-  "http://localhost:4321/api/get-tracks.json"
-).then((data) => data.json());
-
-const { artists } = await fetch(
-  "http://localhost:4321/api/get-artists.json"
-).then((data) => data.json());
+const { tracks } = tracksData;
+const { albums } = albumsData;
+const { artists } = artistsData;
 ---
 
 <Layout title="MatSound">
   <main class="w-screen relative px-4 flex flex-col gap-6 pt-10 pb-40">
-    <List
-      type="Tracks"
-      tracks={tracks}
+    <Tracks
+      tracks={tracks as trackProps[]}
       title="Recomendados"
-      transition="to-page"
+      hasTransition
+      type="row"
     />
-    <!-- <List type="Albums" data={ALBUMS} title="Álbumes" transition="to-page" />-->
-    <List
-      type="Artists"
+    <Albums albums={albums} title="Álbumes" hasTransition />
+    <Artists
       artists={artists}
       title="Artistas escuchados"
-      transition="to-page"
+      hasTransition
+      type="row"
     />
+
+    <!--  <div class="container">
+      <h2>Generador de JSON de Letras</h2>
+      <div class="input-group">
+        <label for="time">Minutos:</label>
+        <input
+          class="text-black"
+          type="text"
+          id="minutes"
+          placeholder="Ej: 00"
+        />
+        <label for="time">Segundos:</label>
+        <input
+          class="text-black"
+          type="text"
+          id="seconds"
+          placeholder="Ej: 02"
+        />
+      </div>
+      <div class="input-group">
+        <label for="lyric">Verso:</label>
+        <input
+          class="text-black"
+          type="text"
+          id="lyric"
+          placeholder="Escribe el verso aquí"
+        />
+      </div>
+      <button class="btn">Agregar</button>
+      <h3>JSON Generado:</h3>
+      <pre id="output" class="text-black"></pre>
+    </div> -->
   </main>
 </Layout>
+<!-- <style>
+  .container {
+    font-family: "Arial", sans-serif;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: auto;
+  }
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+  .input-group {
+    margin-bottom: 10px;
+  }
+  .input-group label {
+    font-weight: bold;
+  }
+  .input-group input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .btn {
+    background-color: #3f51b5;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+  }
+  h3 {
+    text-align: center;
+    margin-top: 20px;
+  }
+  pre {
+    background: #f5f5f5;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+</style>
+<script>
+  const jsonLyrics = {};
+
+  const btn = document.querySelector(".btn");
+
+  btn?.addEventListener("click", () => addLyric());
+
+  function addLyric() {
+    const minutes = document.getElementById("minutes") as HTMLInputElement;
+    const seconds = document.getElementById("seconds") as HTMLInputElement;
+
+    const lyric = document.getElementById("lyric") as HTMLInputElement;
+    const output = document.getElementById("output") as HTMLInputElement;
+
+    if (minutes && seconds && lyric) {
+      const time = `${minutes.value}:${seconds.value}`;
+      jsonLyrics[time] = lyric.value;
+      console.log(jsonLyrics);
+      output.textContent = JSON.stringify(jsonLyrics, null, 2);
+
+      minutes.value = "";
+      seconds.value = "";
+
+      lyric.value = "";
+    } else {
+      alert("Por favor, completa ambos campos.");
+    }
+  }
+  console.log(jsonLyrics);
+</script>
+ -->
