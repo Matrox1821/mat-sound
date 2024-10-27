@@ -10,7 +10,7 @@ import type {
 
 const getUrl =
   process.env.NODE_ENV === "production"
-    ? "https://matsound-qxpt4iooc-matrox1821s-projects.vercel.app"
+    ? "matsound.vercel.app"
     : "http://localhost:4321";
 
 const getTrackById = async (id: string) => {
