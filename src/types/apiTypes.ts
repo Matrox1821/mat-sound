@@ -39,7 +39,7 @@ export interface albumProps {
   id: string;
   image: string;
   name: string;
-  copyright: string;
+  copyright: string[];
   release_date: string;
   artist: {
     id: string;
