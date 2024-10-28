@@ -1,6 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
-/* import Albums from "@components/lists/Albums.astro";
+import Albums from "@components/lists/Albums.astro";
 import Artists from "@components/lists/Artists.astro";
 import Tracks from "@components/lists/Tracks.astro";
 import { getAlbums, getArtists, getTracks } from "../queryFn";
@@ -13,13 +13,13 @@ if (!tracksData || !albumsData || !artistsData) return redirect("/404", 404);
 
 const { tracks } = tracksData;
 const { albums } = albumsData;
-const { artists } = artistsData; */
+const { artists } = artistsData;
 ---
 
 <Layout title="MatSound">
   <main class="w-screen relative px-4 flex flex-col gap-6 pt-10 pb-40">
     <h1>hola</h1>
-    <!-- <Tracks
+    <Tracks
       tracks={tracks as trackProps[]}
       title="Recomendados"
       hasTransition
@@ -31,7 +31,7 @@ const { artists } = artistsData; */
       title="Artistas escuchados"
       hasTransition
       type="row"
-    /> -->
+    />
 
     <!--  <div class="container">
       <h2>Generador de JSON de Letras</h2>
