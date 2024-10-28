@@ -13,7 +13,7 @@ import Tracks from "@components/lists/Tracks.astro";
 import Albums from "@components/lists/Albums.astro";
 import type { trackProps, albumProps, artistProps } from "../../types";
 import { IoIosArrowForward } from "react-icons/io";
-import { HttpStatusCode } from "src/types/httpStatusCode";
+import type { HttpStatusCode } from "src/types/httpStatusCode";
 
 import NewRelease from "@components/cards/NewRelease.astro";
 import { PlayButton } from "@components/ui/PlayButton";
@@ -22,7 +22,6 @@ import About from "@components/cards/About.astro";
 import Artists from "@components/lists/Artists.astro";
 import RelacionatedTracks from "@components/ui/RelacionatedTracks.astro";
 import { TrackImage } from "@components/player/TrackImage";
-export const prerender = false;
 
 const { id } = Astro.params;
 
@@ -79,15 +78,6 @@ const relacionatedTracks = tracks.map((track) => track.name);
     >
       <GoBack client:load />
     </div>
-    <!--  <div class="w-full flex justify-center items-center z-20">
-      <img
-        src={artist.image}
-        alt={artist.name}
-        class="w-52 h-52 object-cover rounded-full shadow-[0_0_80px_0_rgba(0,0,0,0.8)]"
-        transition:name={artist.id + "-to-page"}
-        id="image"
-      />
-    </div> -->
     <section class="absolute left-0 top-0 w-full h-72 z-0">
       <div
         class="from-[rgba(0,0,0,0.5)] to-transparent absolute bg-gradient-to-t z-10 w-full h-72"
@@ -120,15 +110,7 @@ const relacionatedTracks = tracks.map((track) => track.name);
             tracks={tracks as trackProps[]}
             client:load
           />
-          <!-- <figure
-            class="h-11 w-8 border-2 rounded-[7px] flex justify-center items-center"
-          >
-            <img
-              src={mostRecentTrack.image}
-              alt={mostRecentTrack.name}
-              class="h-9 w-6 object-cover rounded-md"
-            />
-          </figure> -->
+
           <button class="px-3 py-2 border-2 rounded-[4px] flex items-center">
             <span class="leading-none text-xs font-bold">Siguiendo</span>
           </button>

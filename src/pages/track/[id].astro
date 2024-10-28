@@ -35,6 +35,7 @@ const moreArtistTracks = tracksData.tracks.filter(
   (newTrack) => track.id !== newTrack.id
 );
 const tracksNames = moreArtistTracks.map((track) => track.name);
+console.log(id);
 ---
 
 <Layout title={`${track.name} - MatSound`}>
@@ -106,10 +107,7 @@ const tracksNames = moreArtistTracks.map((track) => track.name);
           alt={track.artist?.name}
           class="h-12 w-12 object-cover rounded-full"
         />
-        <figcaption
-          transition:name={`${track.id}-to-artist`}
-          class="font-semibold text-base m-0 leading-5"
-        >
+        <figcaption class="font-semibold text-base m-0 leading-5">
           {track.artist?.name}
         </figcaption>
       </a>
