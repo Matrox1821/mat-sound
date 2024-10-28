@@ -5,11 +5,11 @@ import Artists from "@components/lists/Artists.astro";
 import Tracks from "@components/lists/Tracks.astro";
 import { getAlbums, getArtists, getTracks } from "../queryFn";
 import type { trackProps } from "../types";
-const { data: tracksData, errors } = await getTracks();
-const { data: albumsData, errors: errorsAlbums } = await getAlbums();
-const { data: artistsData, errors: errorsArtists } = await getArtists();
-console.log(errors, errorsAlbums, errorsArtists);
-if (!tracksData || !albumsData || !artistsData) return redirect("/404", 404);
+
+const { data: tracksData } = await getTracks();
+const { data: albumsData } = await getAlbums();
+const { data: artistsData } = await getArtists();
+if (!tracksData || !albumsData || !artistsData) return;
 
 const { tracks } = tracksData;
 const { albums } = albumsData;
