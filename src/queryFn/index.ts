@@ -9,8 +9,8 @@ import type {
 } from "../types/apiTypes";
 
 const getUrl =
-  process.env.NODE_ENV === "production"
-    ? process.env.URL
+  process.env.NETLIFY_ENV === "production"
+    ? process.env.URL_NETLIFY
     : "http://localhost:4321";
 
 const getTrackById = async (id: string) => {
