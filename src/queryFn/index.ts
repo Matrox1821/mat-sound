@@ -8,10 +8,7 @@ import type {
   albumProps,
 } from "../types/apiTypes";
 
-const getUrl =
-  process.env.NETLIFY_ENV === "production"
-    ? process.env.URL_NETLIFY
-    : "http://localhost:4321";
+const getUrl = "http://localhost:4321";
 
 const getTrackById = async (id: string) => {
   return await handleCustomApiRequest<{ track: trackProps }>(
