@@ -27,7 +27,7 @@ const sectionStyles = `flex flex-col gap-2 z-20 ${styles}`;
   type === "row" && (
     <section class={sectionStyles}>
       {title && <h2 class="text-xl font-semibold">{title}</h2>}
-      <ul class={"flex overflow-x-auto overflow-y-hidden gap-4 p-2"}>
+      <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
         {tracks?.map((track: trackProps) => (
           <Track track={track} hasTransition={hasTransition} />
         ))}
@@ -42,7 +42,7 @@ const sectionStyles = `flex flex-col gap-2 z-20 ${styles}`;
       {title && <h2 class="text-xl font-bold">{title}</h2>}
       <ul
         style={{ padding: isPlaylist ? "0" : "0.5rem" }}
-        class={"flex flex-col overflow-y-auto overflow-x-hidden gap-4"}
+        class="flex flex-col overflow-y-auto overflow-x-hidden gap-4"
       >
         {tracks?.map((track: trackProps) => (
           <ColumnCard track={track} tracks={tracks} isPlaylist client:load />

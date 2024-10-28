@@ -11,7 +11,7 @@ const { track, hasTransition } = Astro.props;
 
 <li
   class="flex-[0_0_9rem] w-96 rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
-  transition:name={hasTransition ? `${track.id}-to-background` : undefined}
+  transition:name=`${track.id}-to-background`
 >
   <a
     class="flex flex-col rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
@@ -21,18 +21,18 @@ const { track, hasTransition } = Astro.props;
       src={track.image}
       alt={track.name}
       class="object-fill aspect-square w-full rounded-md"
-      transition:name={hasTransition ? `${track.id}-to-page` : undefined}
+      transition:name=`${track.id}-to-page`
     />
     <h2
       style={{ overflowWrap: "anywhere" }}
       class="font-normal text-[18px] m-0 leading-5"
-      transition:name={hasTransition ? `${track.id}-to-title` : undefined}
+      transition:name=`${track.id}-to-title`
     >
       {track.name}
     </h2>
     <span
       class="text-xs font-medium opacity-70"
-      transition:name={hasTransition ? `${track.id}-to-artist` : undefined}
+      transition:name=`${track.id}-to-artist`
     >
       {track.artist?.name}
     </span>
