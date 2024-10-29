@@ -1,58 +1,64 @@
 ---
-import type { trackProps } from "../../types";
-import Track from "../cards/Track.astro";
-import { ColumnCard } from "../cards/ColumnCard";
+import { ColumnCard } from "@components/cards/ColumnCard";
+import Track from "@components/cards/Track.astro";
+import { getTracks, getTracksByArtistId } from "src/queryFn";
+import type { trackProps } from "src/types";
 
 interface Props {
-  tracks: trackProps[];
-  title?: string;
   hasTransition?: boolean;
   type: "row" | "column";
-  styles?: string;
   isPlaylist?: boolean;
+  artistId?: string;
+  albumId?: string;
 }
 const {
-  tracks,
-  title,
   hasTransition = false,
   type,
-  styles = "",
   isPlaylist = false,
+  artistId,
+  albumId,
 } = Astro.props;
 
-const sectionStyles = `flex flex-col gap-2 z-20 ${styles}`;
+let tracks;
+
+if (artistId) {
+  const { data } = await getTracksByArtistId(artistId);
+  if (!data) return;
+  tracks = data.tracks;
+}
+
+/* if (albumId) {
+  const { data } = await getTracksByAlbumId(albumId);
+  if (!data) return;
+  tracks = data.tracks;
+}
+ */
+if (!artistId && !albumId) {
+  const { data: tracksData } = await getTracks();
+
+  if (!tracksData) return;
+  tracks = tracksData.tracks;
+}
 ---
 
-{
-  type === "row" && (
-    <section class={sectionStyles}>
-      {title && <h2 class="text-xl font-semibold">{title}</h2>}
-      <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
-        {tracks?.map((track: trackProps) => (
-          <Track track={track} hasTransition={hasTransition} />
-        ))}
-      </ul>
-    </section>
-  )
-}
-
-{
-  type === "column" && (
-    <section class={sectionStyles}>
-      {title && <h2 class="text-xl font-bold">{title}</h2>}
-      <ul
-        style={{ padding: isPlaylist ? "0" : "0.5rem" }}
-        class="flex flex-col overflow-y-auto overflow-x-hidden gap-4"
-      >
-        {tracks?.map((track: trackProps) => (
-          <ColumnCard
-            track={track}
-            tracks={tracks}
-            isPlaylist={isPlaylist}
-            client:load
-          />
-        ))}
-      </ul>
-    </section>
-  )
-}
+<ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
+  {
+    type === "row" &&
+      tracks?.map((track: trackProps) => (
+        <Track track={track} hasTransition={hasTransition} />
+      ))
+  }
+</ul>
+<ul class="flex flex-col overflow-x-auto overflow-y-hidden gap-4 p-2">
+  {
+    type === "column" &&
+      tracks?.map((track: trackProps) => (
+        <ColumnCard
+          track={track}
+          tracks={tracks}
+          isPlaylist={isPlaylist}
+          client:load
+        />
+      ))
+  }
+</ul>

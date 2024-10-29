@@ -1,0 +1,76 @@
+<ul class="flex overflow-hidden gap-4 p-2">
+  {
+    new Array(3).fill(null).map(() => (
+      <li class="flex-[0_0_9rem] w-96 rounded-lg gap-2">
+        <div class="flex flex-col rounded-lg gap-3 relative">
+          <span class="relative aspect-square w-full rounded-md bg-[rgba(255,255,255,0.1)] skeleton skeleton-box overflow-hidden" />
+          <span class="relative w-full h-5 rounded-[4px] bg-[rgba(255,255,255,0.1)] skeleton skeleton-text overflow-hidden" />
+          <span class="relative w-full h-3 rounded-[4px] bg-[rgba(255,255,255,0.1)] skeleton skeleton-span overflow-hidden" />
+        </div>
+      </li>
+    ))
+  }
+</ul>
+<style>
+  .skeleton {
+    &::before,
+    &::after {
+      content: "";
+      background-color: rgba(255, 255, 255, 0.4);
+      position: absolute;
+      rotate: 20deg;
+      animation: shine 1.5s infinite;
+    }
+
+    &.skeleton-box {
+      &::before,
+      &::after {
+        top: -100px;
+        height: 300%;
+      }
+      &::before {
+        width: 5%;
+        left: -6rem;
+      }
+      &::after {
+        width: 15%;
+        left: -4.5rem;
+      }
+    }
+    &.skeleton-text {
+      &::before,
+      &::after {
+        bottom: 0px;
+        height: 8rem;
+      }
+      &::before {
+        width: 5%;
+        left: -6rem;
+      }
+      &::after {
+        width: 15%;
+        left: -4.5rem;
+      }
+    }
+    &.skeleton-span {
+      &::before,
+      &::after {
+        bottom: 24px;
+        height: 8rem;
+      }
+      &::before {
+        width: 5%;
+        left: -6rem;
+      }
+      &::after {
+        width: 15%;
+        left: -4.5rem;
+      }
+    }
+  }
+  @keyframes shine {
+    to {
+      transform: translateX(17rem);
+    }
+  }
+</style>

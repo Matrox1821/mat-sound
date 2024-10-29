@@ -5,12 +5,14 @@ import { PlayButton } from "@components/ui/PlayButton";
 import { GoBack } from "@components/ui/GoBack";
 import { getTrackById, getTracksByArtistId } from "../../queryFn";
 import type { HttpStatusCode } from "src/types/httpStatusCode";
+import TracksSkeleton from "@components/skeleton/TracksSkeleton.astro";
+
 import { TrackImage } from "@components/player/TrackImage";
 import type { trackProps } from "src/types";
 import RelacionatedTracks from "@components/ui/RelacionatedTracks.astro";
 import { parseDateTime } from "src/shared/helpers";
 import Tracks from "@components/lists/Tracks.astro";
-export const prerender = false;
+const prerender = true;
 
 const { id } = Astro.params;
 if (!id) return redirect("/404", HttpStatusCode.NOT_FOUND);
@@ -35,7 +37,6 @@ const moreArtistTracks = tracksData.tracks.filter(
   (newTrack) => track.id !== newTrack.id
 );
 const tracksNames = moreArtistTracks.map((track) => track.name);
-console.log(id);
 ---
 
 <Layout title={`${track.name} - MatSound`}>
@@ -113,13 +114,15 @@ console.log(id);
       </a>
     </section>
     {
-      moreArtistTracks.length > 0 && (
-        <Tracks
-          tracks={moreArtistTracks as trackProps[]}
-          title={`Más de ${track.artist?.name || ""}`}
-          type="row"
-          styles="pt-8"
-        />
+      track.artist && (
+        <section>
+          <h2>Más de {track.artist?.name}</h2>
+          {moreArtistTracks.length > 0 && (
+            <Tracks type="row" artistId={track.artist.id} server:defer>
+              <TracksSkeleton slot="fallback" />
+            </Tracks>
+          )}
+        </section>
       )
     }
     <section class="pt-8">

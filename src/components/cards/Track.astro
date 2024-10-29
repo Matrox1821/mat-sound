@@ -25,7 +25,7 @@ const { track, hasTransition } = Astro.props;
     />
     <h2
       style={{ overflowWrap: "anywhere" }}
-      class="font-normal text-[18px] m-0 leading-5"
+      class="font-normal text-base m-0 leading-5"
       transition:name={hasTransition ? `${track.id}-to-title` : undefined}
     >
       {track.name}
