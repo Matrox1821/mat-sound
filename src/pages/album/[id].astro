@@ -81,14 +81,6 @@ const { album } = data;
       />
     </section>
 
-    {
-      album.tracks.length > 0 && (
-        <Tracks
-          tracks={album.tracks as trackProps[]}
-          type="column"
-          isPlaylist
-        />
-      )
-    }
+    {album.tracks.length > 0 && <Tracks type="column" isPlaylist />}
   </main>
 </Layout>

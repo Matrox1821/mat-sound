@@ -160,27 +160,13 @@ const relacionatedTracks = tracks.map((track) => track.name);
         />
       )
     }
-    <Tracks
-      tracks={tracks as trackProps[]}
-      title="Canciones"
-      type="column"
-      styles="pt-8"
-    />
+    <Tracks type="column" />
     {
       albums.length > 0 && (
         <Albums albums={albums as albumProps[]} title="Álbumes" styles="pt-8" />
       )
     }
-    {
-      sortedTracks && (
-        <Tracks
-          tracks={sortedTracks as trackProps[]}
-          title="Canciones recomendadas"
-          type="row"
-          styles="pt-8"
-        />
-      )
-    }
+    {sortedTracks && <Tracks type="row" />}
     <About artist={artist} />
     {
       sortedArtists && (
