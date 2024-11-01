@@ -22,8 +22,8 @@ const { track, hasTransition } = Astro.props;
     <Image
       src={track.image}
       alt={track.name}
-      width={10}
-      height={10}
+      width={150}
+      height={150}
       class="object-fill aspect-square w-full rounded-md"
       transition:name={`${track.id}-to-page`}
       loading="lazy"

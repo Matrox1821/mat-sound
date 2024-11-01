@@ -1,16 +1,33 @@
 ---
+import { getTracksByArtistId } from "src/queryFn";
 import { sortArray } from "src/shared/helpers";
+import { HttpStatusCode } from "src/types/httpStatusCode";
 
 interface Props {
-  artist?: string;
-  names: string[];
+  tracksBy?: "artist" | "album";
+  id: string;
   styles: string;
+  except?: string;
+  artist?: string;
+  album?: string;
 }
-const { artist, names, styles = "" } = Astro.props;
+const { tracksBy, id, styles = "", except = "", artist, album } = Astro.props;
 
 const sectionStyles = `text-white/60 ${styles}`;
 
-const nameList = sortArray(names);
+const { data, errors: err } = await getTracksByArtistId(id || "");
+
+if (!data) return redirect("/404", HttpStatusCode.NOT_FOUND);
+if (err.length > 0)
+  return redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+const { tracks } = data;
+
+const moreArtistTracks = tracks.filter((newTrack) => except !== newTrack.id);
+
+const tracksNames = moreArtistTracks.map((newTrack) => newTrack.name);
+
+const nameList = sortArray(tracksNames);
 ---
 
 <section class={sectionStyles}>
@@ -19,6 +36,7 @@ const nameList = sortArray(names);
       nameList.slice(0, 6).map((name) => (
         <span>
           {artist && <span class="text-white">{artist} &nbsp;</span>}
+          {album && <span class="text-white">{album} &nbsp;</span>}
           {name}
           &nbsp; • &nbsp;
         </span>

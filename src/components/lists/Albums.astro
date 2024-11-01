@@ -1,30 +1,49 @@
 ---
 import Album from "../cards/Album.astro";
 import type { albumProps } from "../../types";
+import { getAlbums, getAlbumsByArtistId } from "src/queryFn";
 
 interface Props {
-  albums?: albumProps[];
-  title: string;
   hasTransition?: boolean;
-  styles?: string;
+  type: "row" | "column";
+  isPlaylist?: boolean;
+  artistId?: string;
+  maxTracks?: number;
 }
-const { albums, title, hasTransition = false, styles = "" } = Astro.props;
-const sectionStyles = `flex flex-col gap-2 z-20 ${styles}`;
+const {
+  hasTransition = false,
+  type,
+  isPlaylist = false,
+  artistId,
+  maxTracks = 7,
+} = Astro.props;
+
+let albums;
+
+if (artistId) {
+  const { data } = await getAlbumsByArtistId(artistId);
+  if (!data) return;
+  albums = data.albums;
+}
+
+/* if (albumId) {
+  const { data } = await getTracksByAlbumId(albumId);
+  if (!data) return;
+  tracks = data.tracks;
+}
+ */
+if (!artistId) {
+  const { data } = await getAlbums();
+
+  if (!data) return;
+  albums = data.albums;
+}
 ---
 
-<section class={sectionStyles}>
-  <h2 class="text-2xl font-semibold">{title}</h2>
-  <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
-    {
-      albums?.map((album: albumProps) => (
-        <Album
-          name={album.name || ""}
-          artist={album.artist?.name || ""}
-          image={album.image || ""}
-          id={album.id || ""}
-          hasTransition={hasTransition}
-        />
-      ))
-    }
-  </ul>
-</section>
+<ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
+  {
+    albums?.map((album: albumProps) => (
+      <Album album={album} hasTransition={hasTransition} />
+    ))
+  }
+</ul>

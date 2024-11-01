@@ -64,21 +64,16 @@ export function ColumnCard({ track, tracks, isPlaylist }: Props) {
               fontWeight: `${isPlaylist ? "500" : ""}`,
               overflowWrap: "anywhere",
             }}
-            className="font-normal text-xl m-0 leading-5 overflow-hidden text-ellipsis w-full text-nowrap"
+            className="font-normal text-xl m-0 leading-7 overflow-hidden text-ellipsis w-full text-nowrap"
           >
             {track.name}
           </h2>
           <span className="text-xs font-base opacity-50">
-            {!isPlaylist &&
-              track.album?.name &&
-              `${track.artist?.name} • ${track.album.name}`}
-            {isPlaylist
-              ? `${track.artist?.name} • ${formatTime(
-                  track.seconds
-                )} • ${parseNumberListeners(
-                  track.reproductions
-                )} reproducciones`
-              : track.artist?.name}
+            {!isPlaylist && `${track.artist?.name}  • ${track.album?.name}`}
+            {isPlaylist &&
+              `${track.artist?.name} • ${formatTime(
+                track.seconds
+              )} • ${parseNumberListeners(track.reproductions)} reproducciones`}
           </span>
         </span>
         <span className="w-12 h-12 flex justify-center items-center">

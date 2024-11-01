@@ -1,7 +1,12 @@
 ---
 import { ColumnCard } from "@components/cards/ColumnCard";
 import Track from "@components/cards/Track.astro";
-import { getTracks, getTracksByArtistId } from "src/queryFn";
+import {
+  getTracks,
+  getTracksByArtistId,
+  getTracksByAlbumId,
+} from "src/queryFn";
+import { sortArray } from "src/shared/helpers";
 import type { trackProps } from "src/types";
 
 interface Props {
@@ -10,6 +15,7 @@ interface Props {
   isPlaylist?: boolean;
   artistId?: string;
   albumId?: string;
+  maxTracks?: number;
 }
 const {
   hasTransition = false,
@@ -17,6 +23,7 @@ const {
   isPlaylist = false,
   artistId,
   albumId,
+  maxTracks = 7,
 } = Astro.props;
 
 let tracks;
@@ -24,41 +31,44 @@ let tracks;
 if (artistId) {
   const { data } = await getTracksByArtistId(artistId);
   if (!data) return;
-  tracks = data.tracks;
+  tracks = sortArray(data.tracks)?.slice(0, maxTracks);
 }
-
-/* if (albumId) {
+if (albumId) {
   const { data } = await getTracksByAlbumId(albumId);
   if (!data) return;
+  /*  console.log(data.tracks); */
   tracks = data.tracks;
 }
- */
 if (!artistId && !albumId) {
-  const { data: tracksData } = await getTracks();
+  const { data } = await getTracks();
 
-  if (!tracksData) return;
-  tracks = tracksData.tracks;
+  if (!data) return;
+  tracks = isPlaylist
+    ? data.tracks
+    : sortArray(data.tracks)?.slice(0, maxTracks);
 }
 ---
 
-<ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
-  {
-    type === "row" &&
-      tracks?.map((track: trackProps) => (
+{
+  type === "row" && (
+    <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
+      {tracks?.map((track: trackProps) => (
         <Track track={track} hasTransition={hasTransition} />
-      ))
-  }
-</ul>
-<ul class="flex flex-col overflow-x-auto overflow-y-hidden gap-4 p-2">
-  {
-    type === "column" &&
-      tracks?.map((track: trackProps) => (
+      ))}
+    </ul>
+  )
+}
+{
+  type === "column" && (
+    <ul class="flex flex-col overflow-x-auto overflow-y-hidden gap-4 p-2">
+      {tracks?.map((track: trackProps) => (
         <ColumnCard
           track={track}
           tracks={tracks}
           isPlaylist={isPlaylist}
           client:load
         />
-      ))
-  }
-</ul>
+      ))}
+    </ul>
+  )
+}

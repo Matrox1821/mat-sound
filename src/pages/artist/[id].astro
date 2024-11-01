@@ -160,8 +160,11 @@ const relacionatedTracks = tracks.map((track) => track.name);
         />
       )
     }
-    <Tracks type="column" />
-    {
+    <section class="flex flex-col gap-4 relative z-10">
+      <h2>Canciones de {artist.name}</h2>
+      <Tracks type="column" maxTracks={4} artistId={artist.id} />
+    </section>
+    <!--  {
       albums.length > 0 && (
         <Albums albums={albums as albumProps[]} title="Álbumes" styles="pt-8" />
       )
@@ -177,6 +180,6 @@ const relacionatedTracks = tracks.map((track) => track.name);
           styles="pt-8"
         />
       )
-    }
+    } -->
   </main>
 </Layout>

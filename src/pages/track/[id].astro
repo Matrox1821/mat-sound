@@ -12,8 +12,8 @@ import type { trackProps } from "src/types";
 import RelacionatedTracks from "@components/ui/RelacionatedTracks.astro";
 import { parseDateTime } from "src/shared/helpers";
 import Tracks from "@components/lists/Tracks.astro";
+import { Image } from "astro:assets";
 const prerender = true;
-
 const { id } = Astro.params;
 if (!id) return redirect("/404", HttpStatusCode.NOT_FOUND);
 
@@ -24,19 +24,6 @@ if (errors.length > 0)
   return redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
 
 const { track } = data;
-
-const { data: tracksData, errors: err } = await getTracksByArtistId(
-  track.artist?.id || ""
-);
-
-if (!tracksData) return redirect("/404", HttpStatusCode.NOT_FOUND);
-if (err.length > 0)
-  return redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
-
-const moreArtistTracks = tracksData.tracks.filter(
-  (newTrack) => track.id !== newTrack.id
-);
-const tracksNames = moreArtistTracks.map((track) => track.name);
 ---
 
 <Layout title={`${track.name} - MatSound`}>
@@ -49,13 +36,17 @@ const tracksNames = moreArtistTracks.map((track) => track.name);
       <GoBack client:load />
     </div>
     <section class="w-full flex flex-col">
-      <figure class="w-full flex justify-center">
-        <img
+      <figure class="w-full flex justify-center h-52">
+        <Image
           src={track.image}
           alt={track.name}
+          width={208}
+          height={208}
           class="w-52 rounded-md shadow-[0_0_40px_0_rgba(0,0,0,0.2)]"
           transition:name={`${track.id}-to-page`}
+          loading="lazy"
           id="image"
+          quality="low"
         />
       </figure>
       <h2
@@ -92,14 +83,12 @@ const tracksNames = moreArtistTracks.map((track) => track.name);
         />
       </div>
     </section>
-    {
-      tracksNames.length > 0 && (
-        <RelacionatedTracks
-          names={tracksNames}
-          styles="pt-8 relative z-10 w-full"
-        />
-      )
-    }
+    <RelacionatedTracks
+      tracksBy="artist"
+      id={track.artist?.id || ""}
+      artist={track.artist?.name || ""}
+      styles="pt-8 relative z-10 w-full"
+    />
     <section class="pt-8 flex flex-col gap-6 relative z-10">
       <h3 class="text-sm">{parseDateTime(track.release_date).fullDate}</h3>
       <a class="flex items-center gap-3" href={`/artist/${track.artist?.id}`}>
@@ -113,7 +102,7 @@ const tracksNames = moreArtistTracks.map((track) => track.name);
         </figcaption>
       </a>
     </section>
-    {
+    <!-- {
       track.artist && (
         <section>
           <h2>Más de {track.artist?.name}</h2>
@@ -124,7 +113,7 @@ const tracksNames = moreArtistTracks.map((track) => track.name);
           )}
         </section>
       )
-    }
+    } -->
     <section class="pt-8">
       {track.copyright.map((text) => <h6 class="text-xs">{text}</h6>)}
     </section>

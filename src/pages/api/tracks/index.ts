@@ -5,11 +5,11 @@ import { customError, onSuccessRequest, onThrowError } from "../apiService";
 import type { trackProps } from "../../../types";
 
 export const GET: APIRoute = async () => {
-  const { data: tracks } = (await supabase
+  const { data: tracks } = await supabase
     .from("tracks")
     .select(
       "id,image,name,order_in_album,song_url,release_date,copyright,album:albums(id,name,image),artist:artists(id,name,avatar)"
-    )) as { data: trackProps[] };
+    );
 
   if (!tracks)
     return customError({

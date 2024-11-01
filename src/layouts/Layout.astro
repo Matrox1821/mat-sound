@@ -18,6 +18,7 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+
     <ClientRouter />
   </head>
   <body>
@@ -180,12 +181,65 @@ const { title } = Astro.props;
     inherits: false;
   }
 
-  /*  @keyframes border-left {
-    0% {
-      transform: rotate(180deg);
+  .skeleton {
+    &::before,
+    &::after {
+      content: "";
+      background-color: rgba(255, 255, 255, 0.4);
+      position: absolute;
+      rotate: 20deg;
+      animation: shine 1.5s infinite;
     }
-    100% {
-      transform: rotate(-180deg);
+
+    &.skeleton-box {
+      &::before,
+      &::after {
+        top: -100px;
+        height: 300%;
+      }
+      &::before {
+        width: 5%;
+        left: -6rem;
+      }
+      &::after {
+        width: 15%;
+        left: -4.5rem;
+      }
     }
-  } */
+    &.skeleton-text {
+      &::before,
+      &::after {
+        bottom: 0px;
+        height: 8rem;
+      }
+      &::before {
+        width: 5%;
+        left: -6rem;
+      }
+      &::after {
+        width: 15%;
+        left: -4.5rem;
+      }
+    }
+    &.skeleton-span {
+      &::before,
+      &::after {
+        bottom: 24px;
+        height: 8rem;
+      }
+      &::before {
+        width: 5%;
+        left: -6rem;
+      }
+      &::after {
+        width: 15%;
+        left: -4.5rem;
+      }
+    }
+  }
+  @keyframes shine {
+    to {
+      transform: translateX(17rem);
+    }
+  }
 </style>

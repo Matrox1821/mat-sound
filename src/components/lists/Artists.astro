@@ -1,31 +1,26 @@
 ---
 import Artist from "../cards/Artist.astro";
 import type { artistProps } from "../../types";
+import { getArtists } from "src/queryFn";
 
 interface Props {
-  artists: artistProps[];
-  title: string;
   hasTransition?: boolean;
-  type: "row" | "column";
-  styles?: string;
+  maxArtists?: number;
 }
+const { hasTransition = false, maxArtists = 7 } = Astro.props;
 
-const { artists, title, hasTransition = false, styles = "" } = Astro.props;
-const sectionStyles = `flex flex-col gap-2 z-20 ${styles}`;
+let artists;
+
+const { data } = await getArtists();
+
+if (!data) return;
+artists = data.artists.slice(0, maxArtists);
 ---
 
-<section class={sectionStyles}>
-  <h2 class="text-2xl font-semibold">{title}</h2>
-  <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
-    {
-      artists?.map((artist: artistProps) => (
-        <Artist
-          name={artist.name}
-          image={artist.avatar}
-          id={artist.id}
-          hasTransition={hasTransition}
-        />
-      ))
-    }
-  </ul>
-</section>
+<ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
+  {
+    artists?.map((artist: artistProps) => (
+      <Artist artist={artist} hasTransition={hasTransition} />
+    ))
+  }
+</ul>

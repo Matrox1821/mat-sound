@@ -1,11 +1,11 @@
 ---
+import type { artistProps } from "src/types";
+
 interface Props {
-  image: string;
-  name: string;
-  id: string;
+  artist: artistProps;
   hasTransition: boolean;
 }
-const { image, name, id, hasTransition } = Astro.props;
+const { artist, hasTransition } = Astro.props;
 ---
 
 <li
@@ -13,16 +13,16 @@ const { image, name, id, hasTransition } = Astro.props;
 >
   <a
     class="flex flex-col rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
-    href={`/artist/${id}`}
+    href={`/artist/${artist.id}`}
   >
     <img
-      src={image}
+      src={artist.avatar}
       alt="yoasobi song"
       class="object-cover aspect-square w-full rounded-full"
-      transition:name={hasTransition ? `${id}-to-page` : undefined}
+      transition:name={hasTransition ? `${artist.id}-to-page` : undefined}
     />
     <h2 class="font-normal text-[18px] m-0 leading-5">
-      {name}
+      {artist.name}
     </h2>
   </a>
 </li>

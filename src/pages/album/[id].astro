@@ -7,6 +7,7 @@ import { getAlbumById } from "../../queryFn";
 import type { trackProps } from "src/types";
 import { parseDateTime } from "src/shared/helpers";
 import { PlayButton } from "@components/ui/PlayButton";
+import { HttpStatusCode } from "src/types/httpStatusCode";
 export const prerender = false;
 
 const { id } = Astro.params;
@@ -28,17 +29,17 @@ const { album } = data;
         <GoBack client:load />
       </span>
       <span class="flex flex-col items-center justify-center gap-1">
-        <figure class="relative flex items-center gap-2 z-10">
+        <figure class="relative flex items-center gap-2 z-20">
           <img
             src={album.artist?.avatar}
             alt={album.artist?.name}
-            class="h-4 w-4 rounded-full object-cover"
+            class="h-4 w-4 rounded-full object-cover relative z-20"
           />
           <figcaption class="text-xs">
             {album.artist?.name}
           </figcaption>
         </figure>
-        <h3 class="text-xs relative z-10 opacity-90">
+        <h3 class="text-xs relative z-20 opacity-90">
           Álbum • {parseDateTime(album.release_date).year}
         </h3>
       </span>
@@ -81,6 +82,6 @@ const { album } = data;
       />
     </section>
 
-    {album.tracks.length > 0 && <Tracks type="column" isPlaylist />}
+    <Tracks type="column" isPlaylist albumId={album.id} />
   </main>
 </Layout>
