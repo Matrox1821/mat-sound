@@ -47,28 +47,25 @@ if (!artistId && !albumId) {
     ? data.tracks
     : sortArray(data.tracks)?.slice(0, maxTracks);
 }
+const listStyle =
+  type === "row"
+    ? "flex overflow-x-auto overflow-y-hidden gap-4 p-2"
+    : "flex flex-col overflow-x-auto overflow-y-hidden gap-4 p-2";
 ---
 
-{
-  type === "row" && (
-    <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
-      {tracks?.map((track: trackProps) => (
-        <Track track={track} hasTransition={hasTransition} />
-      ))}
-    </ul>
-  )
-}
-{
-  type === "column" && (
-    <ul class="flex flex-col overflow-x-auto overflow-y-hidden gap-4 p-2">
-      {tracks?.map((track: trackProps) => (
-        <ColumnCard
-          track={track}
-          tracks={tracks}
-          isPlaylist={isPlaylist}
-          client:load
-        />
-      ))}
-    </ul>
-  )
-}
+<ul class={listStyle}>
+  {
+    type === "column"
+      ? tracks?.map((track: trackProps) => (
+          <ColumnCard
+            track={track}
+            tracks={tracks}
+            isPlaylist={isPlaylist}
+            client:load
+          />
+        ))
+      : tracks?.map((track: trackProps) => (
+          <Track track={track} hasTransition={hasTransition} />
+        ))
+  }
+</ul>
