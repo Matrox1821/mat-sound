@@ -19,7 +19,7 @@ if (!tracksData || !albumsData || !artistsData) return;
 const { tracks } = tracksData;
 const { albums } = albumsData;
 const { artists } = artistsData; */
-const prerender = false;
+const prerender = true;
 ---
 
 <Layout title="MatSound">
@@ -31,13 +31,13 @@ const prerender = false;
       </Tracks>
     </section>
     <section class="flex flex-col gap-2 z-20">
-      <h2 class="text-xl font-semibold">Recomendados</h2>
+      <h2 class="text-xl font-semibold">Álbumes</h2>
       <Albums server:defer hasTransition type="row">
         <TracksSkeleton slot="fallback" />
       </Albums>
     </section>
     <section class="flex flex-col gap-2 z-20">
-      <h2 class="text-xl font-semibold">Recomendados</h2>
+      <h2 class="text-xl font-semibold">Artistas</h2>
       <Artists server:defer hasTransition>
         <TracksSkeleton slot="fallback" />
       </Artists>
