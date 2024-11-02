@@ -8,7 +8,7 @@ import type {
   albumProps,
 } from "../types/apiTypes";
 
-const getUrl = "http:/localhost:4321";
+const getUrl = "https://matsound.vercel.app";
 
 const getTrackById = async (id: string) => {
   return await handleCustomApiRequest<{ track: trackProps }>(
