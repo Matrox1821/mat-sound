@@ -1,9 +1,29 @@
 ---
+import { getAlbumsByArtistId } from "src/queryFn";
 import Albums from "./lists/Albums.astro";
+import SkeletonList from "./skeleton/SkeletonList.astro";
 
 interface Props {
-  id: string;
+  artistId: string;
+  artistName: string;
 }
 
-const { id } = Astro.props;
+const { artistId, artistName } = Astro.props;
+
+const { data, errors } = await getAlbumsByArtistId(artistId);
+
+if (errors.length > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+const albums = data?.albums;
 ---
+
+{
+  albums && albums.length > 0 && (
+    <section class="flex flex-col gap-2 relative z-10 pt-8">
+      <h2 class="text-lg font-extrabold">Álbumes de {artistName}</h2>
+      <Albums artistId={artistId} type="row" server:defer>
+        <SkeletonList slot="fallback" />
+      </Albums>
+    </section>
+  )
+}

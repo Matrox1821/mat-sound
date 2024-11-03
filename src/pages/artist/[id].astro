@@ -16,8 +16,8 @@ import SkeletonRelacionatedTracks from "@components/skeleton/SkeletonRelacionate
 import { Image } from "astro:assets";
 import HeaderArtist from "@components/HeaderArtist.astro";
 import SkeletonHeaderArtist from "@components/skeleton/SkeletonHeaderArtist.astro";
+import AlbumsArtist from "@components/AlbumsArtist.astro";
 
-SkeletonRelacionatedTracks;
 const { id } = Astro.params;
 
 if (!id) return Astro.redirect("/400", HttpStatusCode.BAD_REQUEST);
@@ -67,11 +67,9 @@ const { artist } = data;
         >{parseNumberListeners(artist.listeners)} oyentes mensuales</span
       >
     </section>
-
     <HeaderArtist id={artist.id} server:defer>
       <SkeletonHeaderArtist slot="fallback" />
     </HeaderArtist>
-
     <RelacionatedTracks
       tracksBy="artist"
       id={artist.id}
@@ -93,22 +91,14 @@ const { artist } = data;
         <SkeletonList slot="fallback" isColumn />
       </Tracks>
     </section>
-    <section class="flex flex-col gap-2 relative z-10 pt-8">
-      <h2 class="text-lg font-extrabold">Álbumes de {artist.name}</h2>
-      <Albums artistId={artist.id} type="row" server:defer>
-        <SkeletonList slot="fallback" />
-      </Albums>
-    </section>
-
+    <AlbumsArtist artistId={artist.id} artistName={artist.name} />
     <section class="flex flex-col gap-2 relative z-10 pt-8">
       <h2 class="text-lg font-extrabold">Canciones recomendadas</h2>
       <Tracks artistId={artist.id} type="row" isRecomendation server:defer>
         <SkeletonList slot="fallback" />
       </Tracks>
     </section>
-
     <About artist={artist} />
-
     <section class="flex flex-col gap-2 relative z-10 pt-8">
       <h2 class="text-lg font-extrabold">Artistas similares</h2>
       <Artists artistId={artist.id} isRecomendation server:defer>
