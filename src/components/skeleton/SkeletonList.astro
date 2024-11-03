@@ -1,0 +1,39 @@
+---
+interface Props {
+  isColumn?: boolean;
+}
+const { isColumn } = Astro.props;
+
+const listStyle = isColumn
+  ? "flex flex-col overflow-hidden gap-4 p-2"
+  : "flex overflow-hidden gap-4 p-2";
+---
+
+<ul class={listStyle}>
+  {
+    new Array(5).fill(null).map(() => {
+      if (isColumn) {
+        return (
+          <li class="w-full rounded-lg gap-2 p-2">
+            <div class="flex rounded-lg gap-3 relative w-full">
+              <span class="relative aspect-square w-12 rounded-md bg-[rgba(255,255,255,0.1)] skeleton-col skeleton-box overflow-hidden" />
+              <span class="flex flex-col w-9/12 justify-center gap-2">
+                <span class="relative h-4 rounded-[4px] bg-[rgba(255,255,255,0.1)] skeleton-col skeleton-col-text overflow-hidden" />
+                <span class="relative  h-2 rounded-[4px] bg-[rgba(255,255,255,0.1)] skeleton-col skeleton-col-text overflow-hidden before:!-left-[6.5rem] after:!-left-[5.5rem]" />
+              </span>
+            </div>
+          </li>
+        );
+      }
+      return (
+        <li class="flex-[0_0_9rem] w-96 rounded-lg gap-2">
+          <div class="flex flex-col rounded-lg gap-3 relative">
+            <span class="relative aspect-square w-full rounded-md bg-[rgba(255,255,255,0.1)] skeleton skeleton-box overflow-hidden" />
+            <span class="relative w-full h-5 rounded-[4px] bg-[rgba(255,255,255,0.1)] skeleton skeleton-text overflow-hidden" />
+            <span class="relative w-full h-3 rounded-[4px] bg-[rgba(255,255,255,0.1)] skeleton skeleton-span overflow-hidden" />
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>

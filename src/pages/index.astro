@@ -1,24 +1,9 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import TracksSkeleton from "@components/skeleton/TracksSkeleton.astro";
-/* import Albums from "@components/lists/Albums.astro";
-import Artists from "@components/lists/Artists.astro";
-import Tracks from "@components/lists/Tracks.astro";
-import { getAlbums, getArtists, getTracks } from "../queryFn";
-import type { trackProps } from "../types"; */
+import SkeletonList from "@components/skeleton/SkeletonList.astro";
 import Tracks from "@components/lists/Tracks.astro";
 import Artists from "@components/lists/Artists.astro";
 import Albums from "@components/lists/Albums.astro";
-
-/* 
-const { data: tracksData } = await getTracks();
-const { data: albumsData } = await getAlbums();
-const { data: artistsData } = await getArtists();
-if (!tracksData || !albumsData || !artistsData) return;
-
-const { tracks } = tracksData;
-const { albums } = albumsData;
-const { artists } = artistsData; */
 ---
 
 <Layout title="MatSound">
@@ -26,34 +11,20 @@ const { artists } = artistsData; */
     <section class="flex flex-col gap-2 z-20">
       <h2 class="text-xl font-semibold">Recomendados</h2>
       <Tracks server:defer hasTransition type="row">
-        <TracksSkeleton slot="fallback" />
+        <SkeletonList slot="fallback" />
       </Tracks>
     </section>
     <section class="flex flex-col gap-2 z-20">
       <h2 class="text-xl font-semibold">Álbumes</h2>
       <Albums server:defer hasTransition type="row">
-        <TracksSkeleton slot="fallback" />
+        <SkeletonList slot="fallback" />
       </Albums>
     </section>
     <section class="flex flex-col gap-2 z-20">
       <h2 class="text-xl font-semibold">Artistas</h2>
       <Artists server:defer hasTransition>
-        <TracksSkeleton slot="fallback" />
+        <SkeletonList slot="fallback" />
       </Artists>
     </section>
-    <!--  <section class="flex flex-col gap-2 z-20">
-      <h2 class="text-xl font-semibold">Álbumes</h2>
-      <Tracks hasTransition type="row" server:defer>
-        <TracksSkeleton slot="fallback" />
-      </Tracks>
-    </section>
- -->
-    <!-- <Albums albums={albums} title="Álbumes" hasTransition />
-    <Artists
-      artists={artists}
-      title="Artistas escuchados"
-      hasTransition
-      type="row"
-    /> -->
   </main>
 </Layout>

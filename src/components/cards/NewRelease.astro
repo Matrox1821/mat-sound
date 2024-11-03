@@ -1,58 +1,70 @@
 ---
+import { getTracksByArtistId } from "src/queryFn";
+
 interface Props {
   artist: {
     image: string;
     name: string;
-  };
-  newRelease: {
-    name: string;
-    image: string;
     id: string;
-    type: "album" | "track";
   };
 }
-const { artist, newRelease } = Astro.props;
+const { artist } = Astro.props;
+
+const { data, errors } = await getTracksByArtistId(artist.id);
+
+if (!data) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
+
+if (errors.length > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+const { tracks } = data;
+
+const mostRecentTrack = tracks.reduce((previous, current) => {
+  const currentDate = Date.parse(current.created_at);
+  const previousDate = Date.parse(previous.created_at);
+  return currentDate > previousDate ? current : previous;
+});
+const daysOfRelease =
+  (new Date().getTime() - Date.parse(mostRecentTrack.created_at)) / 86400000;
 ---
 
-<section class="flex flex-col gap-5 pt-8">
-  <h2 class="text-lg font-extrabold">Selección del artista</h2>
-  <a
-    class="flex flex-col w-full h-52 relative"
-    href={`/track/${newRelease.id}`}
-  >
-    <img
-      src={newRelease.image}
-      alt={newRelease.name}
-      class="w-full h-full opacity-50 object-cover rounded-md"
-    />
-    <header
-      class="flex items-center absolute top-4 left-4 gap-2 bg-white rounded-full text-black font-medium text-xs py-[2px] pl-[2px] pr-2 leading-none"
-    >
-      <img
-        src={artist.image}
-        alt={artist.name}
-        class="w-6 h-6 rounded-full object-cover"
-      />
-      Nuevo lanzamiento 🎸
-    </header>
-    <footer
-      class="flex justify-center items-center absolute bottom-4 left-4 gap-3"
-    >
-      <img
-        src={newRelease.image}
-        alt={newRelease.name}
-        class="w-12 h-12 object-fill"
-      />
-      <div class="flex flex-col leading-none gap-1">
-        <h2 class="text-base leading-none font-semibold">{newRelease.name}</h2>
-        <span class="text-xs leading-none opacity-85">
-          {
-            newRelease.type === "track"
-              ? `Sencillo • Nuevos lanzamientos`
-              : `Álbum • Nuevos lanzamientos`
-          }
-        </span>
-      </div>
-    </footer>
-  </a>
-</section>
+{
+  daysOfRelease < 30 && (
+    <section class="flex flex-col gap-5 pt-8">
+      <h2 class="text-lg font-extrabold">Selección del artista</h2>
+      <a
+        class="flex flex-col w-full h-52 relative"
+        href={`/track/${mostRecentTrack.id}`}
+      >
+        <img
+          src={mostRecentTrack.image}
+          alt={mostRecentTrack.name}
+          class="w-full h-full opacity-50 object-cover rounded-md"
+        />
+        <header class="flex items-center absolute top-4 left-4 gap-2 bg-white rounded-full text-black font-medium text-xs py-[2px] pl-[2px] pr-2 leading-none">
+          <img
+            src={artist.image}
+            alt={artist.name}
+            class="w-6 h-6 rounded-full object-cover"
+          />
+          Nuevo lanzamiento 🎸
+        </header>
+        <footer class="flex justify-center items-center absolute bottom-4 left-4 gap-3">
+          <img
+            src={mostRecentTrack.image}
+            alt={mostRecentTrack.name}
+            class="w-12 h-12 object-fill"
+          />
+          <div class="flex flex-col leading-none gap-1">
+            <h2 class="text-base leading-none font-semibold">
+              {mostRecentTrack.name}
+            </h2>
+            <span class="text-xs leading-none opacity-85">
+              Sencillo • Nuevos lanzamientos
+            </span>
+          </div>
+        </footer>
+      </a>
+    </section>
+  )
+}

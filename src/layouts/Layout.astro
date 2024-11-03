@@ -237,6 +237,57 @@ const { title } = Astro.props;
       }
     }
   }
+  .skeleton-col {
+    &::before,
+    &::after {
+      content: "";
+      background-color: rgba(255, 255, 255, 0.4);
+      position: absolute;
+      rotate: 20deg;
+    }
+    &.skeleton-box {
+      &::before,
+      &::after {
+        top: -2rem;
+        height: 5rem;
+        animation: box-col-shine 1.5s infinite;
+      }
+      &::before {
+        width: 7%;
+        left: -1.6rem;
+      }
+      &::after {
+        width: 15%;
+        left: -1rem;
+      }
+    }
+    &.skeleton-col-text {
+      &::before,
+      &::after {
+        top: -15rem;
+        height: 15rem;
+        animation: text-col-shine 1.5s infinite;
+      }
+      &::before {
+        width: 1%;
+        left: -6rem;
+      }
+      &::after {
+        width: 5%;
+        left: -5rem;
+      }
+    }
+  }
+  @keyframes box-col-shine {
+    to {
+      transform: translateX(8rem);
+    }
+  }
+  @keyframes text-col-shine {
+    to {
+      transform: translateX(30rem);
+    }
+  }
   @keyframes shine {
     to {
       transform: translateX(17rem);

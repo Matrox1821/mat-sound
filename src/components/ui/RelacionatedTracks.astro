@@ -7,11 +7,18 @@ interface Props {
   tracksBy?: "artist" | "album";
   id: string;
   styles: string;
-  except?: string;
+  except?: boolean;
   artist?: string;
   album?: string;
 }
-const { tracksBy, id, styles = "", except = "", artist, album } = Astro.props;
+const {
+  tracksBy,
+  id,
+  styles = "",
+  except = false,
+  artist,
+  album,
+} = Astro.props;
 
 const sectionStyles = `text-white/60 ${styles}`;
 
@@ -23,17 +30,21 @@ if (err.length > 0)
 
 const { tracks } = data;
 
-const moreArtistTracks = tracks.filter((newTrack) => except !== newTrack.id);
+const filteredTracks = except
+  ? tracks.filter((newTrack) => {
+      return id !== newTrack.id;
+    })
+  : tracks;
 
-const tracksNames = moreArtistTracks.map((newTrack) => newTrack.name);
-
-const nameList = sortArray(tracksNames);
+const nameList = sortArray(
+  filteredTracks.map((newTrack) => newTrack.name)
+)?.slice(0, 6);
 ---
 
 <section class={sectionStyles}>
   {
     nameList &&
-      nameList.slice(0, 6).map((name) => (
+      nameList.map((name) => (
         <span>
           {artist && <span class="text-white">{artist} &nbsp;</span>}
           {album && <span class="text-white">{album} &nbsp;</span>}

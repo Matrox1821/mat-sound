@@ -6,8 +6,15 @@ import { getArtists } from "src/queryFn";
 interface Props {
   hasTransition?: boolean;
   maxArtists?: number;
+  artistId?: string;
+  isRecomendation?: boolean;
 }
-const { hasTransition = false, maxArtists = 7 } = Astro.props;
+const {
+  hasTransition = false,
+  maxArtists = 7,
+  artistId,
+  isRecomendation = false,
+} = Astro.props;
 
 let artists;
 
@@ -15,6 +22,9 @@ const { data } = await getArtists();
 
 if (!data) return;
 artists = data.artists.slice(0, maxArtists);
+if (isRecomendation) {
+  artists = artists.filter((artist) => artist.id !== artistId);
+}
 ---
 
 <ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">

@@ -22,52 +22,35 @@ import About from "@components/cards/About.astro";
 import Artists from "@components/lists/Artists.astro";
 import RelacionatedTracks from "@components/ui/RelacionatedTracks.astro";
 import { TrackImage } from "@components/player/TrackImage";
+import SkeletonList from "@components/skeleton/SkeletonList.astro";
+import SkeletonRelacionatedTracks from "@components/skeleton/SkeletonRelacionatedTracks.astro";
+import { Image } from "astro:assets";
+import HeaderArtist from "@components/HeaderArtist.astro";
+import SkeletonHeaderArtist from "@components/skeleton/SkeletonHeaderArtist.astro";
+import AlbumsArtist from "@components/AlbumsArtist.astro";
 
+SkeletonRelacionatedTracks;
 const { id } = Astro.params;
 
 if (!id) return Astro.redirect("/400", HttpStatusCode.BAD_REQUEST);
 
 const { data, errors } = await getArtistById(id);
-const { data: albumsData, errors: err } = await getAlbumsByArtistId(id);
-const { data: otherTracks, errors: dataErr } = await getTracks();
 
-const { data: tracksData, errors: dataError } = await getTracksByArtistId(id);
-const { data: dataArtists, errors: errs } = await getArtists();
+if (!data) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
 
-if (!data || !albumsData || !tracksData || !dataArtists)
-  return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
-
-if (
-  errors.length > 0 ||
-  err.length > 0 ||
-  dataError.length > 0 ||
-  errs.length > 0
-)
+if (errors.length > 0)
   return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
 
 const { artist } = data;
-const { albums } = albumsData;
-const { tracks } = tracksData;
-
-const mostRecentTrack = tracks.reduce((previous, current) => {
-  const currentDate = Date.parse(current.created_at);
-  const previousDate = Date.parse(previous.created_at);
-  return currentDate > previousDate ? current : previous;
-});
-const daysOfRelease =
-  (new Date().getTime() - Date.parse(mostRecentTrack.created_at)) / 86400000;
-
-const artists = dataArtists.artists.filter(
+/* const artists = dataArtists.artists.filter(
   (newArtist) => newArtist.id !== artist.id
 );
 const recomendatedTracks = otherTracks?.tracks.filter(
   (newTrack) => newTrack.artist?.id !== artist.id
-);
+); 
 const sortedTracks = sortArray<trackProps>(recomendatedTracks as trackProps[]);
 
-const sortedArtists = sortArray<artistProps>(artists as artistProps[]);
-
-const relacionatedTracks = tracks.map((track) => track.name);
+const sortedArtists = sortArray<artistProps>(artists as artistProps[]);*/
 ---
 
 <Layout title={`${artist.name} - MatSound`}>
@@ -83,13 +66,17 @@ const relacionatedTracks = tracks.map((track) => track.name);
         class="from-[rgba(0,0,0,0.5)] to-transparent absolute bg-gradient-to-t z-10 w-full h-72"
       >
       </div>
-      <img
-        src={artist.avatar}
-        alt={artist.name}
-        class="w-full h-72 object-cover absolute z-0"
-        transition:name={artist.id + "-to-page"}
-        id="image"
-      />
+      <picture class="w-full h-72 absolute z-0">
+        <Image
+          src={artist.avatar}
+          alt={artist.name}
+          height={72}
+          width={72}
+          class="w-full h-full object-cover"
+          transition:name={artist.id + "-to-page"}
+          id="image"
+        />
+      </picture>
       <h1
         class="absolute font-extrabold text-5xl mt-3 text-ellipsis overflow-hidden h-[3rem] z-20 bottom-2 left-4"
       >
@@ -102,84 +89,62 @@ const relacionatedTracks = tracks.map((track) => track.name);
       >
     </section>
 
-    <section class="flex flex-col gap-4 relative z-10">
-      <div class="flex justify-between items-center">
-        <div class="flex items-center gap-6">
-          <TrackImage
-            track={mostRecentTrack as trackProps}
-            tracks={tracks as trackProps[]}
-            client:load
-          />
+    <HeaderArtist id={artist.id} server:defer>
+      <SkeletonHeaderArtist slot="fallback" />
+    </HeaderArtist>
 
-          <button class="px-3 py-2 border-2 rounded-[4px] flex items-center">
-            <span class="leading-none text-xs font-bold">Siguiendo</span>
-          </button>
-        </div>
-        <PlayButton
-          song={mostRecentTrack as trackProps}
-          tracks={tracks as trackProps[]}
-          styleContainer="h-12 w-12"
-          styleIcon="h-7 w-7"
-          client:load
-        />
-      </div>
-      {
-        daysOfRelease < 30 && (
-          <a
-            class="flex items-center justify-between p-2 bg-white/15 rounded-[4px]"
-            href={`/track/${mostRecentTrack.id}`}
-          >
-            <div class="flex items-center gap-2">
-              <img
-                src={mostRecentTrack.image}
-                alt={mostRecentTrack.name}
-                class="h-6 w-6 object-cover rounded-[3px]"
-              />
-              <span class="text-xs font-bold">Escucha la nueva canción</span>
-            </div>
-            <IoIosArrowForward className="h-6 w-6" />
-          </a>
-        )
-      }
-    </section>
-    <!-- <RelacionatedTracks
-      artist={artist.name}
-      names={relacionatedTracks}
+    <RelacionatedTracks
+      tracksBy="artist"
+      id={artist.id}
       styles="pt-8"
-    /> -->
-    {
-      daysOfRelease < 30 && (
-        <NewRelease
-          artist={{ name: artist.name, image: artist.avatar }}
-          newRelease={{
-            name: mostRecentTrack.name,
-            image: mostRecentTrack.image,
-            id: mostRecentTrack.id,
-            type: "track",
-          }}
-        />
-      )
-    }
-    <section class="flex flex-col gap-4 relative z-10">
-      <h2>Canciones de {artist.name}</h2>
-      <Tracks type="column" maxTracks={4} artistId={artist.id} />
+      artist={artist.name}
+      server:defer
+    >
+      <div class="pt-8" slot="fallback">
+        <SkeletonRelacionatedTracks />
+      </div>
+    </RelacionatedTracks>
+    <NewRelease
+      artist={{ name: artist.name, image: artist.avatar, id: artist.id }}
+      server:defer
+    />
+    <section class="flex flex-col gap-2 relative z-10 pt-8">
+      <h2 class="text-lg font-extrabold">Canciones de {artist.name}</h2>
+      <Tracks type="column" maxTracks={4} artistId={artist.id} server:defer>
+        <SkeletonList slot="fallback" isColumn />
+      </Tracks>
     </section>
-    <!--  {
-      albums.length > 0 && (
-        <Albums albums={albums as albumProps[]} title="Álbumes" styles="pt-8" />
-      )
-    }
-    {sortedTracks && <Tracks type="row" />}
+    <section class="flex flex-col gap-2 relative z-10 pt-8">
+      <h2 class="text-lg font-extrabold">Álbumes de {artist.name}</h2>
+      <Albums artistId={artist.id} type="row" server:defer>
+        <SkeletonList slot="fallback" />
+      </Albums>
+    </section>
+
+    <section class="flex flex-col gap-2 relative z-10 pt-8">
+      <h2 class="text-lg font-extrabold">Canciones recomendadas</h2>
+      <Tracks artistId={artist.id} type="row" isRecomendation server:defer>
+        <SkeletonList slot="fallback" />
+      </Tracks>
+    </section>
+
     <About artist={artist} />
-    {
+
+    <section class="flex flex-col gap-2 relative z-10 pt-8">
+      <h2 class="text-lg font-extrabold">Artistas similares</h2>
+      <Artists artistId={artist.id} isRecomendation server:defer>
+        <SkeletonList slot="fallback" />
+      </Artists>
+    </section>
+    <!-- {
       sortedArtists && (
-        <Artists
-          artists={sortedArtists as artistProps[]}
-          title="Artistas relacionados"
-          type="row"
-          styles="pt-8"
-        />
+      <Artists
+      artists={sortedArtists as artistProps[]}
+      title="Artistas relacionados"
+      type="row"
+      styles="pt-8"
+      />
       )
-    } -->
+      }  -->
   </main>
 </Layout>

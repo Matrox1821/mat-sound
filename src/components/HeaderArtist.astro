@@ -1,0 +1,69 @@
+---
+import { IoIosArrowForward } from "react-icons/io";
+import { TrackImage } from "./player/TrackImage";
+import { PlayButton } from "./ui/PlayButton";
+import { getTracksByArtistId } from "src/queryFn";
+import type { trackProps } from "src/types";
+
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+
+const { data, errors } = await getTracksByArtistId(id);
+
+if (!data) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
+if (errors.length > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+const { tracks } = data;
+
+const mostRecentTrack = tracks.reduce((previous, current) => {
+  const currentDate = Date.parse(current.created_at);
+  const previousDate = Date.parse(previous.created_at);
+  return currentDate > previousDate ? current : previous;
+});
+const daysOfRelease =
+  (new Date().getTime() - Date.parse(mostRecentTrack.created_at)) / 86400000;
+---
+
+<section class="flex flex-col gap-4 relative z-10">
+  <div class="flex justify-between items-center">
+    <div class="flex items-center gap-6">
+      <TrackImage
+        track={mostRecentTrack as trackProps}
+        tracks={tracks as trackProps[]}
+        client:load
+      />
+
+      <button class="px-3 py-2 border-2 rounded-[4px] flex items-center">
+        <span class="leading-none text-xs font-bold">Siguiendo</span>
+      </button>
+    </div>
+    <PlayButton
+      song={mostRecentTrack as trackProps}
+      tracks={tracks as trackProps[]}
+      styleContainer="h-12 w-12"
+      styleIcon="h-7 w-7"
+      client:load
+    />
+  </div>
+  {
+    daysOfRelease < 30 && (
+      <a
+        class="flex items-center justify-between p-2 bg-white/15 rounded-[4px]"
+        href={`/track/${mostRecentTrack.id}`}
+      >
+        <div class="flex items-center gap-2">
+          <img
+            src={mostRecentTrack.image}
+            alt={mostRecentTrack.name}
+            class="h-6 w-6 object-cover rounded-[3px]"
+          />
+          <span class="text-xs font-bold">Escucha la nueva canción</span>
+        </div>
+        <IoIosArrowForward className="h-6 w-6" />
+      </a>
+    )
+  }
+</section>

@@ -1,0 +1,93 @@
+<div class="flex flex-col w-full gap-4">
+  <div class="w-full flex relative items-center justify-between h-12">
+    <div class="flex relative items-center gap-6">
+      <span
+        class="h-[2.9rem] w-[2.1rem] rounded-[7px] flex justify-center items-center bg-[rgba(var(--bg),1)] image-button-skeleton relative z-0 overflow-hidden"
+      >
+        <span
+          class="bg-[rgba(var(--bg),1)] p-[0.2rem] rounded-[5px] relative z-20 flex justify-center items-center"
+        >
+          <span
+            class="h-9 w-6 object-cover rounded-[4px] bg-[#c0c0c04b] z-10 relative"
+          ></span>
+        </span>
+      </span>
+      <span
+        class="relative w-[88px] h-6 rounded-[4px] bg-[rgba(255,255,255,0.1)] follow-button-skeleton overflow-hidden z-20"
+      ></span>
+    </div>
+    <span
+      class="relative w-12 h-12 rounded-full bg-[rgba(255,255,255,0.1)] follow-button-skeleton overflow-hidden z-20"
+    ></span>
+  </div>
+  <span
+    class="relative w-full h-[40px] rounded-[4px] bg-[rgba(255,255,255,0.1)] skeleton-col skeleton-col-text overflow-hidden z-20"
+  ></span>
+</div>
+<style>
+  .follow-button-skeleton {
+    &::before,
+    &::after {
+      top: -4rem;
+      height: 6rem;
+      content: "";
+      background-color: rgba(255, 255, 255, 0.4);
+      position: absolute;
+      rotate: 20deg;
+      animation: follow-button-shine 1.5s infinite;
+    }
+    &::before {
+      width: 5%;
+      left: -1.6rem;
+    }
+    &::after {
+      width: 10%;
+      left: -1rem;
+    }
+  }
+  @keyframes follow-button-shine {
+    to {
+      transform: translateX(11rem);
+    }
+  }
+  .image-button-skeleton {
+    color: rgb(192, 192, 192);
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 4rem;
+      height: 4rem;
+      background: conic-gradient(
+        rgb(190, 190, 190) 40deg,
+        transparent 0deg 360deg
+      );
+      z-index: 10;
+      animation: border-right-skeleton 2.5s infinite;
+    }
+    &::after {
+      content: "";
+      position: absolute;
+      width: 4rem;
+      height: 4rem;
+      background-image: conic-gradient(
+        rgb(190, 190, 190) 40deg,
+        transparent 0deg 360deg
+      );
+      z-index: 10;
+      animation: border-left-skeleton 2.5s infinite;
+      transform: rotate(180deg);
+    }
+  }
+
+  @keyframes border-right-skeleton {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes border-left-skeleton {
+    100% {
+      transform: rotate(540deg);
+    }
+  }
+</style>

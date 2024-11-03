@@ -16,6 +16,7 @@ interface Props {
   artistId?: string;
   albumId?: string;
   maxTracks?: number;
+  isRecomendation?: boolean;
 }
 const {
   hasTransition = false,
@@ -24,33 +25,42 @@ const {
   artistId,
   albumId,
   maxTracks = 7,
+  isRecomendation = false,
 } = Astro.props;
 
 let tracks;
 
-if (artistId) {
+if (artistId && !isRecomendation) {
   const { data } = await getTracksByArtistId(artistId);
   if (!data) return;
-  tracks = sortArray(data.tracks)?.slice(0, maxTracks);
+  tracks = sortArray(data.tracks);
 }
-if (albumId) {
+if (albumId && !isRecomendation) {
   const { data } = await getTracksByAlbumId(albumId);
   if (!data) return;
   /*  console.log(data.tracks); */
   tracks = data.tracks;
 }
-if (!artistId && !albumId) {
+if ((!artistId && !albumId) || isRecomendation) {
   const { data } = await getTracks();
 
   if (!data) return;
-  tracks = isPlaylist
-    ? data.tracks
-    : sortArray(data.tracks)?.slice(0, maxTracks);
+  tracks = isPlaylist ? data.tracks : sortArray(data.tracks);
 }
+
+if (isRecomendation) {
+  if (artistId) {
+    tracks = tracks?.filter((newTrack) => newTrack.artist?.id !== artistId);
+  }
+  if (albumId) {
+    tracks = tracks?.filter((newTrack) => newTrack.album?.id !== albumId);
+  }
+}
+tracks = tracks?.slice(0, maxTracks);
 const listStyle =
   type === "row"
     ? "flex overflow-x-auto overflow-y-hidden gap-4 p-2"
-    : "flex flex-col overflow-x-auto overflow-y-hidden gap-4 p-2";
+    : "flex flex-col overflow-x-auto overflow-y-hidden gap-2 p-2";
 ---
 
 <ul class={listStyle}>
