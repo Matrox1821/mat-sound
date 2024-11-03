@@ -5,14 +5,15 @@ import { PlayButton } from "@components/ui/PlayButton";
 import { GoBack } from "@components/ui/GoBack";
 import { getTrackById, getTracksByArtistId } from "../../queryFn";
 import type { HttpStatusCode } from "src/types/httpStatusCode";
-import TracksSkeleton from "@components/skeleton/TracksSkeleton.astro";
 
 import { TrackImage } from "@components/player/TrackImage";
 import type { trackProps } from "src/types";
 import RelacionatedTracks from "@components/ui/RelacionatedTracks.astro";
 import { parseDateTime } from "src/shared/helpers";
-import Tracks from "@components/lists/Tracks.astro";
 import { Image } from "astro:assets";
+import Tracks from "@components/lists/Tracks.astro";
+import SkeletonList from "@components/skeleton/SkeletonList.astro";
+
 const prerender = true;
 const { id } = Astro.params;
 if (!id) return redirect("/404", HttpStatusCode.NOT_FOUND);
@@ -102,18 +103,12 @@ const { track } = data;
         </figcaption>
       </a>
     </section>
-    <!-- {
-      track.artist && (
-        <section>
-          <h2>Más de {track.artist?.name}</h2>
-          {moreArtistTracks.length > 0 && (
-            <Tracks type="row" artistId={track.artist.id} server:defer>
-              <TracksSkeleton slot="fallback" />
-            </Tracks>
-          )}
-        </section>
-      )
-    } -->
+    <section>
+      <h2>Más de {track.artist?.name}</h2>
+      <Tracks type="row" isRecomendation trackId={track.id} server:defer>
+        <SkeletonList slot="fallback" />
+      </Tracks>
+    </section>
     <section class="pt-8">
       {track.copyright.map((text) => <h6 class="text-xs">{text}</h6>)}
     </section>

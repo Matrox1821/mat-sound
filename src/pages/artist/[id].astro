@@ -2,32 +2,20 @@
 import Layout from "@layouts/Layout.astro";
 import { GoBack } from "@components/ui/GoBack";
 import { BackgroundColor } from "@components/ui/BackgroundColor";
-import {
-  getArtistById,
-  getAlbumsByArtistId,
-  getTracksByArtistId,
-  getArtists,
-  getTracks,
-} from "../../queryFn";
+import { getArtistById } from "../../queryFn";
 import Tracks from "@components/lists/Tracks.astro";
 import Albums from "@components/lists/Albums.astro";
-import type { trackProps, albumProps, artistProps } from "../../types";
-import { IoIosArrowForward } from "react-icons/io";
 import type { HttpStatusCode } from "src/types/httpStatusCode";
-
 import NewRelease from "@components/cards/NewRelease.astro";
-import { PlayButton } from "@components/ui/PlayButton";
-import { parseNumberListeners, sortArray } from "src/shared/helpers";
+import { parseNumberListeners } from "src/shared/helpers";
 import About from "@components/cards/About.astro";
 import Artists from "@components/lists/Artists.astro";
 import RelacionatedTracks from "@components/ui/RelacionatedTracks.astro";
-import { TrackImage } from "@components/player/TrackImage";
 import SkeletonList from "@components/skeleton/SkeletonList.astro";
 import SkeletonRelacionatedTracks from "@components/skeleton/SkeletonRelacionatedTracks.astro";
 import { Image } from "astro:assets";
 import HeaderArtist from "@components/HeaderArtist.astro";
 import SkeletonHeaderArtist from "@components/skeleton/SkeletonHeaderArtist.astro";
-import AlbumsArtist from "@components/AlbumsArtist.astro";
 
 SkeletonRelacionatedTracks;
 const { id } = Astro.params;
@@ -42,15 +30,6 @@ if (errors.length > 0)
   return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
 
 const { artist } = data;
-/* const artists = dataArtists.artists.filter(
-  (newArtist) => newArtist.id !== artist.id
-);
-const recomendatedTracks = otherTracks?.tracks.filter(
-  (newTrack) => newTrack.artist?.id !== artist.id
-); 
-const sortedTracks = sortArray<trackProps>(recomendatedTracks as trackProps[]);
-
-const sortedArtists = sortArray<artistProps>(artists as artistProps[]);*/
 ---
 
 <Layout title={`${artist.name} - MatSound`}>
@@ -136,15 +115,5 @@ const sortedArtists = sortArray<artistProps>(artists as artistProps[]);*/
         <SkeletonList slot="fallback" />
       </Artists>
     </section>
-    <!-- {
-      sortedArtists && (
-      <Artists
-      artists={sortedArtists as artistProps[]}
-      title="Artistas relacionados"
-      type="row"
-      styles="pt-8"
-      />
-      )
-      }  -->
   </main>
 </Layout>
