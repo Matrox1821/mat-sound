@@ -18,6 +18,7 @@ interface Props {
   trackId?: string;
   maxTracks?: number;
   isRecomendation?: boolean;
+  unlimited?: boolean;
 }
 const {
   hasTransition = false,
@@ -28,6 +29,7 @@ const {
   maxTracks = 7,
   isRecomendation = false,
   trackId,
+  unlimited = false,
 } = Astro.props;
 
 let tracks;
@@ -61,7 +63,9 @@ if (isRecomendation) {
     tracks = tracks?.filter((newTrack) => newTrack?.id !== trackId);
   }
 }
-tracks = tracks?.slice(0, maxTracks);
+if (!unlimited) {
+  tracks = tracks?.slice(0, maxTracks);
+}
 const listStyle =
   type === "row"
     ? "flex overflow-x-auto overflow-y-hidden gap-4 p-2"
