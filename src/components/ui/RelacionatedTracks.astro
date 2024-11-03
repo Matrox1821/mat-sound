@@ -20,7 +20,7 @@ const {
   album,
 } = Astro.props;
 
-const sectionStyles = `text-white/60 ${styles}`;
+const sectionStyles = `text-white/60 relative z-30 ${styles}`;
 
 const { data, errors: err } = await getTracksByArtistId(id || "");
 

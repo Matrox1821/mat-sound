@@ -103,7 +103,7 @@ const { track } = data;
         </figcaption>
       </a>
     </section>
-    <section>
+    <section class="relative z-30 pt-8 gap-3 flex flex-col">
       <h2>Más de {track.artist?.name}</h2>
       <Tracks type="row" isRecomendation trackId={track.id} server:defer>
         <SkeletonList slot="fallback" />
