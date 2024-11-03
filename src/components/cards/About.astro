@@ -1,6 +1,7 @@
 ---
 import type { artistByIdProps } from "src/types";
 import { IoIosArrowForward } from "react-icons/io";
+
 interface Props {
   artist: artistByIdProps;
 }
@@ -9,22 +10,26 @@ const { artist } = Astro.props;
 
 <section class="pt-6">
   <h2 class="text-lg font-extrabold pb-4">Acerca de</h2>
-  <a href={`/artist/about/${artist.id}`} class="relative w-full">
+  <a href={`/artist/about/${artist.id}`} class="relative flex w-full aspect-square ">
     <img
       src={artist.covers ? artist.covers[0] : artist.avatar}
       alt={artist.name}
       class="w-full aspect-square object-cover rounded-md"
     />
-    {
-      artist.is_verified && (
-        <span class="text-xs flex items-center gap-2 absolute top-5 left-5">
+    <header
+      class="text-xs flex items-center absolute top-5 left-5 gap-2 font-medium py-[2px] pl-[2px] pr-2 leading-none"
+    >
+      {
+        artist.is_verified && (
           <span class="star">
-            <span class="accent" />
+              <span class="accent" />
+            </span>
+          <span class="header-text">
+            Artista verificado
           </span>
-          Artista verificado
-        </span>
-      )
-    }
+        )
+      }
+    </header>
     <footer class="p-4 flex flex-col gap-3 absolute bottom-0 justify-end">
       <h2 class="flex items-end">
         <span class="text-xl leading-none font-bold"
@@ -45,6 +50,9 @@ const { artist } = Astro.props;
   </a>
 </section>
 <style>
+  .header-text{
+    width: 100vw;
+  }
   .description {
     width: 100%;
     overflow: hidden;
@@ -93,14 +101,8 @@ const { artist } = Astro.props;
   }
   .star:before {
     -webkit-transform: rotate(30deg);
-    -moz-transform: rotate(30deg);
-    -ms-transform: rotate(30deg);
-    -o-transform: rotate(30deg);
   }
   .star:after {
     -webkit-transform: rotate(60deg);
-    -moz-transform: rotate(60deg);
-    -ms-transform: rotate(60deg);
-    -o-transform: rotate(60deg);
   }
 </style>
