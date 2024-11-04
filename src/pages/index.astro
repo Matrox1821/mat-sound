@@ -7,7 +7,12 @@ import Albums from "@components/lists/Albums.astro";
 ---
 
 <Layout title="MatSound">
-  <main class="w-screen relative px-4 flex flex-col gap-6 pt-10 pb-40">
+  <main class="w-screen relative px-4 flex flex-col gap-4 pt-4 pb-40">
+    <section class="flex flex-col gap-2 z-20">
+      <Albums server:defer hasTransition type="grid">
+        <SkeletonList isGrid slot="fallback" />
+      </Albums>
+    </section>
     <section class="flex flex-col gap-2 z-20">
       <h2 class="text-xl font-semibold">Recomendados</h2>
       <Tracks server:defer hasTransition type="row">
@@ -19,6 +24,12 @@ import Albums from "@components/lists/Albums.astro";
       <Albums server:defer hasTransition type="row">
         <SkeletonList slot="fallback" />
       </Albums>
+    </section>
+    <section class="flex flex-col gap-2 z-20">
+      <h2 class="text-xl font-semibold">Recienets</h2>
+      <Tracks server:defer hasTransition type="row" size="sm">
+        <SkeletonList slot="fallback" />
+      </Tracks>
     </section>
     <section class="flex flex-col gap-2 z-20">
       <h2 class="text-xl font-semibold">Artistas</h2>

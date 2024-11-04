@@ -19,6 +19,7 @@ interface Props {
   maxTracks?: number;
   isRecomendation?: boolean;
   unlimited?: boolean;
+  size?: "sm" | "lg";
 }
 const {
   hasTransition = false,
@@ -30,6 +31,7 @@ const {
   isRecomendation = false,
   trackId,
   unlimited = false,
+  size = "lg",
 } = Astro.props;
 
 let tracks;
@@ -39,17 +41,19 @@ if (artistId && !isRecomendation) {
   if (!data) return;
   tracks = sortArray(data.tracks);
 }
+
 if (albumId && !isRecomendation) {
   const { data } = await getTracksByAlbumId(albumId);
   if (!data) return;
   /*  console.log(data.tracks); */
   tracks = data.tracks;
 }
+
 if ((!artistId && !albumId) || isRecomendation) {
-  const { data } = await getTracks();
+  const { data } = await getTracks({ query: `?max=${maxTracks}` });
 
   if (!data) return;
-  tracks = isPlaylist ? data.tracks : sortArray(data.tracks);
+  tracks = isPlaylist ? data.tracks : data.tracks;
 }
 
 if (isRecomendation) {
@@ -66,13 +70,12 @@ if (isRecomendation) {
 if (!unlimited) {
   tracks = tracks?.slice(0, maxTracks);
 }
-const listStyle =
-  type === "row"
-    ? "flex overflow-x-auto overflow-y-hidden gap-4 p-2"
-    : "flex flex-col overflow-x-auto overflow-y-hidden gap-2 p-2";
 ---
 
-<ul class={listStyle}>
+<ul
+  class="flex overflow-x-auto overflow-y-hidden gap-2 p-2"
+  class:list={type === "row" ? "" : "flex-col"}
+>
   {
     type === "column"
       ? tracks?.map((track: trackProps) => (
@@ -84,7 +87,13 @@ const listStyle =
           />
         ))
       : tracks?.map((track: trackProps) => (
-          <Track track={track} hasTransition={hasTransition} />
+          <Track track={track} hasTransition={hasTransition} size={size} />
         ))
   }
 </ul>
+<style>
+  ul {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+</style>

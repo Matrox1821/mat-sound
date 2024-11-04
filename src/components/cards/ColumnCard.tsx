@@ -39,7 +39,7 @@ export function ColumnCard({ track, tracks, isPlaylist }: Props) {
       }}
     >
       <button
-        className="flex gap-2 w-full h-full p-2 items-center"
+        className="flex gap-2 w-full h-full p-2 items-center rounded-lg"
         onClick={handleClick}
       >
         {track.image && !isPlaylist && (

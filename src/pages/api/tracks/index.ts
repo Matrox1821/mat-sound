@@ -4,12 +4,15 @@ import { HttpStatusCode } from "../../../types/httpStatusCode";
 import { customError, onSuccessRequest, onThrowError } from "../apiService";
 import type { trackProps } from "../../../types";
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ url }) => {
+  const max = url.searchParams.get("max") || 6;
+
   const { data: tracks } = await supabase
-    .from("tracks")
+    .from("random_tracks")
     .select(
       "id,image,name,order_in_album,song_url,release_date,copyright,album:albums(id,name,image),artist:artists(id,name,avatar)"
-    );
+    )
+    .range(0, +max - 1);
 
   if (!tracks)
     return customError({

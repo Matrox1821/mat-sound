@@ -4,33 +4,54 @@ import type { albumProps } from "src/types";
 interface Props {
   album: albumProps;
   hasTransition: boolean;
+  isGrid?: boolean;
 }
-const { album, hasTransition } = Astro.props;
+const { album, hasTransition, isGrid = false } = Astro.props;
 ---
 
 <li
-  class="flex-[0_0_9rem] rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
+  class="color-[rgba(var(--content),1)] duration-150 gap-2 active:scale-[.98] active:opacity-80"
+  class:list={isGrid
+    ? "h-12 w-full bg-[rgb(255,255,255,0.1)] rounded-[4px]"
+    : "flex-[0_0_10rem] p-2 rounded-lg"}
 >
   <a
-    class="flex flex-col rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
+    class="rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
+    class:list={isGrid
+      ? "flex items-center overflow-x-hidden grid-title"
+      : "flex flex-col"}
     href={`/album/${album.id}`}
   >
     <img
       src={album.image}
       alt="yoasobi song"
-      class="object-fill aspect-square w-full rounded-md"
+      class="object-fill aspect-square"
+      class:list={isGrid ? "w-12 h-12 rounded-[4px]" : "w-full  rounded-md"}
       transition:name={hasTransition ? `${album.id}-to-page` : undefined}
     />
-    <h2 class="font-normal text-[18px] m-0 leading-5">
+    <h2
+      class="m-0 leading-5 w-full"
+      class:list={isGrid
+        ? "font-semibold text-sm overflow-hidden text-ellipsis mr-1"
+        : "font-normal text-[18px]"}
+    >
       {album.name}
     </h2>
-    <span class="text-xs font-medium opacity-70">
-      {album.artist?.name}
-    </span>
+    {
+      !isGrid && (
+        <span class="text-xs font-medium opacity-70">{album.artist?.name}</span>
+      )
+    }
   </a>
 </li>
 
 <style>
+  .grid-title {
+    width: 100%;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
   @media (hover: hover) {
     li:hover {
       background-color: rgba(var(--bg-contrast), 0.4);

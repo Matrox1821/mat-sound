@@ -1,17 +1,20 @@
 ---
 import { Image } from "astro:assets";
 import type { trackProps } from "./../../types";
+export const prerender = false;
 
 interface Props {
   track: trackProps;
   hasTransition?: boolean;
+  size: "sm" | "lg";
 }
 
-const { track, hasTransition } = Astro.props;
+const { track, hasTransition, size } = Astro.props;
 ---
 
 <li
-  class="flex-[0_0_9rem] w-96 rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
+  class="w-96 rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2 active:scale-[.98] active:opacity-80 relative"
+  class:list={size === "sm" ? "flex-[0_0_7rem] " : "flex-[0_0_10rem] "}
   transition:name={hasTransition ? `${track.id}-to-background` : undefined}
 >
   <a
@@ -52,3 +55,19 @@ const { track, hasTransition } = Astro.props;
     }
   }
 </style>
+<script>
+  const touchElements = document.querySelector("content-bg");
+  console.log(touchElements);
+  touchElements?.addEventListener("click", function (this: Element, e: any) {
+    let x = e.offsetX;
+    let y = e.offsetY;
+    console.log(e);
+    let ripples = document.createElement("span");
+    ripples.classList.add("ripple");
+    ripples.style.left = x + "px";
+    ripples.style.top = y + "px";
+    this.appendChild(ripples);
+
+    setTimeout(() => ripples.remove(), 500);
+  });
+</script>

@@ -25,6 +25,25 @@ export const usePlayer = (audio: RefObject<HTMLAudioElement>) => {
     const indexTrack = currentMusic.tracks?.findIndex(
       (newTrack) => newTrack.id === currentMusic.track?.id
     );
+
+    if ("mediaSession" in navigator && audio.current) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentMusic.track.name,
+        artist: currentMusic.track.artist?.name,
+        album: currentMusic.track.album?.name,
+        artwork: [
+          {
+            src: currentMusic.track.image,
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
+      });
+      navigator.mediaSession.setActionHandler("previoustrack", () =>
+        handlePrevious()
+      );
+      navigator.mediaSession.setActionHandler("nexttrack", () => handleNext());
+    }
     if (indexTrack == null) return;
     setPlaylistManager({
       hasPrevious: indexTrack !== 0,

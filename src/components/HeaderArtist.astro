@@ -43,7 +43,7 @@ const daysOfRelease =
     <PlayButton
       song={mostRecentTrack as trackProps}
       tracks={tracks as trackProps[]}
-      styleContainer="h-12 w-12"
+      styleContainer="h-12 w-12 active:scale-[0.95] active:after:bg-[rgba(0,0,0,0.2)] after:content-[''] after:w-full after:h-full after:rounded-full after:absolute after:top-0 after:left-0"
       styleIcon="h-7 w-7"
       client:load
     />

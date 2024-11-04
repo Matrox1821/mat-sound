@@ -154,7 +154,23 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      random_tracks: {
+        Row: {
+          album_id: string | null;
+          artist_id: string;
+          created_at: string;
+          id: string;
+          image: string;
+          name: string;
+          order_in_album: number | null;
+          song_url: string;
+          updated_at: string;
+          copyright: string[];
+          release_date: string;
+          reproductions: number;
+          seconds: number;
+        };
+      };
     };
     Functions: {
       [_ in never]: never;

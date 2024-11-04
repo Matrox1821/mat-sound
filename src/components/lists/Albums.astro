@@ -5,7 +5,7 @@ import { getAlbums, getAlbumsByArtistId } from "src/queryFn";
 
 interface Props {
   hasTransition?: boolean;
-  type: "row" | "column";
+  type: "row" | "grid";
   isPlaylist?: boolean;
   artistId?: string;
   maxTracks?: number;
@@ -40,10 +40,25 @@ if (!artistId) {
 }
 ---
 
-<ul class="flex overflow-x-auto overflow-y-hidden gap-4 p-2">
+<ul
+  class="gap-2 p-2"
+  class:list={type === "row"
+    ? "flex overflow-x-auto overflow-y-hidden"
+    : "grid w-full grid-cols-2"}
+>
   {
     albums?.map((album: albumProps) => (
-      <Album album={album} hasTransition={hasTransition} />
+      <Album
+        album={album}
+        hasTransition={hasTransition}
+        isGrid={type === "grid"}
+      />
     ))
   }
 </ul>
+<style>
+  ul {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+</style>
