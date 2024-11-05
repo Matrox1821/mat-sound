@@ -16,7 +16,7 @@ export function TrackImage({
     setIsActive(true);
     setPlayerScreenIsOpen(true);
     const main = document.querySelector("main");
-    if (main) main.style.paddingBottom = "400px";
+    if (main) main.style.paddingBottom = "9rem";
   };
 
   return (

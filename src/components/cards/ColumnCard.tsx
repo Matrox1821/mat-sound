@@ -29,11 +29,13 @@ export function ColumnCard({ track, tracks, isPlaylist }: Props) {
     setIsPlaying(true);
     setCurrentMusic({ track, tracks });
     setIsActive(true);
+    const main = document.querySelector("main");
+    if (main) main.style.paddingBottom = "9rem";
   };
 
   return (
     <li
-      className="w-full active:scale-[.98] rounded-lg"
+      className="w-full active:scale-[.98] rounded-lg "
       style={{
         backgroundColor: isPlayingComponent ? "rgba(255,255,255,.07)" : "",
       }}

@@ -33,6 +33,8 @@ export function PlayButton({
     setIsPlaying(true);
     setCurrentMusic({ track: song, tracks: tracks || [] });
     setIsActive(true);
+    const main = document.querySelector("main");
+    if (main) main.style.paddingBottom = "9rem";
   };
 
   return (
