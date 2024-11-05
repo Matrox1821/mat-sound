@@ -5,21 +5,27 @@ export const prerender = false;
 
 interface Props {
   track: trackProps;
-  hasTransition?: boolean;
   size: "sm" | "lg";
+  isGrid?: boolean;
 }
 
-const { track, hasTransition, size } = Astro.props;
+const { track, size, isGrid } = Astro.props;
 ---
 
 <li
-  class="w-96 rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2 active:scale-[.98] active:opacity-80 relative"
-  class:list={size === "sm" ? "flex-[0_0_7rem] " : "flex-[0_0_10rem] "}
-  transition:name={hasTransition ? `${track.id}-to-background` : undefined}
+  class="w-96 color-[rgba(var(--content),1)] duration-150 gap-2 active:scale-[.98] active:opacity-80 relative"
+  class:list={size === "sm"
+    ? "flex-[0_0_7rem]"
+    : isGrid
+      ? "h-12 w-full bg-[rgb(255,255,255,0.1)] rounded-[4px]"
+      : "flex-[0_0_10rem] rounded-lg"}
 >
   <a
     id={track.id}
-    class="flex flex-col rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2 track"
+    class="flex color-[rgba(var(--content),1)] duration-150 gap-2 track"
+    class:list={isGrid
+      ? "items-center overflow-x-hidden grid-title"
+      : "flex-col rounded-lg"}
     href={`/track/${track.id}`}
   >
     <Image
@@ -27,28 +33,37 @@ const { track, hasTransition, size } = Astro.props;
       alt={track.name}
       width={10}
       height={10}
-      class="object-fill aspect-square w-full rounded-md"
-      transition:name={`${track.id}-to-page`}
+      class="object-fill aspect-square"
+      class:list={isGrid ? "w-12 h-12 rounded-[4px]" : "w-full  rounded-md"}
       loading="lazy"
       quality={"low"}
     />
     <h2
       style={{ overflowWrap: "anywhere" }}
-      class="font-normal text-base m-0 leading-5"
-      transition:name={hasTransition ? `${track.id}-to-title` : undefined}
+      class="m-0 leading-5"
+      class:list={isGrid
+        ? "font-semibold text-sm overflow-hidden text-ellipsis mr-1"
+        : "font-normal text-[18px]"}
     >
       {track.name}
     </h2>
-    <span
-      class="text-xs font-medium opacity-70"
-      transition:name={hasTransition ? `${track.id}-to-artist` : undefined}
-    >
-      {track.artist?.name}
-    </span>
+    {
+      !isGrid && (
+        <span class="text-xs font-medium opacity-70">
+          Single • {track.artist?.name}
+        </span>
+      )
+    }
   </a>
 </li>
 
 <style>
+  .grid-title {
+    width: 100%;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
   @media (hover: hover) {
     li:hover {
       background-color: rgba(var(--bg-contrast), 0.4);

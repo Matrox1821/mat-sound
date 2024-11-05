@@ -27,12 +27,8 @@ if (isRecomendation) {
 }
 ---
 
-<ul class="flex overflow-x-auto overflow-y-hidden gap-2 p-2">
-  {
-    artists?.map((artist: artistProps) => (
-      <Artist artist={artist} hasTransition={hasTransition} />
-    ))
-  }
+<ul class="flex overflow-x-auto overflow-y-hidden gap-4">
+  {artists?.map((artist: artistProps) => <Artist artist={artist} />)}
 </ul>
 <style>
   ul {

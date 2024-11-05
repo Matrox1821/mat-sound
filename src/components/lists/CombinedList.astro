@@ -1,0 +1,79 @@
+---
+import Artist from "../cards/Artist.astro";
+import type { artistProps } from "../../types";
+import { getAlbums, getArtists, getTracks } from "src/queryFn";
+import { HttpStatusCode } from "src/types/httpStatusCode";
+import type { albumProps, trackProps } from "src/types/apiTypes";
+import Album from "@components/cards/Album.astro";
+import Track from "@components/cards/Track.astro";
+import { sortArray } from "src/shared/helpers";
+
+interface Props {
+  maxArtists?: number;
+  artistId?: string;
+  isRecomendation?: boolean;
+  isGrid?: boolean;
+}
+const {
+  maxArtists = 7,
+  artistId,
+  isRecomendation = false,
+  isGrid = false,
+} = Astro.props;
+
+let artists;
+
+const { data, errors } = await getArtists();
+const { data: albumsData, errors: trackErrors } = await getAlbums();
+const { data: tracksData, errors: albumErrors } = await getTracks({
+  query: `?max=${isGrid ? 4 : 8}`,
+});
+
+if (errors.lenght > 0 || trackErrors.lenght > 0 || albumErrors.lenght > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+if (!data || !albumsData || !tracksData)
+  return Astro.redirect("/400", HttpStatusCode.BAD_REQUEST);
+
+let albums = albumsData.albums.map((albums) => {
+  return { type: "album", item: albums };
+});
+
+let tracks = tracksData.tracks.map((tracks) => {
+  return { type: "track", item: tracks };
+});
+
+artists = data.artists.map((artist) => {
+  const { avatar, ...rest } = artist;
+  return { type: "artist", item: { image: avatar, ...rest } as trackProps };
+});
+
+let items = sortArray(albums.concat(tracks).concat(artists));
+
+items = isGrid ? items?.slice(0, 6) : items?.slice(0, 8);
+---
+
+<ul
+  class:list={isGrid
+    ? "grid w-full grid-cols-2 gap-2"
+    : "flex overflow-x-auto overflow-y-hidden gap-4"}
+>
+  {
+    items?.map(({ type, item }) => {
+      if (type === "artist") {
+        return <Artist artist={item as artistProps} isGrid={isGrid} />;
+      }
+      if (type === "track") {
+        return <Track track={item as trackProps} size="lg" isGrid={isGrid} />;
+      }
+      if (type === "album") {
+        return <Album album={item as albumProps} isGrid={isGrid} />;
+      }
+    })
+  }
+</ul>
+<style>
+  ul {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+</style>

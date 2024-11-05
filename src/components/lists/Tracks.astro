@@ -73,8 +73,8 @@ if (!unlimited) {
 ---
 
 <ul
-  class="flex overflow-x-auto overflow-y-hidden gap-2 p-2"
-  class:list={type === "row" ? "" : "flex-col"}
+  class="flex overflow-x-auto overflow-y-hidden"
+  class:list={type === "row" ? "gap-4" : "flex-col gap-2"}
 >
   {
     type === "column"
@@ -86,11 +86,10 @@ if (!unlimited) {
             client:load
           />
         ))
-      : tracks?.map((track: trackProps) => (
-          <Track track={track} hasTransition={hasTransition} size={size} />
-        ))
+      : tracks?.map((track: trackProps) => <Track track={track} size={size} />)
   }
 </ul>
+
 <style>
   ul {
     scrollbar-width: none;

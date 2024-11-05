@@ -23,7 +23,11 @@ const { title } = Astro.props;
   </head>
   <body>
     <NavBar transition:persist />
-    <slot />
+    <main
+      class="w-screen relative px-4 flex flex-col gap-4 pt-4 pb-20 overflow-hidden"
+    >
+      <slot />
+    </main>
     <PlayerBar client:load transition:name="media-player" transition:persist />
   </body>
 </html>

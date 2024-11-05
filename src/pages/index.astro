@@ -4,38 +4,43 @@ import SkeletonList from "@components/skeleton/SkeletonList.astro";
 import Tracks from "@components/lists/Tracks.astro";
 import Artists from "@components/lists/Artists.astro";
 import Albums from "@components/lists/Albums.astro";
+import CombinedList from "@components/lists/CombinedList.astro";
 ---
 
 <Layout title="MatSound">
-  <main class="w-screen relative px-4 flex flex-col gap-4 pt-4 pb-40">
-    <section class="flex flex-col gap-2 z-20">
-      <Albums server:defer hasTransition type="grid">
-        <SkeletonList isGrid slot="fallback" />
-      </Albums>
-    </section>
-    <section class="flex flex-col gap-2 z-20">
-      <h2 class="text-xl font-semibold">Recomendados</h2>
-      <Tracks server:defer hasTransition type="row">
-        <SkeletonList slot="fallback" />
-      </Tracks>
-    </section>
-    <section class="flex flex-col gap-2 z-20">
-      <h2 class="text-xl font-semibold">Álbumes</h2>
-      <Albums server:defer hasTransition type="row">
-        <SkeletonList slot="fallback" />
-      </Albums>
-    </section>
-    <section class="flex flex-col gap-2 z-20">
-      <h2 class="text-xl font-semibold">Recienets</h2>
-      <Tracks server:defer hasTransition type="row" size="sm">
-        <SkeletonList slot="fallback" />
-      </Tracks>
-    </section>
-    <section class="flex flex-col gap-2 z-20">
-      <h2 class="text-xl font-semibold">Artistas</h2>
-      <Artists server:defer hasTransition>
-        <SkeletonList slot="fallback" />
-      </Artists>
-    </section>
-  </main>
+  <section class="flex flex-col gap-2 z-20">
+    <CombinedList server:defer isGrid>
+      <SkeletonList isGrid slot="fallback" />
+    </CombinedList>
+  </section>
+  <section class="flex flex-col gap-2 z-20">
+    <h2 class="text-xl font-semibold">Recomendados</h2>
+    <Tracks server:defer hasTransition type="row">
+      <SkeletonList slot="fallback" />
+    </Tracks>
+  </section>
+  <section class="flex flex-col gap-2 z-20">
+    <h2 class="text-xl font-semibold">Sugerencias para hoy</h2>
+    <CombinedList server:defer>
+      <SkeletonList slot="fallback" />
+    </CombinedList>
+  </section>
+  <section class="flex flex-col gap-2 z-20">
+    <h2 class="text-xl font-semibold">Recientes</h2>
+    <Tracks server:defer hasTransition type="row" size="sm">
+      <SkeletonList slot="fallback" />
+    </Tracks>
+  </section>
+  <section class="flex flex-col gap-2 z-20">
+    <h2 class="text-xl font-semibold">Artistas</h2>
+    <Artists server:defer hasTransition>
+      <SkeletonList slot="fallback" isArtist />
+    </Artists>
+  </section>
+  <section class="flex flex-col gap-2 z-20">
+    <h2 class="text-xl font-semibold">Álbumes</h2>
+    <Albums server:defer hasTransition type="row">
+      <SkeletonList slot="fallback" />
+    </Albums>
+  </section>
 </Layout>

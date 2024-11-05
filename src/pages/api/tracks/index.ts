@@ -7,6 +7,8 @@ import type { trackProps } from "../../../types";
 export const GET: APIRoute = async ({ url }) => {
   const max = url.searchParams.get("max") || 6;
 
+  const from = url.searchParams.get("max") || 6;
+
   const { data: tracks } = await supabase
     .from("random_tracks")
     .select(

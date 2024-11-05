@@ -2,12 +2,13 @@
 interface Props {
   isColumn?: boolean;
   isGrid?: boolean;
+  isArtist?: boolean;
 }
-const { isColumn, isGrid } = Astro.props;
+const { isColumn = false, isGrid = false, isArtist = false } = Astro.props;
 ---
 
 <ul
-  class="overflow-hidden p-2"
+  class="overflow-hidden"
   class:list={isColumn
     ? "flex flex-col gap-4"
     : isGrid
@@ -15,7 +16,7 @@ const { isColumn, isGrid } = Astro.props;
       : "flex gap-4"}
 >
   {
-    new Array(4).fill(null).map(() => {
+    new Array(6).fill(null).map(() => {
       return (
         <li
           class="gap-2"
@@ -44,7 +45,9 @@ const { isColumn, isGrid } = Astro.props;
                   ? "w-12 skeleton-col rounded-md"
                   : isGrid
                     ? "w-12 h-12 rounded-[4px] skeleton-col"
-                    : "w-full skeleton rounded-md"
+                    : isArtist
+                      ? "rounded-full skeleton"
+                      : "w-full skeleton rounded-md"
               }
             />
             <span

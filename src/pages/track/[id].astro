@@ -28,89 +28,77 @@ const { track } = data;
 ---
 
 <Layout title={`${track.name} - MatSound`}>
-  <main
-    class="w-screen relative p-4 pb-32 flex flex-col"
-    transition:name={`${track.id}-to-background`}
-  >
-    <BackgroundColor image={track.image} client:load />
-    <div class="absolute left-4 z-50">
-      <GoBack client:load />
+  <BackgroundColor image={track.image} client:load />
+  <div class="absolute left-4 z-50">
+    <GoBack client:load />
+  </div>
+  <section class="w-full flex flex-col relative">
+    <figure class="w-full flex justify-center h-52">
+      <Image
+        src={track.image}
+        alt={track.name}
+        width={208}
+        height={208}
+        class="w-52 rounded-md shadow-[0_0_40px_0_rgba(0,0,0,0.2)]"
+        loading="lazy"
+        id="image"
+        quality="low"
+      />
+    </figure>
+    <h2 class="font-bold text-2xl m-0">
+      {track.name}
+    </h2>
+  </section>
+  <section class="flex flex-col gap-2 w-full relative z-10 pt-3">
+    <a class="flex items-center gap-2" href={`/artist/${track.artist?.id}`}>
+      <img
+        src={track.artist?.avatar}
+        alt={track.artist?.name}
+        class="h-5 w-5 object-cover rounded-full"
+      />
+      <figcaption class="font-semibold text-xs m-0 leading-5">
+        {track.artist?.name}
+      </figcaption>
+    </a>
+    <h4 class="opacity-60 text-xs pt-1">
+      Sencillo • {parseDateTime(track.release_date).year}
+    </h4>
+    <div class="flex justify-between items-center">
+      <TrackImage track={track as trackProps} client:load />
+      <PlayButton
+        song={track}
+        styleContainer="h-14 w-14"
+        styleIcon="h-8 w-8"
+        client:load
+      />
     </div>
-    <section class="w-full flex flex-col relative">
-      <figure class="w-full flex justify-center h-52">
-        <Image
-          src={track.image}
-          alt={track.name}
-          width={208}
-          height={208}
-          class="w-52 rounded-md shadow-[0_0_40px_0_rgba(0,0,0,0.2)]"
-          transition:name={`${track.id}-to-page`}
-          loading="lazy"
-          id="image"
-          quality="low"
-        />
-      </figure>
-      <h2
-        transition:name={`${track.id}-to-title`}
-        class="font-bold text-2xl m-0"
-      >
-        {track.name}
-      </h2>
-    </section>
-    <section class="flex flex-col gap-2 w-full relative z-10 pt-3">
-      <a class="flex items-center gap-2" href={`/artist/${track.artist?.id}`}>
-        <img
-          src={track.artist?.avatar}
-          alt={track.artist?.name}
-          class="h-5 w-5 object-cover rounded-full"
-        />
-        <figcaption
-          transition:name={`${track.id}-to-artist`}
-          class="font-semibold text-xs m-0 leading-5"
-        >
-          {track.artist?.name}
-        </figcaption>
-      </a>
-      <h4 class="opacity-60 text-xs pt-1">
-        Sencillo • {parseDateTime(track.release_date).year}
-      </h4>
-      <div class="flex justify-between items-center">
-        <TrackImage track={track as trackProps} client:load />
-        <PlayButton
-          song={track}
-          styleContainer="h-14 w-14"
-          styleIcon="h-8 w-8"
-          client:load
-        />
-      </div>
-    </section>
-    <RelacionatedTracks
-      tracksBy="artist"
-      id={track.artist?.id || ""}
-      artist={track.artist?.name || ""}
-      styles="pt-8 relative z-10 w-full"
-    />
-    <section class="pt-8 flex flex-col gap-6 relative z-10">
-      <h3 class="text-sm">{parseDateTime(track.release_date).fullDate}</h3>
-      <a class="flex items-center gap-3" href={`/artist/${track.artist?.id}`}>
-        <img
-          src={track.artist?.avatar}
-          alt={track.artist?.name}
-          class="h-12 w-12 object-cover rounded-full"
-        />
-        <figcaption class="font-semibold text-base m-0 leading-5">
-          {track.artist?.name}
-        </figcaption>
-      </a>
-    </section>
-    <section class="relative z-30 pt-8 gap-3 flex flex-col">
-      <h2>Más de {track.artist?.name}</h2>
-      <Tracks type="row" isRecomendation trackId={track.id} server:defer>
-        <SkeletonList slot="fallback" />
-      </Tracks>
-    </section>
-    <section class="pt-8">
-      {track.copyright.map((text) => <h6 class="text-xs">{text}</h6>)}
-    </section>
-  </main>
+  </section>
+  <RelacionatedTracks
+    tracksBy="artist"
+    id={track.artist?.id || ""}
+    artist={track.artist?.name || ""}
+    styles="pt-8 relative z-10 w-full"
+  />
+  <section class="pt-8 flex flex-col gap-6 relative z-10">
+    <h3 class="text-sm">{parseDateTime(track.release_date).fullDate}</h3>
+    <a class="flex items-center gap-3" href={`/artist/${track.artist?.id}`}>
+      <img
+        src={track.artist?.avatar}
+        alt={track.artist?.name}
+        class="h-12 w-12 object-cover rounded-full"
+      />
+      <figcaption class="font-semibold text-base m-0 leading-5">
+        {track.artist?.name}
+      </figcaption>
+    </a>
+  </section>
+  <section class="relative z-30 pt-8 gap-3 flex flex-col">
+    <h2>Más de {track.artist?.name}</h2>
+    <Tracks type="row" isRecomendation trackId={track.id} server:defer>
+      <SkeletonList slot="fallback" />
+    </Tracks>
+  </section>
+  <section class="pt-8">
+    {track.copyright.map((text) => <h6 class="text-xs">{text}</h6>)}
+  </section>
 </Layout>

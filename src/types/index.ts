@@ -73,7 +73,7 @@ export interface albumProps {
 export interface artistProps {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
 }
 
 /**

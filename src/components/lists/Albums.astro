@@ -41,18 +41,14 @@ if (!artistId) {
 ---
 
 <ul
-  class="gap-2 p-2"
+  class="gap-4"
   class:list={type === "row"
     ? "flex overflow-x-auto overflow-y-hidden"
     : "grid w-full grid-cols-2"}
 >
   {
     albums?.map((album: albumProps) => (
-      <Album
-        album={album}
-        hasTransition={hasTransition}
-        isGrid={type === "grid"}
-      />
+      <Album album={album} isGrid={type === "grid"} />
     ))
   }
 </ul>

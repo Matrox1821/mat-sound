@@ -1,33 +1,58 @@
 ---
+import { Image } from "astro:assets";
 import type { artistProps } from "src/types";
 
-interface Props {
-  artist: artistProps;
-  hasTransition: boolean;
+interface newArtistProps extends artistProps {
+  image?: string;
 }
-const { artist, hasTransition } = Astro.props;
+interface Props {
+  artist: newArtistProps;
+  isGrid?: boolean;
+}
+
+const { artist, isGrid } = Astro.props;
 ---
 
 <li
-  class="flex-[0_0_10rem] w-96 rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2 active:bg-[rgb(255,255,255,0.03)] active:scale-[.98] p-2"
+  class="color-[rgba(var(--content),1)] duration-150 gap-2 active:scale-[.98] active:opacity-80"
+  class:list={isGrid
+    ? "h-12 w-full bg-[rgb(255,255,255,0.1)] rounded-[4px]"
+    : "flex-[0_0_10rem] w-96 rounded-lg"}
 >
   <a
-    class="flex flex-col rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
+    class="color-[rgba(var(--content),1)] duration-150 gap-2"
+    class:list={isGrid
+      ? "flex items-center overflow-x-hidden grid-title"
+      : "flex flex-col rounded-lg items-center"}
     href={`/artist/${artist.id}`}
   >
-    <img
-      src={artist.avatar}
-      alt="yoasobi song"
-      class="object-cover aspect-square w-full rounded-full"
-      transition:name={hasTransition ? `${artist.id}-to-page` : undefined}
+    <Image
+      src={artist.avatar || artist.image || ""}
+      width={100}
+      height={100}
+      quality="low"
+      alt={artist.name}
+      class="object-cover aspect-square"
+      class:list={isGrid ? "w-12 h-12 rounded-[4px]" : "w-full rounded-full"}
     />
-    <h2 class="font-normal text-[18px] m-0 leading-5">
+    <h2
+      class="m-0 leading-5"
+      class:list={isGrid
+        ? "font-semibold text-sm overflow-hidden text-ellipsis mr-1"
+        : "font-normal text-[18px]"}
+    >
       {artist.name}
     </h2>
   </a>
 </li>
 
 <style>
+  .grid-title {
+    width: 100%;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
   @media (hover: hover) {
     li:hover {
       background-color: rgba(var(--bg-contrast), 0.4);

@@ -33,77 +33,80 @@ const { artist } = data;
 ---
 
 <Layout title={`${artist.name} - MatSound`}>
-  <main class="w-screen relative p-4 pb-40 z-10 overflow-x-hidden">
-    <BackgroundColor image={artist.avatar} client:load />
+  <BackgroundColor image={artist.avatar} client:load />
+  <div
+    class="z-40 absolute bg-black/50 rounded-full h-10 w-10 flex pl-1 items-center content-center"
+  >
+    <GoBack client:load />
+  </div>
+  <section class="absolute left-0 top-0 w-full h-72 z-0">
     <div
-      class="z-40 absolute bg-black/50 rounded-full h-10 w-10 flex pl-1 items-center content-center"
+      class="from-[rgba(0,0,0,0.5)] to-transparent absolute bg-gradient-to-t z-10 w-full h-72"
     >
-      <GoBack client:load />
     </div>
-    <section class="absolute left-0 top-0 w-full h-72 z-0">
-      <div
-        class="from-[rgba(0,0,0,0.5)] to-transparent absolute bg-gradient-to-t z-10 w-full h-72"
-      >
-      </div>
-      <picture class="w-full h-72 absolute z-0">
-        <Image
-          src={artist.avatar}
-          alt={artist.name}
-          height={72}
-          width={72}
-          class="w-full h-full object-cover"
-          transition:name={artist.id + "-to-page"}
-          id="image"
-        />
-      </picture>
-      <h1
-        class="absolute font-extrabold text-5xl mt-3 text-ellipsis overflow-hidden h-[3rem] z-20 bottom-2 left-4"
-      >
-        {artist.name}
-      </h1>
-    </section>
-    <section class="relative pt-72 w-full flex flex-col z-10">
-      <span class="text-xs opacity-70 pb-2"
-        >{parseNumberListeners(artist.listeners)} oyentes mensuales</span
-      >
-    </section>
-    <HeaderArtist id={artist.id} server:defer>
-      <SkeletonHeaderArtist slot="fallback" />
-    </HeaderArtist>
-    <RelacionatedTracks
-      tracksBy="artist"
-      id={artist.id}
-      styles="pt-8"
-      artist={artist.name}
+    <picture class="w-full h-72 absolute z-0">
+      <Image
+        src={artist.avatar}
+        alt={artist.name}
+        height={72}
+        width={72}
+        class="w-full h-full object-cover"
+        id="image"
+      />
+    </picture>
+    <h1
+      class="absolute font-extrabold text-5xl mt-3 text-ellipsis overflow-hidden h-[3rem] z-20 bottom-2 left-4"
+    >
+      {artist.name}
+    </h1>
+  </section>
+  <section class="relative pt-72 w-full flex flex-col z-10">
+    <span class="text-xs opacity-70 pb-2"
+      >{parseNumberListeners(artist.listeners)} oyentes mensuales</span
+    >
+  </section>
+  <HeaderArtist id={artist.id} server:defer>
+    <SkeletonHeaderArtist slot="fallback" />
+  </HeaderArtist>
+  <RelacionatedTracks
+    tracksBy="artist"
+    id={artist.id}
+    styles="pt-8"
+    artist={artist.name}
+    server:defer
+  >
+    <div class="pt-8" slot="fallback">
+      <SkeletonRelacionatedTracks />
+    </div>
+  </RelacionatedTracks>
+  <NewRelease
+    artist={{ name: artist.name, image: artist.avatar, id: artist.id }}
+    server:defer
+  />
+  <section class="flex flex-col gap-2 relative z-10 pt-8">
+    <h2 class="text-lg font-extrabold">Canciones de {artist.name}</h2>
+    <Tracks type="column" maxTracks={4} artistId={artist.id} server:defer>
+      <SkeletonList slot="fallback" isColumn />
+    </Tracks>
+  </section>
+  <AlbumsArtist artistId={artist.id} artistName={artist.name} />
+  <section class="flex flex-col gap-2 relative z-10 pt-8">
+    <h2 class="text-lg font-extrabold">Canciones recomendadas</h2>
+    <Tracks
+      artistId={artist.id}
+      type="row"
+      isRecomendation
+      size="sm"
       server:defer
     >
-      <div class="pt-8" slot="fallback">
-        <SkeletonRelacionatedTracks />
-      </div>
-    </RelacionatedTracks>
-    <NewRelease
-      artist={{ name: artist.name, image: artist.avatar, id: artist.id }}
-      server:defer
-    />
-    <section class="flex flex-col gap-2 relative z-10 pt-8">
-      <h2 class="text-lg font-extrabold">Canciones de {artist.name}</h2>
-      <Tracks type="column" maxTracks={4} artistId={artist.id} server:defer>
-        <SkeletonList slot="fallback" isColumn />
-      </Tracks>
-    </section>
-    <AlbumsArtist artistId={artist.id} artistName={artist.name} />
-    <section class="flex flex-col gap-2 relative z-10 pt-8">
-      <h2 class="text-lg font-extrabold">Canciones recomendadas</h2>
-      <Tracks artistId={artist.id} type="row" isRecomendation server:defer>
-        <SkeletonList slot="fallback" />
-      </Tracks>
-    </section>
-    <About artist={artist} />
-    <section class="flex flex-col gap-2 relative z-10 pt-8">
-      <h2 class="text-lg font-extrabold">Artistas similares</h2>
-      <Artists artistId={artist.id} isRecomendation server:defer>
-        <SkeletonList slot="fallback" />
-      </Artists>
-    </section>
-  </main>
+      <SkeletonList slot="fallback" />
+    </Tracks>
+  </section>
+  <About artist={artist} />
+  <section class="flex flex-col gap-2 relative z-10 pt-8">
+    <h2 class="text-lg font-extrabold">Artistas similares</h2>
+    <Artists artistId={artist.id} isRecomendation server:defer>
+      <SkeletonList slot="fallback" />
+    </Artists>
+  </section>
 </Layout>

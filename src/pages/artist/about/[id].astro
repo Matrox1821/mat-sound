@@ -21,14 +21,14 @@ const { artist } = data;
 
 <Layout title={`${artist.name} - Matsound`}>
   <header
-    class="relative w-full p-4 flex justify-center items-center bg-gray-400/15"
+    class="absolute left-0 top-0 w-full p-4 flex justify-center items-center bg-gray-400/15"
   >
     <span class="absolute left-4 top-4"> <GoBack client:load /></span>
     <h1 class="font-bold">
       {artist.name}
     </h1>
   </header>
-  <section class="py-6">
+  <section class="pb-6 pt-16">
     <figure class="h-80 flex w-screen carousell">
       {
         artist.covers ? (
@@ -45,7 +45,7 @@ const { artist } = data;
       }
     </figure>
   </section>
-  <section class="px-4">
+  <section class="">
     <h2 class="text-4xl font-extrabold leading-none">
       {artist.listeners.toLocaleString("es-ES")}
     </h2>
@@ -53,7 +53,7 @@ const { artist } = data;
    {artist.description&& <p class="pt-16">
       {artist.description}
     </p>
-    <figure class="flex items-center gap-2 pt-4">
+    <figure class="flex items-center gap-2 pt-6">
       <img
         src={artist.avatar}
         alt={artist.name}
@@ -62,7 +62,7 @@ const { artist } = data;
       <figcaption>Publicado por {artist.name}</figcaption>
     </figure>}
   </section>
-  <section class="pb-32">
+  <section>
     {artist.social && <Socials socials={artist.social} />}
   </section>
 </Layout>
@@ -91,10 +91,10 @@ const { artist } = data;
       width: 0px;
     }
     & :first-child {
-      margin-left: calc((100vw - 320px) / 2);
+      margin-left: calc((100vw - 320px) / 2 - 16px) ;
     }
     & :last-child {
-      margin-right: calc((100vw - 320px) / 2);
+      padding-right: calc((100vw - 320px) / 2 ) ;
     }
   }
   @keyframes fade {
