@@ -1,10 +1,11 @@
 import { create } from "zustand";
-import type { albumProps, trackProps } from "../types";
+import type { trackProps } from "../types";
 
 interface CurrentMusic {
-  type?: null | albumProps;
   track: null | trackProps;
   tracks?: trackProps[];
+  nextTracks?: trackProps[];
+  playlist?: trackProps[];
 }
 interface PlayerState {
   isPlaying: boolean;
@@ -19,7 +20,7 @@ interface PlayerState {
 
 export const usePlayerStore = create<PlayerState>((set) => ({
   isPlaying: false,
-  currentMusic: { type: null, track: null, tracks: [] },
+  currentMusic: { track: null, tracks: [], nextTracks: [], playlist: [] },
   isActive: false,
   playerScreenIsOpen: false,
   setIsPlaying: (isPlaying) => set({ isPlaying }),

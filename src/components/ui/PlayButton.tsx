@@ -7,12 +7,14 @@ import type { trackProps } from "../../types";
 
 export function PlayButton({
   song,
-  tracks,
+  tracks = [song],
+  nextTracks = [],
   styleContainer,
   styleIcon,
 }: {
   song: trackProps;
   tracks?: trackProps[];
+  nextTracks?: trackProps[] | [];
   styleContainer?: string;
   styleIcon?: string;
 }) {
@@ -31,12 +33,21 @@ export function PlayButton({
       return;
     }
     setIsPlaying(true);
-    setCurrentMusic({ track: song, tracks: tracks || [] });
+    setCurrentMusic({
+      track: song,
+      tracks,
+      nextTracks,
+      playlist:
+        tracks && nextTracks
+          ? tracks.concat(nextTracks)
+          : tracks
+          ? tracks
+          : [song],
+    });
     setIsActive(true);
     const main = document.querySelector("main");
     if (main) main.style.paddingBottom = "9rem";
   };
-
   return (
     <button
       onClick={handleClick}

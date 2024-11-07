@@ -4,13 +4,22 @@ import { formatTime, parseNumberListeners } from "src/shared/helpers";
 import { HiOutlineEllipsisVertical } from "react-icons/hi2";
 
 export const prerender = false;
+
 interface Props {
   track: trackProps;
   tracks?: trackProps[];
+  playlist?: trackProps[];
+  nextTracks?: trackProps[];
   isPlaylist?: boolean;
 }
 
-export function ColumnCard({ track, tracks, isPlaylist }: Props) {
+export function ColumnCard({
+  track,
+  tracks,
+  isPlaylist,
+  nextTracks,
+  playlist,
+}: Props) {
   const {
     isPlaying,
     currentMusic,
@@ -27,7 +36,17 @@ export function ColumnCard({ track, tracks, isPlaylist }: Props) {
       return;
     }
     setIsPlaying(true);
-    setCurrentMusic({ track, tracks });
+    setCurrentMusic({
+      track,
+      tracks,
+      nextTracks,
+      playlist:
+        tracks && nextTracks
+          ? tracks.concat(nextTracks)
+          : tracks
+          ? tracks
+          : [track],
+    });
     setIsActive(true);
     const main = document.querySelector("main");
     if (main) main.style.paddingBottom = "9rem";

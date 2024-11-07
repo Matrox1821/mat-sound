@@ -2,8 +2,9 @@
 import { IoIosArrowForward } from "react-icons/io";
 import { TrackImage } from "./player/TrackImage";
 import { PlayButton } from "./ui/PlayButton";
-import { getTracksByArtistId } from "src/queryFn";
+import { getTracks, getTracksByArtistId } from "src/queryFn";
 import type { trackProps } from "src/types";
+import { HttpStatusCode } from "src/types/httpStatusCode";
 
 interface Props {
   id: string;
@@ -25,6 +26,18 @@ const mostRecentTrack = tracks.reduce((previous, current) => {
 });
 const daysOfRelease =
   (new Date().getTime() - Date.parse(mostRecentTrack.created_at)) / 86400000;
+
+let trackList = tracks.filter(
+  (track) => track.id !== mostRecentTrack.id
+) as trackProps[];
+trackList.unshift(mostRecentTrack);
+
+const { data: newDataTracks, errors: tracksErrors } = await getTracks({
+  query: `?max=10&exclude=${JSON.stringify(trackList.map((track) => track.id))}`,
+});
+
+if (tracksErrors.length > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
 ---
 
 <section class="flex flex-col gap-4 relative z-10">
@@ -33,6 +46,7 @@ const daysOfRelease =
       <TrackImage
         track={mostRecentTrack as trackProps}
         tracks={tracks as trackProps[]}
+        nextTracks={/* newDataTracks?.tracks ||  */ []}
         client:load
       />
 
@@ -43,6 +57,7 @@ const daysOfRelease =
     <PlayButton
       song={mostRecentTrack as trackProps}
       tracks={tracks as trackProps[]}
+      nextTracks={/* newDataTracks?.tracks || */ []}
       styleContainer="h-12 w-12 active:scale-[0.95] active:after:bg-[rgba(0,0,0,0.2)] after:content-[''] after:w-full after:h-full after:rounded-full after:absolute after:top-0 after:left-0"
       styleIcon="h-7 w-7"
       client:load

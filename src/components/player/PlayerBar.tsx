@@ -1,4 +1,4 @@
-import { Fragment, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { IoPlay } from "react-icons/io5";
 import { IoIosPause } from "react-icons/io";
 import { rgbColor } from "../../shared/helpers";

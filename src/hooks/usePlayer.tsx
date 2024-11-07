@@ -1,4 +1,5 @@
 import { useEffect, useState, type RefObject } from "react";
+
 import { usePlayerStore } from "src/store/playerStore";
 
 export const usePlayer = (audio: RefObject<HTMLAudioElement>) => {
@@ -22,10 +23,6 @@ export const usePlayer = (audio: RefObject<HTMLAudioElement>) => {
     audio.current.volume = 0.2;
     audio.current.play();
 
-    const indexTrack = currentMusic.tracks?.findIndex(
-      (newTrack) => newTrack.id === currentMusic.track?.id
-    );
-
     if ("mediaSession" in navigator && audio.current) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentMusic.track.name,
@@ -44,10 +41,14 @@ export const usePlayer = (audio: RefObject<HTMLAudioElement>) => {
       );
       navigator.mediaSession.setActionHandler("nexttrack", () => handleNext());
     }
+
+    const indexTrack = currentMusic.playlist?.findIndex(
+      (newTrack) => newTrack.id === currentMusic.track?.id
+    );
     if (indexTrack == null) return;
     setPlaylistManager({
       hasPrevious: indexTrack !== 0,
-      hasNext: indexTrack + 1 < currentMusic.tracks!.length,
+      hasNext: indexTrack + 1 < currentMusic.playlist!.length,
     });
   }, [currentMusic]);
 
@@ -58,32 +59,37 @@ export const usePlayer = (audio: RefObject<HTMLAudioElement>) => {
 
   const openPlayerScreen = () => {
     setPlayerScreenIsOpen(true);
+    const body = document.querySelector("body");
+    if (body) body.style.overflowY = "hidden";
   };
 
   const handlePrevious = () => {
-    if (!currentMusic.tracks || !playlistManager?.hasPrevious) return;
+    if (!currentMusic.playlist || !playlistManager?.hasPrevious) return;
 
-    const indexTrack = currentMusic.tracks.findIndex(
+    const indexTrack = currentMusic.playlist.findIndex(
       (track) => track.id === currentMusic.track?.id
     );
-
+    const { playlist, ...rest } = currentMusic;
     setCurrentMusic({
-      track: currentMusic.tracks![indexTrack - 1],
-      tracks: currentMusic.tracks,
+      ...rest,
+      track: playlist![indexTrack - 1],
+      playlist,
     });
     setIsPlaying(true);
   };
 
   const handleNext = () => {
-    if (!currentMusic.tracks || !playlistManager?.hasNext) return;
+    if (!currentMusic.playlist || !playlistManager?.hasNext) return;
 
-    const indexTrack = currentMusic.tracks.findIndex(
+    const indexTrack = currentMusic.playlist.findIndex(
       (track) => track.id === currentMusic.track?.id
     );
+    const { playlist, ...rest } = currentMusic;
 
     setCurrentMusic({
-      track: currentMusic.tracks![indexTrack + 1],
-      tracks: currentMusic.tracks,
+      ...rest,
+      track: playlist![indexTrack + 1],
+      playlist,
     });
     setIsPlaying(true);
   };

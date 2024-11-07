@@ -4,14 +4,26 @@ import type { trackProps } from "src/types";
 export function TrackImage({
   track,
   tracks,
+  nextTracks = [],
 }: {
   track: trackProps;
+  nextTracks?: trackProps[] | [];
   tracks?: trackProps[];
 }) {
   const { setCurrentMusic, setIsPlaying, setPlayerScreenIsOpen, setIsActive } =
     usePlayerStore();
   const handleClick = () => {
-    setCurrentMusic({ track: track, tracks: tracks || [track] });
+    setCurrentMusic({
+      track: track,
+      tracks: tracks || [track],
+      nextTracks,
+      playlist:
+        tracks && nextTracks
+          ? tracks.concat(nextTracks)
+          : tracks
+          ? tracks
+          : [track],
+    });
     setIsPlaying(true);
     setIsActive(true);
     setPlayerScreenIsOpen(true);

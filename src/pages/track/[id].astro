@@ -3,8 +3,8 @@ import Layout from "@layouts/Layout.astro";
 import { BackgroundColor } from "@components/ui/BackgroundColor";
 import { PlayButton } from "@components/ui/PlayButton";
 import { GoBack } from "@components/ui/GoBack";
-import { getTrackById, getTracksByArtistId } from "../../queryFn";
-import type { HttpStatusCode } from "src/types/httpStatusCode";
+import { getTrackById, getTracks } from "../../queryFn";
+import { HttpStatusCode } from "src/types/httpStatusCode";
 
 import { TrackImage } from "@components/player/TrackImage";
 import type { trackProps } from "src/types";
@@ -16,15 +16,23 @@ import SkeletonList from "@components/skeleton/SkeletonList.astro";
 
 const prerender = true;
 const { id } = Astro.params;
-if (!id) return redirect("/404", HttpStatusCode.NOT_FOUND);
+if (!id) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
 
 const { data, errors } = await getTrackById(id);
 
-if (!data) return redirect("/404", HttpStatusCode.NOT_FOUND);
+if (!data) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
 if (errors.length > 0)
   return redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
 
 const { track } = data;
+
+const { data: dataTracks, errors: tracksErrors } = await getTracks({
+  query: `?max=10&exclude=["${id}"]`,
+});
+if (!dataTracks) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
+if (tracksErrors.length > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+const { tracks } = dataTracks;
 ---
 
 <Layout title={`${track.name} - MatSound`}>
@@ -67,6 +75,7 @@ const { track } = data;
       <TrackImage track={track as trackProps} client:load />
       <PlayButton
         song={track}
+        nextTracks={tracks}
         styleContainer="h-14 w-14"
         styleIcon="h-8 w-8"
         client:load

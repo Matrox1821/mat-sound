@@ -34,7 +34,8 @@ const {
   size = "lg",
 } = Astro.props;
 
-let tracks;
+let tracks,
+  moreTracks = [] as any[];
 
 if (artistId && !isRecomendation) {
   const { data } = await getTracksByArtistId(artistId);
@@ -70,6 +71,15 @@ if (isRecomendation) {
 if (!unlimited) {
   tracks = tracks?.slice(0, maxTracks);
 }
+if (type === "column") {
+  const { data: newDataTracks, errors: tracksErrors } = await getTracks({
+    query: `?max=10&exclude=${JSON.stringify(tracks?.map((track) => track.id))}`,
+  });
+
+  if (tracksErrors.length > 0)
+    return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+  moreTracks = moreTracks.concat(newDataTracks?.tracks);
+}
 ---
 
 <ul
@@ -82,6 +92,7 @@ if (!unlimited) {
           <ColumnCard
             track={track}
             tracks={tracks}
+            nextTracks={moreTracks}
             isPlaylist={isPlaylist}
             client:load
           />

@@ -2,19 +2,29 @@ import type { APIRoute } from "astro";
 import { supabase } from "../../../lib/supabase";
 import { HttpStatusCode } from "../../../types/httpStatusCode";
 import { customError, onSuccessRequest, onThrowError } from "../apiService";
-import type { trackProps } from "../../../types";
 
 export const GET: APIRoute = async ({ url }) => {
   const max = url.searchParams.get("max") || 6;
 
-  const from = url.searchParams.get("max") || 6;
+  const exclude = url.searchParams.get("exclude") || null;
+  const parcedExclude =
+    exclude &&
+    `(${JSON.parse(exclude)
+      .map((id: string) => `"${id}"`)
+      .join(",")})`;
 
-  const { data: tracks } = await supabase
+  let query = supabase
     .from("random_tracks")
     .select(
       "id,image,name,order_in_album,song_url,release_date,copyright,album:albums(id,name,image),artist:artists(id,name,avatar)"
     )
     .range(0, +max - 1);
+
+  if (parcedExclude) {
+    query = query.not("id", "in", parcedExclude);
+  }
+
+  const { data: tracks } = await query;
 
   if (!tracks)
     return customError({
