@@ -1,0 +1,30 @@
+---
+import { parseDateTime } from "src/shared/helpers";
+import type { trackProps } from "src/types";
+import { TrackImage } from "./player/TrackImage";
+import { PlayButton } from "./ui/PlayButton";
+import { getTracks } from "src/queryFn";
+
+interface Props {
+  tracks: trackProps[];
+}
+const { tracks } = Astro.props;
+const { data: dataTracks, errors: tracksErrors } = await getTracks({
+  query: `?max=10&exclude=${JSON.stringify(tracks.map((track) => track.id))}`,
+});
+if (!dataTracks) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
+if (tracksErrors.length > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+const moreTracks = dataTracks.tracks;
+---
+
+<section class="w-full flex flex-col justify-center items-center gap-3 pb-8">
+  <PlayButton
+    song={tracks[0] as trackProps}
+    tracks={tracks as trackProps[]}
+    nextTracks={moreTracks}
+    styleContainer="w-16 h-16"
+    styleIcon="w-8 h-8"
+    client:load
+  />
+</section>

@@ -9,6 +9,8 @@ import { parseDateTime } from "src/shared/helpers";
 import { PlayButton } from "@components/ui/PlayButton";
 import { HttpStatusCode } from "src/types/httpStatusCode";
 import SkeletonList from "@components/skeleton/SkeletonList.astro";
+import HeaderAlbum from "@components/HeaderAlbum.astro";
+import SkeletonHeaderArtist from "@components/skeleton/SkeletonHeaderArtist.astro";
 export const prerender = false;
 
 const { id } = Astro.params;
@@ -25,7 +27,9 @@ const { album } = data;
 
 <Layout title={`${album.name} - MatSound`}>
   <header class="h-14 flex items-start w-full justify-center">
-    <span class="absolute top-4 left-4 z-50">
+    <span
+      class="absolute top-4 w-9 h-9 left-4 z-50 rounded-full active:bg-black/30 flex items-center justify-center"
+    >
       <GoBack client:load />
     </span>
     <span class="flex flex-col items-center justify-center gap-1">
@@ -73,17 +77,9 @@ const { album } = data;
     >
     <h1 class="text-2xl font-semibold relative z-10">{album.name}</h1>
   </section>
-
-  <section class="w-full flex flex-col justify-center items-center gap-3 pb-8">
-    <PlayButton
-      song={album.tracks[0] as trackProps}
-      tracks={album.tracks as trackProps[]}
-      styleContainer="w-16 h-16"
-      styleIcon="w-8 h-8"
-      client:load
-    />
-  </section>
-
+  <HeaderAlbum tracks={album.tracks as trackProps[]} server:defer>
+    <SkeletonHeaderArtist slot="fallback" />
+  </HeaderAlbum>
   <Tracks unlimited type="column" isPlaylist albumId={album.id} server:defer>
     <SkeletonList slot="fallback" isColumn />
   </Tracks>

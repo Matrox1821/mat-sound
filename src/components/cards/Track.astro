@@ -72,11 +72,9 @@ const { track, size, isGrid } = Astro.props;
 </style>
 <script>
   const touchElements = document.querySelector("content-bg");
-  console.log(touchElements);
   touchElements?.addEventListener("click", function (this: Element, e: any) {
     let x = e.offsetX;
     let y = e.offsetY;
-    console.log(e);
     let ripples = document.createElement("span");
     ripples.classList.add("ripple");
     ripples.style.left = x + "px";

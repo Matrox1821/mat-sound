@@ -13,6 +13,8 @@ import { parseDateTime } from "src/shared/helpers";
 import { Image } from "astro:assets";
 import Tracks from "@components/lists/Tracks.astro";
 import SkeletonList from "@components/skeleton/SkeletonList.astro";
+import HeaderTrack from "@components/HeaderTrack.astro";
+import SkeletonHeaderArtist from "@components/skeleton/SkeletonHeaderArtist.astro";
 
 const prerender = true;
 const { id } = Astro.params;
@@ -25,19 +27,13 @@ if (errors.length > 0)
   return redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
 
 const { track } = data;
-
-const { data: dataTracks, errors: tracksErrors } = await getTracks({
-  query: `?max=10&exclude=["${id}"]`,
-});
-if (!dataTracks) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
-if (tracksErrors.length > 0)
-  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
-const { tracks } = dataTracks;
 ---
 
 <Layout title={`${track.name} - MatSound`}>
   <BackgroundColor image={track.image} client:load />
-  <div class="absolute left-4 z-50">
+  <div
+    class="absolute left-4 w-9 h-9 z-50 rounded-full active:bg-black/30 flex items-center justify-center"
+  >
     <GoBack client:load />
   </div>
   <section class="w-full flex flex-col relative">
@@ -57,31 +53,11 @@ const { tracks } = dataTracks;
       {track.name}
     </h2>
   </section>
-  <section class="flex flex-col gap-2 w-full relative z-10 pt-3">
-    <a class="flex items-center gap-2" href={`/artist/${track.artist?.id}`}>
-      <img
-        src={track.artist?.avatar}
-        alt={track.artist?.name}
-        class="h-5 w-5 object-cover rounded-full"
-      />
-      <figcaption class="font-semibold text-xs m-0 leading-5">
-        {track.artist?.name}
-      </figcaption>
-    </a>
-    <h4 class="opacity-60 text-xs pt-1">
-      Sencillo • {parseDateTime(track.release_date).year}
-    </h4>
-    <div class="flex justify-between items-center">
-      <TrackImage track={track as trackProps} client:load />
-      <PlayButton
-        song={track}
-        nextTracks={tracks}
-        styleContainer="h-14 w-14"
-        styleIcon="h-8 w-8"
-        client:load
-      />
-    </div>
-  </section>
+
+  <HeaderTrack track={track} server:defer>
+    <SkeletonHeaderArtist slot="fallback" />
+  </HeaderTrack>
+
   <RelacionatedTracks
     tracksBy="artist"
     id={track.artist?.id || ""}

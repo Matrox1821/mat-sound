@@ -35,7 +35,7 @@ const { artist } = data;
 <Layout title={`${artist.name} - MatSound`}>
   <BackgroundColor image={artist.avatar} client:load />
   <div
-    class="z-40 absolute bg-black/50 rounded-full h-10 w-10 flex pl-1 items-center content-center"
+    class="z-40 absolute bg-black/50 rounded-full h-10 w-10 flex items-center content-center active:bg-black/40 justify-center"
   >
     <GoBack client:load />
   </div>

@@ -2,6 +2,7 @@
  * @type {import("astro").MiddlewareHandler}
  */
 import { defineMiddleware } from "astro:middleware";
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const pathname = context.url.pathname;
   const cookie = context.request.headers.get("cookie");

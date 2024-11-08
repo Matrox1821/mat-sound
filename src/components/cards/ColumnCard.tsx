@@ -2,6 +2,7 @@ import { usePlayerStore } from "../../store/playerStore";
 import type { trackProps } from "../../types";
 import { formatTime, parseNumberListeners } from "src/shared/helpers";
 import { HiOutlineEllipsisVertical } from "react-icons/hi2";
+import { useState } from "react";
 
 export const prerender = false;
 
@@ -11,6 +12,54 @@ interface Props {
   playlist?: trackProps[];
   nextTracks?: trackProps[];
   isPlaylist?: boolean;
+  isPlaylistScreen?: boolean;
+}
+
+function Popover({
+  track,
+  artistId,
+  trackId,
+  albumId,
+  isOpen,
+  handlePopover,
+  duration,
+}: {
+  duration: string;
+  track: trackProps;
+  artistId: string;
+  trackId: string;
+  albumId: string;
+  isOpen: boolean;
+  handlePopover: (value: boolean) => void;
+}) {
+  return (
+    <span className={isOpen ? `` : ""}>
+      <div>
+        <img
+          src={track.image}
+          alt={track.name}
+          className="object-fill aspect-square w-12 rounded-sm"
+        />
+        <span>
+          <h3>{track.name}</h3>
+          {track.artist?.name && (
+            <span>
+              {track.artist?.name} • {duration}
+            </span>
+          )}
+        </span>
+      </div>
+      <a href={`/artist/${artistId}`} onClick={() => handlePopover(false)}>
+        Ir al artista
+      </a>
+      <a href={`/track/${trackId}`} onClick={() => handlePopover(false)}>
+        Ir a la canción
+      </a>
+      <a href={`/artist/${artistId}`} onClick={() => handlePopover(false)}>
+        Ir al álbum
+      </a>
+    </span>
+  );
 }
 
 export function ColumnCard({
@@ -18,7 +67,7 @@ export function ColumnCard({
   tracks,
   isPlaylist,
   nextTracks,
-  playlist,
+  isPlaylistScreen = false,
 }: Props) {
   const {
     isPlaying,
@@ -48,15 +97,20 @@ export function ColumnCard({
           : [track],
     });
     setIsActive(true);
-    const main = document.querySelector("main");
-    if (main) main.style.paddingBottom = "9rem";
   };
+
+  const trackIsSelected = currentMusic.track?.id === track.id;
 
   return (
     <li
       className="w-full active:scale-[.98] rounded-lg "
       style={{
-        backgroundColor: isPlayingComponent ? "rgba(255,255,255,.07)" : "",
+        backgroundColor:
+          isPlaylistScreen && trackIsSelected
+            ? "rgba(0,0,0,0.4)"
+            : isPlayingComponent
+            ? "rgba(255,255,255,.07)"
+            : "transparent",
       }}
     >
       <button
@@ -66,7 +120,7 @@ export function ColumnCard({
         {track.image && !isPlaylist && (
           <img
             src={track.image}
-            alt="yoasobi song"
+            alt={track.name}
             className="object-fill aspect-square w-12 rounded-sm"
           />
         )}
@@ -78,27 +132,41 @@ export function ColumnCard({
         <span className="flex flex-col items-start overflow-hidden text-start w-full">
           <h2
             style={{
-              color: isPlayingComponent
-                ? "rgba(var(--accent),1)"
-                : "rgba(var(--content),1)",
+              color:
+                isPlaylistScreen && trackIsSelected
+                  ? "#667dff"
+                  : isPlayingComponent
+                  ? "rgba(var(--accent),1)"
+                  : "rgba(var(--content),1)",
               fontSize: `${isPlaylist ? "1rem" : ""}`,
-              fontWeight: `${isPlaylist ? "500" : ""}`,
+              fontWeight: `${
+                isPlaylistScreen && trackIsSelected
+                  ? "700"
+                  : isPlaylist
+                  ? "500"
+                  : ""
+              }`,
               overflowWrap: "anywhere",
             }}
             className="font-normal text-xl m-0 leading-7 overflow-hidden text-ellipsis w-full text-nowrap"
           >
             {track.name}
           </h2>
-          <span className="text-xs font-base opacity-50">
-            {!isPlaylist && `${track.artist?.name}  • ${track.album?.name}`}
+          <span
+            className="text-xs font-base opacity-50"
+            style={{
+              opacity: isPlaylistScreen && trackIsSelected ? 1 : 50,
+            }}
+          >
+            {!isPlaylist &&
+              `${track.artist?.name}${
+                isPlaylistScreen ? "" : " • " + track.album?.name
+              }`}
             {isPlaylist &&
               `${track.artist?.name} • ${formatTime(
                 track.seconds
               )} • ${parseNumberListeners(track.reproductions)} reproducciones`}
           </span>
-        </span>
-        <span className="w-12 h-12 flex justify-center items-center">
-          <HiOutlineEllipsisVertical className="color-white w-7 h-7" />
         </span>
       </button>
     </li>

@@ -1,0 +1,45 @@
+---
+import { parseDateTime } from "src/shared/helpers";
+import type { trackProps } from "src/types";
+import { TrackImage } from "./player/TrackImage";
+import { PlayButton } from "./ui/PlayButton";
+import { getTracks } from "src/queryFn";
+
+interface Props {
+  track: trackProps;
+}
+const { track } = Astro.props;
+const { data: dataTracks, errors: tracksErrors } = await getTracks({
+  query: `?max=10&exclude=["${track.id}"]`,
+});
+if (!dataTracks) return Astro.redirect("/404", HttpStatusCode.NOT_FOUND);
+if (tracksErrors.length > 0)
+  return Astro.redirect("/500", HttpStatusCode.INTERNAL_SERVER_ERROR);
+const { tracks } = dataTracks;
+---
+
+<section class="flex flex-col gap-2 w-full relative z-10 pt-3">
+  <a class="flex items-center gap-2" href={`/artist/${track.artist?.id}`}>
+    <img
+      src={track.artist?.avatar}
+      alt={track.artist?.name}
+      class="h-5 w-5 object-cover rounded-full"
+    />
+    <figcaption class="font-semibold text-xs m-0 leading-5">
+      {track.artist?.name}
+    </figcaption>
+  </a>
+  <h4 class="opacity-60 text-xs pt-1">
+    Sencillo • {parseDateTime(track.release_date).year}
+  </h4>
+  <div class="flex justify-between items-center">
+    <TrackImage track={track as trackProps} client:load />
+    <PlayButton
+      song={track}
+      nextTracks={tracks}
+      styleContainer="h-14 w-14"
+      styleIcon="h-8 w-8"
+      client:load
+    />
+  </div>
+</section>

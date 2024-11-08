@@ -1,5 +1,4 @@
 ---
-import NavBar from "@components/NavBar.astro";
 import { ClientRouter } from "astro:transitions";
 import { PlayerBar } from "@components/player/PlayerBar.tsx";
 interface Props {
@@ -27,9 +26,8 @@ const { title } = Astro.props;
     <ClientRouter />
   </head>
   <body>
-    <NavBar transition:persist />
     <main
-      class="w-screen relative px-4 flex flex-col gap-4 pt-4 pb-20 overflow-hidden"
+      class="w-screen relative px-4 pt-4 flex flex-col gap-4 pb-20 overflow-hidden"
     >
       <slot />
     </main>
@@ -301,6 +299,14 @@ const { title } = Astro.props;
   @keyframes shine {
     to {
       transform: translateX(17rem);
+    }
+  }
+  .shuffle-button {
+    &:active > :first-child {
+      display: none;
+    }
+    &:active > :last-child {
+      display: block;
     }
   }
 </style>

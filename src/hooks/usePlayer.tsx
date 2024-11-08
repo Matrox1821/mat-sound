@@ -1,4 +1,5 @@
 import { useEffect, useState, type RefObject } from "react";
+import { sortArray } from "src/shared/helpers";
 
 import { usePlayerStore } from "src/store/playerStore";
 
@@ -9,6 +10,8 @@ export const usePlayer = (audio: RefObject<HTMLAudioElement>) => {
     setIsPlaying,
     setCurrentMusic,
     setPlayerScreenIsOpen,
+    setInLoop,
+    inLoop,
   } = usePlayerStore((state) => state);
 
   const [playlistManager, setPlaylistManager] = useState<{
@@ -99,6 +102,21 @@ export const usePlayer = (audio: RefObject<HTMLAudioElement>) => {
     e.stopPropagation();
     setIsPlaying(!isPlaying);
   };
+  const handleShuffle = () => {
+    const { track, playlist } = currentMusic;
+    const newPlaylist = sortArray(playlist);
+    setIsPlaying(true);
+    setCurrentMusic({
+      track: newPlaylist ? newPlaylist[0] : track,
+      tracks: newPlaylist,
+      playlist: newPlaylist,
+      nextTracks: [],
+    });
+  };
+
+  const handleLoop = () => {
+    setInLoop(inLoop === "none" ? "all" : inLoop === "all" ? "one" : "none");
+  };
 
   return {
     handlePrevious,
@@ -106,5 +124,7 @@ export const usePlayer = (audio: RefObject<HTMLAudioElement>) => {
     handlePlay,
     playlistManager,
     openPlayerScreen,
+    handleShuffle,
+    handleLoop,
   };
 };

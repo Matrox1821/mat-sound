@@ -23,8 +23,8 @@ const { artist } = data;
   <header
     class="absolute left-0 top-0 w-full p-4 flex justify-center items-center bg-gray-400/15"
   >
-    <span class="absolute left-4 top-4"> <GoBack client:load /></span>
-    <h1 class="font-bold">
+    <span class="absolute left-4 top-4 rounded-full h-8 w-8 flex items-center content-center active:bg-black/40 justify-center"> <GoBack client:load /></span>
+    <h1 class="font-bold h-8 flex items-center">
       {artist.name}
     </h1>
   </header>
@@ -75,7 +75,6 @@ const { artist } = data;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
-
     img {
       view-timeline-name: --image;
       view-timeline-axis: inline;
@@ -93,7 +92,7 @@ const { artist } = data;
     & :first-child {
       margin-left: calc((100vw - 320px) / 2 - 16px) ;
     }
-    & :last-child {
+    & not(:first-child):last-child {
       padding-right: calc((100vw - 320px) / 2 ) ;
     }
   }
