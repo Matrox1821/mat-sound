@@ -115,7 +115,7 @@ const parseDateTime = (date: string) => {
   const dateTime = new Date(date);
   const year = dateTime.getFullYear();
   const month = monthNames[dateTime.getMonth()];
-  const day = dateTime.getDay();
+  const day = dateTime.getDate();
   return {
     fullDate: `${month} ${day}, ${year}`,
     year: year,

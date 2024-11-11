@@ -24,7 +24,7 @@ function Background({
         backgroundColor: `rgba(${color},1)`,
         display: isActive ? "flex" : "none",
       }}
-      className="fixed bottom-4 mx-4 rounded-lg flex-col justify-center items-center z-50"
+      className="fixed bottom-20 mx-4 rounded-lg flex-col justify-center items-center z-[51] sm:!flex sm:row-start-5 sm:m-0 sm:w-full sm:h-[80px] sm:bottom-0 sm:rounded-none"
     >
       {children}
     </div>

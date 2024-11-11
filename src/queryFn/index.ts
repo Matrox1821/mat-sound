@@ -83,6 +83,14 @@ const getTracksByAlbumId = async (id: string) => {
   );
 };
 
+const getSearchResults = async ({ query = "" }: { query?: string }) => {
+  return await handleCustomApiRequest<any>(
+    getUrl + `/api/search${query}`,
+    "GET",
+    null
+  );
+};
+
 export {
   getTrackById,
   getTracks,
@@ -94,4 +102,5 @@ export {
   getAlbumsByArtistId,
   getTracksByArtistId,
   getTracksByAlbumId,
+  getSearchResults,
 };

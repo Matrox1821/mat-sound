@@ -1,0 +1,139 @@
+---
+import Search from "@components/Search.astro";
+import Layout from "@layouts/Layout.astro";
+import { Image } from "astro:assets";
+import {
+  getAlbums,
+  getArtists,
+  getSearchResults,
+  getTracks,
+} from "src/queryFn";
+import { sortArray } from "src/shared/helpers";
+
+const track = Astro.url.searchParams.get("track") || "";
+const album = Astro.url.searchParams.get("album") || "";
+const artist = Astro.url.searchParams.get("artist") || "";
+let elements: any = [];
+let data: any=[]
+
+const colors = [
+  "#DB148B",
+  "#016450",
+  "#7E01DE",
+  "#1D2F5D",
+  "#5F8108",
+  "#477D95",
+  "#509BF6",
+  "#8E66AC",
+  "#E1118B",
+  "#B02897",
+  "#E9142A",
+  "#E13300",
+  "#B95D06",
+  "#E51E31",
+  "#158A08",
+  "#A56752",
+  "#B06339",
+];
+if(track!==""||album!==""||artist!==""){
+  const { data } = await getSearchResults({
+    query: `?track=${track}&artist=${artist}&album=${album}`,
+  });
+}
+else{
+  const { data: artistData } = await getArtists();
+  const { data: albumsData } = await getAlbums();
+  const { data: tracksData } = await getTracks({ query: "?max=8" });
+
+  const artists = artistData?.artists.map((artistData) => {
+    const { avatar, ...rest } = artistData;
+    return { ...rest, image: avatar, type: "artist" };
+  });
+  const albums = albumsData?.albums.map((albumsData) => {
+    return { ...albumsData, type: "album" };
+  });
+  const tracks = tracksData?.tracks.map((tracksData) => {
+    return { ...tracksData, type: "track" };
+  });
+
+  elements = elements?.concat(artists).concat(albums).concat(tracks);
+
+  elements = sortArray(elements);
+}
+
+
+---
+
+<Layout title="Search">
+  <Search />
+
+  {
+    data.length === 0 && elements && (
+      <h2 class="text-white font-bold pt-4">Explorar todo</h2>
+      <ul class="grid grid-cols-2 gap-4">
+        {elements.map(
+          (
+            element: {
+              id: string;
+              name: string;
+              image: string;
+              type: "artist" | "album" | "track";
+            },
+            i: number
+          ) => {
+            return (
+              <li class="flex w-full h-24">
+                <a
+                  class="flex w-full h-full rounded-[4px] overflow-hidden relative"
+                  href={`/${element.type}/${element.id}`}
+                  style={{
+                    backgroundColor: sortArray(colors)![i % colors.length],
+                  }}
+                >
+                  <h2
+                    class="w-4/6 font-extrabold pt-4 pl-2 relative z-30"
+                    style={{ overflowWrap: "break-word" }}
+                  >
+                    {element.name}
+                  </h2>
+                  <figure class="absolute -right-5 rotate-[30deg] bottom-1">
+                    <span class="rounded-full bg-black w-14 h-14 absolute flex top-1 -left-7 items-center justify-center border-[1px] border-white/50 shadow-[0_3px_4px_0_rgb(0,0,0,0.3)]">
+                      <span class="rounded-full w-12 h-12 border-[1px] block absolute border-white/20" />
+                      <span class="rounded-full w-10 h-10 border-[1px] block absolute border-white/20" />
+                      <Image
+                        src={element.image}
+                        alt={element.name}
+                        height={10}
+                        width={10}
+                        loading={"lazy"}
+                        class="rounded-full w-8 h-8 border-[1px] block absolute border-white/50 object-cover vinyl"
+                      />
+                    </span>
+                    <Image
+                      src={element.image}
+                      alt={element.name}
+                      height={10}
+                      width={10}
+                      loading={"lazy"}
+                      class="w-16 h-16 object-cover rounded-[4px] shadow-[0_3px_4px_0_rgb(0,0,0,0.3)] relative z-20"
+                    />
+                  </figure>
+                </a>
+              </li>
+            );
+          }
+        )}
+      </ul>
+    )
+  }
+</Layout>
+<style>
+  .vinyl {
+    animation: rotate 10s infinite linear;
+  }
+  @keyframes rotate {
+    to {
+      transform: rotateZ(360deg);
+    }
+  }
+</style>

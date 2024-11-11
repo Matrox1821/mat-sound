@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import { PlayerBar } from "@components/player/PlayerBar.tsx";
+import Navbar from "@components/Navbar.astro";
 interface Props {
   title: string;
 }
@@ -25,13 +26,26 @@ const { title } = Astro.props;
     <title>{title}</title>
     <ClientRouter />
   </head>
-  <body>
+  <body
+    class="sm:h-screen sm:grid sm:grid-cols-5 sm:grid-rows-[repeat(4,1fr)80px]"
+  >
+    <aside
+      class:list={[
+        "hidden",
+        "sm:flex sm:row-start-1 sm:row-span-4 sm:col-span-2 sm:bg-black",
+      ]}
+    >
+    </aside>
     <main
-      class="w-screen relative px-4 pt-4 flex flex-col gap-4 pb-20 overflow-hidden"
+      class:list={[
+        "w-screen relative px-4 pt-4 flex flex-col gap-4 pb-40 overflow-hidden",
+        "sm:flex sm:row-start-1 sm:row-span-4 sm:col-span-3 sm:overflow-y-scroll sm:w-full",
+      ]}
     >
       <slot />
     </main>
     <PlayerBar client:load transition:name="media-player" transition:persist />
+    <Navbar />
   </body>
 </html>
 

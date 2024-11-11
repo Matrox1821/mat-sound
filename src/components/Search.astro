@@ -1,0 +1,240 @@
+---
+import { IoSearchOutline } from "react-icons/io5";
+import { LuSearch } from "react-icons/lu";
+import { LuArrowLeft } from "react-icons/lu";
+---
+
+<div class="w-full relative flex flex-col search-container">
+  <button
+    class="w-full flex items-center relative z-30 h-12 bg-white rounded-[4px]"
+    id="active-search"
+  >
+    <span class="h-full flex justify-center items-center pl-2">
+      <LuSearch className="text-[rgba(var(--bg),.8)] h-7 w-7" /></span
+    >
+    <div
+      class="text-[rgba(var(--bg),.6)] w-full outline-none h-full px-2 rounded-e-[4px] font-bold text-[15px] flex items-center"
+    >
+      <span>¿Qué quieres escuchar?</span>
+    </div>
+  </button>
+  <label
+    class="flex items-center fixed h-12 left-0 top-0 z-50 bg-[#282828] w-screen"
+    id="search-bar"
+  >
+    <button class="h-full p-2" id="close-search">
+      <LuArrowLeft className="text-white h-7 w-7" />
+    </button>
+    <input
+      type="search"
+      class="text-white placeholder:text-white/75 caret-[rgb(var(--accent))] outline-none w-full h-full bg-[#282828]"
+      name="search"
+      id="search"
+      placeholder="¿Qué quieres escuchar?"
+    />
+  </label>
+  <div
+    id="search-results-container"
+    class="bg-[rgba(var(--bg))] flex flex-col fixed w-screen left-0 top-12 z-50 gap-2 h-[calc(100vh-48px)]"
+  >
+    <div class="flex gap-2 flex-col results-container">
+      <ul id="results" class="flex flex-col gap-2"></ul>
+      <ul id="results-direct" class="flex flex-col gap-2"></ul>
+    </div>
+    <!--   <ul id="search-results-data" class="flex flex-col gap-3"></ul> -->
+  </div>
+</div>
+<script>
+  function init() {
+    const search = document.querySelector("#search") as HTMLInputElement;
+    const resultsDirect = document.querySelector("#results-direct");
+    const results = document.querySelector("#results");
+    const activeSearchButton = document.querySelector("#active-search");
+    const closeSearchButton = document.querySelector("#close-search");
+
+    const searchBar = document.querySelector("#search-bar");
+    /*  const searchResultsData = document.querySelector("#search-results-data"); */
+    const searchContainer = document.querySelector("#search-container");
+    const searchResultsContainer = document.querySelector(
+      "#search-results-container"
+    );
+
+    const searchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="1.75rem" height="1.75rem" viewBox="0 0 24 24">
+	<path fill="currentColor" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14" />
+</svg>`;
+
+    interface SearchResult {
+      image: string;
+      name: string;
+      id: string;
+      artist?: string;
+      album?: string;
+      track?: string;
+      type: "artist" | "album" | "track";
+    }
+    const searchResults = async (element: Element) => {
+      const track = element.getAttribute("data-track");
+      const artist = element.getAttribute("data-artist");
+      const album = element.getAttribute("data-album");
+
+      if (search && results && resultsDirect && searchResultsContainer) {
+        search.value = "";
+        results.innerHTML = "";
+        resultsDirect.innerHTML = "";
+        results.classList.add("hidden");
+        resultsDirect.classList.add("hidden");
+        searchResultsContainer.classList.remove("active");
+      }
+
+      const fetchingData = await fetch(
+        `http://localhost:4321/api/search?track=${track}&artist=${artist}&album=${album}`
+      )
+        .then((res) => res.json())
+        .then((data) => data);
+
+      const data = fetchingData.data;
+
+      /*   if (searchResultsData) {
+        data.forEach((element: SearchResult) =>
+          searchResultsData.insertAdjacentHTML(
+            "beforeend",
+            `<li class="w-full flex bg-white/10 rounded-md active:opacity-70 active:scale-[.96]">
+                <a class="flex items-center p-2 w-full gap-3 cursor-pointer" href="/${element.type}/${element.id}">
+                  <img
+                    src=${element.image}
+                    alt=${element.name}
+                    class="h-10 aspect-square object-cover rounded-md"
+                  />
+                  <span class="flex flex-col overflow-hidden">
+                    <span class="overflow-hidden text-ellipsis">${element.name}</span>
+                    <span
+                      class="overflow-hidden text-ellipsis text-xs opacity-60 font-semibold"
+                      >${element.type}
+                    </span>
+                  </span>
+                </a>
+              </li>`
+          )
+        );
+      } */
+    };
+
+    if (activeSearchButton && searchBar && closeSearchButton) {
+      activeSearchButton.addEventListener("click", () => {
+        searchBar.classList.add("active");
+        search.focus();
+        setTimeout(() => search.select(), 10);
+      });
+      closeSearchButton.addEventListener("click", () => {
+        searchBar.classList.remove("active");
+      });
+    }
+    if (search && results && resultsDirect && searchResultsContainer) {
+      search.addEventListener("keypress", (e: any) => {
+        if (e.key === "Enter") {
+          document.location.replace(`/search?q=${e.target.value}`);
+        }
+      });
+
+      search.addEventListener("input", async (e: any) => {
+        searchResultsContainer.classList.add("active");
+
+        if (e.target.value !== "") {
+          const fetching = await fetch(
+            `http://localhost:4321/api/search?q=${e.target.value}`
+          )
+            .then((res) => res.json())
+            .then((data) => data);
+
+          const data = fetching.data.slice(0, 8) as SearchResult[];
+
+          const firstData = data.slice(0, 4);
+
+          results.classList.add("flex");
+          resultsDirect.classList.add("grid");
+          results.innerHTML = "";
+          resultsDirect.innerHTML = "";
+          if (data) {
+            firstData.forEach((element: SearchResult) =>
+              resultsDirect.insertAdjacentHTML(
+                "beforeend",
+                `<li class="w-full flex  active:opacity-70 active:scale-[.96]">
+                <a class="flex items-center p-2 w-full gap-3" href="/${element.type}/${element.id}">
+                  <img
+                    src=${element.image}
+                    alt=${element.name}
+                    class="h-10 aspect-square object-cover ${element.type === "artist" ? "rounded-full" : "rounded-md"}"
+                  />
+                  <span class="flex flex-col overflow-hidden">
+                    <span class="overflow-hidden text-ellipsis h-6 w-full">${element.name}</span>
+                    <span
+                      class="overflow-hidden text-ellipsis text-xs opacity-60 font-semibold"
+                      >${element.type}
+                    </span>
+                  </span>
+                </a>
+              </li>`
+              )
+            );
+            data.forEach((element: SearchResult) =>
+              results.insertAdjacentHTML(
+                "beforeend",
+                `<a class="w-full h-10 flex active:opacity-70 active:scale-[.99] search-element cursor-pointer items-center p-2 gap-2" href="/search?track=${element.track || ""}&album=${element.album || ""}&artist=${element.artist || ""}&by=${element.type}"
+                data-track="${element.track || ""}"
+                data-artist="${element.artist || ""}"
+                data-album="${element.album || ""}"
+              >
+                ${searchIcon}
+                ${element.name}
+              </li>`
+              )
+            );
+          }
+          const searchElements = document.querySelectorAll(".search-element");
+          searchElements.forEach((element) => {
+            element.addEventListener("click", () => searchResults(element));
+          });
+        }
+        if (e.target.value === "") {
+          results.innerHTML = "";
+          resultsDirect.innerHTML = "";
+          searchResultsContainer.classList.remove("active");
+        }
+      });
+      search.addEventListener("search", (e) => {
+        console.log(e);
+      });
+    }
+  }
+
+  init();
+
+  document.addEventListener("astro:after-swap", init);
+</script>
+<style>
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+  }
+
+  #search-bar {
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+    + #search-results-container {
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s ease;
+    }
+    &.active {
+      opacity: 1;
+      visibility: visible;
+      + #search-results-container {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
+</style>
