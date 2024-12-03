@@ -13,7 +13,7 @@ const handleCustomApiRequest = async <T = any>(
     });
     const petition = await fetching.json(),
       statusCode = fetching.status;
-
+    console.log(petition);
     return handleStatusCode<T>(statusCode, petition);
   } catch (error: any) {
     return { errors: error, message: "Unknown error", data: undefined };
