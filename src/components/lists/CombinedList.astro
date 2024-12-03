@@ -13,12 +13,14 @@ interface Props {
   artistId?: string;
   isRecomendation?: boolean;
   isGrid?: boolean;
+  isColumn?: boolean;
 }
 const {
   maxArtists = 7,
   artistId,
   isRecomendation = false,
   isGrid = false,
+  isColumn = false,
 } = Astro.props;
 
 let artists;
@@ -49,24 +51,49 @@ artists = data.artists.map((artist) => {
 
 let items = sortArray(albums.concat(tracks).concat(artists));
 
-items = isGrid ? items?.slice(0, 6) : items?.slice(0, 8);
+items = isGrid
+  ? items?.slice(0, 6)
+  : isColumn
+    ? items?.slice(0, 10)
+    : items?.slice(0, 8);
 ---
 
 <ul
   class:list={isGrid
     ? "grid w-full grid-cols-2 gap-2"
-    : "flex overflow-x-auto overflow-y-hidden gap-4"}
+    : isColumn
+      ? "flex flex-col"
+      : "flex overflow-x-auto overflow-y-hidden gap-4"}
 >
   {
     items?.map(({ type, item }) => {
       if (type === "artist") {
-        return <Artist artist={item as artistProps} isGrid={isGrid} />;
+        return (
+          <Artist
+            artist={item as artistProps}
+            isGrid={isGrid}
+            isColumn={isColumn}
+          />
+        );
       }
       if (type === "track") {
-        return <Track track={item as trackProps} size="lg" isGrid={isGrid} />;
+        return (
+          <Track
+            track={item as trackProps}
+            size="lg"
+            isGrid={isGrid}
+            isColumn={isColumn}
+          />
+        );
       }
       if (type === "album") {
-        return <Album album={item as albumProps} isGrid={isGrid} />;
+        return (
+          <Album
+            album={item as albumProps}
+            isGrid={isGrid}
+            isColumn={isColumn}
+          />
+        );
       }
     })
   }

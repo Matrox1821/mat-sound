@@ -4,7 +4,7 @@ import { LuSearch } from "react-icons/lu";
 import { LuArrowLeft } from "react-icons/lu";
 ---
 
-<div class="w-full relative flex flex-col search-container">
+<div class="w-full relative flex flex-col search-container top-12">
   <button
     class="w-full flex items-center relative z-30 h-12 bg-white rounded-[4px]"
     id="active-search"
@@ -58,7 +58,8 @@ import { LuArrowLeft } from "react-icons/lu";
     const searchResultsContainer = document.querySelector(
       "#search-results-container"
     );
-    const getUrl = "https://matsound.vercel.app"; /*  "http://localhost:4321" */
+    const getUrl =
+      /*  "https://matsound.vercel.app"; */ "http://localhost:4321";
 
     const searchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="1.75rem" height="1.75rem" viewBox="0 0 24 24">
 	<path fill="currentColor" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14" />
@@ -77,6 +78,7 @@ import { LuArrowLeft } from "react-icons/lu";
       const track = element.getAttribute("data-track");
       const artist = element.getAttribute("data-artist");
       const album = element.getAttribute("data-album");
+      const query = element.getAttribute("data-query");
 
       if (search && results && resultsDirect && searchResultsContainer) {
         search.value = "";
@@ -88,7 +90,7 @@ import { LuArrowLeft } from "react-icons/lu";
       }
 
       const fetchingData = await fetch(
-        `${getUrl}/api/search?track=${track}&artist=${artist}&album=${album}`
+        `${getUrl}/api/search?track=${track}&artist=${artist}&album=${album}&q=${query}`
       )
         .then((res) => res.json())
         .then((data) => data);
@@ -119,24 +121,41 @@ import { LuArrowLeft } from "react-icons/lu";
         );
       } */
     };
-
     if (activeSearchButton && searchBar && closeSearchButton) {
       activeSearchButton.addEventListener("click", () => {
         searchBar.classList.add("active");
-        search.focus();
-        setTimeout(() => search.select(), 10);
+
+        setTimeout(() => {
+          search.focus();
+          search.select();
+        }, 20);
       });
       closeSearchButton.addEventListener("click", () => {
         searchBar.classList.remove("active");
+        setTimeout(() => {
+          search.blur();
+          search.select();
+        }, 20);
       });
     }
     if (search && results && resultsDirect && searchResultsContainer) {
+      results.insertAdjacentHTML(
+        "beforeend",
+        `<h3 class="w-full h-6 flex items-center px-2 pt-2 font-bold"
+              >
+                Escucha lo que más te gusta
+              </h3>`
+      );
+      resultsDirect.insertAdjacentHTML(
+        "beforeend",
+        `<h4 class="w-full h-6 flex items-center px-2"
+              >
+               Busca artistas, canciones, podcasts y más.
+              </h4>`
+      );
       search.addEventListener("input", async (e: any) => {
+        searchResultsContainer.classList.remove("active");
         setTimeout(async () => {
-          if (e.key === "Enter") {
-            document.location.replace(`/search?q=${e.target.value}`);
-          }
-
           searchResultsContainer.classList.add("active");
           if (e.key !== "Enter") {
             const fetching = await fetch(
@@ -165,9 +184,9 @@ import { LuArrowLeft } from "react-icons/lu";
                     class="h-10 aspect-square object-cover ${element.type === "artist" ? "rounded-full" : "rounded-md"}"
                   />
                   <span class="flex flex-col overflow-hidden">
-                    <span class="overflow-hidden text-ellipsis h-6 w-full">${element.name}</span>
+                    <span class="overflow-hidden text-ellipsis h-6 w-full text-base font-semibold">${element.name}</span>
                     <span
-                      class="overflow-hidden text-ellipsis text-xs opacity-60 font-semibold"
+                      class="overflow-hidden text-ellipsis text-xs opacity-60 font-semibold uppercase"
                       >${element.type}
                     </span>
                   </span>
@@ -178,10 +197,11 @@ import { LuArrowLeft } from "react-icons/lu";
               data.forEach((element: SearchResult) =>
                 results.insertAdjacentHTML(
                   "beforeend",
-                  `<a class="w-full h-10 flex active:opacity-70 active:scale-[.99] search-element cursor-pointer items-center p-2 gap-2" href="/search?track=${element.track || ""}&album=${element.album || ""}&artist=${element.artist || ""}&by=${element.type}"
+                  `<a class="w-full h-10 flex active:opacity-70 active:scale-[.99] search-element cursor-pointer items-center p-2 gap-2" href="/search?track=${element.track || ""}&album=${element.album || ""}&artist=${element.artist || ""}&exact=${element.name}"
                 data-track="${element.track || ""}"
                 data-artist="${element.artist || ""}"
                 data-album="${element.album || ""}"
+                data-query="${element.name || ""}"
               >
                 ${searchIcon}
                 ${element.name}
@@ -195,14 +215,26 @@ import { LuArrowLeft } from "react-icons/lu";
             });
           }
           if (e.target.value === "") {
-            results.innerHTML = "";
-            resultsDirect.innerHTML = "";
+            results.insertAdjacentHTML(
+              "beforeend",
+              `<h3 class="w-full h-6 flex items-center px-2 pt-2 font-bold"
+              >
+                Escucha lo que más te gusta
+              </h3>`
+            );
+            resultsDirect.insertAdjacentHTML(
+              "beforeend",
+              `<h4 class="w-full h-6 flex items-center px-2"
+              >
+               Busca artistas, canciones, podcasts y más.
+              </h4>`
+            );
             searchResultsContainer.classList.remove("active");
           }
         }, 10);
       });
-      search.addEventListener("search", (e) => {
-        console.log(e);
+      search.addEventListener("search", (e: any) => {
+        document.location.replace(`/search?q=${e.target.value}`);
       });
     }
   }

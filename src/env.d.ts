@@ -17,7 +17,7 @@ interface ImportMetaEnv {
   readonly CLOUDFLARE_URL: string;
   readonly CLOUDFLARE_ACCESS_ID: string;
   readonly CLOUDFLARE_ACCESS_KEY: string;
-  readonly VERCEL_ENV: string;
+  readonly SERVER_DOMAIN: string;
 }
 interface ImportMeta {
   readonly env: ImportMetaEnv;

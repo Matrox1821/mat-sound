@@ -22,7 +22,8 @@ export const GET: APIRoute = async ({ url }) => {
     const { data: artists } = await supabase
       .from("artists")
       .select("id,image:avatar,name")
-      .ilike("name", `%${query?.split("").join("%%")}%`);
+      .ilike("name", `%${query?.split(" ").join("").split("").join("%")}%`);
+
     if (artists != null) {
       const newArtists = artists.map((artist) => {
         return { ...artist, type: typeData.artist, artist: artist.name };
@@ -33,7 +34,7 @@ export const GET: APIRoute = async ({ url }) => {
     const { data: tracks } = await supabase
       .from("tracks")
       .select("id,image,name,artist:artists(name),album:albums(name)")
-      .ilike("name", `%${query?.split("").join("%%")}%`);
+      .ilike("name", `%${query?.split(" ").join("").split("").join("%")}%`);
 
     if (tracks != null) {
       const newTracks = tracks.map((track) => {
@@ -51,7 +52,7 @@ export const GET: APIRoute = async ({ url }) => {
     const { data: albums } = await supabase
       .from("albums")
       .select("id,image,name,artist:artists(name)")
-      .ilike("name", `%${query?.split("").join("%%")}%`);
+      .ilike("name", `%${query?.split(" ").join("").split("").join("%")}%`);
 
     if (albums != null) {
       const newAlbums = albums.map((album) => {
@@ -63,15 +64,18 @@ export const GET: APIRoute = async ({ url }) => {
       });
       data = data.concat(newAlbums);
     }
+
     data = ordenarPorSimilitud(data, query);
     return onSuccessRequest({
       httpStatusCode: HttpStatusCode.OK,
       data,
     });
   }
+
   const track = url.searchParams.get("track");
   const artist = url.searchParams.get("artist");
   const album = url.searchParams.get("album");
+  const exactWord = url.searchParams.get("exact");
   let data: any[] = [];
   if (track !== "" && track) {
     const { data: tracks } = await supabase
@@ -82,9 +86,19 @@ export const GET: APIRoute = async ({ url }) => {
       .ilike("name", track);
     const flatTracks = tracks?.flatMap((track) => {
       const { artist, album, ...rest } = track;
-      return [{ ...artist }, { ...album }, { ...rest }];
+      if (album) {
+        return [
+          { ...artist, type: "artist" },
+          { ...album, type: "album" },
+          { ...rest, type: "track" },
+        ];
+      }
+      return [
+        { ...artist, type: "artist" },
+        { ...rest, type: "track" },
+      ];
     });
-    data.push(flatTracks);
+    data = data.concat(flatTracks);
   }
   if (artist !== "" && artist) {
     const { data: artists } = await supabase
@@ -93,15 +107,21 @@ export const GET: APIRoute = async ({ url }) => {
         "id,image:avatar,name,tracks(image,name,id),album:albums(name,image,id)"
       )
       .ilike("name", artist);
-
     const flatArtists = artists?.flatMap((artist) => {
       const { tracks, album, ...rest } = artist;
-      const [...dataTracks] = tracks;
-      const [...dataAlbums] = album;
+      const dataTracks = tracks.flatMap((element) => {
+        return { ...element, type: "track" };
+      });
+      if (album.length > 0) {
+        const dataAlbums = album.flatMap((element) => {
+          return { ...element, type: "album" };
+        });
+        return [...dataTracks, ...dataAlbums, { ...rest, type: "artist" }];
+      }
 
-      return [...dataTracks, ...dataAlbums, { ...rest }];
+      return [...dataTracks, { ...rest, type: "artist" }];
     });
-    data.push(flatArtists);
+    data = data.concat(flatArtists);
   }
   if (album !== "" && album) {
     const { data: albums } = await supabase
@@ -113,13 +133,20 @@ export const GET: APIRoute = async ({ url }) => {
 
     const flatAlbums = albums?.flatMap((album) => {
       const { tracks, artist, ...rest } = album;
-      const [...dataTracks] = tracks;
-      return [...dataTracks, { ...artist }, { ...rest }];
+      const dataTracks = tracks.flatMap((element) => {
+        return { ...element, type: "track" };
+      });
+      return [
+        ...dataTracks,
+        { ...artist, type: "artist" },
+        { ...rest, type: "album" },
+      ];
     });
-    data.push(flatAlbums);
+    data = data.concat(flatAlbums);
   }
-  data = data.flatMap((dataElements) => eliminarDuplicadosPorId(dataElements));
-  console.log(ordenarPorSimilitud(data, track));
+  console.log(data);
+  data = eliminarDuplicadosPorId(data);
+  data = ordenarPorSimilitud(data, exactWord);
   return onSuccessRequest({
     httpStatusCode: HttpStatusCode.OK,
     data: data,
@@ -152,6 +179,7 @@ function levenshteinDistance(a: any, b: any) {
   return matrix[a.length][b.length];
 }
 function ordenarPorSimilitud(array: any, palabraObjetivo: any) {
+  /* console.log({ array, palabraObjetivo }); */
   return array.sort((a: any, b: any) => {
     const distanciaA = levenshteinDistance(a.name, palabraObjetivo);
     const distanciaB = levenshteinDistance(b.name, palabraObjetivo);

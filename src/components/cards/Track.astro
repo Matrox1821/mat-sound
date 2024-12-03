@@ -7,9 +7,10 @@ interface Props {
   track: trackProps;
   size: "sm" | "lg";
   isGrid?: boolean;
+  isColumn?: boolean;
 }
 
-const { track, size, isGrid } = Astro.props;
+const { track, size, isGrid = false, isColumn = false } = Astro.props;
 ---
 
 <li
@@ -18,14 +19,18 @@ const { track, size, isGrid } = Astro.props;
     ? "flex-[0_0_7rem]"
     : isGrid
       ? "h-12 w-full bg-[rgb(255,255,255,0.1)] rounded-[4px]"
-      : "flex-[0_0_10rem] rounded-lg"}
+      : isColumn
+        ? "w-full active:scale-[.98] rounded-lg"
+        : "flex-[0_0_10rem] rounded-lg"}
 >
   <a
     id={track.id}
     class="flex color-[rgba(var(--content),1)] duration-150 gap-2 track"
     class:list={isGrid
       ? "items-center overflow-x-hidden grid-title"
-      : "flex-col rounded-lg"}
+      : isColumn
+        ? "flex gap-2 w-full h-full p-2 items-center rounded-lg"
+        : "flex-col rounded-lg"}
     href={`/track/${track.id}`}
   >
     <Image
@@ -34,53 +39,65 @@ const { track, size, isGrid } = Astro.props;
       width={10}
       height={10}
       class="object-fill aspect-square"
-      class:list={isGrid ? "w-12 h-12 rounded-[4px]" : "w-full  rounded-md"}
+      class:list={isGrid
+        ? "w-12 h-12 rounded-[4px]"
+        : isColumn
+          ? "object-fill aspect-square w-12 rounded-sm"
+          : "w-full  rounded-md"}
       loading="lazy"
       quality={"low"}
     />
-    <h2
-      style={{ overflowWrap: "anywhere" }}
-      class="m-0 leading-5"
-      class:list={isGrid
-        ? "font-semibold text-sm overflow-hidden text-ellipsis mr-1"
-        : "font-normal text-[18px]"}
+    <span
+      class:list={isColumn
+        ? "flex flex-col items-start overflow-hidden text-start w-full"
+        : ""}
     >
-      {track.name}
-    </h2>
-    {
-      !isGrid && (
-        <span class="text-xs font-medium opacity-70">
-          Single • {track.artist?.name}
-        </span>
-      )
-    }
+      <h2
+        style={{ overflowWrap: "anywhere" }}
+        class="m-0 leading-5"
+        class:list={isGrid
+          ? "font-semibold text-sm overflow-hidden text-ellipsis mr-1"
+          : isColumn
+            ? "font-normal text-xl m-0 leading-7 overflow-hidden text-ellipsis w-full text-nowrap"
+            : "font-normal text-[18px]"}
+      >
+        {track.name}
+      </h2>
+      {
+        !isGrid && (
+          <span class="text-xs font-medium opacity-70">
+            Single • {track.artist?.name}
+          </span>
+        )
+      }
+    </span>
   </a>
-</li>
 
-<style>
-  .grid-title {
-    width: 100%;
-    overflow: hidden;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-  @media (hover: hover) {
-    li:hover {
-      background-color: rgba(var(--bg-contrast), 0.4);
+  <style>
+    .grid-title {
+      width: 100%;
+      overflow: hidden;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
-  }
-</style>
-<script>
-  const touchElements = document.querySelector("content-bg");
-  touchElements?.addEventListener("click", function (this: Element, e: any) {
-    let x = e.offsetX;
-    let y = e.offsetY;
-    let ripples = document.createElement("span");
-    ripples.classList.add("ripple");
-    ripples.style.left = x + "px";
-    ripples.style.top = y + "px";
-    this.appendChild(ripples);
+    @media (hover: hover) {
+      li:hover {
+        background-color: rgba(var(--bg-contrast), 0.4);
+      }
+    }
+  </style>
+  <script>
+    const touchElements = document.querySelector("content-bg");
+    touchElements?.addEventListener("click", function (this: Element, e: any) {
+      let x = e.offsetX;
+      let y = e.offsetY;
+      let ripples = document.createElement("span");
+      ripples.classList.add("ripple");
+      ripples.style.left = x + "px";
+      ripples.style.top = y + "px";
+      this.appendChild(ripples);
 
-    setTimeout(() => ripples.remove(), 500);
-  });
-</script>
+      setTimeout(() => ripples.remove(), 500);
+    });
+  </script>
+</li>

@@ -8,22 +8,27 @@ interface newArtistProps extends artistProps {
 interface Props {
   artist: newArtistProps;
   isGrid?: boolean;
+  isColumn?: boolean;
 }
 
-const { artist, isGrid } = Astro.props;
+const { artist, isGrid = false, isColumn = false } = Astro.props;
 ---
 
 <li
   class="color-[rgba(var(--content),1)] duration-150 gap-2 active:scale-[.98] active:opacity-80"
   class:list={isGrid
     ? "h-12 w-full bg-[rgb(255,255,255,0.1)] rounded-[4px]"
-    : "flex-[0_0_10rem] w-96 rounded-lg"}
+    : isColumn
+      ? "w-full active:scale-[.98] rounded-lg"
+      : "flex-[0_0_10rem] w-96 rounded-lg"}
 >
   <a
     class="color-[rgba(var(--content),1)] duration-150 gap-2"
     class:list={isGrid
       ? "flex items-center overflow-x-hidden grid-title"
-      : "flex flex-col rounded-lg items-center"}
+      : isColumn
+        ? "flex gap-2 w-full h-full p-2 items-center rounded-lg"
+        : "flex flex-col rounded-lg items-center"}
     href={`/artist/${artist.id}`}
   >
     <Image
@@ -33,13 +38,19 @@ const { artist, isGrid } = Astro.props;
       quality="low"
       alt={artist.name}
       class="object-cover aspect-square"
-      class:list={isGrid ? "w-12 h-12 rounded-[4px]" : "w-full rounded-full"}
+      class:list={isGrid
+        ? "w-12 h-12 rounded-[4px]"
+        : isColumn
+          ? "object-cover aspect-square w-12 rounded-sm"
+          : "w-full rounded-full"}
     />
     <h2
       class="m-0 leading-5"
       class:list={isGrid
         ? "font-semibold text-sm overflow-hidden text-ellipsis mr-1"
-        : "font-normal text-[18px]"}
+        : isColumn
+          ? "font-normal text-xl m-0 leading-7 overflow-hidden text-ellipsis w-full text-nowrap"
+          : "font-normal text-[18px]"}
     >
       {artist.name}
     </h2>

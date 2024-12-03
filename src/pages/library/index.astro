@@ -1,0 +1,23 @@
+---
+import CombinedList from "@components/lists/CombinedList.astro";
+import Tracks from "@components/lists/Tracks.astro";
+import SkeletonList from "@components/skeleton/SkeletonList.astro";
+import Layout from "@layouts/Layout.astro";
+import { FaUserCircle } from "react-icons/fa";
+---
+
+<Layout title="MatSound">
+  <span class="flex items-center gap-4">
+    <FaUserCircle
+      className="h-8 w-8 fill-[rgb(var(--accent))] brightness-150"
+    />
+    <h2 class="font-extrabold text-2xl">Tu biblioteca</h2>
+  </span>
+
+  <div class="flex flex-col gap-4">
+    <span class="font-medium opacity-70">Recientes:</span>
+    <CombinedList isColumn server:defer>
+      <SkeletonList isColumn slot="fallback" />
+    </CombinedList>
+  </div>
+</Layout>

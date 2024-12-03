@@ -1,0 +1,16 @@
+<ul class="overflow-hidden grid w-full grid-cols-2 gap-4">
+  {
+    new Array(14).fill(null).map(() => {
+      return (
+        <li class="gap-2 h-24 w-full bg-[rgb(255,255,255,0.1)] rounded-[4px]">
+          <div class="rounded-lg gap-3 relative w-full h-full flex items-center">
+            <span class="absolute aspect-square bg-[rgba(255,255,255,0.1)] skeleton-box overflow-hidden w-14 h-14 rounded-[4px] skeleton-col bottom-2 right-2" />
+            <span class="absolute flex flex-col justify-center gap-2 w-20 h-4 top-4 left-4">
+              <span class="relative rounded-[4px] bg-[rgba(255,255,255,0.1)] overflow-hidden h-full skeleton skeleton-text" />
+            </span>
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>

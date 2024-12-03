@@ -1,4 +1,4 @@
-import type { APIRoute } from "astro";
+import type { APIRoute } from "node_modules/astro/dist/types/public/common";
 import { supabase } from "../../../lib/supabase";
 import { HttpStatusCode } from "../../../types/httpStatusCode";
 import { customError, onSuccessRequest, onThrowError } from "../apiService";
@@ -7,6 +7,7 @@ export const GET: APIRoute = async ({ url }) => {
   const max = url.searchParams.get("max") || 6;
 
   const exclude = url.searchParams.get("exclude") || null;
+
   const parcedExclude =
     exclude &&
     `(${JSON.parse(exclude)

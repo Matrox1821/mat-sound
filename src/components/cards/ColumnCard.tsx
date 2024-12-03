@@ -1,8 +1,7 @@
+import { useState } from "react";
 import { usePlayerStore } from "../../store/playerStore";
 import type { trackProps } from "../../types";
 import { formatTime, parseNumberListeners } from "src/shared/helpers";
-import { HiOutlineEllipsisVertical } from "react-icons/hi2";
-import { useState } from "react";
 
 export const prerender = false;
 
@@ -13,53 +12,6 @@ interface Props {
   nextTracks?: trackProps[];
   isPlaylist?: boolean;
   isPlaylistScreen?: boolean;
-}
-
-function Popover({
-  track,
-  artistId,
-  trackId,
-  albumId,
-  isOpen,
-  handlePopover,
-  duration,
-}: {
-  duration: string;
-  track: trackProps;
-  artistId: string;
-  trackId: string;
-  albumId: string;
-  isOpen: boolean;
-  handlePopover: (value: boolean) => void;
-}) {
-  return (
-    <span className={isOpen ? `` : ""}>
-      <div>
-        <img
-          src={track.image}
-          alt={track.name}
-          className="object-fill aspect-square w-12 rounded-sm"
-        />
-        <span>
-          <h3>{track.name}</h3>
-          {track.artist?.name && (
-            <span>
-              {track.artist?.name} • {duration}
-            </span>
-          )}
-        </span>
-      </div>
-      <a href={`/artist/${artistId}`} onClick={() => handlePopover(false)}>
-        Ir al artista
-      </a>
-      <a href={`/track/${trackId}`} onClick={() => handlePopover(false)}>
-        Ir a la canción
-      </a>
-      <a href={`/artist/${artistId}`} onClick={() => handlePopover(false)}>
-        Ir al álbum
-      </a>
-    </span>
-  );
 }
 
 export function ColumnCard({
@@ -76,6 +28,8 @@ export function ColumnCard({
     setCurrentMusic,
     setIsActive,
   } = usePlayerStore((state) => state);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const isPlayingComponent = isPlaying && currentMusic.track?.id === track.id;
 
@@ -103,7 +57,7 @@ export function ColumnCard({
 
   return (
     <li
-      className="w-full active:scale-[.98] rounded-lg "
+      className="w-full active:scale-[.98] rounded-lg"
       style={{
         backgroundColor:
           isPlaylistScreen && trackIsSelected

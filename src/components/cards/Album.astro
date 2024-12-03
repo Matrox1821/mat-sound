@@ -4,44 +4,61 @@ import type { albumProps } from "src/types";
 interface Props {
   album: albumProps;
   isGrid?: boolean;
+  isColumn?: boolean;
 }
-const { album, isGrid = false } = Astro.props;
+const { album, isGrid = false, isColumn = false } = Astro.props;
 ---
 
 <li
   class="color-[rgba(var(--content),1)] duration-150 gap-2 active:scale-[.98] active:opacity-80"
   class:list={isGrid
     ? "h-12 w-full bg-[rgb(255,255,255,0.1)] rounded-[4px]"
-    : "flex-[0_0_10rem] rounded-lg"}
+    : isColumn
+      ? "w-full active:scale-[.98] rounded-lg"
+      : "flex-[0_0_10rem] rounded-lg"}
 >
   <a
     class="rounded-lg color-[rgba(var(--content),1)] duration-150 gap-2"
     class:list={isGrid
       ? "flex items-center overflow-x-hidden grid-title"
-      : "flex flex-col"}
+      : isColumn
+        ? "flex gap-2 w-full h-full p-2 items-center rounded-lg"
+        : "flex flex-col"}
     href={`/album/${album.id}`}
   >
     <img
       src={album.image}
       alt={album.name}
       class="object-fill aspect-square"
-      class:list={isGrid ? "w-12 h-12 rounded-[4px]" : "w-full  rounded-md"}
-    />
-    <h2
-      class="m-0 leading-5 w-full"
       class:list={isGrid
-        ? "font-semibold text-sm overflow-hidden text-ellipsis mr-1"
-        : "font-normal text-[18px]"}
+        ? "w-12 h-12 rounded-[4px]"
+        : isColumn
+          ? "object-fill aspect-square w-12 rounded-sm"
+          : "w-full  rounded-md"}
+    />
+    <span
+      class:list={isColumn
+        ? "flex flex-col items-start overflow-hidden text-start w-full"
+        : ""}
     >
-      {album.name}
-    </h2>
-    {
-      !isGrid && (
-        <span class="text-xs font-medium opacity-70">
-          {album.artist ? `Álbum • ${album.artist.name}` : "Álbum"}
-        </span>
-      )
-    }
+      <h2
+        class="m-0 leading-5 w-full"
+        class:list={isGrid
+          ? "font-semibold text-sm overflow-hidden text-ellipsis mr-1"
+          : isColumn
+            ? "font-normal text-xl m-0 leading-7 overflow-hidden text-ellipsis w-full text-nowrap"
+            : "font-normal text-[18px]"}
+      >
+        {album.name}
+      </h2>
+      {
+        !isGrid && (
+          <span class="text-xs font-medium opacity-70">
+            {album.artist ? `Álbum • ${album.artist.name}` : "Álbum"}
+          </span>
+        )
+      }
+    </span>
   </a>
 </li>
 

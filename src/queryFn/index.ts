@@ -9,8 +9,10 @@ import type {
 } from "../types/apiTypes";
 
 const getUrl =
-  process.env.VERCEL_ENV === "production"
+  process.env.SERVER_DOMAIN === "vercel"
     ? "https://matsound.vercel.app"
+    : process.env.SERVER_DOMAIN === "netlify"
+    ? "https://matsound.netlify.app"
     : "http://localhost:4321";
 
 const getTrackById = async (id: string) => {
