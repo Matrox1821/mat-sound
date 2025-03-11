@@ -1,0 +1,214 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//User
+
+/**
+ * model User {
+ * id                   String       @id @default(uuid(7))
+ * active               Boolean?
+ * created_at           DateTime        @default(now())
+ * email                String          @unique
+ * password             String
+ * name                 String
+ * biography            String?
+ * location             String?
+ * profile              UserProfile     @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+ * profile_id           Int             @unique
+ * user_content         UserContent[]
+ * historical           Historical[]
+ * user_playlists         UserCourses[]
+ * user_liked_songs    LivesAndStrikes @relation(fields: [lives_and_strikes_id], references: [id], onDelete: Cascade)
+ * user_ Int             @unique
+ * }
+ * model UserProfile {
+ * id            String       @id @default(uuid(7))
+ * user        User?
+ * color       String
+ * image       String
+ * }
+ */
+/**
+ * model Historical {
+ * id            String       @id @default(uuid(7))
+ * user         User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+ * user_id      Int?
+ * last_heard   LastHeard
+ * last_searched   LastSearched
+ * content      Content  @relation(fields: [content_id], references: [id], onDelete: Cascade)
+ * last_watched DateTime @default(now())
+ * content_id   Int
+ * }
+ */
+
+model Artist {
+  id                 String   @id @default(uuid(7))
+  name               String
+  image              String
+  description        String
+  listeners          Int
+  is_verified        Boolean
+  regional_listeners Json
+  socials            Json
+  covers             String[] @default([])
+  followers_default  Int
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  Albums Album[]
+
+  tracks TracksOnArtists[]
+
+  followers Follows[]
+}
+
+model Album {
+  id           String   @id @default(uuid(7))
+  name         String
+  image        String
+  release_date DateTime @default(now())
+  copyright    String[]
+
+  artist    Artist? @relation(fields: [artist_id], references: [id], onDelete: Cascade)
+  artist_id String?
+
+  tracks TracksOnAlbums[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+/**
+ * model Playlist {
+ * id    String @id @default(uuid(7))
+ * name  String
+ * creator_id String
+ * }
+ */
+
+model TracksOnAlbums {
+  order_in_album Int
+
+  album    Album  @relation(fields: [album_id], references: [id], onDelete: Cascade)
+  album_id String
+
+  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
+  track_id String
+
+  @@id([album_id, track_id])
+}
+
+model TracksOnArtists {
+  artist    Artist @relation(fields: [artist_id], references: [id], onDelete: Cascade)
+  artist_id String
+
+  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
+  track_id String
+
+  @@id([artist_id, track_id])
+}
+
+model Track {
+  id    String @id @default(uuid(7))
+  name  String
+  image String
+
+  song          String
+  copyright     String[]
+  release_date  DateTime @default(now())
+  duration      Int
+  reproductions Int
+
+  likes Likes[]
+
+  artists TracksOnArtists[]
+
+  albums TracksOnAlbums[]
+
+  playlists TrackPlaylist[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Follows {
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+
+  artist    Artist @relation(fields: [artist_id], references: [id], onDelete: Cascade)
+  artist_id String
+
+  followed_at DateTime @default(now())
+
+  @@id([user_id, artist_id])
+}
+
+model Likes {
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+
+  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
+  track_id String
+
+  followed_at DateTime @default(now())
+
+  @@id([user_id, track_id])
+}
+
+model Playlist {
+  id   String @id @default(uuid(7))
+  name String
+
+  tracks TrackPlaylist[]
+
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model TrackPlaylist {
+  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
+  track_id String
+
+  playlist    Playlist @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+  playlist_id String
+
+  added_at DateTime @default(now())
+
+  @@id([track_id, playlist_id])
+}
+
+model User {
+  id        String  @id @default(uuid(7))
+  name      String
+  image     String?
+  active    Boolean
+  biography String?
+  location  String?
+
+  mail     String
+  password String
+
+  tracks_likeds Likes[]
+
+  following Follows[]
+
+  playlists Playlist[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Admin {
+  id       String @id @default(uuid(7)) 
+  email    String @unique
+  password String
+}
