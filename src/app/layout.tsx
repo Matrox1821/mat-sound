@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import NavigationButtons from "@/components/NavigationButtons";
 import Aside from "@/components/Aside";
 import Player from "@/components/Player";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,6 +20,7 @@ export default function RootLayout({
         <Aside />
         {children}
         <Player />
+        <ToastContainer position="bottom-right" draggable theme="dark" />
       </body>
     </html>
   );

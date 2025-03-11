@@ -1,12 +1,12 @@
 "use client";
 import { redirect } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
-import { CustomInput } from "@/components/input/CustomInput";
 import { ListElementsInput } from "@/components/input/ListElementsInput";
 import { adminQuery } from "@/queryFn";
 import { SelectInput } from "@/components/input/SelectInput";
 import { OrderAlbumInput } from "@/components/input/OrderInAlbumInput";
 import { createAlbumServer } from "@/actions/album";
+import CustomInputAdminForm from "@/components/input/CustomInputAdminForm";
 const initialState = {
   errors: [],
   success: false,
@@ -105,30 +105,5 @@ export default function Page() {
         Ingresar
       </button>
     </form>
-  );
-}
-
-function CustomInputAdminForm(props: {
-  title: string;
-  type: "text" | "textarea" | "checkbox" | "file";
-  isRequired?: boolean;
-  name: string;
-  isMultiple?: boolean;
-  inBox?: boolean;
-}) {
-  return (
-    <CustomInput
-      {...props}
-      labelStyle={`${props.inBox ? "flex-col gap-2 w-full" : "flex-col gap-2"}`}
-      titleStyle="text-base"
-      inputStyle={`w-full bg-background border-2 border-content/70 rounded-md focus-visible:border-accent/90 focus:border-2 outline-none ${
-        props.type === "textarea" ? "h-32 py-1 pl-1 text-sm" : "h-8 py-4 pl-1"
-      }`}
-      previewImageStyle={`${
-        props.isMultiple
-          ? "h-24 verflow-y-auto w-full grid gap-2 grid-cols-3"
-          : "h-22 w-22 flex justify-center"
-      }  items-center p-2 o overflow-x-hidden border-2 border-accent/70 rounded-md`}
-    />
   );
 }

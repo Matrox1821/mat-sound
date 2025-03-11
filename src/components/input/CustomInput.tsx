@@ -3,7 +3,14 @@ import { useState } from "react";
 interface CustomInputProps {
   title: string;
   name: string;
-  type: "text" | "textarea" | "checkbox" | "file" | "number";
+  type:
+    | "text"
+    | "textarea"
+    | "checkbox"
+    | "file"
+    | "number"
+    | "email"
+    | "password";
   isRequired?: boolean;
   labelStyle: string;
   titleStyle: string;
@@ -48,6 +55,8 @@ export function CustomInput({
       );
     case "text":
     case "number":
+    case "email":
+    case "password":
       return (
         <label className={`${labelStyle} flex`}>
           <h2 className={titleStyle}>
