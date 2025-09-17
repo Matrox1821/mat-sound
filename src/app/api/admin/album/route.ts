@@ -1,33 +1,41 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import prisma from "@/app/config/db";
+import prisma from "@/config/db";
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 import { deleteFileToBucket, uploadFileToBucket } from "@/shared/files";
-import { ALBUM_COVER_FILE_R2 } from "@/shared/constants";
 import { createAlbumInDatabase } from "@/shared/database";
+import { formatR2FilePath } from "@/shared/helpers";
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const cover_name_path = (ALBUM_COVER_FILE_R2 +
-      formData.get("name")) as string;
+    const name = formData.get("name") as string;
+    const artists = JSON.parse(formData.get("artists") as string) as {
+      name: string;
+    }[];
+    const cover_path = formatR2FilePath({
+      type: "albumCover",
+      albumName: name,
+      root: "artists",
+      artistName: artists[0].name,
+    });
     const body = {
       name: formData.get("name") as string,
       image: formData.get("image") as File,
       release_date: formData.get("release_date") as string,
       copyright: JSON.parse(formData.get("copyright") as string) as string[],
-      artists_id: JSON.parse(formData.get("artists_id") as string) as string[],
-      tracks_in_order: JSON.parse(
-        formData.get("tracks_in_order") as string
-      ) as { [key: string]: string }[],
-      cover_name_path,
+      tracks_in_order: JSON.parse(formData.get("tracks_in_order") as string) as {
+        [key: string]: string;
+      }[],
+      artists,
+      cover_path,
     };
-
-    const coverCreated = await uploadFileToBucket(body.image, cover_name_path);
+    const coverCreated = await uploadFileToBucket(body.image, cover_path);
 
     if (!coverCreated) {
-      await deleteFileToBucket(body.image, cover_name_path);
+      await deleteFileToBucket(body.image, cover_path);
+
       throw new CustomError({
         errors: [{ message: "Album cover was not created." }],
         msg: "Album cover was not created.",
@@ -58,9 +66,7 @@ export async function POST(req: NextRequest) {
 }
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams.get("artists_id") as
-      | string
-      | string[];
+    const searchParams = req.nextUrl.searchParams.get("artists_id") as string | string[];
 
     if (!searchParams) {
       throw new CustomError({

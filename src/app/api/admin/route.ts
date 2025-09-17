@@ -1,10 +1,11 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import prisma from "@/app/config/db";
+import prisma from "@/config/db";
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import { logInUser } from "@/shared/apiShared";
+
 export async function POST(req: NextRequest) {
   try {
     const body: { email: string; password: string } = await req.json();
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
         email: body.email,
       },
     });
+
     if (!request)
       throw new CustomError({
         errors: [{ message: "Admin not found." }],
@@ -30,6 +32,7 @@ export async function POST(req: NextRequest) {
         httpStatusCode: HttpStatusCode.UNAUTHORIZED,
       });
     }
+
     const { password, ...user } = request;
     const jwt = logInUser(user);
 

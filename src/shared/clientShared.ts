@@ -2,13 +2,7 @@ import { HttpStatusCode } from "@/types/httpStatusCode";
 import { getBearerAdminToken, getBearerToken } from "./cookies";
 /* import { getBearerToken, logoutUser } from "./cookies"; */
 
-function defaultError({
-  errors,
-  message = "Unknown error",
-}: {
-  errors?: any;
-  message?: string;
-}) {
+function defaultError({ errors, message = "Unknown error" }: { errors?: any; message?: string }) {
   return {
     errors: errors,
     message: message,
@@ -25,11 +19,7 @@ const handleCustomApiRequest = async <T = any>(
   try {
     let headers: any[] = [];
 
-    const parsedBody = body
-      ? body instanceof FormData
-        ? body
-        : JSON.stringify(body)
-      : undefined;
+    const parsedBody = body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined;
 
     if (withToken) {
       let token: { value: string };
@@ -51,14 +41,17 @@ const handleCustomApiRequest = async <T = any>(
 
       headers = [["Authorization", `${token}`]];
     }
+
     const fetching = await fetch(request, {
       method,
       body: parsedBody,
       next: { revalidate: 0 },
       headers,
     });
+
     const petition = await fetching.json(),
       statusCode = fetching.status;
+
     return handleStatusCode<T>(statusCode, petition);
   } catch (error: any) {
     console.error({ error, message: "hola" });
@@ -71,12 +64,6 @@ const handleStatusCode = async <T>(
   petition: { message: string; data: string; errors: string[] }
 ) => {
   switch (statusCode) {
-    case HttpStatusCode.UNAUTHORIZED:
-      /* await logoutUser(); */
-      return defaultError({
-        errors: HttpStatusCode.UNAUTHORIZED,
-        message: "Unauthorized",
-      });
     case HttpStatusCode.OK:
       return {
         message: "Data request has succeeded",
@@ -92,7 +79,6 @@ const handleStatusCode = async <T>(
   }
 };
 
-const randomKey = () =>
-  new Date(new Date().valueOf() - Math.random() * 1e12).toString();
+const randomKey = () => new Date(new Date().valueOf() - Math.random() * 1e12).toString();
 
 export { randomKey, handleCustomApiRequest };

@@ -1,4 +1,5 @@
 /* import { IsBoolean, IsEmail, IsOptional, Length } from "class-validator"; */
+import { ContentType } from ".";
 import { HttpStatusCode } from "./httpStatusCode";
 /* import { ExerciseType } from "@prisma/client";
 
@@ -317,6 +318,113 @@ export interface IDisplayToken {
   isBlank: boolean;
 }
  */
+export interface APITrack {
+  id: string;
+  name: string;
+  image: string;
+  release_date: string;
+  copyright: string[];
+  artists: { artist: { name: string; id: string; image: string } }[] | null;
+  duration: number;
+  song: string;
+  likes: number;
+  reproductions: number;
+  albums: { album: { id: true; image: true; name: true } }[] | null;
+}
+
+export interface APIAlbum {
+  id: string;
+  image: string;
+  name: string;
+  release_date: string;
+  copyright: string[];
+  duration: number;
+  _count: {
+    tracks: number;
+  };
+  tracks?:
+    | {
+        order_in_album: number;
+        track: {
+          name: string;
+          id: string;
+          image: string;
+          artists?: { artist: { name: string; id: string } }[] | null;
+          reproductions: number;
+          duration: number;
+          song: string;
+        };
+      }[]
+    | null;
+  artist?: { name: string; id: string; image: string } | null;
+}
+
+export interface APIContent {
+  id: string;
+  image: string | string[];
+  name: string;
+  song?: string;
+  type: ContentType;
+  seconds: number;
+  order_in_album?: number | null;
+  duration: number;
+  reproductions: number;
+  release_date: string;
+  _count?: {
+    likes: number;
+  };
+  albums?:
+    | {
+        album: {
+          name: string;
+          id: string;
+          image: string;
+        };
+      }[]
+    | null;
+  artists?:
+    | {
+        artist: {
+          name: string;
+          id: string;
+          avatar: string;
+        };
+      }[]
+    | null;
+  artist?: { name: string; id: string; avatar: string } | null;
+}
+
+export interface APIArtist {
+  id: string;
+  name: string;
+  image: string;
+  page_cover?: string;
+  description?: string;
+  listeners: number;
+  is_verified: boolean;
+  regional_listeners?: { [key: string]: string }[];
+  socials?: { [key: string]: string }[];
+  covers?: string[];
+  followers_default: number;
+  _count: {
+    followers: number;
+  };
+}
+
+export interface APIRecentsArtistTracks {
+  id: string;
+  name: string;
+  image: string;
+  song: string;
+  release_date: string;
+  duration: number;
+  reproductions: number;
+  _count: {
+    likes: number;
+  };
+  albums: { album: { name: string; id: string; image: string } }[];
+}
+
 // ERROR ----------------------
 
 export class CustomError extends Error {

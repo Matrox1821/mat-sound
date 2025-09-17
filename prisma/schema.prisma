@@ -1,3 +1,5 @@
+
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -51,13 +53,16 @@ model Artist {
   id                 String   @id @default(uuid(7))
   name               String
   image              String
+  page_cover         String
   description        String
   listeners          Int
   is_verified        Boolean
   regional_listeners Json
   socials            Json
   covers             String[] @default([])
+
   followers_default  Int
+  
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
 
@@ -67,6 +72,7 @@ model Artist {
 
   followers Follows[]
 }
+
 
 model Album {
   id           String   @id @default(uuid(7))
@@ -125,6 +131,8 @@ model Track {
   duration      Int
   reproductions Int
 
+ /*  default_likes Int */
+
   likes Likes[]
 
   artists TracksOnArtists[]
@@ -164,7 +172,7 @@ model Likes {
 model Playlist {
   id   String @id @default(uuid(7))
   name String
-
+  images String[]
   tracks TrackPlaylist[]
 
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
