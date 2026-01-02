@@ -1,56 +1,78 @@
 "use client";
 import { RefObject } from "react";
 import { usePlaybackStore } from "@/store/playbackStore";
-import { usePlaylistManager } from "@/hooks/player/usePlaylistManager";
+import { usePlaylistManager } from "@/shared/client/hooks/player/usePlaylistManager";
 import { Pause } from "@/components/UI/Icons/Playback/Pause";
 import { Play } from "@/components/UI/Icons/Playback/Play";
 import { Next, Prev } from "@/components/UI/Icons/Playback/SkipTo";
+import { Shuffle } from "@/components/UI/Icons/Playback/Shuffle";
+import { LoopAll, LoopOnce } from "@/components/UI/Icons/Playback/Loop";
+import { usePlayerStore } from "@/store/playerStore";
 
 interface PlayerControllerProps {
   audioRef: RefObject<HTMLAudioElement>;
 }
 
 const PlayerController = ({ audioRef }: PlayerControllerProps) => {
-  const { isShuffled, isPlaying, inLoop } = usePlaybackStore();
-  const { handlePlayPause, handleNext, handlePrevious, hasNext, hasPrevious } =
-    usePlaylistManager();
+  const { isShuffled, isPlaying, setLoopMode, loopMode, toggleShuffle } = usePlaybackStore();
+  const { next, prev, shuffleOff, shuffleOn } = usePlayerStore();
+  const { handlePlayPause } = usePlaylistManager();
+
+  const shuffle = () => {
+    if (isShuffled) {
+      shuffleOff();
+    } else {
+      shuffleOn();
+    }
+    toggleShuffle();
+  };
 
   return (
     <div className="flex items-center justify-center gap-4 h-full w-full">
-      {/* <button
-        onClick={handleShuffle}
-        className={`text-xl ${isShuffled ? "text-primary" : "text-background-500"}`}
-      >
-        <i className="fas fa-random" />
-      </button> */}
       <button
-        onClick={handlePrevious}
-        className={`flex items-center justify-center text-xl h-10 w-10 ${
-          hasPrevious ? "cursor-pointer" : "cursor-default"
+        onClick={shuffle}
+        className={`w-8 h-8 flex items-center justify-center text-content-950 cursor-pointer ${
+          isShuffled ? "text-primary bg-background-600 rounded-xl" : ""
         }`}
       >
-        <Prev className={`${hasPrevious ? "text-white" : "text-white/50"}`} />
+        <Shuffle className="w-4 h-4 hover:text-white/80" />
+      </button>
+      <button
+        onClick={prev}
+        className={`flex items-center justify-center text-xl h-10 w-10 cursor-pointer`}
+      >
+        <Prev className="text-white hover:text-white/80" />
       </button>
       <button
         onClick={() => handlePlayPause()}
         className="flex items-center justify-center text-2xl h-10 w-10 cursor-pointer"
       >
-        {isPlaying ? <Pause /> : <Play />}
+        {isPlaying ? (
+          <Pause className="hover:text-white/80 h-8 w-8" />
+        ) : (
+          <Play className="hover:text-white/80 h-8 w-8" />
+        )}
       </button>
       <button
-        onClick={handleNext}
-        className={`flex items-center justify-center text-xl h-10 w-10 ${
-          hasNext ? "cursor-pointer" : "cursor-default"
+        onClick={next}
+        className={`flex items-center justify-center text-xl h-10 w-10  cursor-pointer `}
+      >
+        <Next className="text-white hover:text-white/80" />
+      </button>
+      <button
+        onClick={() =>
+          setLoopMode(loopMode === "none" ? "all" : loopMode === "all" ? "once" : "none")
+        }
+        className={`w-8 h-8 cursor-pointer flex items-center justify-center text-content-950 ${
+          loopMode !== "none" ? "text-primary bg-background-600 rounded-xl" : ""
         }`}
       >
-        <Next className={`${hasNext ? "text-white" : "text-white/50"}`} />
+        {loopMode !== "once" ? (
+          <LoopAll className="w-4 h-4 hover:text-white/80" />
+        ) : (
+          <LoopOnce className="w-4 h-4 hover:text-white/80" />
+        )}
       </button>
-      {/*  <button
-        onClick={() => setLoopMode(!inLoop)}
-        className={`text-xl ${inLoop ? "text-primary" : "text-background-500"}`}
-      >
-        <i className="fas fa-repeat" />
-      </button> */}
     </div>
   );
 };

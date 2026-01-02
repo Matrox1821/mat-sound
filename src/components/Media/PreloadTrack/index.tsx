@@ -5,7 +5,7 @@ interface CarouselCardPlayButtonProps {
 }
 
 const PreloadTrack = ({ track }: CarouselCardPlayButtonProps) => {
-  return <link rel="preload" as="audio" href={track.song} />;
+  return <link rel="preload" as="fetch" href={track.song} crossOrigin="anonymous" />;
 };
 
 export default PreloadTrack;

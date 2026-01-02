@@ -23,6 +23,7 @@ export interface APIAlbum {
           reproductions: number;
           duration: number;
           song: string;
+          lyric: string;
         };
       }[]
     | null;

@@ -1,18 +1,20 @@
 "use client";
-import { useProgress } from "@/hooks/player/useProgress";
-import { formatTime } from "@/shared/helpers";
+import { useProgress } from "@/shared/client/hooks/player/useProgress";
+import { formatTime } from "@/shared/utils/helpers";
 import {
   Slider as SliderRoute,
   SliderRange,
   SliderThumb,
   SliderTrack,
 } from "@radix-ui/react-slider";
-import { RefObject, useRef, useState, useMemo, useCallback, useEffect } from "react";
+import { RefObject, useRef, useState, useCallback } from "react";
 
 const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const hoverTimeRef = useRef<HTMLTimeElement>(null);
-  const { currentTime, duration, setIsDragging, setCurrentTime } = useProgress(audioRef);
+  const { currentTime, duration, setIsDragging, setCurrentTime, isDragging } =
+    useProgress(audioRef);
+  const [isHovering, setIsHovering] = useState(false);
   const [hoverTime, setHoverTime] = useState("0:00");
   const [hoverPosition, setHoverPosition] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -56,14 +58,16 @@ const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
   const formattedDuration = formatTime(duration || 0);
 
   return (
-    <div className="flex items-center gap-2 min-w-[300px] max-w-[600px]">
+    <div className="flex items-center justify-center gap-2 min-w-[300px] w-3/5">
       <time className="text-[12px] w-9 flex justify-center items-center">
         {formattedCurrentTime}
       </time>
       <div
         ref={sliderRef}
-        className="relative flex h-8 touch-none min-w-[250px] max-w-[600px] select-none items-center slider-container"
+        className="relative flex h-8 touch-none min-w-[250px] w-4/5 select-none items-center slider-container"
         onPointerMove={handlePointerMove}
+        onPointerEnter={() => setIsHovering(true)}
+        onPointerLeave={() => setIsHovering(false)}
       >
         <SliderRoute
           className="relative flex h-8 touch-none w-full select-none items-center slider-route"
@@ -75,32 +79,30 @@ const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
           onPointerDown={() => setIsDragging(true)}
           onPointerUp={() => setIsDragging(false)}
         >
-          <SliderTrack className="slider-track relative h-[3px] grow rounded-full bg-background-500">
+          <SliderTrack className=" relative h-[3px] grow rounded-full bg-background-500">
             <SliderRange className="absolute h-full rounded-full bg-background-50" />
           </SliderTrack>
           <SliderThumb
-            className="slider-thumb block h-3 w-1 rounded-full bg-background-50 shadow-[0_0_2px_1px_rgb(0_0_0/0.45)] hover:scale-110 transition-[transform,opacity] focus:border-0"
+            className=" block h-3 w-1 rounded-full bg-background-50 shadow-[0_0_2px_1px_rgb(0_0_0/0.45)] hover:scale-110 transition-[transform,opacity] focus:border-0"
             style={{
-              opacity: 0,
+              opacity: isHovering || isDragging ? 1 : 0,
             }}
             aria-label="Song progress"
           />
         </SliderRoute>
-        {isVisible && (
+        {(isHovering || isDragging) && isVisible && (
           <time
             ref={hoverTimeRef}
-            className="hover-time absolute bottom-6 bg-background-50 text-background-950 font-bold text-[12px] p-[2px] rounded-xs w-9 flex justify-center items-center transition-opacity duration-200"
+            className=" absolute bottom-6 bg-background-50 text-background-950 font-bold text-[12px] p-[2px] rounded-xs w-9 flex justify-center items-center transition-opacity duration-200"
             style={{
               left: `${hoverPosition - 18}px`,
-              opacity: 0,
+              opacity: 1,
               pointerEvents: "none",
             }}
           >
             {hoverTime}
           </time>
         )}
-        {/* {isDragging && (
-        )} */}
       </div>
       <time className="text-[12px] w-9 flex justify-center items-center">{formattedDuration}</time>
     </div>

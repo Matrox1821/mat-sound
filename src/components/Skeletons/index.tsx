@@ -20,4 +20,5 @@ function CarouselSkeleton() {
     </div>
   );
 }
+
 export { CardSkeleton, CarouselSkeleton };
