@@ -1,6 +1,6 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { JsonValue } from "@prisma/client/runtime/library";
+import { JsonValue } from "@prisma/client/runtime/client";
 
 const createAlbum = async (album: any) => {
   return await handleCustomApiRequest(GET_URL + "/api/admin/album", "POST", album, true);

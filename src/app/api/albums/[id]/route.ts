@@ -1,8 +1,8 @@
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
-import prisma from "@/config/db";
 import { onSuccessRequest, onThrowError } from "@/apiService";
+import { prisma } from "@config/db";
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -14,35 +14,41 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       select: {
         id: true,
         name: true,
-        image: true,
+        cover: true,
         release_date: true,
-        copyright: true,
-        artist: {
+        artists: {
           select: {
-            id: true,
-            image: true,
-            name: true,
+            artist: { select: { id: true, avatar: true, name: true } },
           },
         },
-        _count: { select: { tracks: { where: { album_id: id } } } },
+        _count: { select: { tracks: { where: { album: { id } } } } },
         tracks: {
           select: {
-            order_in_album: true,
+            order: true,
+            disk: true,
             track: {
               select: {
-                artists: { select: { artist: { select: { name: true, id: true } } } },
+                artists: {
+                  select: {
+                    artist: { select: { name: true, id: true, avatar: true } },
+                  },
+                },
+                albums: {
+                  select: { album: { select: { name: true, id: true } } },
+                },
+                lyric: true,
                 reproductions: true,
                 duration: true,
                 name: true,
                 song: true,
                 id: true,
+                cover: true,
               },
             },
           },
         },
       },
     });
-
     if (!response) {
       throw new CustomError({
         errors: [
@@ -55,7 +61,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       });
     }
 
-    const duration = response.tracks.map((track) => track.track.duration).reduce((a, b) => a + b);
+    const duration = response.tracks.map(({ track }) => track.duration).reduce((a, b) => a + b);
 
     return onSuccessRequest({
       httpStatusCode: 200,

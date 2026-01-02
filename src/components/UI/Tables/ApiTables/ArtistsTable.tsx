@@ -4,11 +4,11 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { use, useRef } from "react";
 
-import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup"; // To use <ConfirmPopup> tag
+import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Toast } from "primereact/toast";
 import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { JsonValue } from "@prisma/client/runtime/library";
+import { JsonValue } from "@prisma/client/runtime/client";
 
 export default function ArtistsTable({
   data,
@@ -31,7 +31,7 @@ export default function ArtistsTable({
     const filled = [...arr];
     const emptyCount = minRows - arr.length;
     for (let i = 0; i < emptyCount; i++) {
-      filled.push({ name: "", id: `empty-${i}`, avatar: { sm: "", md: "", lg: "" } }); // id único para evitar keys duplicadas
+      filled.push({ name: "", id: `empty-${i}`, avatar: { sm: "", md: "", lg: "" } });
     }
 
     return filled;
