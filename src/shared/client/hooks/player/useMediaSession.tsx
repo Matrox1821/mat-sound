@@ -13,13 +13,10 @@ export const useMediaSession = (
     if ("mediaSession" in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentTrack.name,
-        artist: currentTrack.artists
-          ? currentTrack.artists[0].artist.name
-          : currentTrack.artist?.name,
+        artist: currentTrack.artists ? currentTrack.artists[0].name : currentTrack.artist?.name,
         artwork: [
           {
-            src:
-              typeof currentTrack.image === "string" ? currentTrack.image : currentTrack.image[0],
+            src: currentTrack.image.sm,
             sizes: "512x512",
             type: "image/jpeg",
           },

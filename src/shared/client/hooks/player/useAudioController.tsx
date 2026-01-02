@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import type { RefObject } from "react";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
@@ -8,31 +8,37 @@ export const useAudioController = (audio: RefObject<HTMLAudioElement | null>) =>
   const { isPlaying, volume } = usePlaybackStore((state) => state);
   const { currentTrack } = usePlayerStore((state) => state);
 
-  const objectUrlRef = useRef<string | null>(null);
   useEffect(() => {
     if (!audio?.current || !currentTrack) return;
 
     const currentAudio = audio.current;
+    let cancelled = false;
+    // Reset completo del audio (evita AbortError + NotSupportedError)
+    currentAudio.pause();
+    currentAudio.removeAttribute("src");
+    currentAudio.load();
 
-    if (objectUrlRef.current) {
-      URL.revokeObjectURL(objectUrlRef.current);
-      objectUrlRef.current = null;
-    }
-    fetch(currentTrack.song)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        objectUrlRef.current = url;
-        currentAudio.src = url;
-        currentAudio.volume = volume;
+    // Asignar nuevo audio
+    currentAudio.src = currentTrack.song;
+    currentAudio.volume = volume;
 
-        if (isPlaying) {
-          currentAudio
-            .play()
-            .catch((err) => console.error("Error reproducir track prefeteado:", err));
-        }
-      })
-      .catch((err) => console.error("Error prefetch audio:", err));
+    // Reproducir solo cuando esté listo
+    const onLoadedMetadata = () => {
+      if (cancelled) return;
+
+      if (isPlaying) {
+        currentAudio.play().catch((err) => {
+          console.error("Error al reproducir:", err);
+        });
+      }
+    };
+
+    currentAudio.addEventListener("loadedmetadata", onLoadedMetadata);
+
+    return () => {
+      cancelled = true;
+      currentAudio.removeEventListener("loadedmetadata", onLoadedMetadata);
+    };
   }, [currentTrack, audio]);
 
   useEffect(() => {

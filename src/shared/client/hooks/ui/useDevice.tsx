@@ -1,5 +1,5 @@
 "use client";
-import { MAX_SIZE_MOBILE } from "@/shared/constants";
+import { MAX_SIZE_MOBILE } from "@/shared/utils/constants";
 import { useEffect, useState } from "react";
 
 export const useDevice = () => {

@@ -1,6 +1,6 @@
 "use client";
 import { useUIStore } from "@/store/activeStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export const useMainHeight = () => {
   const { playerBarIsActive } = useUIStore((state) => state);
@@ -10,12 +10,10 @@ export const useMainHeight = () => {
     const updateHeight = () => {
       const footer = document.querySelector("footer");
       const root = document.querySelector("div#root") as HTMLElement;
-      console.log(root.clientHeight);
       const footerHeight = footer?.getBoundingClientRect().height || 0;
       const windowHeight = window.innerHeight;
 
       root.style.setProperty("height", `${windowHeight - footerHeight}px`, "important");
-      console.log(root.clientHeight);
     };
 
     updateHeight();

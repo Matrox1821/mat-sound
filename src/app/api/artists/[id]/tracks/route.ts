@@ -1,8 +1,8 @@
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
-import prisma from "@/config/db";
 import { onSuccessRequest, onThrowError } from "@/apiService";
+import { prisma } from "@config/db";
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -32,34 +32,34 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       }
       return orderBy;
     };
-    const response = await prisma.tracksOnArtists.findMany({
-      orderBy: { track: { ...orderBy() } },
-      take: limit,
+    const response = await prisma.track.findMany({
       where: {
-        artist_id: id,
-      },
-      select: {
-        track: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-            song: true,
-            release_date: true,
-            duration: true,
-            reproductions: true,
-            _count: {
-              select: {
-                likes: true,
-              },
-            },
-            albums: {
-              select: { album: { select: { id: true, name: true, image: true } } },
-            },
+        artists: {
+          some: {
+            artist: { id },
           },
         },
       },
+      orderBy: { ...orderBy() },
+      take: limit || 10,
+      select: {
+        id: true,
+        name: true,
+        cover: true,
+        song: true,
+        release_date: true,
+        duration: true,
+        reproductions: true,
+        lyric: true,
+        _count: {
+          select: { likes: true },
+        },
+        albums: {
+          select: { album: { select: { id: true, name: true, cover: true } } },
+        },
+      },
     });
+
     if (!response || response.length === 0) {
       throw new CustomError({
         errors: [
@@ -71,6 +71,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         httpStatusCode: HttpStatusCode.NOT_FOUND,
       });
     }
+
     return onSuccessRequest({
       httpStatusCode: 200,
       data: response,

@@ -1,12 +1,31 @@
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
-import prisma from "@/config/db";
 import { onSuccessRequest, onThrowError } from "@/apiService";
+import { getTracks } from "@/shared/server/track/trackRepository";
+import { prisma } from "@config/db";
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-
+    const limit = req.nextUrl.searchParams.get("limit");
+    if (limit) {
+      const tracks = await getTracks(Number(limit), { by: "tracks", id });
+      if (!tracks) {
+        throw new CustomError({
+          errors: [
+            {
+              message: "The search returned no results. No elements were found.",
+            },
+          ],
+          msg: "The search returned no results. No elements were found.",
+          httpStatusCode: HttpStatusCode.NOT_FOUND,
+        });
+      }
+      return onSuccessRequest({
+        httpStatusCode: HttpStatusCode.OK,
+        data: tracks,
+      });
+    }
     const response = await prisma.track.findUnique({
       where: {
         id,
@@ -14,15 +33,33 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       select: {
         id: true,
         name: true,
-        image: true,
+        cover: true,
         release_date: true,
-        copyright: true,
-        artists: { select: { artist: { select: { id: true, image: true, name: true } } } },
+        artists: {
+          select: { artist: { select: { id: true, avatar: true, name: true } } },
+        },
         duration: true,
         song: true,
         likes: true,
         reproductions: true,
-        albums: { select: { album: { select: { id: true, image: true, name: true } } } },
+        lyric: true,
+        albums: {
+          select: {
+            album: {
+              select: { id: true, cover: true, name: true },
+            },
+          },
+        },
+        genres: {
+          select: {
+            genre: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -39,7 +76,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     return onSuccessRequest({
-      httpStatusCode: 200,
+      httpStatusCode: HttpStatusCode.OK,
       data: response,
     });
   } catch (error) {

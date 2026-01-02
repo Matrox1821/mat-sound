@@ -1,8 +1,8 @@
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
-import prisma from "@/config/db";
 import { onSuccessRequest, onThrowError } from "@/apiService";
+import { prisma } from "@config/db";
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -14,8 +14,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       select: {
         id: true,
         name: true,
-        image: true,
-        page_cover: true,
+        avatar: true,
+        main_cover: true,
         description: true,
         covers: true,
         is_verified: true,

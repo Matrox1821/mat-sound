@@ -1,5 +1,5 @@
 import { HttpStatusCode } from "@/types/httpStatusCode";
-import { getBearerAdminToken, getBearerToken } from "./cookies";
+import { getBearerAdminToken, getBearerToken } from "../server/cookies";
 /* import { getBearerToken, logoutUser } from "./cookies"; */
 
 function defaultError({ errors, message = "Unknown error" }: { errors?: any; message?: string }) {
@@ -17,7 +17,7 @@ const handleCustomApiRequest = async <T = any>(
   withToken: boolean = false
 ) => {
   try {
-    let headers: any[] = [];
+    let headers = new Headers();
 
     const parsedBody = body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined;
 
@@ -39,7 +39,7 @@ const handleCustomApiRequest = async <T = any>(
         token = user_token;
       }
 
-      headers = [["Authorization", `${token}`]];
+      headers.set("Authorization", `Bearer ${token.value}`);
     }
 
     const fetching = await fetch(request, {
@@ -54,7 +54,6 @@ const handleCustomApiRequest = async <T = any>(
 
     return handleStatusCode<T>(statusCode, petition);
   } catch (error: any) {
-    console.error({ error, message: "hola" });
     return defaultError({ errors: error });
   }
 };
@@ -65,6 +64,7 @@ const handleStatusCode = async <T>(
 ) => {
   switch (statusCode) {
     case HttpStatusCode.OK:
+    case HttpStatusCode.CREATED:
       return {
         message: "Data request has succeeded",
         errors: [],

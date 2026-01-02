@@ -1,54 +1,51 @@
 "use client";
 import { useEffect, useState, type RefObject } from "react";
-import { usePlaylistManager } from "./usePlaylistManager";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { useProgressStore } from "@/store/progressStore";
+import { usePlayerStore } from "@/store/playerStore";
 
 export const useProgress = (audioRef: RefObject<HTMLAudioElement | null>) => {
-  const { inLoop } = usePlaybackStore((state) => state);
+  const { loopMode } = usePlaybackStore((state) => state);
+  const { next } = usePlayerStore((state) => state);
   const { currentTime, setCurrentTime, duration } = useProgressStore((state) => state);
-  const { handleNext } = usePlaylistManager();
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    if (!audioRef?.current) return;
-
     const audio = audioRef.current;
+    if (!audio) return;
 
+    // --- TIME UPDATE ---
     const handleTimeUpdate = () => {
       if (!isDragging) {
         setCurrentTime(audio.currentTime);
       }
 
-      if ("mediaSession" in navigator) {
-        updatePositionState(duration, audio.currentTime);
-      }
+      if ("mediaSession" in navigator && duration && duration > 0) {
+        const safePosition = Math.min(audio.currentTime, duration - 0.01);
 
-      if (audio.currentTime === duration && !isDragging) {
-        if (inLoop) {
-          audio.currentTime = 0;
-          setCurrentTime(0);
-          audio.play().catch(console.error);
-        } else {
-          handleNext();
-        }
-      } else {
+        navigator.mediaSession.setPositionState({
+          duration,
+          position: safePosition,
+        });
       }
+    };
+
+    // --- TRACK ENDED ---
+    const handleEnded = () => {
+      audio.currentTime = 0;
+      setCurrentTime(0);
+      audio.play().catch(console.error);
+      next();
     };
 
     audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("ended", handleEnded);
 
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("ended", handleEnded);
     };
-  }, [audioRef, inLoop, handleNext, isDragging]);
-
-  const updatePositionState = (mediaDuration: number, position: number) => {
-    navigator.mediaSession.setPositionState({
-      duration: mediaDuration || 180,
-      position,
-    });
-  };
+  }, [audioRef, loopMode, next, isDragging, duration, setCurrentTime, currentTime]);
 
   return {
     currentTime,

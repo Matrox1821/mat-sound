@@ -1,20 +1,24 @@
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
-import prisma from "@/config/db";
 import { onSuccessRequest, onThrowError } from "@/apiService";
+import { prisma } from "@config/db";
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
     const response = await prisma.album.findMany({
       where: {
-        artist_id: id,
+        artists: {
+          some: {
+            artist: { id },
+          },
+        },
       },
       select: {
         id: true,
         name: true,
-        image: true,
+        cover: true,
         release_date: true,
       },
     });
