@@ -6,7 +6,9 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "1024mb",
     },
     viewTransition: true,
+    imgOptTimeoutInSeconds: 20000,
   },
+
   images: {
     remotePatterns: [
       {

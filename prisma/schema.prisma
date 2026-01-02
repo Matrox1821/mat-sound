@@ -1,21 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 //User
 
 /**
  * model User {
- * id                   String       @id @default(uuid(7))
+ * id                   String       @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
  * active               Boolean?
- * created_at           DateTime        @default(now())
+ * created_at           DateTime        @db.Date @default(dbgenerated("now()"))
  * email                String          @unique
  * password             String
  * name                 String
@@ -30,7 +34,7 @@ datasource db {
  * user_ Int             @unique
  * }
  * model UserProfile {
- * id            String       @id @default(uuid(7))
+ * id            String       @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
  * user        User?
  * color       String
  * image       String
@@ -38,164 +42,182 @@ datasource db {
  */
 /**
  * model Historical {
- * id            String       @id @default(uuid(7))
+ * id            String       @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
  * user         User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
  * user_id      Int?
  * last_heard   LastHeard
  * last_searched   LastSearched
  * content      Content  @relation(fields: [content_id], references: [id], onDelete: Cascade)
- * last_watched DateTime @default(now())
+ * last_watched DateTime @db.Date @default(dbgenerated("now()"))
  * content_id   Int
  * }
  */
 
 model Artist {
-  id                 String   @id @default(uuid(7))
+  id                 String   @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name               String
-  image              String
-  page_cover         String
+  avatar             Json
+  main_cover         String
   description        String
   listeners          Int
   is_verified        Boolean
   regional_listeners Json
-  socials            Json
+  socials            Json 
   covers             String[] @default([])
 
   followers_default  Int
   
-  created_at         DateTime @default(now())
+  created_at         DateTime @default(dbgenerated("now()")) 
   updated_at         DateTime @updatedAt
 
-  Albums Album[]
+  albums Album[]
 
-  tracks TracksOnArtists[]
+  tracks Track[]
 
   followers Follows[]
+
+  genres Genre[]
+
+  @@index([name])
 }
 
 
 model Album {
-  id           String   @id @default(uuid(7))
+  id           String   @id  @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name         String
-  image        String
-  release_date DateTime @default(now())
-  copyright    String[]
+  cover        Json
+  release_date DateTime @db.Date @default(dbgenerated("now()"))
 
-  artist    Artist? @relation(fields: [artist_id], references: [id], onDelete: Cascade)
-  artist_id String?
+  artists   Artist[]
+
+  genres Genre[]
 
   tracks TracksOnAlbums[]
 
-  created_at DateTime @default(now())
+  created_at DateTime @db.Date @default(dbgenerated("now()"))
   updated_at DateTime @updatedAt
-}
 
-/**
- * model Playlist {
- * id    String @id @default(uuid(7))
- * name  String
- * creator_id String
- * }
- */
-
-model TracksOnAlbums {
-  order_in_album Int
-
-  album    Album  @relation(fields: [album_id], references: [id], onDelete: Cascade)
-  album_id String
-
-  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
-  track_id String
-
-  @@id([album_id, track_id])
-}
-
-model TracksOnArtists {
-  artist    Artist @relation(fields: [artist_id], references: [id], onDelete: Cascade)
-  artist_id String
-
-  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
-  track_id String
-
-  @@id([artist_id, track_id])
+  @@index([name])
 }
 
 model Track {
-  id    String @id @default(uuid(7))
-  name  String
-  image String
-
+  id            String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  name          String
+  cover         Json
   song          String
-  copyright     String[]
-  release_date  DateTime @default(now())
+  release_date  DateTime @db.Date @default(dbgenerated("now()"))
   duration      Int
+  lyric         String?
+ /*  default_reproductions Int ¿? */ 
+
   reproductions Int
 
  /*  default_likes Int */
 
+  genres Genre[]
+
   likes Likes[]
 
-  artists TracksOnArtists[]
+  artists Artist[]
 
   albums TracksOnAlbums[]
 
   playlists TrackPlaylist[]
 
-  created_at DateTime @default(now())
+  created_at DateTime @db.Date @default(dbgenerated("now()"))
   updated_at DateTime @updatedAt
+  
+  @@index([name])
 }
+
+
+
+model Genre {
+  id   String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  artists Artist[]
+  albums Album[]
+  tracks Track[]
+  name String
+  added_at DateTime @db.Date @default(dbgenerated("now()"))
+}
+
+
+/**
+ * model Playlist {
+ * id    String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+ * name  String
+ * creator_id String
+ * }
+ */
+
+
+model TracksOnAlbums {
+  order Int @default(1) @db.Integer
+  disk Int  @default(1) @db.Integer
+
+  album    Album  @relation(fields: [album_id], references: [id], onDelete: Cascade)
+  album_id String @db.Uuid
+
+  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
+  track_id String @db.Uuid
+
+  @@id([album_id, track_id])
+}
+
+
+model TrackPlaylist {
+  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
+  track_id String @db.Uuid
+
+  playlist    Playlist @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+  playlist_id String @db.Uuid
+
+  added_at DateTime @db.Date @default(dbgenerated("now()"))
+
+  @@id([track_id, playlist_id])
+}
+
 
 model Follows {
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id String
+  user_id String @db.Uuid
 
   artist    Artist @relation(fields: [artist_id], references: [id], onDelete: Cascade)
-  artist_id String
+  artist_id String @db.Uuid
 
-  followed_at DateTime @default(now())
+  followed_at DateTime @db.Date @default(dbgenerated("now()"))
 
   @@id([user_id, artist_id])
 }
 
 model Likes {
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id String
+  user_id String @db.Uuid
 
   track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
-  track_id String
+  track_id String @db.Uuid
 
-  followed_at DateTime @default(now())
+  followed_at DateTime @db.Date @default(dbgenerated("now()"))
 
   @@id([user_id, track_id])
 }
 
 model Playlist {
-  id   String @id @default(uuid(7))
+  id   String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name String
   images String[]
   tracks TrackPlaylist[]
 
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id String
+  user_id String @db.Uuid
 
-  created_at DateTime @default(now())
+  created_at DateTime @db.Date @default(dbgenerated("now()"))
   updated_at DateTime @updatedAt
 }
 
-model TrackPlaylist {
-  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
-  track_id String
-
-  playlist    Playlist @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
-  playlist_id String
-
-  added_at DateTime @default(now())
-
-  @@id([track_id, playlist_id])
-}
 
 model User {
-  id        String  @id @default(uuid(7))
+  id        String  @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name      String
   image     String?
   active    Boolean
@@ -211,12 +233,12 @@ model User {
 
   playlists Playlist[]
 
-  created_at DateTime @default(now())
+  created_at DateTime @db.Date @default(dbgenerated("now()"))
   updated_at DateTime @updatedAt
 }
 
 model Admin {
-  id       String @id @default(uuid(7)) 
+  id       String @id @db.Uuid @default(dbgenerated("gen_random_uuid()")) 
   email    String @unique
   password String
 }

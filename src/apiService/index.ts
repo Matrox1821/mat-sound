@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
+import { Prisma } from "../../generated/prisma/client";
 
 const validateOrReject = async (input: any) => {};
 
