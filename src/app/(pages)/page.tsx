@@ -3,7 +3,7 @@ import Carousel from "@/components/UI/Carousel";
 export default async function Home() {
   return (
     <section
-      className={`w-full h-full overflow-y-auto overflow-x-hidden md:pt-8 md:bg-background md:transition-[heigth] md:duration-200`}
+      className={`flex flex-col gap-12 w-full h-full overflow-y-auto overflow-x-hidden md:pt-8 md:bg-background md:transition-[heigth] md:duration-200 lg:pt-24 lg:pl-18`}
     >
       <Carousel title="Canciones" options={{ type: ["tracks"] }} />
       <Carousel title="Artistas" options={{ type: ["artists"] }} />

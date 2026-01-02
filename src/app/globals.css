@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -57,9 +56,10 @@
 }
 
 * {
-  font-family: Plus Jakarta Sans, sans-serif;
   font-optical-sizing: auto;
   box-sizing: border-box;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 
 li,
@@ -75,15 +75,11 @@ h4 {
 p {
   text-wrap: pretty;
 }
-code {
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
-}
 body {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-  font-family: system-ui, sans-serif;
+
   background: rgba(var(--bg), 1);
   color: rgba(var(--content));
 }
@@ -103,7 +99,7 @@ section::-webkit-scrollbar {
 }
 
 section::-webkit-scrollbar-track {
-  background: var(--sb-track-color) !important;
+  background: transparent !important;
   border-radius: 1px !important;
 }
 
@@ -161,8 +157,8 @@ section::-webkit-scrollbar-thumb {
   &::after {
     content: "";
     position: absolute;
-    width: 4rem;
-    height: 4rem;
+    width: 60px;
+    height: 70px;
     background: conic-gradient(rgb(190, 190, 190) var(--angle), transparent 0deg 360deg);
     z-index: 10;
     animation: border-right 3s linear, border-completed 3s forwards;
@@ -170,8 +166,8 @@ section::-webkit-scrollbar-thumb {
   &::before {
     content: "";
     position: absolute;
-    width: 4rem;
-    height: 4rem;
+    width: 60px;
+    height: 70px;
     background-image: conic-gradient(rgb(190, 190, 190) var(--angle2), transparent 0deg 360deg);
     z-index: 10;
     animation: border-left 2.5s linear;
@@ -379,4 +375,82 @@ section::-webkit-scrollbar-thumb {
     rgba(0, 0, 0, 0.23853291316526615) 89%,
     rgba(255, 255, 255, 0) 98%
   );
+}
+
+.p-stepper-panels {
+  background-color: hsl(0, 0%, 8%) !important;
+  border-radius: 10px;
+}
+.p-stepper-content > span {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+.p-datatable-wrapper {
+  border-radius: 6px 6px 0 0 !important;
+  background-color: #2e2e2e !important;
+}
+.p-datatable-thead > tr > th {
+  background-color: #2e2e2e !important;
+  border-color: #141414;
+}
+.p-datatable-tbody {
+  background-color: #2e2e2e !important;
+}
+/* .p-paginator-page-start {
+  background-color: #1a1a1a !important;
+} */
+
+.p-paginator-page.p-paginator-element.p-link.p-highlight {
+  background-color: #1a1a1a !important;
+}
+
+.p-dropdown.p-inputwrapper,
+.p-dropdown-items {
+  background-color: #1a1a1a !important;
+  border-color: #575757 !important;
+}
+.p-dropdown-item.p-highlight {
+  background-color: #141414 !important;
+  border-color: #141414;
+}
+.p-dropdown-item.p-highlight.p-focus {
+  background-color: #2e2e2e !important;
+  border-color: #575757 !important;
+}
+
+.p-dropdown-panel.p-component.p-ripple-disabled.p-connected-overlay-enter-done {
+  border-color: hsl(0, 0%, 8%) !important;
+}
+
+.p-datatable-striped {
+  width: 100% !important;
+}
+.blurred {
+  filter: blur(10px);
+}
+
+.p-sidebar-mask.p-sidebar-bottom {
+  z-index: 40 !important;
+  background: var(--sidebar-bg) !important;
+}
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  /*  border: 0px solid transparent;
+  box-shadow: inset 0 0 1px 1px rgba(255, 255, 255, 0.2), 0 16px 32px rgba(0, 0, 0, 0.12); */
+  backdrop-filter: blur(2px) brightness(0.8);
+  filter: url(#glass-distortion);
+  /* -webkit-backdrop-filter: url(#frosted); */
+  outline: 0;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.vinyl {
+  animation: rotate 10s infinite linear;
+}
+@keyframes rotate {
+  to {
+    transform: rotateZ(360deg);
+  }
 }
