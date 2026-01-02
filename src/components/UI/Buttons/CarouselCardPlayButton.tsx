@@ -6,34 +6,37 @@ import { usePlaybackStore } from "@/store/playbackStore";
 import { Pause } from "../Icons/Playback/Pause";
 import { useProgressStore } from "@/store/progressStore";
 import { useUIStore } from "@/store/activeStore";
+import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 
 interface CarouselCardPlayButtonProps {
   track: contentProps;
 }
 
 const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
-  const { setCurrentTrack, currentTrack, setPlaylist, setCopiedPlaylist } = usePlayerStore(
+  const { currentTrack, setTrack, setUpcoming, setPlayingFrom, reset } = usePlayerStore(
     (state) => state
   );
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
-
+  const parsedTracks = track.tracks?.map((newTrack) => parseTrackByPlayer(newTrack));
+  const parsedTrack = parseTrackByPlayer(track);
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
     if (!playerBarIsActive) activePlayerBar();
-    if (track.id === currentTrack?.id) {
+    if (parsedTrack.id === currentTrack?.id) {
       if (isPlaying) {
         pause();
       } else {
         play();
       }
     } else {
-      setCurrentTrack(track);
-      setPlaylist([track]);
-      setCopiedPlaylist([track]);
-      setDuration(track.duration);
+      reset();
+      setTrack(parsedTrack, [parsedTrack]);
+      setUpcoming(parsedTracks ? parsedTracks : []);
+      setDuration(parsedTrack.duration);
+      setPlayingFrom(parsedTrack.name);
       play();
     }
   };
@@ -43,7 +46,7 @@ const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
       onClick={handleClick}
       className="cursor-pointer play-button z-20 w-10 h-10 bg-background-950/90 opacity-0 absolute bottom-1 right-2 bg-primary text-white rounded-full p-2 hover:bg-primary/80 transition-colors"
     >
-      {track === currentTrack ? isPlaying ? <Pause /> : <Play /> : <Play />}
+      {parsedTrack === currentTrack ? isPlaying ? <Pause /> : <Play /> : <Play />}
     </button>
   );
 };

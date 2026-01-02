@@ -4,13 +4,17 @@ import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css/pagination";
-import { useDevice } from "@/hooks/ui/useDevice";
-import { slidesPerView } from "@/shared/helpers";
+import { useDevice } from "@/shared/client/hooks/ui/useDevice";
+import { slidesPerView } from "@/shared/utils/helpers";
 import SwiperButtons from "../Buttons/SwiperButtons";
 import CarouselCard from "../Cards/CarouselCard";
 import { CarousellContentProps } from "@/types/components";
+import { use } from "react";
+import { contentProps } from "@/types";
 
-export default function CarouselSwiper({ content }: { content: CarousellContentProps[] }) {
+export default function CarouselSwiper({ data }: { data: Promise<contentProps[] | undefined> }) {
+  if (!data) return;
+  const content = use(data);
   const { isMobile, size } = useDevice();
   const slidesPerViewAmount = slidesPerView(isMobile, size);
   return (

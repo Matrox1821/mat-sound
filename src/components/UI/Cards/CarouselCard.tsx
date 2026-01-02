@@ -1,8 +1,8 @@
 import Image from "next/image";
 import CarouselCardPlayButton from "../Buttons/CarouselCardPlayButton";
-import { useDevice } from "@/hooks/ui/useDevice";
+import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import Link from "next/link";
-import PreloadTrack from "@/components/Media/PreloadTrack";
+import { contentProps } from "@/types";
 
 const roundedByIndex = (index: number) => {
   switch (index) {
@@ -19,15 +19,14 @@ const roundedByIndex = (index: number) => {
   }
 };
 
-export default function CarouselCard({ element, ref }: any) {
+export default function CarouselCard({ element }: { element: contentProps }) {
   const { isMobile } = useDevice();
   const desktopStyle = isMobile
     ? "[&_.play-button]:opacity-100 [&_.play-button]:!-translate-y-1"
     : "hover:[&_.play-button]:opacity-100 hover:[&_.play-button]:!transition-all hover:[&_.play-button]:!duration-300 hover:[&_.play-button]:!-translate-y-1 not-hover:[&_.play-button]:!transition-all not-hover:[&_.play-button]:!duration-300";
   const fallbackImage = "/placeholder.png";
-
   return (
-    <li className="w-full color-content-950 duration-150 gap-2" ref={ref}>
+    <li className="w-full color-content-950 duration-150 gap-2">
       <Link
         className={`w-full h-full flex flex-col color-content-950 duration-150 gap-2 track rounded-lg relative active:not-[:has(&_.play-button:active)]:scale-[.98] active:not-[:has(&_.play-button:active)]:opacity-80 z-10 ${desktopStyle}`}
         href={`/${element.type}/${element.id}`}
@@ -35,7 +34,7 @@ export default function CarouselCard({ element, ref }: any) {
         <figure className="w-full aspect-square relative">
           {element.type !== "playlists" && (
             <Image
-              src={element.image || fallbackImage}
+              src={element.image.md || fallbackImage}
               alt={element.name}
               width={160}
               height={160}
@@ -46,7 +45,7 @@ export default function CarouselCard({ element, ref }: any) {
               quality={50}
             />
           )}
-          {element.type === "playlists" && (
+          {/* {element.type === "playlists" && (
             <figure className="w-full grid grid-cols-2 grid-row-2 object-contain">
               {element.image?.map((image: string, i: number) => {
                 return (
@@ -64,10 +63,10 @@ export default function CarouselCard({ element, ref }: any) {
                 );
               })}
             </figure>
-          )}
+          )} */}
           {element.type === "tracks" && (
             <>
-              <PreloadTrack track={element} />
+              {/* <PreloadTrack track={element} /> */}
               <CarouselCardPlayButton track={element} />
             </>
           )}
@@ -83,7 +82,7 @@ export default function CarouselCard({ element, ref }: any) {
           </h2>
           {(element.type === "tracks" || element.type === "albums") && (
             <span className="m-0 leading-5 font-normal text-sm text-content-600/70">
-              {element.artists && element.artists[0].artist.name}
+              {element.artists && element.artists[0].name}
               {element.artist && element.artist.name}
             </span>
           )}

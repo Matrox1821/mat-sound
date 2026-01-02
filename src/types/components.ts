@@ -1,19 +1,22 @@
 import { ContentType } from ".";
+import { ImageSizes } from "./apiTypes";
+import { playerTrackProps } from "./trackProps";
 
 export interface CarousellContentProps {
   id: string;
   name: string;
-  image: string | string[];
+  image: ImageSizes;
   type: ContentType;
   song: string | null;
-  artists: { artist: { name: string; avatar: string; id: string } }[] | null;
+  artists: { artist: { name: string; avatar: ImageSizes; id: string } }[] | null;
   likes: number | null;
+  lyric: string | null;
   album:
     | {
         album: {
           name: string;
           id: string;
-          image: string;
+          cover: ImageSizes;
         };
       }[]
     | null;
@@ -21,7 +24,8 @@ export interface CarousellContentProps {
   orderInAlbum: number | null;
   reproductions: number | null;
   releaseDate: string | null;
-  artist: { name: string; id: string; avatar: string } | null;
+  artist: { name: string; id: string; avatar: ImageSizes } | null;
+  tracks?: playerTrackProps[];
 }
 
 export interface CarouselSwiperProps {

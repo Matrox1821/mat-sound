@@ -1,15 +1,17 @@
 import { CarouselProps } from "@/types/components";
-import useContent from "@/hooks/db/useContent";
-import ClientCarousel from "./ClientCarousel";
+import CarouselSwiper from "./CarouselSwiper";
+import { Suspense } from "react";
+import { CarouselSkeleton } from "@/components/Skeletons";
+import { fetchContentData } from "@/shared/client/adapters/fetchContentData";
 
 export default async function Carousel({ remove, options, filter, title }: CarouselProps) {
-  const rawContent = await useContent({ remove, options, filter });
-  const content = rawContent.data ?? [];
-
+  const content = fetchContentData({ remove, options, filter });
   return (
-    <article className="relative w-full h-80 flex flex-col pl-4">
-      <h2 className="h-12 font-semibold text-xl ">{title}</h2>
-      <ClientCarousel content={content} />
+    <article className="relative w-full flex flex-col pl-4">
+      <h2 className="h-12 font-semibold text-2xl ">{title}</h2>
+      <Suspense fallback={<CarouselSkeleton />}>
+        <CarouselSwiper data={content} />
+      </Suspense>
     </article>
   );
 }
