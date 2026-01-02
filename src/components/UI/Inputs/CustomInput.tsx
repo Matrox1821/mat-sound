@@ -5,14 +5,9 @@ import CustomCheckBox from "./CustomInputs/CustomCheckBox";
 interface CustomInputProps {
   title: string;
   name: string;
-  type:
-    | "text"
-    | "textarea"
-    | "checkbox"
-    | "file"
-    | "number"
-    | "email"
-    | "password";
+  value?: any;
+  onChange?: (value: any) => void;
+  type: "text" | "textarea" | "checkbox" | "file" | "number" | "email" | "password";
   styles: {
     labelStyle: string;
     titleStyle: string;
@@ -32,6 +27,8 @@ export function CustomInput({
   type,
   options,
   styles,
+  value,
+  onChange,
 }: CustomInputProps) {
   switch (type) {
     case "checkbox":
@@ -41,6 +38,8 @@ export function CustomInput({
           isRequired={Boolean(options.isRequired)}
           name={name}
           title={title}
+          value={value}
+          onChange={onChange}
         />
       );
     case "textarea":
@@ -50,6 +49,8 @@ export function CustomInput({
           isRequired={Boolean(options.isRequired)}
           name={name}
           title={title}
+          value={value}
+          onChange={(e) => onChange?.(e.target.value)}
         />
       );
 
@@ -60,6 +61,7 @@ export function CustomInput({
           options={options}
           name={name}
           title={title}
+          onChange={onChange}
         />
       );
 
@@ -75,6 +77,8 @@ export function CustomInput({
             name={name}
             required={options.isRequired}
             className={styles.inputStyle}
+            value={value}
+            onChange={(e) => onChange?.(e.target.value)}
           />
         </label>
       );

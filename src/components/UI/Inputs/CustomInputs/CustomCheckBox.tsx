@@ -3,12 +3,16 @@ interface CustomCheckBox {
   title: string;
   name: string;
   isRequired: boolean;
+  value?: any;
+  onChange?: (value: any) => void;
 }
 export default function CustomCheckBox({
   styles,
   title,
   name,
   isRequired,
+  value,
+  onChange,
 }: CustomCheckBox) {
   return (
     <label className={`${styles.labelStyle} inline-flex`}>
@@ -22,6 +26,8 @@ export default function CustomCheckBox({
           name={name}
           required={isRequired}
           className={`!w-5 ${styles.inputStyle}`}
+          /* checked={value} */
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.checked)}
         />
       </div>
     </label>

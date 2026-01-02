@@ -1,10 +1,10 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import prisma from "@/config/db";
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
-import { logInUser } from "@/shared/apiShared";
+import { logInUser } from "@/shared/client/apiShared";
+import { prisma } from "@config/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
         msg: "Admin not found.",
         httpStatusCode: HttpStatusCode.NOT_FOUND,
       });
-
     const isMatch = await bcrypt.compare(body.password, request.password);
 
     if (!isMatch) {

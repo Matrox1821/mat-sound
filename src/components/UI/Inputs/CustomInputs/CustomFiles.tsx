@@ -10,14 +10,9 @@ interface CustomFiles {
   title: string;
   name: string;
   options: { isRequired: boolean; isAudio: boolean; isMultiple: boolean };
+  onChange?: (value: any) => void;
 }
-export default function CustomFiles({
-  styles,
-  title,
-  name,
-
-  options,
-}: CustomFiles) {
+export default function CustomFiles({ styles, title, name, options, onChange }: CustomFiles) {
   const [previewImage, setPreviewImage] = useState<string>("");
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [audioName, setAudioName] = useState<string>("");
@@ -28,7 +23,7 @@ export default function CustomFiles({
           ? "flex flex-col items-center gap-2"
           : options.isMultiple
           ? "flex flex-col gap-2"
-          : "flex h-22 gap-4 pr-24"
+          : "flex h-22 gap-4"
       }`}
     >
       <label className={`${styles.labelStyle} flex`}>
@@ -43,39 +38,36 @@ export default function CustomFiles({
         >
           {options.isAudio
             ? "Ingrese un audio"
-            : `Ingrese ${
-                options.isMultiple ? "al menos una imágen" : "una imágen"
-              }`}
+            : `Ingrese ${options.isMultiple ? "al menos una imágen" : "una imágen"}`}
           <input
             type="file"
             name={name}
             required={options.isRequired}
             className="hidden"
             multiple={options.isMultiple}
-            onChange={({
-              currentTarget: { files },
-            }: React.ChangeEvent<HTMLInputElement>) => {
+            onChange={({ currentTarget: { files } }: React.ChangeEvent<HTMLInputElement>) => {
               if (files && files.length > 0) {
                 if (options.isAudio) {
+                  const file = files[0];
                   setAudioName(files[0].name);
+                  onChange?.(file);
                   return;
                 }
                 setPreviewImages([]);
                 setPreviewImage("");
                 if (options.isMultiple) {
-                  for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
+                  const selectedFiles: File[] = Array.from(files);
+                  onChange?.(selectedFiles);
+                  selectedFiles.forEach((file) => {
                     const reader = new FileReader();
                     reader.onloadend = () => {
-                      setPreviewImages((prev) => [
-                        ...prev,
-                        reader.result as string,
-                      ]);
+                      setPreviewImages((prev) => [...prev, reader.result as string]);
                     };
                     reader.readAsDataURL(file);
-                  }
+                  });
                 } else {
                   const file = files[0];
+                  onChange?.(file);
                   const reader = new FileReader();
                   reader.onloadend = () => {
                     setPreviewImage(reader.result as string);
@@ -121,19 +113,10 @@ const ImagesPreview = ({
     >
       {previewImages.length > 0 &&
         previewImages.map((image, index) => (
-          <img
-            key={index}
-            src={image}
-            alt=""
-            className="w-16 h-16 object-cover rounded-xs"
-          />
+          <img key={index} src={image} alt="" className="w-16 h-16 object-cover rounded-xs" />
         ))}
       {previewImage !== "" ? (
-        <img
-          src={previewImage}
-          alt=""
-          className="w-16 h-16 object-cover rounded-xs"
-        />
+        <img src={previewImage} alt="" className="w-16 h-16 object-cover rounded-xs" />
       ) : (
         <div className="w-22 h-22 object-cover rounded-xs" />
       )}

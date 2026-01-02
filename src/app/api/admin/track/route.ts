@@ -1,99 +1,96 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import prisma from "@/config/db";
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
-import { deleteFileToBucket, uploadFileToBucket } from "@/shared/files";
-import { createTrackInDatabase } from "@/shared/database";
-import { formatR2FilePath } from "@/shared/helpers";
+import { deleteFileToBucket } from "@/shared/server/files";
+import { parseTrackFormData } from "@/shared/formData/trackForm";
+import {
+  createTrack,
+  deleteTrack,
+  trackIsExists,
+  updateTrackResourses,
+} from "@/shared/server/track/trackRepository";
+import { handleTrackResizeAndUpload, uploadSong } from "@/shared/server/track/trackStorage";
+import { GET_BUCKET_URL } from "@/shared/utils/constants";
+import { prisma } from "@config/db";
+import { updateAlbumGenre } from "@/shared/server/album/albumRepository";
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const name = formData.get("name") as string;
-    const artists = JSON.parse(formData.get("artists_id") as string) as {
-      id: string;
-      name: string;
-    }[];
+    const body = parseTrackFormData(formData);
 
-    const cover_path = formatR2FilePath({
-      type: "trackCover",
-      trackName: name,
-      root: "artists",
-      artistName: artists[0].name,
-    });
-    const song_path = formatR2FilePath({
-      type: "trackSong",
-      trackName: name,
-      root: "artists",
-      artistName: artists[0].name,
-    });
+    const isExists = await trackIsExists({ name: body.name });
+    if (isExists)
+      throw new CustomError({
+        errors: [{ message: "Track already exists." }],
+        msg: "Track already exists.",
+        httpStatusCode: HttpStatusCode.CONFLICT,
+      });
 
-    const body = {
-      name: formData.get("name") as string,
-      image: formData.get("image") as File,
-      song: formData.get("song") as File,
-      copyright: JSON.parse(formData.get("copyright") as string) as string[],
-      release_date: formData.get("release_date") as string,
-      duration: parseInt(formData.get("duration") as string),
-      reproductions: parseInt(formData.get("reproductions") as string),
-      albums_id: JSON.parse(formData.get("albums_id") as string) as string[],
-      order_in_album: JSON.parse(formData.get("order_in_album") as string) as {
-        [key: string]: string;
-      }[],
-      album_image: formData.get("album_image") as string,
-      artists,
-      cover_path,
-      song_path,
-    };
+    const newTrack = await createTrack(body);
+    const song_path = await uploadSong(body.song, newTrack.id);
 
-    if (body.image.name !== "") {
-      const coverCreated = await uploadFileToBucket(body.image, cover_path);
+    if (!body.cover) {
+      const updatedTrack = await updateTrackResourses({
+        id: newTrack.id,
+        paths: { song: GET_BUCKET_URL + song_path },
+        albumId: Object.keys(body.order_and_disk)[0],
+      });
 
-      if (!coverCreated) {
-        await deleteFileToBucket(body.image, cover_path);
+      if (!song_path || !updatedTrack) {
+        await Promise.all([deleteTrack(newTrack.id), deleteFileToBucket(body.song, song_path)]);
         throw new CustomError({
-          errors: [{ message: "Album cover was not created." }],
-          msg: "Album cover was not created.",
+          errors: [{ message: "The track has not been updated" }],
+          msg: "The track has not been updated",
           httpStatusCode: HttpStatusCode.CONFLICT,
         });
       }
-    }
-    const songCreated = await uploadFileToBucket(body.song, song_path);
 
-    if (!songCreated) {
-      await deleteFileToBucket(body.song, song_path);
-      throw new CustomError({
-        errors: [{ message: "Album cover was not created." }],
-        msg: "Album cover was not created.",
-        httpStatusCode: HttpStatusCode.CONFLICT,
+      return onSuccessRequest({
+        httpStatusCode: 200,
+        data: updatedTrack,
       });
     }
 
-    const existTrack = await prisma.track.findFirst({
-      where: { name: body.name },
+    const { buffer, dbPath, r2Path, trackUploads } = await handleTrackResizeAndUpload(
+      body.cover,
+      newTrack.id
+    );
+
+    const updatedTrack = await updateTrackResourses({
+      id: newTrack.id,
+      paths: { cover: dbPath, song: GET_BUCKET_URL + song_path },
     });
 
-    if (existTrack)
+    if (!buffer || !dbPath || !r2Path || !trackUploads || !song_path || !updatedTrack) {
+      await Promise.all([
+        deleteTrack(newTrack.id),
+        ...Object.entries(r2Path).map(async ([key, path]) => {
+          const currentBuffer = buffer[key as "sm" | "md" | "lg"];
+          if (currentBuffer) await deleteFileToBucket(currentBuffer, path);
+        }),
+        deleteFileToBucket(body.song, song_path),
+      ]);
       throw new CustomError({
-        errors: [{ message: "Album already exists." }],
-        msg: "Album already exists.",
+        errors: [{ message: "The track has not been updated" }],
+        msg: "The track has not been updated",
         httpStatusCode: HttpStatusCode.CONFLICT,
       });
-    const newTrack = await createTrackInDatabase(body);
+    }
 
     return onSuccessRequest({
       httpStatusCode: 200,
-      data: { track: newTrack },
+      data: updatedTrack,
     });
   } catch (error) {
+    console.log(error);
     return onThrowError(error);
   }
 }
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams.get("artists_id") as string | string[];
-
+    const searchParams = req.nextUrl.searchParams.getAll("artists_id") as string[];
     if (!searchParams) {
       throw new CustomError({
         errors: [{ message: "Admin not found." }],
@@ -104,19 +101,16 @@ export async function GET(req: NextRequest) {
 
     const artists_id = [...searchParams];
 
-    const artistIds = artists_id.map((id) => {
-      return {
-        id,
-      };
-    });
-    const albums = await prisma.album.findMany({
+    const tracks = await prisma.track.findMany({
       where: {
-        artist: { AND: artistIds },
+        artists: {
+          some: { artist_id: { in: artists_id } },
+        },
       },
     });
     return onSuccessRequest({
       httpStatusCode: 200,
-      data: { albums },
+      data: tracks,
     });
   } catch (error) {
     return onThrowError(error);

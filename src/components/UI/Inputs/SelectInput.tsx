@@ -1,7 +1,9 @@
+"use client";
 import { useEffect, useState } from "react";
 
 interface Element {
-  image: string;
+  avatar?: { sm: string; md: string; lg: string };
+  cover?: { sm: string; md: string; lg: string };
   name: string;
   id: string;
   [key: string]: any;
@@ -30,19 +32,20 @@ export function SelectInput({
   useEffect(() => {
     if (callback) callback(value, elements);
   }, [value]);
+
   const addElement = (item: any) => {
     const existItemInElements = elements.find((e) => e.id === item.id);
     if (!existItemInElements) {
       if (isMultiple) {
         setElements((prev) => [...prev, item]);
-        setImages((prev) => [...prev, item.image]);
+        setImages((prev) => [...prev, item.avatar ? item.avatar.sm : item.cover.sm]);
         setValue((prev) => [...prev, item.id]);
         setValueWithName((prev) => [...prev, { id: item.id, name: item.name }]);
         return;
       }
       setElements([item]);
       setValue([item.id]);
-      setImages([item.image]);
+      setImages([item.avatar ? item.avatar.sm : item.cover.sm]);
       setValueWithName([{ id: item.id, name: item.name }]);
     }
   };
@@ -99,11 +102,20 @@ export function SelectInput({
                 className="flex p-2 border-accent-950 border-1 rounded-xs gap-2"
                 key={element.id}
               >
-                <img
-                  src={element.image}
-                  alt={element.name}
-                  className="w-12 h-12 radius-sm object-cover"
-                />
+                {element.avatar && (
+                  <img
+                    src={element.avatar.sm}
+                    alt={element.name}
+                    className="w-12 h-12 radius-sm object-cover"
+                  />
+                )}
+                {element.cover && (
+                  <img
+                    src={element.cover.sm}
+                    alt={element.name}
+                    className="w-12 h-12 radius-sm object-cover"
+                  />
+                )}
                 <h2 className="h-12 flex items-center pl-1 text-sm">{element.name}</h2>
                 <button
                   type="button"
@@ -127,16 +139,25 @@ export function SelectInput({
               <li key={item.id} className="w-full ">
                 <button
                   type="button"
-                  className={`w-full p-1 active:bg-accent-400 z-20 relative flex h-full items-center gap-2 cursor-pointer ${
-                    elements.find((e) => e.id === item.id) ? "!bg-accent-200" : "bg-background-950"
+                  className={`w-full p-1 active:bg-background-800 z-20 relative flex h-full items-center gap-2 cursor-pointer ${
+                    elements.find((e) => e.id === item.id)
+                      ? "!bg-background-800"
+                      : "bg-background-950"
                   }`}
                   onClick={() => {
                     addElement(item);
                   }}
                 >
-                  {item.image !== "none" && (
+                  {item.avatar && (
                     <img
-                      src={item.image}
+                      src={item.avatar.sm}
+                      alt={item.name}
+                      className="w-10 h-10 radius-sm object-cover"
+                    />
+                  )}
+                  {item.cover && (
+                    <img
+                      src={item.cover.sm}
                       alt={item.name}
                       className="w-10 h-10 radius-sm object-cover"
                     />

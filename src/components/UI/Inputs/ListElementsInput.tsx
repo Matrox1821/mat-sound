@@ -1,14 +1,21 @@
 import { useRef, useState } from "react";
 
-export function ListElementsInput({ name }: { name: string }) {
+export function ListElementsInput({
+  name,
+  value = [],
+  onChange,
+}: {
+  name: string;
+  value?: string[];
+  onChange?: (value: any) => void;
+}) {
   const [elements, setElements] = useState<string[]>([]);
   const valueInput = useRef<HTMLInputElement>(null);
 
   const addElement = () => {
     const valueInputValue = valueInput.current?.value as string;
 
-    const doesNotExistInputValue =
-      !valueInput.current || valueInputValue === "";
+    const doesNotExistInputValue = !valueInput.current || valueInputValue === "";
 
     if (doesNotExistInputValue) return;
 
@@ -18,21 +25,14 @@ export function ListElementsInput({ name }: { name: string }) {
   const removeElement = (elementToDelete: string) => {
     if (elements.length === 0) return;
 
-    const newElement = elements.filter(
-      (element) => element !== elementToDelete
-    );
+    const newElement = elements.filter((element) => element !== elementToDelete);
     setElements(newElement);
   };
 
   return (
     <div className="w-full flex flex-col">
       <label className="grid grid-cols-12 relative w-full z-10">
-        <input
-          value={JSON.stringify(elements) || "none"}
-          name={name}
-          className="hidden"
-          readOnly
-        />
+        <input value={JSON.stringify(elements) || "none"} name={name} className="hidden" readOnly />
         <input
           className="col-start-1 col-end-12 input-value bg-background-950 border-2 border-[rgb(176,178,186)] border-r-0 h-8 focus-visible:border-accent-900 focus:border-2 
           rounded-l-md

@@ -1,3 +1,4 @@
+"use client";
 import { ChangeEvent, useState } from "react";
 
 interface Element {
@@ -12,15 +13,17 @@ export function OrderAlbumInput({
   data,
   zIndex = 30,
   title,
+  onChange,
 }: {
   name: string;
   data: Element[];
   zIndex?: number;
   title: string;
   isRequired?: boolean;
-  callback?: (value: string[]) => void;
+  value?: any;
+  onChange?: (value: any) => void;
 }) {
-  const [value, setValue] = useState<{ [key: string]: string }[]>([]);
+  const [value, setValue] = useState<{ [key: string]: { order: number; disk: number } }>({});
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
 
   const handleMenu = () => setMenuIsOpen(!menuIsOpen);
@@ -31,7 +34,7 @@ export function OrderAlbumInput({
     inputTitleStyle: isDataEmpty ? "text-content-200" : "",
     spanContainerStyle: isDataEmpty
       ? "border-content-200"
-      : "active:border-accent-900 active:border-2 border-content-700  active:bg-accent-400 selected-item",
+      : "active:border-accent-900 active:border-2 border-content-700  active:bg-background-950 selected-item",
   };
 
   return (
@@ -63,18 +66,18 @@ export function OrderAlbumInput({
             data.map((item: any) => (
               <li
                 key={item.id}
-                className="w-full flex items-center justify-between pr-4 bg-accent-50"
+                className="w-full flex items-center justify-between px-4 py-1 bg-background-950"
               >
                 <div className="w-full p-1 z-20 relative flex h-full items-center gap-2">
-                  {item.image !== "none" && (
+                  {item.cover && (
                     <img
-                      src={item.image}
+                      src={item.cover.sm}
                       alt={item.name}
                       className="w-10 h-10 radius-sm object-cover"
                     />
                   )}
                   <span>
-                    {item?.artist && item.image !== "none" ? (
+                    {item?.artist && item.cover !== "none" ? (
                       <span>
                         {item?.name} de <span>{item.artist?.name}</span>
                       </span>
@@ -83,14 +86,37 @@ export function OrderAlbumInput({
                     )}
                   </span>
                 </div>
-                <div className=" p-1  z-20 relative flex h-full items-center gap-2">
+                <div className=" p-1 z-20 relative flex h-full items-center gap-2">
+                  <span>Disk:</span>
+                  <input
+                    type="number"
+                    name="disk"
+                    defaultValue={1}
+                    className="bg-accent-950 h-8 border-2 rounded-sm text-background-950 font-bold text-base w-24 ocus-visible:border-accen-900 focus:border-2 outline-none p-2"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      setValue((prev) => ({
+                        ...prev,
+                        [item.id]: {
+                          order: prev[item.id]?.order ?? 0,
+                          disk: Number(e.target.value),
+                        },
+                      }));
+                    }}
+                  />
+                  <span>Order:</span>
                   <input
                     type="number"
                     name="order_number"
                     defaultValue={0}
                     className="bg-accent-950 h-8 border-2 rounded-sm text-background-950 font-bold text-base w-24 ocus-visible:border-accen-900 focus:border-2 outline-none p-2"
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      setValue([...value, { [item.id]: e.target.value }]);
+                      setValue((prev) => ({
+                        ...prev,
+                        [item.id]: {
+                          disk: prev[item.id]?.disk ?? 1,
+                          order: Number(e.target.value),
+                        },
+                      }));
                     }}
                   />
                 </div>
@@ -99,28 +125,22 @@ export function OrderAlbumInput({
           ) : (
             <option>No existen elementos</option>
           )}
-
-          <li className="w-full h-12 flex items-center justify-center pr-4 bg-accent-50">
-            <button
-              className="h-8 w-28 p-1 z-20 relative flex items-center gap-2 cursor-pointer bg-accent-950 text-base text-background-950 font-bold justify-center rounded-xs"
-              type="button"
-              onClick={() => {
-                const newValues = [...value];
-                const reducedValues = newValues.reduce(
-                  (acc: { [key: string]: { [key: string]: string } }, item) => {
-                    const key = Object.keys(item)[0];
-                    acc[key] = item;
-                    return acc;
-                  },
-                  {}
-                );
-                const result = Object.values(reducedValues);
-                setValue(result);
-                setMenuIsOpen(false);
-              }}
-            >
-              Completar
-            </button>
+          <li className="w-full h-12 flex flex-col bg-background-950">
+            <hr className="text-background-700 w-full p-0" />
+            <div className="w-full h-12 flex items-center justify-center pr-4 bg-background-950">
+              <button
+                className="h-8 w-28 p-1 z-20 relative flex items-center gap-2 cursor-pointer bg-accent-950 text-base text-background-950 font-bold justify-center rounded-xs"
+                type="button"
+                onClick={() => {
+                  const newValues = { ...value };
+                  if (onChange) onChange(newValues);
+                  setValue(newValues);
+                  setMenuIsOpen(false);
+                }}
+              >
+                Completar
+              </button>
+            </div>
           </li>
         </ul>
       </div>

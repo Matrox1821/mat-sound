@@ -1,73 +1,66 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import prisma from "@/config/db";
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
-import { deleteFileToBucket, uploadFileToBucket } from "@/shared/files";
-import { createAlbumInDatabase } from "@/shared/database";
-import { formatR2FilePath } from "@/shared/helpers";
+import { deleteFileToBucket } from "@/shared/server/files";
+import { parseAlbumFormData } from "@/shared/formData/albumForm";
+import {
+  albumIsExists,
+  createAlbum,
+  deleteAlbumById,
+  updateAlbumCover,
+} from "@/shared/server/album/albumRepository";
+import { handleCoverResizeAndUpload } from "@/shared/server/album/albumStorage";
+import { prisma } from "@config/db";
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const name = formData.get("name") as string;
-    const artists = JSON.parse(formData.get("artists") as string) as {
-      name: string;
-    }[];
-    const cover_path = formatR2FilePath({
-      type: "albumCover",
-      albumName: name,
-      root: "artists",
-      artistName: artists[0].name,
-    });
-    const body = {
-      name: formData.get("name") as string,
-      image: formData.get("image") as File,
-      release_date: formData.get("release_date") as string,
-      copyright: JSON.parse(formData.get("copyright") as string) as string[],
-      tracks_in_order: JSON.parse(formData.get("tracks_in_order") as string) as {
-        [key: string]: string;
-      }[],
-      artists,
-      cover_path,
-    };
-    const coverCreated = await uploadFileToBucket(body.image, cover_path);
+    const body = parseAlbumFormData(formData);
 
-    if (!coverCreated) {
-      await deleteFileToBucket(body.image, cover_path);
-
-      throw new CustomError({
-        errors: [{ message: "Album cover was not created." }],
-        msg: "Album cover was not created.",
-        httpStatusCode: HttpStatusCode.CONFLICT,
-      });
-    }
-
-    const existAlbum = await prisma.album.findFirst({
-      where: { name: body.name },
-    });
-
-    if (existAlbum)
+    const isExists = await albumIsExists({ name: body.name });
+    if (isExists)
       throw new CustomError({
         errors: [{ message: "Album already exists." }],
         msg: "Album already exists.",
         httpStatusCode: HttpStatusCode.CONFLICT,
       });
 
-    const newAlbum = await createAlbumInDatabase(body);
+    const album = await createAlbum(body);
 
+    const { buffer, coverUploads, dbPath, r2Path } = await handleCoverResizeAndUpload(
+      body.cover,
+      album.id
+    );
+
+    const updatedAlbum = await updateAlbumCover({ albumId: album.id, paths: dbPath });
+
+    if (!updatedAlbum || !buffer || !coverUploads || !dbPath || !r2Path) {
+      await Promise.all([
+        deleteAlbumById(album.id),
+        ...Object.entries(r2Path).map(async ([key, path]) => {
+          const currentBuffer = buffer[key as "sm" | "md" | "lg"];
+          if (currentBuffer) await deleteFileToBucket(currentBuffer, path);
+        }),
+      ]);
+      throw new CustomError({
+        errors: [{ message: "The album has not been updated" }],
+        msg: "The album has not been updated",
+        httpStatusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
+      });
+    }
     return onSuccessRequest({
       httpStatusCode: 200,
-      data: { artist: newAlbum },
+      data: updatedAlbum,
     });
   } catch (error) {
     return onThrowError(error);
   }
 }
+
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams.get("artists_id") as string | string[];
-
+    const searchParams = req.nextUrl.searchParams.getAll("artists_id") as string | string[];
     if (!searchParams) {
       throw new CustomError({
         errors: [{ message: "Admin not found." }],
@@ -76,25 +69,16 @@ export async function GET(req: NextRequest) {
       });
     }
     let albums = [];
-    if (searchParams instanceof Array) {
-      const newArtistsId = [...searchParams];
-      const artists_id_obj = newArtistsId.map((id) => {
-        return {
-          artist_id: id,
-        };
-      });
-      albums = await prisma.album.findMany({
-        where: {
-          AND: artists_id_obj,
-        },
-      });
-    } else {
-      const artists_id = searchParams;
+    const newArtistsId = [...searchParams];
 
-      albums = await prisma.album.findMany({
-        where: { artist: { id: artists_id } },
-      });
-    }
+    albums = await prisma.album.findMany({
+      where: {
+        artists: {
+          some: { artist_id: { in: newArtistsId } },
+        },
+      },
+    });
+
     if (albums.length === 0) {
       throw new CustomError({
         errors: [{ message: "Album not found." }],
@@ -104,7 +88,7 @@ export async function GET(req: NextRequest) {
     }
     return onSuccessRequest({
       httpStatusCode: 200,
-      data: { albums },
+      data: albums,
     });
   } catch (error) {
     return onThrowError(error);

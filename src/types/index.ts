@@ -1,28 +1,6 @@
 //store interface
 
-export interface PlayerState {
-  isPlaying: boolean;
-  currentMusic: storeTrackProps | null;
-  isActive: boolean;
-  playerScreenIsOpen: boolean;
-  inLoop: boolean;
-  isShuffled: boolean;
-  currentTime: number;
-  duration: number;
-  actions?: {
-    play: () => void;
-    pause: () => void;
-    togglePlay: () => void;
-    setTrack: (track: storeTrackProps) => void;
-    setPlaylist: (playlist: storeTrackProps[]) => void;
-    setRecommendedSongs: (songs: storeTrackProps[]) => void;
-    setLoopMode: (mode: LoopMode) => void;
-    openPlayerScreen: () => void;
-    closePlayerScreen: () => void;
-    activatePlayer: () => void;
-    deactivatePlayer: () => void;
-  };
-}
+import { ImageSizes } from "./apiTypes";
 
 //enums
 export enum Size {
@@ -38,7 +16,13 @@ export enum AMOUNTS {
 }
 
 //types
-export type ContentType = "albums" | "tracks" | "artists" | "playlists" | "albums-by-artist";
+export type ContentType =
+  | "albums"
+  | "tracks"
+  | "artists"
+  | "playlists"
+  | "albums-by-artist"
+  | "none";
 
 export type LoopMode = "none" | "all" | "one";
 
@@ -51,105 +35,120 @@ export interface RgbProps {
 
 export interface contentProps {
   id: string;
-  image: string | string[];
+  image: ImageSizes;
   name: string;
   song: string;
   type: ContentType;
-  seconds: number;
   duration: number;
   reproductions: number;
-  release_date: string;
+  releaseDate: string;
   likes: number;
+  lyric: string;
   albums?:
     | {
-        order_in_album?: number | null;
-        album: {
-          name: string;
-          id: string;
-          image: string;
-        };
+        name: string;
+        id: string;
+        cover: ImageSizes;
       }[]
     | null;
   artists?:
     | {
-        artist: {
-          name: string;
-          id: string;
-          avatar: string;
-        };
+        name: string;
+        id: string;
+        avatar: ImageSizes;
       }[]
     | null;
-  artist?: { name: string; id: string; avatar: string } | null;
+  tracks?:
+    | {
+        albums?:
+          | {
+              id: string;
+              name: string;
+            }[]
+          | null;
+        artists?:
+          | {
+              id: string;
+              name: string;
+              avatar: ImageSizes;
+            }[]
+          | null;
+        duration: number;
+        id: string;
+        name: string;
+        cover: ImageSizes;
+        song?: string;
+        releaseDate: string;
+        reproductions: number | null;
+        likes: number | null;
+        lyric: string;
+      }[]
+    | null;
+  artist?: { name: string; id: string; avatar: ImageSizes } | null;
 }
 export interface trackAlbumsProps {
   order_in_album?: number | null;
   album: {
     name: string;
     id: string;
-    image: string;
+    cover: ImageSizes;
   };
 }
 export interface trackArtistsProps {
   artist: {
     name: string;
     id: string;
-    avatar: string;
+    avatar: ImageSizes;
   };
-}
-export interface storeTrackProps {
-  id: string;
-  title: string;
-  artist: string;
-  image: string;
-  url: string;
-  duration: number;
 }
 //track page props
 export interface trackPageProps {
   id: string;
   name: string;
-  image: string;
+  cover: ImageSizes;
   releaseDate: string;
   copyright: string[];
-  artists: { artist: { name: string; id: string; image: string } }[] | null;
+  artists: { name: string; id: string; avatar: ImageSizes }[] | null;
   duration: number;
   song: string;
   likes: number;
   reproductions: number;
-  albums: { album: { id: true; image: true; name: true } }[] | null;
+  lyric: string;
+  albums: { id: string; cover: ImageSizes; name: string }[] | null;
 }
 //album page props
 export interface albumPageProps {
   id: string;
-  image: string;
+  cover: ImageSizes;
   name: string;
   releaseDate: string;
   copyright: string[];
   duration: number;
   tracksCount: number;
+
   tracks?:
     | {
-        orderInAlbum: number;
-        track: {
-          name: string;
-          id: string;
-          image: string;
-          artists?: { artist: { name: string; id: string } }[] | null;
-          reproductions: number;
-          duration: number;
-          song: string;
-        };
-      }[]
-    | null;
-  artist?: { name: string; id: string; image: string } | null;
+        order: number;
+        disk: number;
+        name: string;
+        id: string;
+        cover: ImageSizes;
+        artists?: { artist: { name: string; id: string } }[] | null;
+        albums?: { albums: { name: string; id: string } }[] | null;
+        reproductions: number;
+        duration: number;
+        song: string;
+        lyric: string;
+      }[];
+  artists?: { name: string; id: string; avatar: ImageSizes }[] | null;
 }
 
 //artist page props
 export interface artistPageProps {
   id: string;
   name: string;
-  image: string;
-  pageCover?: string;
+  avatar: ImageSizes;
+  mainCover?: string;
   description?: string;
   listeners: number;
   isVerified: boolean;
@@ -159,16 +158,17 @@ export interface artistPageProps {
   followers: number;
 }
 
-export interface artistRecentsTracksProps {
+export interface artistTracksProps {
   id: string;
   name: string;
-  image: string;
+  cover: ImageSizes;
   song: string;
   releaseDate: string;
   duration: number;
   reproductions: number;
   likes: number;
-  albums: { album: { name: string; id: string; image: string } }[] | null;
+  lyric: string;
+  albums: { album: { name: string; id: string; cover: ImageSizes } }[] | null;
 }
 
 export interface TracksByArtistIdQuery {

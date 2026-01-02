@@ -1,10 +1,10 @@
 "use server";
 
-import { createTrack } from "@/queryFn/admin";
+import { trackAdminApi } from "@/queryFn/admin/trackApi";
 
 export async function createTrackServer(currentState: any, formData: FormData) {
   try {
-    const track = await createTrack(formData);
+    const track = await trackAdminApi.createTrack(formData);
 
     if (track.errors.length !== 0) return { errors: [track.errors], success: false };
 

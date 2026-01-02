@@ -1,6 +1,6 @@
 "use server";
-import { signinAdminUser } from "@/queryFn/admin";
-import { setLoginCookies } from "@/shared/apiShared";
+import { signinAdminUser } from "@/queryFn/admin/account";
+import { setLoginCookies } from "@/shared/client/apiShared";
 export async function adminSignInFormValidation(currentState: any, formData: FormData) {
   try {
     const email = formData.get("email"),

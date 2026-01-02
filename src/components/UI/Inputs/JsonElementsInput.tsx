@@ -1,7 +1,17 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export function JsonElementsInput({ name, title }: { name: string; title: string }) {
-  const [elements, setElements] = useState<{ [key: string]: string }>();
+export function JsonElementsInput({
+  name,
+  title,
+  value,
+  onChange,
+}: {
+  name: string;
+  title: string;
+  value?: any;
+  onChange?: (value: any) => void;
+}) {
+  const [elements, setElements] = useState<{ [key: string]: string }>(value ? value : {});
   const keyInput = useRef<HTMLInputElement>(null);
   const valueInput = useRef<HTMLInputElement>(null);
 
@@ -23,6 +33,10 @@ export function JsonElementsInput({ name, title }: { name: string; title: string
     delete newElement[elementName];
     setElements(newElement);
   };
+
+  useEffect(() => {
+    onChange?.(elements);
+  }, [elements]);
 
   return (
     <div className="flex flex-col gap-2 relative w-full">

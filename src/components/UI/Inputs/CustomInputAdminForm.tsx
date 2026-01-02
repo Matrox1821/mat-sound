@@ -2,27 +2,20 @@ import { CustomInput } from "./CustomInput";
 
 export default function CustomInputAdminForm(props: {
   title: string;
-  type:
-    | "text"
-    | "textarea"
-    | "checkbox"
-    | "file"
-    | "number"
-    | "email"
-    | "password";
+  type: "text" | "textarea" | "checkbox" | "file" | "number" | "email" | "password";
   name: string;
   isRequired?: boolean;
   isMultiple?: boolean;
   isAudio?: boolean;
   inBox?: boolean;
+  value?: any;
+  onChange?: (value: any) => void;
 }) {
   return (
     <CustomInput
       {...props}
       styles={{
-        labelStyle: `${
-          props.inBox ? "flex-col gap-2 w-full" : "flex-col gap-2"
-        }`,
+        labelStyle: `${props.inBox ? "flex-col gap-2 w-full" : "flex-col gap-2"}`,
         titleStyle: "text-base",
         inputStyle: `w-full bg-background-950 border-2 border-content-700 rounded-md focus-visible:border-accent-900 focus:border-2 outline-none ${
           props.type === "textarea" ? "h-32 py-1 pl-1 text-sm" : "h-8 py-4 pl-1"
