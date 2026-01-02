@@ -25,38 +25,38 @@ export function parseContent(content: APIContent[]): contentProps[] {
           avatar: item.artist.avatar,
         })) ?? null,
 
-      tracks: tracks
-        ? tracks.map((trackItem) => {
-            const t = trackItem.track;
+      tracks:
+        tracks && tracks?.length > 0
+          ? tracks.map((trackItem) => {
+              const t = trackItem;
+              return {
+                id: t.id,
+                name: t.name,
+                duration: t.duration ?? 0,
+                cover: t.cover,
+                releaseDate: t.release_date ?? "",
+                reproductions: t.reproductions ?? 0,
+                likes: t._count?.likes ?? 0,
+                song: t.song ?? "",
+                lyric: t.lyric ?? "",
 
-            return {
-              id: t.id,
-              name: t.name,
-              duration: t.duration ?? 0,
-              cover: t.cover,
-              releaseDate: t.release_date ?? "",
-              reproductions: t.reproductions ?? 0,
-              likes: t._count?.likes ?? 0,
-              song: t.song ?? "",
-              lyric: t.lyric ?? "",
+                albums: Array.isArray(t.albums)
+                  ? t.albums.map((a) => ({
+                      id: a.album.id,
+                      name: a.album.name,
+                    }))
+                  : null,
 
-              albums: Array.isArray(t.albums)
-                ? t.albums.map((a) => ({
-                    id: a.album.id,
-                    name: a.album.name,
-                  }))
-                : null,
-
-              artists: Array.isArray(t.artists)
-                ? t.artists.map((ar) => ({
-                    id: ar.artist.id,
-                    name: ar.artist.name,
-                    avatar: ar.artist.avatar,
-                  }))
-                : null,
-            };
-          })
-        : null,
+                artists: Array.isArray(t.artists)
+                  ? t.artists.map((ar) => ({
+                      id: ar.artist.id,
+                      name: ar.artist.name,
+                      avatar: ar.artist.avatar,
+                    }))
+                  : null,
+              };
+            })
+          : null,
     };
   });
 }

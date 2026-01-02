@@ -15,7 +15,7 @@ export const RightMenu = () => {
   return (
     <div className="flex items-center gap-2 relative justify-center">
       <button
-        className={`p-[5px] h-8 w-8 flex items-center justify-center rounded-lg ${
+        className={`p-[5px] h-8 w-8 flex items-center justify-center rounded-lg cursor-pointer ${
           playerRightMenuIsActive ? "bg-background-700" : ""
         }`}
         onClick={() => {

@@ -70,31 +70,29 @@ export interface APIContent {
     | null;
   artist?: { name: string; id: string; avatar: ImageSizes } | null;
   tracks?: {
-    track: {
-      albums: {
-        album: {
-          id: string;
-          name: string;
-        };
-      }[];
-      artists: {
-        artist: {
-          id: string;
-          name: string;
-          avatar: ImageSizes;
-        };
-      }[];
-      lyric: string;
-      duration: number;
-      id: string;
-      name: string;
-      cover: ImageSizes;
-      song: string;
-      release_date: string;
-      reproductions: number;
-      _count: {
-        likes: number;
+    albums: {
+      album: {
+        id: string;
+        name: string;
       };
+    }[];
+    artists: {
+      artist: {
+        id: string;
+        name: string;
+        avatar: ImageSizes;
+      };
+    }[];
+    lyric: string;
+    duration: number;
+    id: string;
+    name: string;
+    cover: ImageSizes;
+    song: string;
+    release_date: string;
+    reproductions: number;
+    _count: {
+      likes: number;
     };
   }[];
 }

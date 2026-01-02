@@ -13,7 +13,7 @@ import { playerTrackProps } from "@/types/trackProps";
 import Image from "next/image";
 import Link from "next/link";
 import { Sidebar } from "primereact/sidebar";
-import { Fragment, RefObject, useRef, useState } from "react";
+import { Fragment, RefObject, useState } from "react";
 function darkenRgba(rgba: string, amount = 0.3) {
   const match = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)/);
 
@@ -101,7 +101,7 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
   return (
     <div className="flex items-center gap-2 relative justify-center ">
       <button
-        className={`p-2 flex items-center justify-center rounded-lg bg-background-700 h-8 w-8 ${
+        className={`p-2 flex items-center justify-center rounded-lg bg-background-700 h-8 w-8 cursor-pointer ${
           playerScreenIsActive ? "" : ""
         }`}
         onClick={() => {
