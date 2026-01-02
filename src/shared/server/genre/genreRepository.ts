@@ -1,6 +1,5 @@
 "use server";
 
-import uuid from "@/shared/utils/uuid";
 import { prisma } from "@config/db";
 
 export const getGenres = async () => {
@@ -30,7 +29,6 @@ export const genreIsExist = async (genre: string) => {
 export const createGenre = async (genre: string) => {
   return await prisma.genre.create({
     data: {
-      id: uuid(),
       name: genre,
     },
   });

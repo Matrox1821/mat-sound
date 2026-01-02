@@ -1,6 +1,5 @@
 "use server";
 
-import uuid from "@/shared/utils/uuid";
 import { CustomError, TrackFormData } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { prisma } from "@config/db";

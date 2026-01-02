@@ -1,7 +1,5 @@
 import { AlbumFormData } from "@/types/apiTypes";
 import { prisma } from "@config/db";
-import { v7 as uuid } from "uuid";
-
 export const getAlbums = async (
   limit: number,
   filter?: { by: "artists" | "tracks" | "albums" | "playlists" | "none"; id: string }

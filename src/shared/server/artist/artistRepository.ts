@@ -1,6 +1,5 @@
 "use server";
 
-import uuid from "@/shared/utils/uuid";
 import { ArtistFormData } from "@/types/apiTypes";
 import { prisma } from "@config/db";
 
