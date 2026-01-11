@@ -10,6 +10,8 @@ import Link from "next/link";
 import { Volume } from "../Options/Volume";
 import { RightMenu } from "../Options/RightMenu";
 import { ScreenPlaylistMenu } from "../Options/ScreenPlaylistMenu";
+import { LikeButton } from "@/components/UI/Buttons/Like";
+import { Options } from "@/components/UI/Buttons/Options";
 
 export default function DesktopPlayer() {
   const { currentTrack: track, playingFrom } = usePlayerStore();
@@ -19,7 +21,7 @@ export default function DesktopPlayer() {
     <>
       <audio ref={audioRef} preload="metadata" />
       <footer
-        className="flex absolute justify-between z-60 -bottom-24 left-0 items-center w-full h-24 bg-background-900 text p-2 px-4 transition-transform duration-200 border-t-2 border-background-950"
+        className="flex absolute justify-between z-60 -bottom-24 left-0 items-center w-full h-24 bg-background text p-2 px-4 transition-transform duration-200 border-t-2 border-background-900"
         style={{ transform: track ? "translateY(-96px)" : "" }}
       >
         {track && <CurrentMusicWidget track={track} playingFrom={playingFrom} />}
@@ -51,9 +53,19 @@ const CurrentMusicWidget = ({
           playingFrom !== "" ? "justify-between" : "justify-center gap-2"
         }`}
       >
-        <Link className="text-sm font-bold hover:underline" href={`/tracks/${track.id}`}>
-          {track.name}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link className="text-sm font-bold hover:underline" href={`/tracks/${track.id}`}>
+            {track.name}
+          </Link>
+          <div className="flex gap-2 items-center">
+            <LikeButton
+              trackId={track.id}
+              initialCount={track.likes}
+              initialIsLiked={track.isLiked}
+            />
+            <Options options={["Playlist", "Ir al artista", "Guardar en colección"]} />
+          </div>
+        </div>
         {track.artists &&
           track.artists.map((artist) => (
             <Link
