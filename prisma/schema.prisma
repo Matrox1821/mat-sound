@@ -13,46 +13,6 @@ datasource db {
   provider = "postgresql"
 }
 
-//User
-
-/**
- * model User {
- * id                   String       @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
- * active               Boolean?
- * created_at           DateTime        @db.Date @default(dbgenerated("now()"))
- * email                String          @unique
- * password             String
- * name                 String
- * biography            String?
- * location             String?
- * profile              UserProfile     @relation(fields: [profile_id], references: [id], onDelete: Cascade)
- * profile_id           Int             @unique
- * user_content         UserContent[]
- * historical           Historical[]
- * user_playlists         UserCourses[]
- * user_liked_songs    LivesAndStrikes @relation(fields: [lives_and_strikes_id], references: [id], onDelete: Cascade)
- * user_ Int             @unique
- * }
- * model UserProfile {
- * id            String       @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
- * user        User?
- * color       String
- * image       String
- * }
- */
-/**
- * model Historical {
- * id            String       @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
- * user         User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
- * user_id      Int?
- * last_heard   LastHeard
- * last_searched   LastSearched
- * content      Content  @relation(fields: [content_id], references: [id], onDelete: Cascade)
- * last_watched DateTime @db.Date @default(dbgenerated("now()"))
- * content_id   Int
- * }
- */
-
 model Artist {
   id                 String   @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name               String
@@ -74,7 +34,7 @@ model Artist {
 
   tracks Track[]
 
-  followers Follows[]
+  followers Follow[]
 
   genres Genre[]
 
@@ -94,6 +54,8 @@ model Album {
 
   tracks TracksOnAlbums[]
 
+  collections AlbumOnCollection[]
+
   created_at DateTime @db.Date @default(dbgenerated("now()"))
   updated_at DateTime @updatedAt
 
@@ -107,30 +69,29 @@ model Track {
   song          String
   release_date  DateTime @db.Date @default(dbgenerated("now()"))
   duration      Int
-  lyric         String?
- /*  default_reproductions Int ¿? */ 
+  lyrics         String?
 
   reproductions Int
 
- /*  default_likes Int */
-
   genres Genre[]
 
-  likes Likes[]
+  likes Like[]
 
   artists Artist[]
 
   albums TracksOnAlbums[]
 
-  playlists TrackPlaylist[]
+  playlists TrackOnPlaylist[]
+
+  collections TrackOnCollection[]
+
+  history History[]
 
   created_at DateTime @db.Date @default(dbgenerated("now()"))
   updated_at DateTime @updatedAt
   
   @@index([name])
 }
-
-
 
 model Genre {
   id   String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
@@ -140,16 +101,6 @@ model Genre {
   name String
   added_at DateTime @db.Date @default(dbgenerated("now()"))
 }
-
-
-/**
- * model Playlist {
- * id    String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
- * name  String
- * creator_id String
- * }
- */
-
 
 model TracksOnAlbums {
   order Int @default(1) @db.Integer
@@ -165,7 +116,7 @@ model TracksOnAlbums {
 }
 
 
-model TrackPlaylist {
+model TrackOnPlaylist {
   track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
   track_id String @db.Uuid
 
@@ -175,10 +126,66 @@ model TrackPlaylist {
   added_at DateTime @db.Date @default(dbgenerated("now()"))
 
   @@id([track_id, playlist_id])
+  @@index([playlist_id, added_at])
 }
 
 
-model Follows {
+//content User
+
+model AlbumOnCollection{
+  album    Album  @relation(fields: [album_id], references: [id], onDelete: Cascade)
+  album_id String @db.Uuid
+
+  collection    Collection @relation(fields: [collection_id], references: [id], onDelete: Cascade)
+  collection_id String @db.Uuid
+
+  added_at DateTime @db.Date @default(dbgenerated("now()"))
+
+  @@id([album_id, collection_id])
+}
+
+model TrackOnCollection{
+  track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
+  track_id String @db.Uuid
+
+  collection    Collection @relation(fields: [collection_id], references: [id], onDelete: Cascade)
+  collection_id String @db.Uuid
+
+  added_at DateTime @db.Date @default(dbgenerated("now()"))
+
+  @@id([track_id, collection_id])
+}
+
+model PlaylistOnCollection{
+  playlist    Playlist  @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+  playlist_id String @db.Uuid
+
+  collection    Collection @relation(fields: [collection_id], references: [id], onDelete: Cascade)
+  collection_id String @db.Uuid
+
+  added_at DateTime @db.Date @default(dbgenerated("now()"))
+
+  @@id([playlist_id, collection_id])
+}
+
+
+model Collection{
+  id   String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+
+  albums AlbumOnCollection[]
+
+  tracks TrackOnCollection[]
+
+  playlists PlaylistOnCollection[]
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique @db.Uuid @map("user_id")
+
+}
+
+
+
+model Follow {
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String @db.Uuid
 
@@ -187,26 +194,32 @@ model Follows {
 
   followed_at DateTime @db.Date @default(dbgenerated("now()"))
 
+
   @@id([user_id, artist_id])
 }
 
-model Likes {
+model Like {
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String @db.Uuid
 
   track    Track  @relation(fields: [track_id], references: [id], onDelete: Cascade)
   track_id String @db.Uuid
 
-  followed_at DateTime @db.Date @default(dbgenerated("now()"))
+  liked_at DateTime @db.Date @default(dbgenerated("now()"))
 
   @@id([user_id, track_id])
+  @@index([user_id, liked_at])
 }
+
 
 model Playlist {
   id   String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name String
-  images String[]
-  tracks TrackPlaylist[]
+  images Json
+
+  tracks TrackOnPlaylist[]
+
+  collections PlaylistOnCollection[]
 
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String @db.Uuid
@@ -215,26 +228,110 @@ model Playlist {
   updated_at DateTime @updatedAt
 }
 
+model UserFollow {
+  follower    User   @relation("userFollowing", fields: [followerId], references: [id])
+  followerId  String @db.Uuid
+
+  following    User   @relation("followedBy", fields: [followingId], references: [id])
+  followingId  String @db.Uuid
+
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId])
+}
+
+//History
+
+model History {
+  id        String   @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid @map("user_id")
+
+  track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId   String   @db.Uuid @map("track_id")
+
+  playedAt  DateTime @default(dbgenerated("now()")) @db.Timestamp
+
+  @@index([userId, playedAt])
+}
+
+
+
+
+
+//User
 
 model User {
-  id        String  @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  name      String
-  image     String?
-  active    Boolean
-  biography String?
-  location  String?
+  id              String    @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  name            String
+  email           String    @unique
+  emailVerified   Boolean?
+  image           String?
+  username        String    @unique
+  displayUsername String
+  biography       String?
+  location        String?
+  
+  accounts        Account[]
+  sessions        Session[]
 
-  mail     String
-  password String
+  history         History[]
+  likes           Like[]
+  following       Follow[]
+  playlists       Playlist[]
+  collection      Collection?
+  userFollowing UserFollow[] @relation("userFollowing")
+  followedBy UserFollow[] @relation("followedBy")
 
-  tracks_likeds Likes[]
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
-  following Follows[]
+  @@map("user")
+}
 
-  playlists Playlist[]
+model Session {
+  id        String   @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  expiresAt DateTime @map("expires_at")
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @db.Uuid @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  created_at DateTime @db.Date @default(dbgenerated("now()"))
-  updated_at DateTime @updatedAt
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @db.Uuid @map("user_id")
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("verification")
 }
 
 model Admin {
