@@ -91,6 +91,8 @@ interface PlayerState {
    * Reset the store to its initial state
    */
   reset: () => void;
+
+  updateTrackMetadata: (trackId: string, metadata: Partial<playerTrackProps>) => void;
 }
 
 const initialState = {
@@ -280,6 +282,35 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       currentTrack,
     });
   },
+  updateTrackMetadata: (trackId, metadata) => {
+    const { currentTrack, queue, history, upcoming } = get();
 
+    // 1. Clonamos y actualizamos la Queue (incluye el current si está ahí)
+    const newQueue = queue.map((track) =>
+      track.id === trackId ? { ...track, ...metadata } : track
+    );
+
+    // 2. Actualizamos el CurrentTrack si coincide
+    const newCurrentTrack =
+      currentTrack?.id === trackId ? { ...currentTrack, ...metadata } : currentTrack;
+
+    // 3. Actualizamos el Historial
+    const newHistory = history.map((track) =>
+      track.id === trackId ? { ...track, ...metadata } : track
+    );
+
+    // 4. Actualizamos Upcoming (Sugerencias)
+    const newUpcoming = upcoming.map((track) =>
+      track.id === trackId ? { ...track, ...metadata } : track
+    );
+
+    // Aplicamos todos los cambios de una sola vez para evitar re-renders innecesarios
+    set({
+      currentTrack: newCurrentTrack,
+      queue: newQueue,
+      history: newHistory,
+      upcoming: newUpcoming,
+    });
+  },
   reset: () => set({ ...initialState }),
 }));

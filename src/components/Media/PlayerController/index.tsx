@@ -16,7 +16,7 @@ interface PlayerControllerProps {
 const PlayerController = ({ audioRef }: PlayerControllerProps) => {
   const { isShuffled, isPlaying, setLoopMode, loopMode, toggleShuffle } = usePlaybackStore();
   const { next, prev, shuffleOff, shuffleOn } = usePlayerStore();
-  const { handlePlayPause } = usePlaylistManager();
+  const { handlePlayPause, hasNext, hasPrevious } = usePlaylistManager(); // Traemos los nuevos valores
 
   const shuffle = () => {
     if (isShuffled) {
@@ -26,7 +26,6 @@ const PlayerController = ({ audioRef }: PlayerControllerProps) => {
     }
     toggleShuffle();
   };
-
   return (
     <div className="flex items-center justify-center gap-4 h-full w-full">
       <button
@@ -39,6 +38,7 @@ const PlayerController = ({ audioRef }: PlayerControllerProps) => {
       </button>
       <button
         onClick={prev}
+        disabled={!hasPrevious}
         className={`flex items-center justify-center text-xl h-10 w-10 cursor-pointer`}
       >
         <Prev className="text-white hover:text-white/80" />
@@ -55,6 +55,7 @@ const PlayerController = ({ audioRef }: PlayerControllerProps) => {
       </button>
       <button
         onClick={next}
+        disabled={!hasNext}
         className={`flex items-center justify-center text-xl h-10 w-10  cursor-pointer `}
       >
         <Next className="text-white hover:text-white/80" />

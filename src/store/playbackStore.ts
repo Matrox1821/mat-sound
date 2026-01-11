@@ -21,7 +21,7 @@ const initialState = {
   volume: 0.2,
 };
 
-export const usePlaybackStore = create<PlaybackState>((set, get) => ({
+export const usePlaybackStore = create<PlaybackState>((set) => ({
   ...initialState,
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
   play: () => set(() => ({ isPlaying: true })),
