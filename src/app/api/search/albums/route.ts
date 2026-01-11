@@ -25,9 +25,9 @@ export async function GET(request: Request) {
       END AS priority,
       (
         SELECT json_agg(json_build_object('id', ar.id, 'name', ar.name))
-        FROM "AlbumsOnArtists" aoa
-        JOIN "Artist" ar ON ar.id = aoa.artist_id
-        WHERE aoa.album_id = al.id
+        FROM "_AlbumToArtist" ata
+        JOIN "Artist" ar ON ar.id = ata."B"
+        WHERE ata."A" = al.id
       ) AS artists,
       (
         SELECT json_agg(ordered_tracks) FROM (
@@ -44,9 +44,9 @@ export async function GET(request: Request) {
           FROM (
             SELECT DISTINCT tr.id, tr.name, tr.cover AS image
             FROM "Track" tr
-            JOIN "TrackGenre" tg ON tr.id = tg.track_id
-            JOIN "AlbumGenre" ag ON ag.genre_id = tg.genre_id
-            WHERE ag.album_id = al.id
+            JOIN "_GenreToTrack" gtt ON tr.id = gtt."B"
+            JOIN "_AlbumToGenre" atg ON atg."B" = gtt."A"
+            WHERE atg."A" = al.id
               AND NOT EXISTS (
                 SELECT 1 FROM "TracksOnAlbums" t_on_a 
                 WHERE t_on_a.track_id = tr.id AND t_on_a.album_id = al.id
@@ -66,9 +66,9 @@ export async function GET(request: Request) {
       SELECT al.id, al.name, al.cover AS image, 'album' AS type, 0 AS rank, -1 AS priority,
       (
         SELECT json_agg(json_build_object('id', ar.id, 'name', ar.name))
-        FROM "AlbumsOnArtists" aoa
-        JOIN "Artist" ar ON ar.id = aoa.artist_id
-        WHERE aoa.album_id = al.id
+        FROM "_AlbumToArtist" ata
+        JOIN "Artist" ar ON ar.id = ata."B"
+        WHERE ata."A" = al.id
       ) AS artists,
       (
         SELECT json_agg(ordered_tracks) FROM (
@@ -85,9 +85,9 @@ export async function GET(request: Request) {
           FROM (
             SELECT DISTINCT tr.id, tr.name, tr.cover AS image
             FROM "Track" tr
-            JOIN "TrackGenre" tg ON tr.id = tg.track_id
-            JOIN "AlbumGenre" ag ON ag.genre_id = tg.genre_id
-            WHERE ag.album_id = al.id
+            JOIN "_GenreToTrack" gtt ON tr.id = gtt."B"
+            JOIN "_AlbumToGenre" atg ON atg."B" = gtt."A"
+            WHERE atg."A" = al.id
               AND NOT EXISTS (
                 SELECT 1 FROM "TracksOnAlbums" t_on_a 
                 WHERE t_on_a.track_id = tr.id AND t_on_a.album_id = al.id

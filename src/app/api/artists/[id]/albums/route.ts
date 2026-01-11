@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       where: {
         artists: {
           some: {
-            artist: { id },
+            id,
           },
         },
       },

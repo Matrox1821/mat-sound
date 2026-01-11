@@ -1,5 +1,3 @@
-import { CustomError } from "@/types/apiTypes";
-import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { prisma } from "@config/db";

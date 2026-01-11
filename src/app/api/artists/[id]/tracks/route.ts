@@ -36,7 +36,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       where: {
         artists: {
           some: {
-            artist: { id },
+            id,
           },
         },
       },
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         release_date: true,
         duration: true,
         reproductions: true,
-        lyric: true,
+        lyrics: true,
         _count: {
           select: { likes: true },
         },

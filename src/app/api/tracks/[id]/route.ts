@@ -36,13 +36,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         cover: true,
         release_date: true,
         artists: {
-          select: { artist: { select: { id: true, avatar: true, name: true } } },
+          select: { id: true, avatar: true, name: true },
         },
         duration: true,
         song: true,
         likes: true,
         reproductions: true,
-        lyric: true,
+        lyrics: true,
         albums: {
           select: {
             album: {
@@ -52,12 +52,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         },
         genres: {
           select: {
-            genre: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
+            id: true,
+            name: true,
           },
         },
       },

@@ -18,7 +18,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         release_date: true,
         artists: {
           select: {
-            artist: { select: { id: true, avatar: true, name: true } },
+            id: true,
+            avatar: true,
+            name: true,
           },
         },
         _count: { select: { tracks: { where: { album: { id } } } } },
@@ -30,13 +32,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
               select: {
                 artists: {
                   select: {
-                    artist: { select: { name: true, id: true, avatar: true } },
+                    name: true,
+                    id: true,
+                    avatar: true,
                   },
                 },
                 albums: {
                   select: { album: { select: { name: true, id: true } } },
                 },
-                lyric: true,
+                lyrics: true,
                 reproductions: true,
                 duration: true,
                 name: true,

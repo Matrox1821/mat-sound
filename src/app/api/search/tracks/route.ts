@@ -25,9 +25,9 @@ export async function GET(request: Request) {
       END AS priority,
       (
         SELECT json_agg(json_build_object('id', ar.id, 'name', ar.name))
-        FROM "TracksOnArtists" toa
-        JOIN "Artist" ar ON ar.id = toa.artist_id
-        WHERE toa.track_id = t.id
+        FROM "_ArtistToTrack" att
+        JOIN "Artist" ar ON ar.id = att."A"
+        WHERE att."B" = t.id
       ) AS artists,
       (
         SELECT json_agg(ordered_rec) FROM (
@@ -35,12 +35,12 @@ export async function GET(request: Request) {
           FROM (
             SELECT DISTINCT r.id, r.name, r.cover AS image
             FROM "Track" r
-            LEFT JOIN "TrackGenre" tg_r ON r.id = tg_r.track_id
-            LEFT JOIN "TrackGenre" tg_t ON tg_t.genre_id = tg_r.genre_id AND tg_t.track_id = t.id
-            LEFT JOIN "TracksOnArtists" ta_r ON r.id = ta_r.track_id
-            LEFT JOIN "TracksOnArtists" ta_t ON ta_t.artist_id = ta_r.artist_id AND ta_t.track_id = t.id
+            LEFT JOIN "_GenreToTrack" gtr_r ON r.id = gtr_r."B"
+            LEFT JOIN "_GenreToTrack" gtr_t ON gtr_t."A" = gtr_r."A" AND gtr_t."B" = t.id
+            LEFT JOIN "_ArtistToTrack" att_r ON r.id = att_r."B"
+            LEFT JOIN "_ArtistToTrack" att_t ON att_t."A" = att_r."A" AND att_t."B" = t.id
             WHERE r.id <> t.id 
-              AND (tg_t.track_id IS NOT NULL OR ta_t.track_id IS NOT NULL)
+              AND (gtr_t."B" IS NOT NULL OR att_t."B" IS NOT NULL)
           ) rec
           ORDER BY RANDOM()
           LIMIT 5
@@ -56,9 +56,9 @@ export async function GET(request: Request) {
       SELECT t.id, t.name, t.cover AS image, 0 AS rank, -1 AS priority,
       (
         SELECT json_agg(json_build_object('id', ar.id, 'name', ar.name))
-        FROM "TracksOnArtists" toa
-        JOIN "Artist" ar ON ar.id = toa.artist_id
-        WHERE toa.track_id = t.id
+        FROM "_ArtistToTrack" att
+        JOIN "Artist" ar ON ar.id = att."A"
+        WHERE att."B" = t.id
       ) AS artists,
       (
         SELECT json_agg(ordered_rec) FROM (
@@ -66,12 +66,12 @@ export async function GET(request: Request) {
           FROM (
             SELECT DISTINCT r.id, r.name, r.cover AS image
             FROM "Track" r
-            LEFT JOIN "TrackGenre" tg_r ON r.id = tg_r.track_id
-            LEFT JOIN "TrackGenre" tg_t ON tg_t.genre_id = tg_r.genre_id AND tg_t.track_id = t.id
-            LEFT JOIN "TracksOnArtists" ta_r ON r.id = ta_r.track_id
-            LEFT JOIN "TracksOnArtists" ta_t ON ta_t.artist_id = ta_r.artist_id AND ta_t.track_id = t.id
+            LEFT JOIN "_GenreToTrack" gtr_r ON r.id = gtr_r."B"
+            LEFT JOIN "_GenreToTrack" gtr_t ON gtr_t."A" = gtr_r."A" AND gtr_t."B" = t.id
+            LEFT JOIN "_ArtistToTrack" att_r ON r.id = att_r."B"
+            LEFT JOIN "_ArtistToTrack" att_t ON att_t."A" = att_r."A" AND att_t."B" = t.id
             WHERE r.id <> t.id 
-              AND (tg_t.track_id IS NOT NULL OR ta_t.track_id IS NOT NULL)
+              AND (gtr_t."B" IS NOT NULL OR att_t."B" IS NOT NULL)
           ) rec
           ORDER BY RANDOM()
           LIMIT 5
