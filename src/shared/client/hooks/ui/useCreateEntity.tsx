@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ToastOptions } from "react-toastify";
-import { useToastify } from "./useToastify";
+import { useToast } from "./useToast";
 
 type ServerResponse = {
   success: boolean;
@@ -22,7 +22,7 @@ export function useCreateEntity<T>({
   errorMessage = "Error al crear el elemento",
   toastOptions = {},
 }: UseCreateEntityOptions<T>) {
-  const { showSuccess, showError } = useToastify();
+  const { success: showSuccess, error: showError } = useToast();
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
