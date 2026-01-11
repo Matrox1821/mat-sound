@@ -19,15 +19,15 @@ export interface APIAlbum {
           name: string;
           id: string;
           cover: ImageSizes;
-          artists?: { artist: { name: string; id: string } }[] | null;
+          artists?: { name: string; id: string }[] | null;
           reproductions: number;
           duration: number;
           song: string;
-          lyric: string;
+          lyrics: string;
         };
       }[]
     | null;
-  artists?: { artist: { name: string; id: string; avatar: ImageSizes } }[] | null;
+  artists?: { name: string; id: string; avatar: ImageSizes }[] | null;
 }
 
 export interface ImageSizes {
@@ -46,7 +46,8 @@ export interface APIContent {
   duration: number;
   reproductions: number;
   release_date: string;
-  lyric: string;
+  lyrics: string;
+  isLiked: boolean;
   _count?: {
     likes: number;
   };
@@ -61,11 +62,9 @@ export interface APIContent {
     | null;
   artists?:
     | {
-        artist: {
-          name: string;
-          id: string;
-          avatar: ImageSizes;
-        };
+        name: string;
+        id: string;
+        avatar: ImageSizes;
       }[]
     | null;
   artist?: { name: string; id: string; avatar: ImageSizes } | null;
@@ -77,13 +76,11 @@ export interface APIContent {
       };
     }[];
     artists: {
-      artist: {
-        id: string;
-        name: string;
-        avatar: ImageSizes;
-      };
+      id: string;
+      name: string;
+      avatar: ImageSizes;
     }[];
-    lyric: string;
+    lyrics: string;
     duration: number;
     id: string;
     name: string;
@@ -91,7 +88,8 @@ export interface APIContent {
     song: string;
     release_date: string;
     reproductions: number;
-    _count: {
+    isLiked: boolean;
+    _count?: {
       likes: number;
     };
   }[];
@@ -122,7 +120,7 @@ export interface APIArtistTrack {
   release_date: string;
   duration: number;
   reproductions: number;
-  lyric: string;
+  lyrics: string;
   _count: {
     likes: number;
   };
@@ -163,7 +161,7 @@ export interface TrackFormData {
     [key: string]: { order: number; disk: number };
   };
   artists: string[];
-  lyric: string;
+  lyrics: string;
 }
 export interface GenreFormData {
   genre: string | string[];

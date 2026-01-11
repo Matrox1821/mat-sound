@@ -6,12 +6,12 @@ export interface APITrack {
   cover: ImageSizes;
   release_date: string;
   copyright: string[];
-  artists: { artist: { name: string; id: string; avatar: ImageSizes } }[] | null;
+  artists: { name: string; id: string; avatar: ImageSizes }[] | null;
   duration: number;
   song: string;
   likes: number;
   reproductions: number;
-  lyric: string;
+  lyrics: string;
   albums: { album: { id: string; cover: ImageSizes; name: string } }[] | null;
 }
 
@@ -43,7 +43,7 @@ export interface DBTrack {
   releaseDate: string;
   duration: number;
   reproductions: number;
-  lyric: string;
+  lyrics: string;
   genres?: TrackGenreProps[];
   artists?: TrackArtistRelationProps[];
   albums?: TrackAlbumRelationProps[];
@@ -61,7 +61,8 @@ export interface playerTrackProps {
   reproductions: number;
   releaseDate: string;
   likes: number;
-  lyric: string;
+  lyrics: string;
+  isLiked: boolean;
   albums?:
     | {
         name: string;

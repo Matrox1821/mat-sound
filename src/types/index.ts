@@ -42,8 +42,10 @@ export interface contentProps {
   duration: number;
   reproductions: number;
   releaseDate: string;
+  isLiked: boolean;
   likes: number;
-  lyric: string;
+  lyrics: string;
+
   albums?:
     | {
         name: string;
@@ -81,7 +83,8 @@ export interface contentProps {
         releaseDate: string;
         reproductions: number | null;
         likes: number | null;
-        lyric: string;
+        lyrics: string;
+        isLiked: boolean;
       }[]
     | null;
   artist?: { name: string; id: string; avatar: ImageSizes } | null;
@@ -108,12 +111,12 @@ export interface trackPageProps {
   cover: ImageSizes;
   releaseDate: string;
   copyright: string[];
-  artists: { name: string; id: string; avatar: ImageSizes }[] | null;
   duration: number;
   song: string;
   likes: number;
   reproductions: number;
-  lyric: string;
+  lyrics: string;
+  artists: { name: string; id: string; avatar: ImageSizes }[] | null;
   albums: { id: string; cover: ImageSizes; name: string }[] | null;
 }
 //album page props
@@ -133,12 +136,12 @@ export interface albumPageProps {
         name: string;
         id: string;
         cover: ImageSizes;
-        artists?: { artist: { name: string; id: string } }[] | null;
+        artists?: { name: string; id: string }[] | null;
         albums?: { albums: { name: string; id: string } }[] | null;
         reproductions: number;
         duration: number;
         song: string;
-        lyric: string;
+        lyrics: string;
       }[];
   artists?: { name: string; id: string; avatar: ImageSizes }[] | null;
 }
@@ -167,7 +170,7 @@ export interface artistTracksProps {
   duration: number;
   reproductions: number;
   likes: number;
-  lyric: string;
+  lyrics: string;
   albums: { album: { name: string; id: string; cover: ImageSizes } }[] | null;
 }
 
