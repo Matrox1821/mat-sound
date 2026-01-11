@@ -10,7 +10,7 @@ export const initialTrackFormData: TrackFormData = {
   genres: [],
   order_and_disk: {},
   artists: [],
-  lyric: "",
+  lyrics: "",
 };
 
 export const toTrackFormData = (data: TrackFormData) => {
@@ -25,7 +25,7 @@ export const toTrackFormData = (data: TrackFormData) => {
       form.append("genres", id);
     });
   }
-  form.append("lyric", data.lyric);
+  form.append("lyrics", data.lyrics);
 
   form.append("order_and_disk", JSON.stringify(data.order_and_disk));
 
@@ -67,6 +67,6 @@ export function parseTrackFormData(formData: FormData): TrackFormData {
     reproductions: Number(formData.get("reproductions") as string) | 0,
     genres: formData.getAll("genres") as string[],
     order_and_disk: parseJSON(formData.get("order_and_disk")),
-    lyric: formData.get("lyric") as string,
+    lyrics: formData.get("lyric") as string,
   };
 }

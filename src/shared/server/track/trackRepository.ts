@@ -29,10 +29,11 @@ async function getRandomTracksIds(limit = 5, excludeId: string | null) {
 }
 export const getTracks = async (
   limit: number,
+  userId?: string,
   filter?: { by: "artists" | "tracks" | "albums" | "playlists" | "none"; id: string }
 ) => {
   let findBy = {};
-  let ids = await getRandomTracksIds(5, filter?.by === "tracks" ? filter.id : null);
+  const ids = await getRandomTracksIds(5, filter?.by === "tracks" ? filter.id : null);
   if (filter?.by === "artists") {
     findBy = {
       ...findBy,
@@ -61,10 +62,25 @@ export const getTracks = async (
       duration: true,
       reproductions: true,
       release_date: true,
-      lyric: true,
+      lyrics: true,
+      collections: true,
+      playlists: true,
+
+      likes: userId
+        ? {
+            where: {
+              user_id: userId,
+            },
+            select: {
+              user_id: true,
+            },
+            take: 1,
+          }
+        : false,
+
       _count: { select: { likes: true } },
       artists: {
-        select: { artist: { select: { name: true, id: true, avatar: true } } },
+        select: { name: true, id: true, avatar: true },
       },
       albums: {
         select: { order: true, disk: true, album: { select: { id: true, name: true } } },
@@ -74,6 +90,8 @@ export const getTracks = async (
 
   return tracks.map((track) => ({
     ...track,
+    isLiked: userId ? track.likes.length > 0 : false, // Si hay al menos un registro, es true
+    likes: undefined, // Limpiamos el array temporal de la respuesta
     type: "tracks",
   }));
 };
@@ -115,10 +133,10 @@ export const createTrack = async (body: TrackFormData) => {
       release_date: new Date(body.release_date),
       duration: body.duration,
       reproductions: body.reproductions,
-      lyric: body.lyric,
+      lyrics: body.lyrics,
       artists: {
-        create: body.artists.map((artistId: string) => {
-          return { artist_id: artistId };
+        connect: body.artists.map((artistId: string) => {
+          return { id: artistId };
         }),
       },
       albums: {
@@ -127,7 +145,7 @@ export const createTrack = async (body: TrackFormData) => {
         }),
       },
       genres: {
-        create: body.genres.map((genre_id) => ({ genre_id })),
+        connect: body.genres.map((genre_id) => ({ id: genre_id })),
       },
     },
   });
@@ -138,7 +156,7 @@ export const createTrack = async (body: TrackFormData) => {
   });
   const artist = await prisma.track.findFirst({
     where: { id: track.id },
-    select: { artists: { select: { artist_id: true } } },
+    select: { artists: { select: { id: true } } },
   });
   if (track && album && artist)
     await Promise.all([
@@ -146,8 +164,7 @@ export const createTrack = async (body: TrackFormData) => {
         async ({ album_id }) => await updateAlbumGenre({ albumId: album_id, genresId: body.genres })
       ),
       ...artist.artists.map(
-        async (artist) =>
-          await updateArtistGenre({ artistId: artist.artist_id, genresId: body.genres })
+        async (artist) => await updateArtistGenre({ artistId: artist.id, genresId: body.genres })
       ),
     ]);
 

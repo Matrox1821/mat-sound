@@ -11,20 +11,22 @@ export const getContent = async ({
   filter = "none",
   filterId = "",
   idToRemove,
+  userId = "",
 }: {
   type?: string[];
   limit?: number;
   filter?: "artists" | "tracks" | "albums" | "playlists" | "none";
   filterId?: string;
   idToRemove?: string;
+  userId?: string;
 }) => {
   let elements: any[] = [];
   if (type.includes("tracks")) {
-    const tracksData = await getTracks(limit, { by: filter, id: filterId });
+    const tracksData = await getTracks(limit, userId, { by: filter, id: filterId });
 
     const newTracks = await Promise.all(
       tracksData.map(async (track: any) => ({
-        tracks: await getTracks(5, { by: "tracks", id: track.id }),
+        tracks: await getTracks(5, userId, { by: "tracks", id: track.id }),
         ...track,
       }))
     );

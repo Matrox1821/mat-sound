@@ -8,6 +8,7 @@ interface TrackQuery {
   limit?: number;
   remove?: string;
   filter?: { type: ContentType; id: string };
+  userId?: string;
 }
 
 const getContent = async ({
@@ -15,6 +16,7 @@ const getContent = async ({
   limit = 8,
   remove = "",
   filter = { type: "none", id: "" },
+  userId = "",
 }: TrackQuery) => {
   const searchParams = new URLSearchParams();
   type.forEach((t) => searchParams.append("type", t));
@@ -22,6 +24,7 @@ const getContent = async ({
   searchParams.set("remove", remove);
   searchParams.set("filter", filter.type);
   searchParams.set("filter_id", filter.id);
+  searchParams.set("user_id", userId);
 
   const response = await handleCustomApiRequest<APIContent[]>(
     GET_URL + "/api/content" + "?" + searchParams.toString(),

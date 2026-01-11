@@ -14,6 +14,6 @@ export function parseAlbum(data: APIAlbum | null): albumPageProps | null {
       order: track.order,
       disk: track.disk,
     })),
-    artists: artists?.map((artist) => ({ ...artist.artist })),
+    artists: artists?.map((artist) => ({ ...artist })),
   };
 }

@@ -17,7 +17,7 @@ export const getAlbums = async (
       name: true,
       cover: true,
       artists: {
-        select: { artist: { select: { id: true, avatar: true, name: true } } },
+        select: { id: true, avatar: true, name: true },
       },
     },
   });
@@ -60,7 +60,8 @@ export const createAlbum = async (body: AlbumFormData) => {
       release_date: new Date(body.release_date),
 
       artists: {
-        create: body.artists.map((artist_id: string) => ({ artist_id })),
+        // En relaciones implícitas, conectas directamente con la lista de IDs
+        connect: body.artists.map((id: string) => ({ id })),
       },
     },
   });
@@ -93,20 +94,19 @@ export const updateAlbumGenre = async ({
   albumId: string;
   genresId: string[];
 }) => {
-  const genresInAlbum = await prisma.albumGenre.findMany({
-    where: { album_id: albumId },
-    select: { genre_id: true },
+  const genresInAlbum = await prisma.album.findMany({
+    where: { id: albumId },
+    select: { genres: { select: { id: true } } },
   });
 
-  const filteredGenres = genresId.filter((id) => {
-    id !== genresInAlbum.find(({ genre_id }) => genre_id === id)?.genre_id;
-  });
+  const genreIds = genresInAlbum.flatMap((item) => item.genres.map((g) => g.id));
+  const filteredGenres = genresId.filter((id) => id !== genreIds.find((genre) => genre === id));
 
   await prisma.album.update({
     where: { id: albumId },
     data: {
       genres: {
-        create: filteredGenres.map((genre_id) => ({ genre_id })),
+        set: filteredGenres.map((id) => ({ id })),
       },
     },
   });

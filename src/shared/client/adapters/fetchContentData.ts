@@ -6,6 +6,7 @@ export const fetchContentData = async ({
   remove,
   options,
   filter,
+  userId = "",
 }: {
   remove?: {
     artistId?: string;
@@ -18,15 +19,16 @@ export const fetchContentData = async ({
     type?: ContentType[];
   };
   filter?: { type: ContentType; id: string };
+  userId?: string;
 }): Promise<contentProps[] | undefined> => {
-  let dataToRemove = remove?.artistId || remove?.albumId || remove?.trackId || "";
+  const dataToRemove = remove?.artistId || remove?.albumId || remove?.trackId || "";
   const content = await contentApi.getContent({
     type: options?.type || ["tracks"],
     limit: options?.limit || 8,
     remove: dataToRemove,
     filter,
+    userId,
   });
-
   if (!content) return;
   return parseContent(content);
 };

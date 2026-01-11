@@ -2,15 +2,15 @@ import { contentProps } from "@/types";
 import { APIContent, ImageSizes } from "@/types/apiTypes";
 export function parseContent(content: APIContent[]): contentProps[] {
   return content.map((data) => {
-    const { release_date, cover, avatar, _count, albums, artists, tracks, song, ...rest } = data;
-
+    const { release_date, cover, avatar, _count, albums, artists, tracks, song, isLiked, ...rest } =
+      data;
     return {
       ...rest,
       image: (avatar || cover) as ImageSizes,
       song: song ?? "",
       likes: _count?.likes ?? 0,
       releaseDate: release_date ?? "",
-
+      isLiked: isLiked,
       albums:
         albums?.map((item) => ({
           id: item.album.id,
@@ -20,9 +20,9 @@ export function parseContent(content: APIContent[]): contentProps[] {
 
       artists:
         artists?.map((item) => ({
-          id: item.artist.id,
-          name: item.artist.name,
-          avatar: item.artist.avatar,
+          id: item.id,
+          name: item.name,
+          avatar: item.avatar,
         })) ?? null,
 
       tracks:
@@ -37,8 +37,9 @@ export function parseContent(content: APIContent[]): contentProps[] {
                 releaseDate: t.release_date ?? "",
                 reproductions: t.reproductions ?? 0,
                 likes: t._count?.likes ?? 0,
+                isLiked: t.isLiked,
                 song: t.song ?? "",
-                lyric: t.lyric ?? "",
+                lyrics: t.lyrics ?? "",
 
                 albums: Array.isArray(t.albums)
                   ? t.albums.map((a) => ({
@@ -49,9 +50,9 @@ export function parseContent(content: APIContent[]): contentProps[] {
 
                 artists: Array.isArray(t.artists)
                   ? t.artists.map((ar) => ({
-                      id: ar.artist.id,
-                      name: ar.artist.name,
-                      avatar: ar.artist.avatar,
+                      id: ar.id,
+                      name: ar.name,
+                      avatar: ar.avatar,
                     }))
                   : null,
               };

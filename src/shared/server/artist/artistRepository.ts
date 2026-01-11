@@ -84,20 +84,20 @@ export const updateArtistGenre = async ({
   artistId: string;
   genresId: string[];
 }) => {
-  const genresInArtist = await prisma.artistGenre.findMany({
-    where: { artist_id: artistId },
-    select: { genre_id: true },
+  const genres = await prisma.genre.findMany({
+    where: { artists: { every: { id: artistId } } },
+    select: { id: true },
   });
 
   const filteredGenres = genresId.filter((id) => {
-    id !== genresInArtist.find(({ genre_id }) => genre_id === id)?.genre_id;
+    id !== genres.find((genre) => genre.id === id)?.id;
   });
 
   await prisma.artist.update({
     where: { id: artistId },
     data: {
       genres: {
-        create: filteredGenres.map((genre_id) => ({ genre_id })),
+        set: filteredGenres.map((id) => ({ id })),
       },
     },
   });

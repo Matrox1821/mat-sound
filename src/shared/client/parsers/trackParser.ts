@@ -8,7 +8,7 @@ export function parseTracks(data: APITrack[] | null): trackPageProps[] | null {
     return {
       ...restData,
       releaseDate: release_date,
-      artists: artists?.map((artist) => ({ ...artist.artist })) || null,
+      artists: artists?.map((artist) => ({ ...artist })) || null,
       albums: albums?.map((album) => ({ ...album.album })) || null,
     };
   });
@@ -23,8 +23,9 @@ export function parseTrackByPlayer(track: any): playerTrackProps {
     duration: track.duration ?? 0,
     reproductions: track.reproductions ?? 0,
     releaseDate: track.releaseDate ?? track.release_date ?? "",
-    likes: track?.likes ?? 0,
-    lyric: track.lyric || "",
+    likes: track?.likes || 0,
+    lyrics: track.lyrics || "",
+    isLiked: track.isLiked,
     artists: track.artists
       ? track.artists.map((a: any) => ({
           id: a.id ?? a.artist?.id,
