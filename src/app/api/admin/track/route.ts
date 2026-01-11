@@ -13,7 +13,6 @@ import {
 import { handleTrackResizeAndUpload, uploadSong } from "@/shared/server/track/trackStorage";
 import { GET_BUCKET_URL } from "@/shared/utils/constants";
 import { prisma } from "@config/db";
-import { updateAlbumGenre } from "@/shared/server/album/albumRepository";
 
 export async function POST(req: NextRequest) {
   try {
@@ -91,11 +90,11 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams.getAll("artists_id") as string[];
-    if (!searchParams) {
+    if (searchParams.length === 0) {
       throw new CustomError({
-        errors: [{ message: "Admin not found." }],
-        msg: "Admin not found.",
-        httpStatusCode: HttpStatusCode.NOT_FOUND,
+        errors: [{ message: "Artists ID not provided." }],
+        msg: "Artists ID not provided.",
+        httpStatusCode: HttpStatusCode.BAD_REQUEST,
       });
     }
 
@@ -104,7 +103,9 @@ export async function GET(req: NextRequest) {
     const tracks = await prisma.track.findMany({
       where: {
         artists: {
-          some: { artist_id: { in: artists_id } },
+          some: {
+            id: { in: artists_id },
+          },
         },
       },
     });
@@ -113,6 +114,7 @@ export async function GET(req: NextRequest) {
       data: tracks,
     });
   } catch (error) {
+    console.log(error);
     return onThrowError(error);
   }
 }

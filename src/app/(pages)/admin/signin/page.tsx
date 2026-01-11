@@ -1,5 +1,5 @@
 "use client";
-import { adminSignInFormValidation } from "@/actions/auth";
+import { adminSigninFormValidation } from "@/actions/auth";
 import CustomInputAdminForm from "@/components/UI/Inputs/CustomInputAdminForm";
 import { redirect } from "next/navigation";
 import { useActionState, useEffect } from "react";
@@ -9,8 +9,8 @@ const initialState = {
   errors: [],
   success: false,
 };
-export default function Page() {
-  const [state, formAction] = useActionState(adminSignInFormValidation, initialState);
+export default function AdminSigninPage() {
+  const [state, formAction] = useActionState(adminSigninFormValidation, initialState);
 
   const errorToast = (text: string) => toast.error(text);
   const successToast = (text: string, options: any) => toast.success(text, options);
@@ -27,7 +27,7 @@ export default function Page() {
     }
   }, [state]);
   return (
-    <main className="w-full h-full flex justify-center items-center">
+    <main className="w-full h-full flex justify-center items-center bg-background">
       <form
         action={formAction}
         className="w-80 h-80 rounded-lg border-2 border-accent-400 p-8 flex flex-col gap-8"

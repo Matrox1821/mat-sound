@@ -3,6 +3,7 @@ import Paginator from "@/components/UI/Paginator";
 import TracksTable from "@/components/UI/Tables/ApiTables/TrackTable";
 import { genreAdminApi } from "@/queryFn/admin/genreApi";
 import { trackAdminApi } from "@/queryFn/admin/trackApi";
+import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";
 
 export default async function Page({
@@ -20,17 +21,17 @@ export default async function Page({
   const genres = genreAdminApi.getGenres();
 
   return (
-    <main className="w-full h-screen">
+    <main className="w-full h-screen bg-background">
       <section className="w-full h-1/6 flex items-center justify-center">
         <FormDialog type="track" data={genres} />
       </section>
       <hr className="text-background-700 w-full" />
       <section className="flex justify-center items-center w-full py-20 flex-col">
-        <div className="w-1/2 rounded-xl bg-background-800 p-2 flex flex-col gap-4">
-          <Suspense fallback={<div className="w-full h-[480px]" />}>
+        <div className="w-1/2 rounded-xl bg-background-900 p-2 flex flex-col gap-4">
+          <Suspense fallback={<ProgressSpinner className="w-full h-[480px]" />}>
             <TracksTable data={tracks} rows={rows} />
           </Suspense>
-          <Suspense fallback={<span>loading</span>}>
+          <Suspense fallback={<span></span>}>
             <Paginator paginationInfo={paginationInfo} />
           </Suspense>
         </div>

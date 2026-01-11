@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
       data: updatedAlbum,
     });
   } catch (error) {
+    console.log(error);
     return onThrowError(error);
   }
 }
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest) {
     albums = await prisma.album.findMany({
       where: {
         artists: {
-          some: { artist_id: { in: newArtistsId } },
+          some: { id: { in: newArtistsId } },
         },
       },
     });
