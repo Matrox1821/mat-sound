@@ -42,7 +42,7 @@ export default function About({ artist }: { artist: artistPageProps | null }) {
     <div className="flex flex-col gap-4">
       <h2 className="text-2xl font-bold">Acerca de</h2>
       <button
-        className="flex-none w-3/5 h-[516px] relative rounded-xl after:absolute after:content-[''] after:w-full after:h-[101%] after:bg-linear-to-t after:from-background-950 after:to-60% after:to-background-950/10 after:left-0 after:top-0 after:rounded-xl after:z-10 cursor-pointer hover:scale-101 transition-[scale] duration-400"
+        className="flex-none w-3/5 h-[516px] relative rounded-xl after:absolute after:content-[''] after:w-full after:h-[101%] after:bg-linear-to-t after:from-background after:to-60% after:to-background/10 after:left-0 after:top-0 after:rounded-xl after:z-10 cursor-pointer hover:scale-101 transition-[scale] duration-400"
         onClick={() => setVisible(true)}
       >
         <Image
@@ -76,7 +76,7 @@ export default function About({ artist }: { artist: artistPageProps | null }) {
           if (!visible) return;
           setVisible(false);
         }}
-        content={({ hide }) => (
+        content={() => (
           <div className="rounded-2xl overflow-hidden">
             <section
               className="flex flex-column gap-4 bg-background-950 relative"

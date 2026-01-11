@@ -21,7 +21,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ artistI
   });
 
   return (
-    <section className="w-full z-20 h-full flex flex-col relative md:bg-background-950 md:transition-[heigth] md:duration-200 focus-visible:outline-0">
+    <section className="w-full z-20 h-full flex flex-col relative md:bg-background md:transition-[heigth] md:duration-200 focus-visible:outline-0">
       <Suspense fallback={<MainCoverSkeleton />}>
         <MainCover artistPromise={artistPromise} />
       </Suspense>

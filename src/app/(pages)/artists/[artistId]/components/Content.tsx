@@ -29,7 +29,7 @@ export default function ArtistContent({
   }));
   const parsedTracks = tracks?.map((newTrack) => parseTrackByPlayer(newTrack));
   return (
-    <article className="z-30 top-[calc(5/12*100vh)] left-0 w-full flex flex-col focus:none p-8 gap-8 relative bg-background-950">
+    <article className="z-30 top-[calc(5/12*100vh)] left-0 w-full flex flex-col focus:none p-8 gap-8 relative bg-background">
       {/*
       ----- Posible fondo ----- 
       <Background image={artist?.mainCover}>

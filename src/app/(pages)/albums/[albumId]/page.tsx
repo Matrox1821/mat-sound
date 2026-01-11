@@ -11,7 +11,7 @@ export default async function AlbumPage({ params }: { params: Promise<{ albumId:
   if (!albumPromise) return null;
 
   return (
-    <section className="w-full z-20 h-full md:relative md:bg-background-950 md:transition-[heigth] md:duration-200 overflow-y-auto focus-visible:outline-0">
+    <section className="w-full z-20 h-full md:relative md:bg-background md:transition-[heigth] md:duration-200 overflow-y-auto focus-visible:outline-0">
       <article className="w-full h-[calc(1/2*100vh)] flex flex-col justify-center px-26 relative">
         <Suspense fallback={<MainCoverSkeleton />}>
           <MainCover albumPromise={albumPromise} />

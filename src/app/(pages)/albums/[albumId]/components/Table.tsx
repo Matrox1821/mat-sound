@@ -13,7 +13,7 @@ import { use } from "react";
 
 export default function Table({ albumPromise }: { albumPromise: Promise<albumPageProps | null> }) {
   const album = use(albumPromise);
-  const { setTrack, currentTrack, setPlayingFrom, playingFrom } = usePlayerStore((state) => state);
+  const { setTrack, currentTrack, setPlayingFrom } = usePlayerStore((state) => state);
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
 
@@ -150,7 +150,7 @@ function DiskTable({
             </td>
             <td className="text-sm font-semibold">
               {track.artists &&
-                track.artists.map(({ artist }: any) => (
+                track.artists.map((artist: any) => (
                   <Link href={`/artists/${artist.id}`} key={artist.id}>
                     {artist.name}
                   </Link>

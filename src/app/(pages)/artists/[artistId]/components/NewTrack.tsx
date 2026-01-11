@@ -15,7 +15,7 @@ export default async function NewArtistTrack({
   return (
     <div className="relative flex flex-col gap-4">
       <h2 className="text-2xl font-bold">Selección del artista</h2>
-      <div className="flex-none w-[350px] h-[250px] relative rounded-xl after:content-[''] after:w-full after:h-[101%] after:bg-linear-to-t after:from-background-950 after:to-60% after:to-background-950/10 after:absolute after:top-0 after:rounded-xl after:z-10">
+      <div className="flex-none w-[350px] h-[250px] relative rounded-xl after:content-[''] after:w-full after:h-[101%] after:bg-linear-to-t after:from-background after:to-60% after:to-background-950/10 after:absolute after:top-0 after:rounded-xl after:z-10">
         <Image
           src={track.cover.md}
           alt={track.name}

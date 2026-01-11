@@ -5,7 +5,6 @@ import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { useProgressStore } from "@/store/progressStore";
 import { artistTracksProps } from "@/types";
 
 export function PlayButton({
