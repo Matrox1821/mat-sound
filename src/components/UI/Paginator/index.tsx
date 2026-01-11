@@ -39,7 +39,7 @@ export default function Paginator({
       rows={rows}
       rowsPerPageOptions={[rowsPerPage, rowsPerPage * 2, rowsPerPage * 3]}
       onPageChange={onPageChange}
-      className="!rounded-tl-none !rounded-tr-none !border-0 !bg-background-800"
+      className="!rounded-tl-none !rounded-tr-none !border-0 !bg-background-900"
     ></PrimeReactPaginator>
   );
 }

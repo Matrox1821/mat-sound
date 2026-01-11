@@ -29,7 +29,7 @@ export function FormDialog({
         }}
         content={({ hide }) => (
           <div
-            className="flex flex-column p-3 gap-4 bg-background-900"
+            className="flex flex-column p-3 gap-4 bg-background-950"
             style={{
               borderRadius: "12px",
             }}

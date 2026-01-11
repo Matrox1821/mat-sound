@@ -46,7 +46,7 @@ const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
       onClick={handleClick}
       className="cursor-pointer play-button z-20 w-10 h-10 bg-background-950/90 opacity-0 absolute bottom-1 right-2 bg-primary text-white rounded-full p-2 hover:bg-primary/80 transition-colors"
     >
-      {parsedTrack === currentTrack ? isPlaying ? <Pause /> : <Play /> : <Play />}
+      {parsedTrack.id === currentTrack?.id ? isPlaying ? <Pause /> : <Play /> : <Play />}
     </button>
   );
 };

@@ -8,14 +8,13 @@ import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import { slidesPerView } from "@/shared/utils/helpers";
 import SwiperButtons from "../Buttons/SwiperButtons";
 import CarouselCard from "../Cards/CarouselCard";
-import { CarousellContentProps } from "@/types/components";
 import { use } from "react";
 import { contentProps } from "@/types";
 
 export default function CarouselSwiper({ data }: { data: Promise<contentProps[] | undefined> }) {
+  const { isMobile, size } = useDevice();
   if (!data) return;
   const content = use(data);
-  const { isMobile, size } = useDevice();
   const slidesPerViewAmount = slidesPerView(isMobile, size);
   return (
     <Swiper

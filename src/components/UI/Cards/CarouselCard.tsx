@@ -3,6 +3,7 @@ import CarouselCardPlayButton from "../Buttons/CarouselCardPlayButton";
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import Link from "next/link";
 import { contentProps } from "@/types";
+import { LikeButton } from "../Buttons/Like";
 
 const roundedByIndex = (index: number) => {
   switch (index) {
@@ -28,7 +29,7 @@ export default function CarouselCard({ element }: { element: contentProps }) {
   return (
     <li className="w-full color-content-950 duration-150 gap-2">
       <Link
-        className={`w-full h-full flex flex-col color-content-950 duration-150 gap-2 track rounded-lg relative active:not-[:has(&_.play-button:active)]:scale-[.98] active:not-[:has(&_.play-button:active)]:opacity-80 z-10 ${desktopStyle}`}
+        className={`w-full h-full flex flex-col color-content-950 duration-150 gap-2 track rounded-lg relative active:not-[:has(&_.play-button:active,&_.like-button:active)]:scale-[.98] active:not-[:has(&_.play-button:active,&_.like-button:active)]:opacity-80 z-10 ${desktopStyle}`}
         href={`/${element.type}/${element.id}`}
       >
         <figure className="w-full aspect-square relative">
@@ -65,11 +66,14 @@ export default function CarouselCard({ element }: { element: contentProps }) {
             </figure>
           )} */}
           {element.type === "tracks" && (
-            <>
-              {/* <PreloadTrack track={element} /> */}
-              <CarouselCardPlayButton track={element} />
-            </>
+            <LikeButton
+              trackId={element.id}
+              initialIsLiked={element.isLiked}
+              initialCount={element.likes}
+            />
           )}
+
+          {element.type === "tracks" && <CarouselCardPlayButton track={element} />}
         </figure>
         <span>
           <h2

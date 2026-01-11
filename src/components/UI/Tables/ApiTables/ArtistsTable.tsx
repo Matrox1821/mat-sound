@@ -121,17 +121,17 @@ export default function ArtistsTable({
   };
 
   return (
-    <DataTable value={parsedArtists} scrollable scrollHeight="531px" className="bg-background-800">
+    <DataTable value={parsedArtists} scrollable scrollHeight="531px" className="bg-background-900">
       <Column
         /* field="image" */
         header="Image"
-        className="w-60 bg-background-800 !border-background"
+        className="w-60 bg-background-900 !border-background"
         body={imageBodyTemplate}
       ></Column>
       <Column
         field="name"
         header="Nombre"
-        className="w-60 bg-background-800 !border-background"
+        className="w-60 bg-background-900 !border-background"
       ></Column>
       {/* <Column
         header="Editar"
@@ -141,7 +141,7 @@ export default function ArtistsTable({
       <Column
         header="Borrar"
         body={deleteBodyTemplate}
-        className="w-20 bg-background-800 !border-background"
+        className="w-20 bg-background-900 !border-background"
       ></Column>
     </DataTable>
   );

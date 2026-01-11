@@ -82,10 +82,10 @@ export function SecondStep({
       </div>
       <CustomInputAdminForm
         title="Letra de la canción:"
-        name="lyric"
+        name="lyrics"
         type="textarea"
-        value={formData.lyric}
-        onChange={(val: any) => onChange("lyric", val)}
+        value={formData.lyrics}
+        onChange={(val: any) => onChange("lyrics", val)}
         isRequired
       />
     </section>
