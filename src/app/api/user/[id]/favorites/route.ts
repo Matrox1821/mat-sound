@@ -12,7 +12,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       select: {
         likes: {
           select: {
-            track: { include: { artists: { select: { id: true, name: true, avatar: true } } } },
+            track: {
+              include: {
+                artists: { select: { id: true, name: true, avatar: true } },
+                _count: { select: { likes: true } },
+              },
+            },
           },
         },
       },
@@ -32,7 +37,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     return onSuccessRequest({
       httpStatusCode: HttpStatusCode.OK,
-      data: userLibrary.likes.map(({ track }) => track),
+      data: userLibrary.likes.map(({ track }) => ({
+        isLiked: true,
+        likes: track._count.likes,
+        ...track,
+      })),
     });
   } catch (error) {
     console.log(error);

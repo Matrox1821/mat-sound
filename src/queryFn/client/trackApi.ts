@@ -2,9 +2,9 @@ import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
 import { APITrack } from "@/types/trackProps";
 
-const getTrackById = async (id: string) => {
+const getTrackById = async (id: string, userId: string = "") => {
   const response = await handleCustomApiRequest<APITrack>(
-    GET_URL + "/api/tracks/" + id,
+    GET_URL + "/api/tracks/" + id + "?user_id=" + userId,
     "GET",
     null
   );
@@ -14,9 +14,9 @@ const getTrackById = async (id: string) => {
   return response.data;
 };
 
-const getTracksExceptId = async (id: string, limit: number) => {
+const getTracksExceptId = async (id: string, limit: number, userId: string = "") => {
   const response = await handleCustomApiRequest<APITrack[]>(
-    GET_URL + "/api/tracks/" + id + "?limit=" + limit,
+    GET_URL + "/api/tracks/" + id + "?limit=" + limit + "&user_id=" + userId,
     "GET",
     null
   );

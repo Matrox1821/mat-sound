@@ -1,4 +1,3 @@
-import { ToastContainer } from "react-toastify";
 import { PrimeReactProvider } from "primereact/api";
 
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
@@ -24,7 +23,6 @@ export default async function DashboardLayout({
           <Header initialSession={session} />
           {children}
         </main>
-        <ToastContainer position="bottom-right" draggable theme="dark" />
       </div>
     </PrimeReactProvider>
   );

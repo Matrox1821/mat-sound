@@ -65,14 +65,6 @@ export default function CarouselCard({ element }: { element: contentProps }) {
               })}
             </figure>
           )} */}
-          {element.type === "tracks" && (
-            <LikeButton
-              trackId={element.id}
-              initialIsLiked={element.isLiked}
-              initialCount={element.likes}
-            />
-          )}
-
           {element.type === "tracks" && <CarouselCardPlayButton track={element} />}
         </figure>
         <span>
