@@ -83,18 +83,18 @@ export default function Header({ initialSession }: { initialSession: any }) {
           <User initialSession={initialSession} />
         ) : (
           <>
-            <Link
+            <a
               href={"/signup"}
               className="!h-10 !px-6 !rounded-full !bg-transparent !border-[1px] !border-background-700/70 hover:!bg-background-800/50 !text-background-50 !font-semibold flex items-center transition-colors duration-100"
             >
               Registrarse
-            </Link>
-            <Link
+            </a>
+            <a
               href={"/signin"}
               className="flex items-center !h-10 !px-6 !rounded-full bg-content-900/80 hover:!bg-accent-700 hover:brightness-90 !text-background-900 !font-semibold transition-colors duration-100"
             >
               Iniciar sesión
-            </Link>
+            </a>
           </>
         )}
       </div>

@@ -17,7 +17,7 @@ const handleCustomApiRequest = async <T = any>(
   withToken: boolean = false
 ) => {
   try {
-    let headers = new Headers();
+    const headers = new Headers();
 
     const parsedBody = body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined;
 
