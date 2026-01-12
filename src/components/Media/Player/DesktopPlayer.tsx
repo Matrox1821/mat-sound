@@ -63,7 +63,10 @@ const CurrentMusicWidget = ({
               initialCount={track.likes}
               initialIsLiked={track.isLiked}
             />
-            <Options options={["Playlist", "Ir al artista", "Guardar en colección"]} />
+            <Options
+              options={["Playlist", "Ir al artista", "Guardar en colección"]}
+              optionsPanelClassName="translate-x-6"
+            />
           </div>
         </div>
         {track.artists &&

@@ -4,58 +4,51 @@ import type { RefObject } from "react";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 
-export const useAudioController = (audio: RefObject<HTMLAudioElement | null>) => {
-  const { isPlaying, volume } = usePlaybackStore((state) => state);
-  const { currentTrack } = usePlayerStore((state) => state);
+export const useAudioController = (audioRef: RefObject<HTMLAudioElement | null>) => {
+  const { isPlaying, volume } = usePlaybackStore();
+  const songUrl = usePlayerStore((state) => state.currentTrack?.song);
 
   useEffect(() => {
-    if (!audio?.current || !currentTrack) return;
+    const el = audioRef.current;
+    if (!el || !songUrl) return;
 
-    const currentAudio = audio.current;
     let cancelled = false;
-    // Reset completo del audio (evita AbortError + NotSupportedError)
-    currentAudio.pause();
-    currentAudio.removeAttribute("src");
-    currentAudio.load();
 
-    // Asignar nuevo audio
-    currentAudio.src = currentTrack.song;
-    currentAudio.volume = volume;
+    el.pause();
+    el.removeAttribute("src");
+    el.load();
+    el.src = songUrl;
 
-    // Reproducir solo cuando esté listo
     const onLoadedMetadata = () => {
       if (cancelled) return;
-
       if (isPlaying) {
-        currentAudio.play().catch((err) => {
-          console.error("Error al reproducir:", err);
-        });
+        el.play().catch((err) => console.error("Error play:", err));
       }
     };
 
-    currentAudio.addEventListener("loadedmetadata", onLoadedMetadata);
+    el.addEventListener("loadedmetadata", onLoadedMetadata);
 
     return () => {
       cancelled = true;
-      currentAudio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      el.removeEventListener("loadedmetadata", onLoadedMetadata);
     };
-  }, [currentTrack, audio]);
+  }, [songUrl, isPlaying]);
 
   useEffect(() => {
-    if (!audio?.current) return;
+    const el = audioRef.current;
+    if (!el || !el.src) return;
 
     if (isPlaying) {
-      audio.current.play().catch((error) => {
-        console.error("Error playing audio:", error);
-      });
+      el.play().catch(() => {});
     } else {
-      audio.current.pause();
+      el.pause();
     }
-  }, [isPlaying, audio]);
+  }, [isPlaying, audioRef]);
 
   useEffect(() => {
-    if (!audio?.current) return;
-
-    audio.current.volume = volume;
-  }, [volume, audio]);
+    const el = audioRef.current;
+    if (el) {
+      el.volume = volume;
+    }
+  }, [volume, audioRef]);
 };

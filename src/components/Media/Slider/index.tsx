@@ -27,7 +27,7 @@ const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
         setCurrentTime(newCurrentTime);
       }
     },
-    [audioRef]
+    [audioRef, setCurrentTime]
   );
 
   const handlePointerMove = useCallback(
