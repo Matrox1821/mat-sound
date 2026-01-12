@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import CustomInputAdminForm from "../../Inputs/CustomInputAdminForm";
 import { createGenreServer } from "@/actions/genre";
 import { redirect, usePathname } from "next/navigation";
-import { useToast } from "@/shared/client/hooks/ui/useToast";
+import { toast } from "sonner";
 
 const initialState = {
   errors: [],
@@ -14,18 +14,17 @@ const initialState = {
 export function GenreForm({ hide }: { hide: (e: React.SyntheticEvent) => void }) {
   const [state, formAction] = useActionState(createGenreServer, initialState);
   const [inputs, setInputs] = useState(1);
-  const { success, error } = useToast();
   const pathname = usePathname();
 
   useEffect(() => {
     if (state.success) {
-      success("Género creado", { autoClose: 2000 });
+      toast.success("Género creado", { duration: 2000 });
       redirect(pathname);
     }
     if (state.errors.length > 0) {
-      error("Problema al crear el género", { autoClose: 2000 });
+      toast.error("Problema al crear el género", { duration: 2000 });
     }
-  }, [state.success]);
+  }, [state.success, pathname, state.errors.length]);
 
   return (
     <form action={formAction} className="w-[750px] flex flex-col gap-4 text-xs overflow-hidden">

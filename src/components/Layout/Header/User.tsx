@@ -1,11 +1,11 @@
 "use client";
 import { signoutFormValidation } from "@/actions/auth";
 import { User as UserIcon } from "@/components/UI/Icons/User";
-import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { FormSignoutState } from "@/shared/utils/schemas/validations";
 import Link from "next/link";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { useActionState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 const initialState: FormSignoutState = {
   success: false,
@@ -15,7 +15,6 @@ const initialState: FormSignoutState = {
 export default function User({ initialSession }: { initialSession: any }) {
   const [state, formAction] = useActionState(signoutFormValidation, initialState);
   const op = useRef<OverlayPanel>(null);
-  const { success } = useToast();
   const options = [
     { label: "Perfil", href: `/user/${initialSession.user.username}` },
     { label: "Configuración", href: "`/user/settings`" },
@@ -23,10 +22,10 @@ export default function User({ initialSession }: { initialSession: any }) {
 
   useEffect(() => {
     if (state.success) {
-      success("Has cerrado tu sesión");
+      toast("Has cerrado tu sesión");
       window.location.href = "/";
     }
-  }, [state, success]);
+  }, [state]);
   return (
     <>
       <button

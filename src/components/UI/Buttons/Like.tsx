@@ -4,6 +4,7 @@ import { toggleLikeAction } from "@/actions/like";
 import { useOptimistic, useTransition } from "react";
 import { Heart } from "../Icons/Heart";
 import { usePlayerStore } from "@/store/playerStore";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
 
 interface LikeButtonProps {
   trackId: string;
@@ -14,8 +15,7 @@ interface LikeButtonProps {
 export function LikeButton({ trackId, initialIsLiked, initialCount }: LikeButtonProps) {
   const [isPending, startTransition] = useTransition();
   const updateTrackInStore = usePlayerStore((state) => state.updateTrackMetadata);
-  // 1. Definimos el estado optimista
-  // Recibe el estado real y una función para calcular el estado temporal
+  const { error: toastError } = useToast();
   const [optimisticLike, addOptimisticLike] = useOptimistic(
     { isLiked: initialIsLiked, count: initialCount },
     (state, newIsLiked: boolean) => ({
@@ -35,7 +35,7 @@ export function LikeButton({ trackId, initialIsLiked, initialCount }: LikeButton
       try {
         await toggleLikeAction(trackId, nextState);
       } catch (error) {
-        console.error("Error al guardar el like", error);
+        toastError("No tienes una sesión iniciada.");
         updateTrackInStore(trackId, { isLiked: !nextState });
       }
     });

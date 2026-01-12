@@ -22,7 +22,5 @@ export async function toggleLikeAction(trackId: string, shouldLike: boolean) {
       },
     });
   }
-
-  // Esto limpia la caché de Next.js y actualiza los datos reales
   revalidatePath(`/user/${session.user.username}`);
 }

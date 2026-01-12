@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { ToastOptions } from "react-toastify";
-import { useToast } from "./useToast";
+import { toast, ToasterProps } from "sonner";
 
 type ServerResponse = {
   success: boolean;
@@ -12,7 +11,7 @@ interface UseCreateEntityOptions<T> {
   serverAction: (initial: ServerResponse, form: FormData) => Promise<ServerResponse>;
   successMessage?: string;
   errorMessage?: string;
-  toastOptions?: ToastOptions;
+  toastOptions?: ToasterProps;
 }
 
 export function useCreateEntity<T>({
@@ -22,8 +21,6 @@ export function useCreateEntity<T>({
   errorMessage = "Error al crear el elemento",
   toastOptions = {},
 }: UseCreateEntityOptions<T>) {
-  const { success: showSuccess, error: showError } = useToast();
-
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }[]>([]);
@@ -38,15 +35,16 @@ export function useCreateEntity<T>({
       const result = await serverAction({ success: false, errors: [] }, form);
 
       if (result.success) {
-        showSuccess(successMessage, toastOptions);
+        toast(successMessage, toastOptions);
         setSuccess(true);
       } else {
-        showError(errorMessage, toastOptions);
+        toast(errorMessage, toastOptions);
+
         setErrors(result.errors || []);
       }
     } catch (err) {
       console.error(err);
-      showError("Error inesperado en la creación", toastOptions);
+      toast("Error inesperado en la creación", toastOptions);
       setErrors([{ message: "Error inesperado" }]);
     } finally {
       setLoading(false);
