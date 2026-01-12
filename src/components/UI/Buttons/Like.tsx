@@ -34,7 +34,7 @@ export function LikeButton({ trackId, initialIsLiked, initialCount }: LikeButton
       updateTrackInStore(trackId, { isLiked: nextState });
       try {
         await toggleLikeAction(trackId, nextState);
-      } catch (error) {
+      } catch {
         toastError("No tienes una sesión iniciada.");
         updateTrackInStore(trackId, { isLiked: !nextState });
       }
@@ -46,7 +46,7 @@ export function LikeButton({ trackId, initialIsLiked, initialCount }: LikeButton
       onClick={handleLike}
       disabled={isPending}
       className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full h-2 w-5 transition-all hover:opacity-75 ${
-        optimisticLike.isLiked ? "text-accent-950" : "text-white"
+        optimisticLike.isLiked ? "text-accent-950" : "text-content-900"
       }`}
     >
       <Heart isFilled={optimisticLike.isLiked} className="h-5" />

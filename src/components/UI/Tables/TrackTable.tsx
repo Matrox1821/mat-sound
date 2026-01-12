@@ -9,6 +9,7 @@ import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { playerTrackProps } from "@/types/trackProps";
 import { LikeButton } from "../Buttons/Like";
+import { Options } from "../Buttons/Options";
 
 interface TrackTableProps {
   tracks: playerTrackProps[];
@@ -130,7 +131,8 @@ export default function TrackTable({
                 <td className="text-sm text-background-400">{formatTime(track.duration)}</td>
 
                 <td className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="pi pi-ellipsis-h cursor-pointer hover:text-white pt-[6px]" />
+                  <Options options={["hola"]} />
+                  {/* <button className="pi pi-ellipsis-h cursor-pointer hover:text-white pt-[6px]" /> */}
                 </td>
 
                 <td className="rounded-r-xl">
@@ -140,7 +142,7 @@ export default function TrackTable({
                       initialIsLiked={track.isLiked ?? false}
                       initialCount={track?.likes ?? 0}
                     />
-                    <button className="pi pi-plus cursor-pointer text-background-300 hover:text-white" />
+                    <Options options={["Agregar a"]} iconClassName="pi-plus" />
                   </div>
                 </td>
               </tr>
