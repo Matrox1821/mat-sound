@@ -1,10 +1,11 @@
 "use client";
 
-import { toggleLikeAction } from "@/actions/like";
 import { useOptimistic, useTransition } from "react";
 import { Heart } from "../Icons/Heart";
 import { usePlayerStore } from "@/store/playerStore";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
+import { toggleLikeAction } from "@/actions/user";
+import { usePathname } from "next/navigation";
 
 interface LikeButtonProps {
   trackId: string;
@@ -13,6 +14,8 @@ interface LikeButtonProps {
 }
 
 export function LikeButton({ trackId, initialIsLiked, initialCount }: LikeButtonProps) {
+  const pathname = usePathname();
+
   const [isPending, startTransition] = useTransition();
   const updateTrackInStore = usePlayerStore((state) => state.updateTrackMetadata);
   const { error: toastError } = useToast();
@@ -33,7 +36,7 @@ export function LikeButton({ trackId, initialIsLiked, initialCount }: LikeButton
       addOptimisticLike(nextState);
       updateTrackInStore(trackId, { isLiked: nextState });
       try {
-        await toggleLikeAction(trackId, nextState);
+        await toggleLikeAction(trackId, nextState, pathname);
       } catch {
         toastError("No tienes una sesión iniciada.");
         updateTrackInStore(trackId, { isLiked: !nextState });

@@ -10,6 +10,8 @@ import { usePlayerStore } from "@/store/playerStore";
 import { playerTrackProps } from "@/types/trackProps";
 import { LikeButton } from "../Buttons/Like";
 import { Options } from "../Buttons/Options";
+import { Bookmark } from "../Icons/Bookmark";
+import { SaveInPlaylist } from "../Buttons/SaveInPlaylist";
 
 interface TrackTableProps {
   tracks: playerTrackProps[];
@@ -50,6 +52,7 @@ export default function TrackTable({
       play();
     }
   };
+
   return (
     <table className="w-full border-separate border-spacing-y-1">
       <thead>
@@ -131,7 +134,14 @@ export default function TrackTable({
                 <td className="text-sm text-background-400">{formatTime(track.duration)}</td>
 
                 <td className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Options options={["hola"]} />
+                  <Options
+                    options={[
+                      {
+                        label: "Nueva playlist",
+                        buttonClassName: "flex items-center justify-center gap-3",
+                      },
+                    ]}
+                  />
                   {/* <button className="pi pi-ellipsis-h cursor-pointer hover:text-white pt-[6px]" /> */}
                 </td>
 
@@ -142,7 +152,39 @@ export default function TrackTable({
                       initialIsLiked={track.isLiked ?? false}
                       initialCount={track?.likes ?? 0}
                     />
-                    <Options options={["Agregar a"]} iconClassName="pi-plus" />
+                    <Options
+                      options={[
+                        ...(track.playlists && track.playlists.length > 0
+                          ? track.playlists.map((playlist) => ({
+                              label: playlist.name,
+                              imagePosition: "left" as const,
+                              buttonClassName: "flex items-center justify-between gap-3 px-3",
+
+                              image: (
+                                <PlaylistImage
+                                  trackImages={playlist.tracks.map(({ track }) => ({ ...track }))}
+                                />
+                              ),
+                              select: (
+                                <SaveInPlaylist
+                                  playlistName={playlist.name}
+                                  playlistId={playlist.id}
+                                  trackId={track.id}
+                                  initialIsSaved={playlist.isInPlaylist}
+                                />
+                              ),
+                            }))
+                          : [{ label: "No tienes playlists" }]),
+                        {
+                          label: "Nueva playlist",
+                          icon: <i className="pi pi-plus"></i>,
+                          buttonClassName: "flex items-center justify-center gap-3",
+                          iconPosition: "left",
+                          trackId: track.id,
+                        },
+                      ]}
+                      iconClassName="pi-plus"
+                    />
                   </div>
                 </td>
               </tr>
@@ -152,3 +194,22 @@ export default function TrackTable({
     </table>
   );
 }
+const PlaylistImage = ({
+  trackImages,
+}: {
+  trackImages: { id: string; cover: { sm: string; md: string; lg: string } }[];
+}) => {
+  if (trackImages.length === 0) return;
+  if (trackImages.length === 1)
+    return (
+      <Image src={trackImages[0].cover.sm} alt="" width={40} height={40} className="h-10 w-10" />
+    );
+
+  return (
+    <figure className="h-10 w-10 rounded-md bg-background grid grid-cols-2 grid-row-2 ">
+      {trackImages.map((image) =>
+        image ? <Image src={image.cover.sm} alt="" key={image.id} height={20} width={20} /> : null
+      )}
+    </figure>
+  );
+};

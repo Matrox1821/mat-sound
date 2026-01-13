@@ -6,6 +6,7 @@ import "primeicons/primeicons.css";
 import Player from "@/components/Media/Player";
 import { Poppins } from "next/font/google";
 import { Toaster } from "sonner";
+import { CreatePlaylistDialog } from "@/components/UI/Dialog/CreatePlaylistDialog";
 
 export const metadata: Metadata = {
   title: "Mat Sound",
@@ -24,6 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {children}
         <Player />
         <Toaster theme="dark" richColors className="!h-6 " position="top-center" />
+        <CreatePlaylistDialog />
       </body>
     </html>
   );

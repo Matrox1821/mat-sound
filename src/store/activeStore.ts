@@ -16,7 +16,7 @@ const initialState = {
   playerRightMenuIsActive: false,
 };
 
-export const useUIStore = create<UIState>((set, get) => ({
+export const useUIStore = create<UIState>((set) => ({
   ...initialState,
   setPlayerBarIsActive: (newPlayerBarState: boolean) =>
     set({ playerBarIsActive: newPlayerBarState }),

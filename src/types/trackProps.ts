@@ -13,6 +13,16 @@ export interface APITrack {
   reproductions: number;
   lyrics: string;
   albums: { album: { id: string; cover: ImageSizes; name: string } }[] | null;
+  playlists:
+    | {
+        id: string;
+        cover?: ImageSizes;
+        images?: ImageSizes;
+        name: string;
+        isInPlaylist: boolean;
+        tracks: { track: { id: string; cover: ImageSizes } }[];
+      }[]
+    | null;
 }
 
 export interface TrackGenreProps {
@@ -75,6 +85,16 @@ export interface playerTrackProps {
         name: string;
         id: string;
         avatar: ImageSizes;
+      }[]
+    | null;
+  playlists?:
+    | {
+        id: string;
+        cover?: ImageSizes;
+        images?: ImageSizes;
+        name: string;
+        isInPlaylist: boolean;
+        tracks: { track: { id: string; cover: ImageSizes } }[];
       }[]
     | null;
 }

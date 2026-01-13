@@ -118,6 +118,16 @@ export interface trackPageProps {
   lyrics: string;
   artists: { name: string; id: string; avatar: ImageSizes }[] | null;
   albums: { id: string; cover: ImageSizes; name: string }[] | null;
+  playlists?:
+    | {
+        id: string;
+        cover?: ImageSizes;
+        images?: ImageSizes;
+        name: string;
+        isInPlaylist: boolean;
+        tracks: { track: { id: string; cover: ImageSizes } }[];
+      }[]
+    | null;
 }
 //album page props
 export interface albumPageProps {

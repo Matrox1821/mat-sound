@@ -1,22 +1,34 @@
 "use client";
 
+import { useCreatePlaylistDialogStore } from "@/store/createPlaylistDialogStore";
 import { OverlayPanel } from "primereact/overlaypanel";
-import { useRef } from "react";
+import { JSX, useRef } from "react";
 
 export function Options({
   options,
   buttonClassName,
   iconClassName = "pi-ellipsis-h",
-  optionsClassName,
+  baseOptionsClassName,
   optionsPanelClassName,
 }: {
-  options: string[];
+  options: {
+    label: string;
+    buttonClassName?: string;
+    icon?: React.ReactElement;
+    iconPosition?: "left" | "right";
+    onClick?: () => void;
+    trackId?: string;
+    image?: JSX.Element;
+    imagePosition?: "left" | "right";
+    select?: React.ReactElement;
+  }[];
   buttonClassName?: string;
   iconClassName?: string;
   optionsPanelClassName?: string;
-  optionsClassName?: string;
+  baseOptionsClassName?: string;
 }) {
   const op = useRef<OverlayPanel>(null);
+  const { toggle, setTrackId } = useCreatePlaylistDialogStore((state) => state);
 
   return (
     <div>
@@ -34,16 +46,45 @@ export function Options({
           optionsPanelClassName || ""
         }`}
       >
-        {options.map((option, i) => (
-          <button
-            key={i}
-            className={`w-full p-1 cursor-pointer hover:bg-background-950 rounded-sm text-start ${
-              optionsClassName || ""
-            }`}
-          >
-            {option}
-          </button>
-        ))}
+        {options.map((option, i) => {
+          if (option.icon && option.iconPosition)
+            return (
+              <button
+                key={i}
+                onClick={() => {
+                  if (option.trackId) {
+                    setTrackId(option.trackId);
+                    toggle();
+                  }
+                  if (option.onClick) option.onClick();
+                }}
+                className={`w-full p-1 cursor-pointer hover:bg-background-950 rounded-sm text-start ${
+                  baseOptionsClassName || ""
+                } ${option.buttonClassName || ""}`}
+              >
+                <span className="flex items-center gap-2">
+                  {option.iconPosition === "left" ? option.icon : option.label}
+                  {option.iconPosition === "left" ? option.label : option.icon}
+                </span>
+                {option.select}
+              </button>
+            );
+          if (option.image && option.imagePosition)
+            return (
+              <div
+                key={i}
+                className={`w-full p-1 cursor-pointer hover:bg-background-950 rounded-sm text-start ${
+                  baseOptionsClassName || ""
+                } ${option.buttonClassName || ""}`}
+              >
+                <span className="flex items-center gap-2">
+                  {option.imagePosition === "left" ? option.image : option.label}
+                  {option.imagePosition === "left" ? option.label : option.image}
+                </span>
+                {option.select}
+              </div>
+            );
+        })}
       </OverlayPanel>
     </div>
   );

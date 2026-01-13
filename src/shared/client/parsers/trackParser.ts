@@ -4,12 +4,13 @@ import { APITrack, playerTrackProps } from "@/types/trackProps";
 export function parseTracks(data: APITrack[] | null): trackPageProps[] | null {
   if (!data) return null;
   return data.map((newData) => {
-    const { release_date, albums, artists, ...restData } = newData;
+    const { release_date, albums, artists, playlists, ...restData } = newData;
     return {
       ...restData,
       releaseDate: release_date,
       artists: artists?.map((artist) => ({ ...artist })) || null,
       albums: albums?.map((album) => ({ ...album.album })) || null,
+      playlists: playlists,
     };
   });
 }
@@ -33,7 +34,7 @@ export function parseTrackByPlayer(track: any): playerTrackProps {
           avatar: a.avatar ?? a.artist?.avatar,
         }))
       : [],
-
+    playlists: track.playlists,
     albums: track.albums
       ? track.albums.map((a: any) => ({
           id: a.id ?? a.album?.id,

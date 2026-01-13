@@ -1,9 +1,9 @@
 "use client";
 import { adminSigninFormValidation } from "@/actions/auth";
 import CustomInputAdminForm from "@/components/UI/Inputs/CustomInputAdminForm";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { redirect } from "next/navigation";
 import { useActionState, useEffect } from "react";
-import { toast } from "react-toastify";
 
 const initialState = {
   errors: [],
@@ -11,9 +11,9 @@ const initialState = {
 };
 export default function AdminSigninPage() {
   const [state, formAction] = useActionState(adminSigninFormValidation, initialState);
-
-  const errorToast = (text: string) => toast.error(text);
-  const successToast = (text: string, options: any) => toast.success(text, options);
+  const { error, success } = useToast();
+  const errorToast = (text: string) => error(text);
+  const successToast = (text: string, options: any) => success(text, options);
 
   useEffect(() => {
     if (state.errors.length !== 0) {

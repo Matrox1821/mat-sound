@@ -3,13 +3,12 @@
 import { CustomError, TrackFormData } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { prisma } from "@config/db";
-import { Prisma } from "../../../../generated/prisma/client";
 import { updateArtistGenre } from "../artist/artistRepository";
 import { updateAlbumGenre } from "../album/albumRepository";
+import { Prisma } from "../../../../generated/prisma/client";
 
 async function getRandomTracksIds(limit = 5, excludeId: string | null) {
   if (excludeId) {
-    // Con exclusión
     return await prisma.$queryRaw<{ id: string }[]>`
       SELECT "id" 
       FROM "Track"
@@ -19,7 +18,6 @@ async function getRandomTracksIds(limit = 5, excludeId: string | null) {
     `;
   }
 
-  // Sin exclusión
   return await prisma.$queryRaw<{ id: string }[]>`
     SELECT "id"
     FROM "Track"
@@ -27,6 +25,71 @@ async function getRandomTracksIds(limit = 5, excludeId: string | null) {
     LIMIT ${limit};
   `;
 }
+
+export const getTrackById = async ({
+  trackId,
+  userId = "",
+}: {
+  trackId: string;
+  userId: string;
+}) => {
+  const response = await prisma.track.findUnique({
+    where: {
+      id: trackId,
+    },
+    select: {
+      id: true,
+      name: true,
+      cover: true,
+      release_date: true,
+      artists: {
+        select: { id: true, avatar: true, name: true },
+      },
+      duration: true,
+      song: true,
+      likes: userId
+        ? {
+            where: {
+              user_id: userId,
+            },
+            select: {
+              user_id: true,
+            },
+            take: 1,
+          }
+        : false,
+
+      _count: { select: { likes: true } },
+      reproductions: true,
+      lyrics: true,
+      albums: {
+        select: {
+          album: {
+            select: { id: true, cover: true, name: true },
+          },
+        },
+      },
+      genres: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+  if (!response)
+    throw new CustomError({
+      errors: [
+        {
+          message: "Track not found.",
+        },
+      ],
+      msg: "Track not found.",
+      httpStatusCode: HttpStatusCode.NOT_FOUND,
+    });
+  return response;
+};
+
 export const getTracks = async (
   limit: number,
   userId?: string,
