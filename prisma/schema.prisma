@@ -215,7 +215,7 @@ model Like {
 model Playlist {
   id   String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   name String
-  images Json
+  cover Json
 
   tracks TrackOnPlaylist[]
 
