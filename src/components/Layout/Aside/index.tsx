@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAsideStore } from "@/store/asideStore";
 import { ArrowLine } from "@/components/ui/icons/ArrowLine";
-import { Clover } from "./Clover";
 
 export default function Aside() {
   const { isMobile } = useDevice();
@@ -139,9 +138,6 @@ export default function Aside() {
                   })}
             </ul>
           </nav>
-        </div>
-        <div className="relative h-16">
-          <Clover className="h-20 w-20 px-6 text-content-900/85 absolute -left-20 hover:translate-x-14" />
         </div>
       </div>
     </aside>
