@@ -41,7 +41,7 @@ export function DropdownMenu({
 
       <OverlayPanel
         ref={op}
-        className={`!bg-background !border-background-800 !shadow-lg !rounded-lg [&>div]:!p-2 ${
+        className={`!bg-background !border-background-800 !shadow-lg !rounded-lg [&>div]:!p-2 before:!content-none after:!content-none ${
           optionsPanelClassName || ""
         }`}
       >
