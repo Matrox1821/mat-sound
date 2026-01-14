@@ -10,7 +10,7 @@ export interface CarousellContentProps {
   song: string | null;
   artists: { artist: { name: string; avatar: ImageSizes; id: string } }[] | null;
   likes: number | null;
-  lyric: string | null;
+  lyrics: string | null;
   album:
     | {
         album: {

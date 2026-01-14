@@ -67,6 +67,6 @@ export function parseTrackFormData(formData: FormData): TrackFormData {
     reproductions: Number(formData.get("reproductions") as string) | 0,
     genres: formData.getAll("genres") as string[],
     order_and_disk: parseJSON(formData.get("order_and_disk")),
-    lyrics: formData.get("lyric") as string,
+    lyrics: formData.get("lyrics") as string,
   };
 }

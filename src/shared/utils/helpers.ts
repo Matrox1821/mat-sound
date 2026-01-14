@@ -284,7 +284,7 @@ function sortObject<T extends Record<string, any>>(obj: T) {
 type LyricLine = {
   start: number;
   end?: number;
-  lyric: string;
+  lyrics: string;
 };
 function parseLyricsToObject(lrc: string) {
   const regex = /\[(\d{2}):(\d{2}\.\d{2})\]([\s\S]*?)(?=\[\d{2}:\d{2}\.\d{2}\]|$)/g;
@@ -301,7 +301,7 @@ function parseLyricsToObject(lrc: string) {
 
     results.push({
       start,
-      lyric: rawText,
+      lyrics: rawText,
     });
   }
 
