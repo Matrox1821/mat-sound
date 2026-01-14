@@ -1,4 +1,4 @@
-import CustomInputAdminForm from "@/components/UI/Inputs/CustomInputAdminForm";
+import CustomInputAdminForm from "@/components/ui/inputs/CustomInputAdminForm";
 
 export function SecondStep({
   formData,

@@ -21,7 +21,7 @@ export const Volume = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) 
         setVolume(newCurrentVolume);
       }
     },
-    [audioRef]
+    [audioRef, setVolume]
   );
 
   return (

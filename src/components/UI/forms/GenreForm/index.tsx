@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "primereact/button";
 import { useActionState, useEffect, useState } from "react";
-import CustomInputAdminForm from "../../Inputs/CustomInputAdminForm";
+import CustomInputAdminForm from "../../inputs/CustomInputAdminForm";
 import { createGenreServer } from "@/actions/genre";
 import { redirect, usePathname } from "next/navigation";
 import { toast } from "sonner";

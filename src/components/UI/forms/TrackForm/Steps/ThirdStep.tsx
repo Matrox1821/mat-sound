@@ -1,17 +1,11 @@
 "use client";
-import { OrderAlbumInput } from "@/components/UI/Inputs/OrderInAlbumInput";
-import { SelectInput } from "@/components/UI/Inputs/SelectInput";
+import { OrderAlbumInput } from "@/components/ui/inputs/OrderInAlbumInput";
+import { SelectInput } from "@/components/ui/inputs/SelectInput";
 import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { useEffect, useState } from "react";
 
-export function ThirdStep({
-  formData,
-  onChange,
-}: {
-  formData: any;
-  onChange: (field: any, value: any) => void;
-}) {
+export function ThirdStep({ onChange }: { onChange: (field: any, value: any) => void }) {
   const [artists, setArtists] = useState<any>(null);
   const [artistsId, setArtistsId] = useState<string[]>([]);
   const [albums, setAlbums] = useState<any>(null);

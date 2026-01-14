@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface Element {
@@ -31,7 +32,7 @@ export function SelectInput({
 
   useEffect(() => {
     if (callback) callback(value, elements);
-  }, [value]);
+  }, [value, elements, callback]);
 
   const addElement = (item: any) => {
     const existItemInElements = elements.find((e) => e.id === item.id);
@@ -103,14 +104,18 @@ export function SelectInput({
                 key={element.id}
               >
                 {element.avatar && (
-                  <img
+                  <Image
+                    width={48}
+                    height={48}
                     src={element.avatar.sm}
                     alt={element.name}
                     className="w-12 h-12 radius-sm object-cover"
                   />
                 )}
                 {element.cover && (
-                  <img
+                  <Image
+                    width={48}
+                    height={48}
                     src={element.cover.sm}
                     alt={element.name}
                     className="w-12 h-12 radius-sm object-cover"
@@ -135,7 +140,7 @@ export function SelectInput({
           ${!data || data.length === 0 ? "!border-0" : ""}`}
         >
           {data ? (
-            data.map((item: any, i: any) => (
+            data.map((item: any) => (
               <li key={item.id} className="w-full ">
                 <button
                   type="button"
@@ -149,14 +154,18 @@ export function SelectInput({
                   }}
                 >
                   {item.avatar && (
-                    <img
+                    <Image
+                      width={48}
+                      height={48}
                       src={item.avatar.sm}
                       alt={item.name}
                       className="w-10 h-10 radius-sm object-cover"
                     />
                   )}
                   {item.cover && (
-                    <img
+                    <Image
+                      width={48}
+                      height={48}
                       src={item.cover.sm}
                       alt={item.name}
                       className="w-10 h-10 radius-sm object-cover"

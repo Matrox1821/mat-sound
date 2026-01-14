@@ -1,19 +1,14 @@
 "use client";
-import { RefObject } from "react";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlaylistManager } from "@/shared/client/hooks/player/usePlaylistManager";
-import { Pause } from "@/components/UI/Icons/Playback/Pause";
-import { Play } from "@/components/UI/Icons/Playback/Play";
-import { Next, Prev } from "@/components/UI/Icons/Playback/SkipTo";
-import { Shuffle } from "@/components/UI/Icons/Playback/Shuffle";
-import { LoopAll, LoopOnce } from "@/components/UI/Icons/Playback/Loop";
+import { Next, Prev } from "@/components/ui/icons/playback/SkipTo";
+import { Shuffle } from "@/components/ui/icons/playback/Shuffle";
+import { LoopAll, LoopOnce } from "@/components/ui/icons/playback/Loop";
 import { usePlayerStore } from "@/store/playerStore";
+import { Pause } from "@/components/ui/icons/playback/Pause";
+import { Play } from "@/components/ui/icons/playback/Play";
 
-interface PlayerControllerProps {
-  audioRef: RefObject<HTMLAudioElement>;
-}
-
-const PlayerController = ({ audioRef }: PlayerControllerProps) => {
+const PlayerController = () => {
   const { isShuffled, isPlaying, setLoopMode, loopMode, toggleShuffle } = usePlaybackStore();
   const { next, prev, shuffleOff, shuffleOn } = usePlayerStore();
   const { handlePlayPause, hasNext, hasPrevious } = usePlaylistManager(); // Traemos los nuevos valores

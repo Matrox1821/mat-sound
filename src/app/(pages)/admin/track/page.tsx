@@ -1,6 +1,6 @@
-import { FormDialog } from "@/components/UI/Dialog/Form/FormDialog";
-import Paginator from "@/components/UI/Paginator";
-import TracksTable from "@/components/UI/Tables/ApiTables/TrackTable";
+import { FormDialog } from "@/components/ui/dialogs/form/FormDialog";
+import Paginator from "@/components/ui/paginator";
+import TracksTable from "@/components/ui/tables/apiTables/TrackTable";
 import { genreAdminApi } from "@/queryFn/admin/genreApi";
 import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { ProgressSpinner } from "primereact/progressspinner";

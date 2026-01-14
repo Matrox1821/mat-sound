@@ -1,14 +1,6 @@
 import { useRef, useState } from "react";
 
-export function ListElementsInput({
-  name,
-  value = [],
-  onChange,
-}: {
-  name: string;
-  value?: string[];
-  onChange?: (value: any) => void;
-}) {
+export function ListElementsInput({ name }: { name: string }) {
   const [elements, setElements] = useState<string[]>([]);
   const valueInput = useRef<HTMLInputElement>(null);
 

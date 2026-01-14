@@ -5,31 +5,36 @@ import { SecondStep } from "./Steps/SecondStep";
 import { Stepper } from "primereact/stepper";
 import { StepperPanel } from "primereact/stepperpanel";
 import { useEffect, useRef, useState } from "react";
+import { ThirdStep } from "./Steps/ThirdStep";
+import { createTrackServer } from "@/actions/track";
+import { initialTrackFormData, toTrackFormData } from "@/shared/formData/trackForm";
 import { redirect, usePathname } from "next/navigation";
-import { createAlbumServer } from "@/actions/album";
-import { initialAlbumFormData, toAlbumFormData } from "@/shared/formData/albumForm";
-import { AlbumFormData } from "@/types/apiTypes";
+import { TrackFormData } from "@/types/apiTypes";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
 
-const stepTitles = ["Información", "Relaciones"];
+const stepTitles = ["Información", "Detalles", "Relaciones"];
 
-export function AlbumForm({ hide }: { hide: (e: React.SyntheticEvent) => void }) {
+export function TrackForm({
+  hide,
+  genres,
+}: {
+  hide: (e: React.SyntheticEvent) => void;
+  genres: Promise<{ name: string; id: string }[] | undefined>;
+}) {
   const stepperRef = useRef<any>(null);
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<AlbumFormData>(initialAlbumFormData);
-
+  const [formData, setFormData] = useState<TrackFormData>(initialTrackFormData);
   const { createEntity, success } = useCreateEntity({
-    toFormData: toAlbumFormData,
-    serverAction: createAlbumServer,
-    successMessage: "Album creado con éxito",
-    errorMessage: "Ocurrió un error al crear el album",
+    toFormData: toTrackFormData,
+    serverAction: createTrackServer,
+    successMessage: "Canción creada con éxito",
+    errorMessage: "Ocurrió un error al crear la canción",
   });
   const pathname = usePathname();
 
-  const handleChange = <K extends keyof AlbumFormData>(field: K, value: AlbumFormData[K]) => {
+  const handleChange = <K extends keyof TrackFormData>(field: K, value: TrackFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await createEntity(formData);
@@ -39,11 +44,12 @@ export function AlbumForm({ hide }: { hide: (e: React.SyntheticEvent) => void })
     if (success) {
       redirect(pathname);
     }
-  }, [success]);
+  }, [success, pathname]);
   return (
     <form onSubmit={handleSubmit} className="w-[750px] flex flex-col gap-4 text-xs overflow-auto">
       <article className="flex flex-col">
         <h2 className="text-lg">{stepTitles[0]}</h2>
+
         <Stepper ref={stepperRef} style={{ flexBasis: "5rem" }}>
           <StepperPanel header={stepTitles[0]}>
             <FirstStep onChange={handleChange} formData={formData} />
@@ -58,8 +64,31 @@ export function AlbumForm({ hide }: { hide: (e: React.SyntheticEvent) => void })
             />
           </StepperPanel>
           <StepperPanel header={stepTitles[1]}>
-            <SecondStep onChange={handleChange} formData={formData} />
+            <SecondStep onChange={handleChange} formData={formData} genres={genres} />
             <div className="flex pt-4 justify-between gap-4">
+              <Button
+                label="Back"
+                severity="secondary"
+                icon="pi pi-arrow-left"
+                onClick={() => {
+                  stepperRef.current.prevCallback();
+                  setStep(step - 1);
+                }}
+              />
+              <Button
+                label="Next"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                onClick={() => {
+                  stepperRef.current.nextCallback();
+                  setStep(step + 1);
+                }}
+              />
+            </div>
+          </StepperPanel>
+          <StepperPanel header={stepTitles[2]}>
+            <ThirdStep onChange={handleChange} />
+            <div className="flex pt-4 justify-content-between">
               <Button
                 label="Back"
                 severity="secondary"
@@ -73,7 +102,7 @@ export function AlbumForm({ hide }: { hide: (e: React.SyntheticEvent) => void })
           </StepperPanel>
         </Stepper>
         <div className="flex justify-end gap-2 p-2 pt-4">
-          {step === 2 && (
+          {step === 3 && (
             <Button
               type="submit"
               className="!bg-accent-700 text-content-900 hover:bg-accent-800 hover:text-content-950 !font-bold"

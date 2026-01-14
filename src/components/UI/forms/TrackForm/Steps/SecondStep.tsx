@@ -1,5 +1,5 @@
 "use client";
-import CustomInputAdminForm from "@/components/UI/Inputs/CustomInputAdminForm";
+import CustomInputAdminForm from "@/components/ui/inputs/CustomInputAdminForm";
 import { genreCapitalize } from "@/shared/utils/helpers";
 import { MultiSelect } from "primereact/multiselect";
 import { use, useRef, useState } from "react";

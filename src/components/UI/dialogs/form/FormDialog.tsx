@@ -2,10 +2,10 @@
 import { Button } from "primereact/button";
 import { Dialog as PrimeReactDialog } from "primereact/dialog";
 import { useState } from "react";
-import { TrackForm } from "../../Form/TrackForm";
-import { GenreForm } from "../../Form/GenreForm";
-import { ArtistForm } from "../../Form/ArtistForm";
-import { AlbumForm } from "../../Form/AlbumForm";
+import { TrackForm } from "../../forms/TrackForm";
+import { GenreForm } from "../../forms/GenreForm";
+import { ArtistForm } from "../../forms/ArtistForm";
+import { AlbumForm } from "../../forms/AlbumForm";
 
 export function FormDialog({
   data,

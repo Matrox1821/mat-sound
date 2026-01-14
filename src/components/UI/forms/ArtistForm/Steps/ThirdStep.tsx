@@ -1,6 +1,6 @@
 "use client";
-import CustomInputAdminForm from "@/components/UI/Inputs/CustomInputAdminForm";
-import { JsonElementsInput } from "@/components/UI/Inputs/JsonElementsInput";
+import CustomInputAdminForm from "@/components/ui/inputs/CustomInputAdminForm";
+import { JsonElementsInput } from "@/components/ui/inputs/JsonElementsInput";
 
 export function ThirdStep({
   formData,

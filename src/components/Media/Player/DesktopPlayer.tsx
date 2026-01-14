@@ -1,17 +1,18 @@
 "use client";
 import Image from "next/image";
-import Slider from "../Slider";
+import Slider from "../slider";
 import { RefObject, useRef } from "react";
-import PlayerController from "../PlayerController";
+import PlayerController from "../playerController";
 import { usePlayerStore } from "@/store/playerStore";
 import { useAudioController } from "@/shared/client/hooks/player/useAudioController";
 import { playerTrackProps } from "@/types/trackProps";
 import Link from "next/link";
-import { Volume } from "../Options/Volume";
-import { RightMenu } from "../Options/RightMenu";
-import { ScreenPlaylistMenu } from "../Options/ScreenPlaylistMenu";
-import { LikeButton } from "@/components/UI/Buttons/Like";
-import { Options } from "@/components/UI/Buttons/Options";
+
+import { LikeButton } from "@/components/ui/buttons/Like";
+import { Volume } from "../options/Volume";
+import { RightMenu } from "../options/RightMenu";
+import { ScreenPlaylistMenu } from "../options/ScreenPlaylistMenu";
+import PlaylistSelector from "@/components/features/PlaylistSelector";
 
 export default function DesktopPlayer() {
   const { currentTrack: track, playingFrom } = usePlayerStore();
@@ -63,10 +64,7 @@ const CurrentMusicWidget = ({
               initialCount={track.likes}
               initialIsLiked={track.isLiked}
             />
-            <Options
-              options={["Playlist", "Ir al artista", "Guardar en colección"]}
-              optionsPanelClassName="translate-x-6"
-            />
+            <PlaylistSelector track={track} />
           </div>
         </div>
         {track.artists &&
@@ -92,7 +90,7 @@ const CurrentMusicWidget = ({
 const CurrentMusicPlayer = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
   return (
     <div className="flex flex-col w-3/5 h-full items-center justify-center">
-      <PlayerController audioRef={audioRef} />
+      <PlayerController />
       <Slider audioRef={audioRef} />
     </div>
   );

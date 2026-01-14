@@ -1,6 +1,6 @@
 import { artistPageProps, artistTracksProps } from "@/types";
 import { Suspense, use } from "react";
-import Carousel from "@/components/UI/Carousel";
+import Carousel from "@/components/ui/carousels";
 import dynamic from "next/dynamic";
 import Sample from "./Sample";
 import NewArtistTrack from "./NewTrack";

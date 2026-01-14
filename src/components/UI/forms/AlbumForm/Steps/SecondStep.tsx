@@ -1,5 +1,5 @@
-import { OrderAlbumInput } from "@/components/UI/Inputs/OrderInAlbumInput";
-import { SelectInput } from "@/components/UI/Inputs/SelectInput";
+import { OrderAlbumInput } from "@/components/ui/inputs/OrderInAlbumInput";
+import { SelectInput } from "@/components/ui/inputs/SelectInput";
 import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { useEffect, useState } from "react";

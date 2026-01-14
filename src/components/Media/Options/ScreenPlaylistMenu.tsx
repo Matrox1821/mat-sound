@@ -1,8 +1,8 @@
 "use client";
-import { MusicNote } from "@/components/UI/Icons/Playback/MusicNote";
-import { Play } from "@/components/UI/Icons/Playback/Play";
-import { RightMenuIcon } from "@/components/UI/Icons/Playback/RightMenu";
-import { Lyrics as LyricIcon } from "@/components/UI/Icons/Playback/Lyrics";
+import { MusicNote } from "@/components/ui/icons/playback/MusicNote";
+import { Play } from "@/components/ui/icons/playback/Play";
+import { RightMenuIcon } from "@/components/ui/icons/playback/RightMenu";
+import { Lyrics as LyricIcon } from "@/components/ui/icons/playback/Lyrics";
 import { useProgress } from "@/shared/client/hooks/player/useProgress";
 import { parseLyricsToObject } from "@/shared/utils/helpers";
 import { useUIStore } from "@/store/activeStore";

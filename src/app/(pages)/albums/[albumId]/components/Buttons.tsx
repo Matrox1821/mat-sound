@@ -1,14 +1,15 @@
 "use client";
-import { Play } from "@/components/UI/Icons/Playback/Play";
-import { Shuffle } from "@/components/UI/Icons/Playback/Shuffle";
+import { Play } from "@/components/ui/icons/playback/Play";
+import { Shuffle } from "@/components/ui/icons/playback/Shuffle";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { useProgressStore } from "@/store/progressStore";
+import { useState } from "react";
 
 function shuffleArray<T>(array: T[]): T[] {
-  const arr = [...array]; // evitar mutar el original
+  const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -23,8 +24,8 @@ export function PlayButton({
   currently: any | null;
   tracksList: any[] | null;
 }) {
-  const { setTrack, currentTrack, setPlayingFrom } = usePlayerStore((state) => state);
-  const { isPlaying, play, pause } = usePlaybackStore((state) => state);
+  const { setTrack, setPlayingFrom } = usePlayerStore((state) => state);
+  const { play } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
 
@@ -58,11 +59,12 @@ export function RandButton({ tracksList }: { tracksList: any[] | null }) {
   const { play } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
+  const [random] = useState(() => Math.random());
 
   if (!tracksList) return null;
-  const parsedTracks = tracksList.map((newTrack) => parseTrackByPlayer(newTrack));
 
-  const track = parsedTracks[Math.floor(Math.random() * parsedTracks.length)];
+  const parsedTracks = tracksList.map((newTrack) => parseTrackByPlayer(newTrack));
+  const track = parsedTracks[Math.floor(random * parsedTracks.length)];
   const tracks = shuffleArray(parsedTracks.filter((t) => track.id !== t.id));
 
   const playAlbum = (e: any) => {

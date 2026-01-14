@@ -1,5 +1,5 @@
 import { useOptimistic, useTransition } from "react";
-import { Bookmark } from "../Icons/Bookmark";
+import { Bookmark } from "../icons/Bookmark";
 import { usePlayerStore } from "@/store/playerStore";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { togglePlaylist } from "@/actions/user";

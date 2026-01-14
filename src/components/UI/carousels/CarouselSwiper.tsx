@@ -6,8 +6,8 @@ import { Navigation } from "swiper/modules";
 import "swiper/css/pagination";
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import { slidesPerView } from "@/shared/utils/helpers";
-import SwiperButtons from "../Buttons/SwiperButtons";
-import CarouselCard from "../Cards/CarouselCard";
+import SwiperButtons from "../buttons/SwiperButtons";
+import CarouselCard from "../cards/CarouselCard";
 import { use } from "react";
 import { contentProps } from "@/types";
 

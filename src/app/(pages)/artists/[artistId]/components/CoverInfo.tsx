@@ -1,4 +1,4 @@
-import { Verified } from "@/components/UI/Icons/Verified";
+import { Verified } from "@/components/ui/icons/Verified";
 import { artistPageProps } from "@/types";
 import Image from "next/image";
 import { use } from "react";

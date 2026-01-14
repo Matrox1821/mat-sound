@@ -1,24 +1,9 @@
 import Image from "next/image";
-import CarouselCardPlayButton from "../Buttons/CarouselCardPlayButton";
+
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import Link from "next/link";
 import { contentProps } from "@/types";
-import { LikeButton } from "../Buttons/Like";
-
-const roundedByIndex = (index: number) => {
-  switch (index) {
-    case 0:
-      return "rounded-tl-md";
-    case 1:
-      return "rounded-tr-md";
-    case 2:
-      return "rounded-br-md";
-    case 3:
-      return "rounded-bl-md";
-    default:
-      return "rounded-md";
-  }
-};
+import CarouselCardPlayButton from "../buttons/CarouselCardPlayButton";
 
 export default function CarouselCard({ element }: { element: contentProps }) {
   const { isMobile } = useDevice();

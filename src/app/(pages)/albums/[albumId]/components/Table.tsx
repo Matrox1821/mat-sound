@@ -1,5 +1,5 @@
 "use client";
-import TrackTable from "@/components/UI/Tables/TrackTable";
+import TrackTable from "@/components/ui/tables/TrackTable";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { albumPageProps } from "@/types";
 import { use } from "react";
@@ -25,7 +25,7 @@ export default function AlbumTable({
         return (
           <section key={diskNum} className="mb-8">
             {disks.length > 1 && <h2 className="text-xl font-bold mb-4">Volumen {diskNum}</h2>}
-            <TrackTable tracks={diskTracks} playingFromLabel={album.name} isAlbumView />
+            {diskTracks ? <TrackTable tracks={diskTracks} playingFromLabel={album.name} /> : null}
           </section>
         );
       })}

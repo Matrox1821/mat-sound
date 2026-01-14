@@ -5,29 +5,28 @@ import { SecondStep } from "./Steps/SecondStep";
 import { Stepper } from "primereact/stepper";
 import { StepperPanel } from "primereact/stepperpanel";
 import { useEffect, useRef, useState } from "react";
-import { ThirdStep } from "./Steps/ThirdStep";
-import { createArtistServer } from "@/actions/artist";
 import { redirect, usePathname } from "next/navigation";
-import { initialArtistFormData, toArtistFormData } from "@/shared/formData/artistForm";
-import { ArtistFormData } from "@/types/apiTypes";
+import { createAlbumServer } from "@/actions/album";
+import { initialAlbumFormData, toAlbumFormData } from "@/shared/formData/albumForm";
+import { AlbumFormData } from "@/types/apiTypes";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
 
-const stepTitles = ["Información", "Detalles", "Relaciones"];
+const stepTitles = ["Información", "Relaciones"];
 
-export function ArtistForm({ hide }: { hide: (e: React.SyntheticEvent) => void }) {
+export function AlbumForm({ hide }: { hide: (e: React.SyntheticEvent) => void }) {
   const stepperRef = useRef<any>(null);
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<ArtistFormData>(initialArtistFormData);
+  const [formData, setFormData] = useState<AlbumFormData>(initialAlbumFormData);
 
-  const { createEntity, success, errors } = useCreateEntity({
-    toFormData: toArtistFormData,
-    serverAction: createArtistServer,
-    successMessage: "Artista creado con éxito",
-    errorMessage: "Ocurrió un error al crear el artista",
+  const { createEntity, success } = useCreateEntity({
+    toFormData: toAlbumFormData,
+    serverAction: createAlbumServer,
+    successMessage: "Album creado con éxito",
+    errorMessage: "Ocurrió un error al crear el album",
   });
   const pathname = usePathname();
 
-  const handleChange = <K extends keyof ArtistFormData>(field: K, value: ArtistFormData[K]) => {
+  const handleChange = <K extends keyof AlbumFormData>(field: K, value: AlbumFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -40,7 +39,7 @@ export function ArtistForm({ hide }: { hide: (e: React.SyntheticEvent) => void }
     if (success) {
       redirect(pathname);
     }
-  }, [success]);
+  }, [success, pathname]);
   return (
     <form onSubmit={handleSubmit} className="w-[750px] flex flex-col gap-4 text-xs overflow-auto">
       <article className="flex flex-col">
@@ -70,34 +69,11 @@ export function ArtistForm({ hide }: { hide: (e: React.SyntheticEvent) => void }
                   setStep(step - 1);
                 }}
               />
-              <Button
-                label="Next"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                onClick={() => {
-                  stepperRef.current.nextCallback();
-                  setStep(step + 1);
-                }}
-              />
-            </div>
-          </StepperPanel>
-          <StepperPanel header={stepTitles[2]}>
-            <ThirdStep onChange={handleChange} formData={formData} />
-            <div className="flex pt-4 justify-content-between">
-              <Button
-                label="Back"
-                severity="secondary"
-                icon="pi pi-arrow-left"
-                onClick={() => {
-                  stepperRef.current.prevCallback();
-                  setStep(step - 1);
-                }}
-              />
             </div>
           </StepperPanel>
         </Stepper>
         <div className="flex justify-end gap-2 p-2 pt-4">
-          {step === 3 && (
+          {step === 2 && (
             <Button
               type="submit"
               className="!bg-accent-700 text-content-900 hover:bg-accent-800 hover:text-content-950 !font-bold"

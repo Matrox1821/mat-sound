@@ -47,30 +47,48 @@ export default function Search() {
   };
 
   useEffect(() => {
-    // Si borra el texto, reseteamos todo
-    if (!query.trim()) {
-      setResult(null);
-      setVisible(false);
-      return;
-    }
+    // Variable para evitar actualizar el estado si el componente se desmonta
+    // o si el query cambia antes de que termine el fetch
+    let isMounted = true;
 
-    // Esperamos 300ms antes de llamar a la base de datos
     const timer = setTimeout(async () => {
+      // Si está vacío, limpiamos inmediatamente
+      if (!query.trim()) {
+        if (isMounted) {
+          setResult(null);
+          setVisible(false);
+        }
+        return;
+      }
+
       const params = new URLSearchParams();
       params.set("q", query);
 
-      const data = await fetchSearchData(params);
-      setResult(data);
-      // SOLO MOSTRAR si el usuario sigue enfocado en el input y hay resultados
-      const inputFocused = document.activeElement === wrapperRef.current?.querySelector("input");
-      if (inputFocused && data && data?.length > 0) {
-        setVisible(true);
-      } else if (!inputFocused || !data || data.length === 0) {
-        setVisible(false);
+      try {
+        const data = await fetchSearchData(params);
+
+        // Solo actualizamos si esta petición sigue siendo la última (isMounted)
+        if (isMounted) {
+          setResult(data);
+
+          const inputFocused =
+            document.activeElement === wrapperRef.current?.querySelector("input");
+
+          if (inputFocused && data && data.length > 0) {
+            setVisible(true);
+          } else {
+            setVisible(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error en búsqueda:", error);
       }
     }, 300);
 
-    return () => clearTimeout(timer); // Limpieza del timer
+    return () => {
+      isMounted = false; // Marcamos como "cancelado" para el fetch anterior
+      clearTimeout(timer);
+    };
   }, [query]);
 
   const onSearchSubmit = (e: React.FormEvent) => {

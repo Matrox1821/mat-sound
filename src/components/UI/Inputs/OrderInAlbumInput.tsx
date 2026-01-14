@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { ChangeEvent, useState } from "react";
 
 interface Element {
@@ -70,9 +71,11 @@ export function OrderAlbumInput({
               >
                 <div className="w-full p-1 z-20 relative flex h-full items-center gap-2">
                   {item.cover && (
-                    <img
+                    <Image
                       src={item.cover.sm}
                       alt={item.name}
+                      width={40}
+                      height={40}
                       className="w-10 h-10 radius-sm object-cover"
                     />
                   )}

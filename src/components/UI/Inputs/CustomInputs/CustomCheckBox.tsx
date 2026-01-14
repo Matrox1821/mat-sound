@@ -11,7 +11,6 @@ export default function CustomCheckBox({
   title,
   name,
   isRequired,
-  value,
   onChange,
 }: CustomCheckBox) {
   return (

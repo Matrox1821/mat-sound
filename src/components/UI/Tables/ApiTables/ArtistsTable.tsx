@@ -18,11 +18,10 @@ export default function ArtistsTable({
   rows?: string;
 }) {
   const artists = use(data);
-  if (!artists) return;
-
   const toast = useRef<Toast>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  if (!artists) return;
 
   const fillEmptyRows = (
     arr: { name: string; id: string; avatar: JsonValue }[],

@@ -1,12 +1,12 @@
 "use client";
 import { usePlayerStore } from "@/store/playerStore";
 import type { contentProps } from "@/types";
-import { Play } from "../Icons/Playback/Play";
 import { usePlaybackStore } from "@/store/playbackStore";
-import { Pause } from "../Icons/Playback/Pause";
 import { useProgressStore } from "@/store/progressStore";
 import { useUIStore } from "@/store/activeStore";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
+import { Pause } from "@components/ui/icons/playback/Pause";
+import { Play } from "@components/ui/icons/playback/Play";
 
 interface CarouselCardPlayButtonProps {
   track: contentProps;

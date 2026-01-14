@@ -1,4 +1,3 @@
-import { Play } from "@/components/UI/Icons/Playback/Play";
 import { formatTime } from "@/shared/utils/helpers";
 import { albumPageProps } from "@/types";
 import Image from "next/image";

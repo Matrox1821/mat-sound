@@ -1,7 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { Heart } from "../Icons/Heart";
+import { Heart } from "../icons/Heart";
 import { usePlayerStore } from "@/store/playerStore";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { toggleLikeAction } from "@/actions/user";

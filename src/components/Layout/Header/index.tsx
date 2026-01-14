@@ -5,10 +5,10 @@ import { useNavigationStore } from "@/store/navigationStore";
 import { useAsideStore } from "@/store/asideStore";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import Search from "./Search";
 import Link from "next/link";
-import { MatSound } from "@/components/UI/Icons/MatSound";
+import { MatSound } from "@/components/ui/icons/MatSound";
 import { authClient } from "@/lib/auth-client";
+import Search from "./Search";
 import User from "./User";
 export default function Header({ initialSession }: { initialSession: any }) {
   const pathname = usePathname();

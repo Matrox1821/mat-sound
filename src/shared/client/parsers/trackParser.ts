@@ -16,6 +16,7 @@ export function parseTracks(data: APITrack[] | null): trackPageProps[] | null {
 }
 
 export function parseTrackByPlayer(track: any): playerTrackProps {
+  /* console.log({ track }); */
   return {
     id: track.id,
     name: track.name,

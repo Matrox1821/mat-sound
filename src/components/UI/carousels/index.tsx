@@ -1,7 +1,7 @@
 import { CarouselProps } from "@/types/components";
 import CarouselSwiper from "./CarouselSwiper";
 import { Suspense } from "react";
-import { CarouselSkeleton } from "@/components/Skeletons";
+import { CarouselSkeleton } from "@/components/skeletons";
 import { fetchContentData } from "@/shared/client/adapters/fetchContentData";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";

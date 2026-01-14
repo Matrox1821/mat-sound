@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useState } from "react";
 
 interface CustomFiles {
@@ -113,10 +114,23 @@ const ImagesPreview = ({
     >
       {previewImages.length > 0 &&
         previewImages.map((image, index) => (
-          <img key={index} src={image} alt="" className="w-16 h-16 object-cover rounded-xs" />
+          <Image
+            width={64}
+            height={64}
+            key={index}
+            src={image}
+            alt=""
+            className="w-16 h-16 object-cover rounded-xs"
+          />
         ))}
       {previewImage !== "" ? (
-        <img src={previewImage} alt="" className="w-16 h-16 object-cover rounded-xs" />
+        <Image
+          width={64}
+          height={64}
+          src={previewImage}
+          alt=""
+          className="w-16 h-16 object-cover rounded-xs"
+        />
       ) : (
         <div className="w-22 h-22 object-cover rounded-xs" />
       )}

@@ -1,4 +1,4 @@
-import { Play } from "@/components/UI/Icons/Playback/Play";
+import { Play } from "@/components/ui/icons/playback/Play";
 import { artistTracksProps } from "@/types";
 import Image from "next/image";
 

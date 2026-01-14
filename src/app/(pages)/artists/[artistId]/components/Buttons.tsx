@@ -1,6 +1,6 @@
 "use client";
-import { Pause } from "@/components/UI/Icons/Playback/Pause";
-import { Play } from "@/components/UI/Icons/Playback/Play";
+import { Pause } from "@/components/ui/icons/playback/Pause";
+import { Play } from "@/components/ui/icons/playback/Play";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";

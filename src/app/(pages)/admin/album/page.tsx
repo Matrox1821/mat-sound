@@ -1,6 +1,6 @@
-import { FormDialog } from "@/components/UI/Dialog/Form/FormDialog";
-import Paginator from "@/components/UI/Paginator";
-import AlbumsTable from "@/components/UI/Tables/ApiTables/AlbumsTable";
+import { FormDialog } from "@/components/ui/dialogs/form/FormDialog";
+import Paginator from "@/components/ui/paginator";
+import AlbumsTable from "@/components/ui/tables/apiTables/AlbumsTable";
 import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";

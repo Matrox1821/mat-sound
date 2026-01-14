@@ -1,6 +1,6 @@
 "use client";
 import { signoutFormValidation } from "@/actions/auth";
-import { User as UserIcon } from "@/components/UI/Icons/User";
+import { User as UserIcon } from "@/components/ui/icons/User";
 import { FormSignoutState } from "@/shared/utils/schemas/validations";
 import Link from "next/link";
 import { OverlayPanel } from "primereact/overlaypanel";

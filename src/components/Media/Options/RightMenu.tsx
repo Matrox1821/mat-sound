@@ -1,6 +1,6 @@
 "use client";
-import { Play } from "@/components/UI/Icons/Playback/Play";
-import { RightMenuIcon } from "@/components/UI/Icons/Playback/RightMenu";
+import { Play } from "@/components/ui/icons/playback/Play";
+import { RightMenuIcon } from "@/components/ui/icons/playback/RightMenu";
 import { useUIStore } from "@/store/activeStore";
 import { usePlayerStore } from "@/store/playerStore";
 import Image from "next/image";

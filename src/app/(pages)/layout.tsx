@@ -2,8 +2,8 @@ import { PrimeReactProvider } from "primereact/api";
 
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
 import "primeicons/primeicons.css";
-import Header from "@/components/Layout/Header";
-import Aside from "@/components/Layout/Aside";
+import Header from "@/components/layout/header";
+import Aside from "@/components/layout/aside";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 

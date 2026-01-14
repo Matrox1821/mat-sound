@@ -16,10 +16,10 @@ export default function GenresTable({
   rows?: string;
 }) {
   const genres = use(data);
-  if (!genres) return;
   const toast = useRef<Toast>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  if (!genres) return;
 
   const capitalizeWords = (arr: { name: string; id: string }[]) => {
     return arr.map(({ name, id }) => ({

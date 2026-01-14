@@ -9,13 +9,13 @@ export default function Paginator({
   paginationInfo: Promise<{ amount: number; pages: number } | undefined>;
 }) {
   const info = use(paginationInfo);
-  if (!info?.amount) return;
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
   const pathname = usePathname();
   const rowsPerPage = 6;
   const [first, setFirst] = useState((currentPage - 1) * rowsPerPage);
   const [rows, setRows] = useState(rowsPerPage);
+  if (!info?.amount) return;
 
   const createPageUrl = (page: number, rows: number) => {
     const params = new URLSearchParams(searchParams);

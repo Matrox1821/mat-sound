@@ -18,10 +18,10 @@ export default function AlbumsTable({
   rows?: string;
 }) {
   const albums = use(data);
-  if (!albums) return;
   const toast = useRef<Toast>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  if (!albums) return;
 
   const fillEmptyRows = (
     arr: { name: string; id: string; cover: JsonValue }[],
@@ -36,7 +36,7 @@ export default function AlbumsTable({
 
     return filled;
   };
-  const accept = async (id: string) => {
+  const accept = async () => {
     const params = new URLSearchParams(searchParams);
     toast.current?.show({
       severity: "info",
@@ -57,14 +57,14 @@ export default function AlbumsTable({
     });
   };
 
-  const confirm = async (event: any, id: string) => {
+  const confirm = async (event: any) => {
     confirmPopup({
       target: event.currentTarget,
       message: "Do you want to delete this record?",
       icon: "pi pi-info-circle",
       defaultFocus: "reject",
       acceptClassName: "p-button-danger",
-      accept: () => accept(id),
+      accept: () => accept(),
       reject,
     });
   };
@@ -108,12 +108,7 @@ export default function AlbumsTable({
       <div>
         <Toast />
         <ConfirmPopup />
-        <Button
-          type="button"
-          className="!p-3"
-          severity="danger"
-          onClick={(e: any) => confirm(e, album.id)}
-        >
+        <Button type="button" className="!p-3" severity="danger" onClick={(e: any) => confirm(e)}>
           <i className="pi pi-trash !text-xl !font-semibold leading-5" />
         </Button>
       </div>

@@ -1,11 +1,12 @@
 "use server";
 
-import { CustomError, TrackFormData } from "@/types/apiTypes";
+import { CustomError, ImageSizes, TrackFormData } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { prisma } from "@config/db";
 import { updateArtistGenre } from "../artist/artistRepository";
 import { updateAlbumGenre } from "../album/albumRepository";
 import { Prisma } from "../../../../generated/prisma/client";
+import { JsonValue } from "@prisma/client/runtime/client";
 
 async function getRandomTracksIds(limit = 5, excludeId: string | null) {
   if (excludeId) {
@@ -93,7 +94,22 @@ export const getTrackById = async ({
 export const getTracks = async (
   limit: number,
   userId?: string,
-  filter?: { by: "artists" | "tracks" | "albums" | "playlists" | "none"; id: string }
+  filter?: { by: "artists" | "tracks" | "albums" | "playlists" | "none"; id: string },
+  userPlaylists?: {
+    playlists: {
+      id: string;
+      cover?: ImageSizes;
+      images?: string[];
+      name: string;
+      isInPlaylist: boolean;
+      tracks: {
+        track: {
+          id: string;
+          cover: any;
+        };
+      }[];
+    }[];
+  }
 ) => {
   let findBy = {};
   const ids = await getRandomTracksIds(5, filter?.by === "tracks" ? filter.id : null);
@@ -150,13 +166,30 @@ export const getTracks = async (
       },
     },
   });
+  const newTracks = tracks.map((track) => {
+    if (!userPlaylists)
+      return {
+        ...track,
+        isLiked: userId ? track.likes.length > 0 : false,
+        likes: undefined,
+        type: "tracks",
+      };
 
-  return tracks.map((track) => ({
-    ...track,
-    isLiked: userId ? track.likes.length > 0 : false, // Si hay al menos un registro, es true
-    likes: undefined, // Limpiamos el array temporal de la respuesta
-    type: "tracks",
-  }));
+    return {
+      ...track,
+      isLiked: userId ? track.likes.length > 0 : false,
+      likes: undefined,
+      type: "tracks",
+      playlists: userPlaylists.playlists.map((playlist) => ({
+        ...playlist,
+        isInPlaylist: playlist.tracks.some(
+          ({ track: playlistTrack }) => playlistTrack.id === track.id
+        ),
+      })),
+    };
+  });
+
+  return newTracks;
 };
 
 export const countTracks = async () => {

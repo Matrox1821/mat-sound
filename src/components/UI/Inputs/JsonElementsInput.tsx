@@ -36,7 +36,7 @@ export function JsonElementsInput({
 
   useEffect(() => {
     onChange?.(elements);
-  }, [elements]);
+  }, [elements, onChange]);
 
   return (
     <div className="flex flex-col gap-2 relative w-full">

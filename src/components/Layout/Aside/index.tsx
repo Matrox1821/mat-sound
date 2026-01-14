@@ -1,10 +1,10 @@
 "use client";
-import { MatSound } from "@/components/UI/Icons/MatSound";
+import { MatSound } from "@/components/ui/icons/MatSound";
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAsideStore } from "@/store/asideStore";
-import { ArrowLine } from "@/components/UI/Icons/ArrowLine";
+import { ArrowLine } from "@/components/ui/icons/ArrowLine";
 import { Clover } from "./Clover";
 
 export default function Aside() {
