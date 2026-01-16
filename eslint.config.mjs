@@ -12,7 +12,7 @@ const eslintConfig = [
   {
     rules: {
       "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": ["error", { varsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-misused-promises": "off",
       "react-hooks/rules-of-hooks": "error",
