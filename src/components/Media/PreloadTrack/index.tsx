@@ -1,4 +1,4 @@
-import { contentProps } from "@/types";
+import { contentProps } from "@/types/common.types";
 
 interface CarouselCardPlayButtonProps {
   track: contentProps;

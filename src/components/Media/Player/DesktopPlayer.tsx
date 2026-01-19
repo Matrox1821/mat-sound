@@ -12,7 +12,7 @@ import { LikeButton } from "@/components/ui/buttons/Like";
 import { Volume } from "../options/Volume";
 import { RightMenu } from "../options/RightMenu";
 import { ScreenPlaylistMenu } from "../options/ScreenPlaylistMenu";
-import PlaylistSelector from "@/components/features/PlaylistSelector";
+import PlaylistSelector from "@/components/features/inputs/PlaylistSelector";
 
 export default function DesktopPlayer() {
   const { currentTrack: track, playingFrom } = usePlayerStore();
