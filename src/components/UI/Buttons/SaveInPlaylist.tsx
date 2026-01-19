@@ -19,7 +19,7 @@ export const SaveInPlaylist = ({
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const updateTrackInStore = usePlayerStore((state) => state.updateTrackMetadata);
-  const { error: toastError, default: toastSuccess } = useToast();
+  const { error: toastError, message } = useToast();
   const [optimisticSaved, addOptimisticSaved] = useOptimistic(
     initialIsSaved,
     (newIsSaved: boolean) => newIsSaved
@@ -34,7 +34,7 @@ export const SaveInPlaylist = ({
       updateTrackInStore(trackId, { isLiked: nextState });
       try {
         await togglePlaylist(playlistId, trackId, nextState, pathname);
-        toastSuccess(`${nextState ? "Agregado a" : "Eliminado de"} ${playlistName}`);
+        message(`${nextState ? "Agregado a" : "Eliminado de"} ${playlistName}`);
       } catch {
         toastError("No tienes una sesión iniciada.");
         updateTrackInStore(trackId, { isLiked: !nextState });

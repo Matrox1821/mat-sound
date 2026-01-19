@@ -23,7 +23,7 @@ export function CreatePlaylistDialog() {
   const [isPending, startTransition] = useTransition();
 
   // ... (tus estados)
-  const { error: toastError, default: toastSuccess } = useToast(); // Traemos el toast success
+  const { error: toastError, message: toastSuccess } = useToast(); // Traemos el toast success
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
