@@ -1,0 +1,103 @@
+"use client";
+import { useRef } from "react";
+
+export function JsonElementsInput({
+  name,
+  title,
+  value,
+  onChange,
+}: {
+  name: string;
+  title: string;
+  value?: any;
+  onChange?: (value: any) => void;
+}) {
+  const elements: Record<string, string> = Array.isArray(value)
+    ? value.reduce((acc, curr) => ({ ...acc, ...curr }), {})
+    : value || {};
+
+  const keyInput = useRef<HTMLInputElement>(null);
+  const valueInput = useRef<HTMLInputElement>(null);
+
+  const addElement = () => {
+    const key = keyInput.current?.value;
+    const val = valueInput.current?.value;
+
+    if (!key || !val) return;
+
+    // 2. Notificamos al padre directamente
+    const newElements = { ...elements, [key]: val };
+    onChange?.(newElements);
+
+    keyInput.current!.value = "";
+    valueInput.current!.value = "";
+  };
+
+  const removeElement = (elementName: string) => {
+    // 3. Notificamos al padre de la eliminación
+    const newElements = { ...elements };
+    delete newElements[elementName];
+    onChange?.(newElements);
+  };
+
+
+  return (
+    <div className="flex flex-col gap-2 relative w-full">
+      <h2 className="flex">{title}</h2>
+      <div className="w-full  flex flex-col">
+        <label className="grid grid-cols-12 relative w-full z-10">
+          <input
+            value={JSON.stringify(elements) || "none"}
+            name={name}
+            className="hidden"
+            readOnly
+          />
+          <input
+            className="col-start-1 col-end-3 input-key bg-background-950 border-2 border-[rgb(176,178,186)] rounded-md rounded-e-none h-8 focus-visible:border-accent-900 focus:border-2 outline-none py-4 pl-1"
+            type="text"
+            ref={keyInput}
+          />
+          <input
+            className="col-start-3 col-end-12  input-value bg-background-950 border-2 border-[rgb(176,178,186)] border-x-0 h-8 focus-visible:border-accent-900 focus:border-2 outline-none py-4 pl-1 "
+            type="text"
+            ref={valueInput}
+          />
+          <button
+            className="relative border-2 bg-background-950 pb-[.15rem] rounded-s-none rounded-md border-[rgb(176,178,186)] active:border-accent-900 active:text-accent-900"
+            onClick={addElement}
+            type="button"
+          >
+            +
+          </button>
+        </label>
+
+        {elements && Object.keys(elements).length > 0 && (
+          <div className="border-2 border-[rgb(176,178,186)] rounded-b-md pt-2 -translate-y-3 z-0 ">
+            {Object.keys(elements).map((elementName, i) => (
+              <div
+                className={`${i > 0 ? "border-t-2 border-t-[rgb(176,178,186)]" : ""
+                  } grid grid-cols-12 relative`}
+                key={elementName + i}
+              >
+                <span className="!border-x-4 !border-x-transparent col-start-1 col-end-12 flex items-center w-auto border-r-0 border-[rgb(176,178,186)] rounded-md rounded-e-none h-8 focus-visible:border-accent-900 focus:border-2 outline-none py-4 pl-1 gap-2">
+                  <span>{elementName}</span>
+                  <span>:</span>
+                  <span className="w-5/12 overflow-hidden text-ellipsis">
+                    {elements![elementName]}
+                  </span>
+                </span>
+                <button
+                  className="relative ml-[0.1rem] bg-background-950 pb-[.15rem] rounded-s-none rounded-md border-[rgb(176,178,186)] border-l-2 active:border-accent-900 active:text-accent-900"
+                  onClick={() => removeElement(elementName)}
+                  type="button"
+                >
+                  -
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

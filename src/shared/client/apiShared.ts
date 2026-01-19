@@ -16,18 +16,14 @@ const setCookie = async (cookieKey: string, value: any) => {
       path: "/",
     });
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
 
-const setLoginCookies = async (
-  user: string,
-  token?: string,
-  isAdmin: boolean = false
-) => {
+const setLoginCookies = async (user: string, token?: string, isAdmin: boolean = false) => {
   await setUserCookie(user, isAdmin);
-  token && (await setCookie(isAdmin ? "admin_token" : "token", token));
+  if (token) await setCookie(isAdmin ? "admin_token" : "token", token);
 };
 
 const setUserCookie = async (user: string, isAdmin?: boolean) => {
@@ -45,7 +41,7 @@ const logInUser = (user: any) => {
     };
     const token = jwt.sign(data, secret, options);
     return token;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -55,7 +51,7 @@ const removeCookie = async (cookieKey: string) => {
     const cookie = await cookies();
     cookie.set({ name: cookieKey, maxAge: 0, value: "" });
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -64,7 +60,7 @@ const verifyToken = (token: string | null) => {
   try {
     if (!token) return undefined;
     return jwt.verify(token, secret);
-  } catch (error) {
+  } catch {
     return undefined;
   }
 };

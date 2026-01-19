@@ -1,4 +1,4 @@
-import { ContentType } from ".";
+import { ContentType } from "./common.types";
 import { HttpStatusCode } from "./httpStatusCode";
 
 export interface APIAlbum {
@@ -28,12 +28,6 @@ export interface APIAlbum {
       }[]
     | null;
   artists?: { name: string; id: string; avatar: ImageSizes }[] | null;
-}
-
-export interface ImageSizes {
-  sm: string;
-  md: string;
-  lg: string;
 }
 
 export interface APIContent {
@@ -125,46 +119,6 @@ export interface APIArtistTrack {
     likes: number;
   };
   albums: { album: { name: string; id: string; cover: ImageSizes } }[];
-}
-
-// FORMDATA-------------------------
-
-export interface ArtistFormData {
-  name: string;
-  avatar: File | null;
-  main_cover: File | null;
-  listeners: number;
-  followers: number;
-  description: string;
-  is_verified: boolean;
-  regional_listeners: Record<string, string>;
-  socials: Record<string, string>;
-  covers: File[] | null;
-}
-export interface AlbumFormData {
-  name: string;
-  cover: File | null;
-  release_date: string;
-  artists: string[];
-  tracks: string[];
-  tracks_order: { [key: string]: string };
-}
-export interface TrackFormData {
-  name: string;
-  cover: File | null;
-  song: File | null;
-  release_date: string;
-  duration: number;
-  reproductions: number;
-  genres: string[];
-  order_and_disk: {
-    [key: string]: { order: number; disk: number };
-  };
-  artists: string[];
-  lyrics: string;
-}
-export interface GenreFormData {
-  genre: string | string[];
 }
 
 // ERROR ----------------------

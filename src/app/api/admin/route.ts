@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { password, ...user } = request;
+    const { password: _password, ...user } = request;
     const jwt = logInUser(user);
 
     return onSuccessRequest({

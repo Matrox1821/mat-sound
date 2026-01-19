@@ -1,4 +1,4 @@
-import { albumPageProps } from "@/types";
+import { albumPageProps } from "@/types/common.types";
 import { APIAlbum } from "@/types/apiTypes";
 
 export function parseAlbum(data: APIAlbum | null): albumPageProps | null {

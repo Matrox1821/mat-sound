@@ -1,6 +1,5 @@
-import { AMOUNTS } from "@/types";
+import { AMOUNTS } from "@/types/common.types";
 import { RefObject } from "react";
-import { usePalette } from "react-palette";
 const setAudioTrack = async ({
   audio,
   song,
@@ -14,15 +13,12 @@ const setAudioTrack = async ({
   if (!currentAudio) return;
 
   try {
-    // First pause and reset the current audio
     currentAudio.pause();
     currentAudio.currentTime = 0;
 
-    // Set volume and source
     currentAudio.volume = volume;
     currentAudio.src = song;
 
-    // Wait for the audio to be loaded
     await new Promise<void>((resolve, reject) => {
       const handleLoadedData = () => {
         currentAudio.removeEventListener("loadeddata", handleLoadedData);
@@ -39,7 +35,6 @@ const setAudioTrack = async ({
       currentAudio.addEventListener("loadeddata", handleLoadedData);
       currentAudio.addEventListener("error", handleError);
 
-      // If the audio is already loaded, resolve immediately
       if (currentAudio.readyState >= 2) {
         handleLoadedData();
         currentAudio.play();
@@ -219,7 +214,7 @@ function parseNumberListeners(amount: number) {
       return `${amount}`;
   }
 }
-
+/* 
 function hexToRgb(hex?: string) {
   if (!hex) return "20, 20, 20";
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -249,7 +244,7 @@ function rgbColor(image?: string | null, transparency?: number) {
     vibrant: `rgba(${hexToRgb(data.vibrant)}, ${transparency || 1})`,
   };
 }
-
+ */
 const slidesPerView = (isMobile: boolean, size: number) => {
   const asideSize = 272;
 
@@ -325,7 +320,6 @@ export {
   formatR2FilePath,
   parseStringToR2NamePath,
   parseNumberListeners,
-  rgbColor,
   slidesPerView,
   genreCapitalize,
   sortObject,

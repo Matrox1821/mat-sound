@@ -22,7 +22,7 @@ export async function uploadFileToBucket(file: File | Buffer, fileName: string) 
         ContentType,
       },
     });
-    let res = await parallelUploads.done();
+    const res = await parallelUploads.done();
 
     if (!res) {
       throw new CustomError({
@@ -43,7 +43,8 @@ export async function uploadFileToBucket(file: File | Buffer, fileName: string) 
   }
 }
 
-export async function deleteFileToBucket(file: File | Buffer | null, fileName: string) {
+export async function deleteFileToBucket(file: File | Buffer | null, fileName: string | null) {
+  if (!fileName) return;
   const Key = fileName;
   const Bucket = "mat-sound";
   try {
