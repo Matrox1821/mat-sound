@@ -1,4 +1,4 @@
-import { ContentType } from ".";
+import { ContentType } from "./common.types";
 import { ImageSizes } from "./apiTypes";
 import { playerTrackProps } from "./trackProps";
 
