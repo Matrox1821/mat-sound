@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "primereact/button";
 import { FirstStep } from "./steps/FirstStep";
 import { SecondStep } from "./steps/SecondStep";
 import { Stepper } from "primereact/stepper";
@@ -15,10 +14,8 @@ import { TrackFormData } from "@/types/form.types";
 const stepTitles = ["Información", "Detalles", "Relaciones"];
 
 export function CreateTrackForm({
-  hide,
   genres,
 }: {
-  hide: (e: React.SyntheticEvent) => void;
   genres: Promise<{ name: string; id: string }[] | undefined>;
 }) {
   const stepperRef = useRef<any>(null);
@@ -53,71 +50,62 @@ export function CreateTrackForm({
         <Stepper ref={stepperRef} style={{ flexBasis: "5rem" }}>
           <StepperPanel header={stepTitles[0]}>
             <FirstStep onChange={handleChange} formData={formData} />
-            <Button
-              label="Next"
-              icon="pi pi-arrow-right"
-              iconPos="right"
+            <button
+              className="flex gap-2 items-center bg-background-700 p-4 rounded-md cursor-pointer border border-transparent"
+              type="button"
               onClick={() => {
                 stepperRef.current.nextCallback();
                 setStep(step + 1);
               }}
-            />
+            >
+              Siguiente<i className="pi pi-arrow-right"></i>
+            </button>
           </StepperPanel>
           <StepperPanel header={stepTitles[1]}>
             <SecondStep onChange={handleChange} formData={formData} genres={genres} />
-            <div className="flex pt-4 justify-between gap-4">
-              <Button
-                label="Back"
-                severity="secondary"
-                icon="pi pi-arrow-left"
-                onClick={() => {
-                  stepperRef.current.prevCallback();
-                  setStep(step - 1);
-                }}
-              />
-              <Button
-                label="Next"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                onClick={() => {
-                  stepperRef.current.nextCallback();
-                  setStep(step + 1);
-                }}
-              />
-            </div>
+            <button
+              className="flex gap-2 items-center bg-background-700 p-4 rounded-md cursor-pointer border border-transparent"
+              type="button"
+              onClick={() => {
+                stepperRef.current.prevCallback();
+                setStep(step - 1);
+              }}
+            >
+              <i className="pi pi-arrow-left"></i>Atrás
+            </button>
+            <button
+              className="flex gap-2 items-center bg-background-700 p-4 rounded-md cursor-pointer border border-transparent"
+              type="button"
+              onClick={() => {
+                stepperRef.current.nextCallback();
+                setStep(step + 1);
+              }}
+            >
+              Siguiente<i className="pi pi-arrow-right"></i>
+            </button>
           </StepperPanel>
           <StepperPanel header={stepTitles[2]}>
             <ThirdStep onChange={handleChange} />
-            <div className="flex pt-4 justify-content-between">
-              <Button
-                label="Back"
-                severity="secondary"
-                icon="pi pi-arrow-left"
+            <div className="flex pt-4 gap-4">
+              <button
+                className="flex gap-2 items-center bg-background-700 p-4 rounded-md cursor-pointer borer border-transparent"
+                type="button"
                 onClick={() => {
                   stepperRef.current.prevCallback();
                   setStep(step - 1);
                 }}
-              />
+              >
+                <i className="pi pi-arrow-left"></i>Atrás
+              </button>
+              <button
+                className="bg-accent-950/20 border border-accent-950/50 p-4 text-white hover:bg-accent-950/25 cursor-pointer font-bold rounded-md flex"
+                type="submit"
+              >
+                Crear
+              </button>
             </div>
           </StepperPanel>
         </Stepper>
-        <div className="flex justify-end gap-2 p-2 pt-4">
-          {step === 3 && (
-            <Button
-              type="submit"
-              className="!bg-accent-700 text-content-900 hover:bg-accent-800 hover:text-content-950 !font-bold"
-            >
-              Crear
-            </Button>
-          )}
-          <Button
-            label="Cancel"
-            type="button"
-            onClick={(e) => hide(e)}
-            text
-            className="text-primary-50 !bg-background"
-          ></Button>
-        </div>
       </article>
     </form>
   );

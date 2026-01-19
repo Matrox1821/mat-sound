@@ -39,7 +39,7 @@ export function FormDialog({
           if (!visible) return;
           setVisible(false);
         }}
-        content={({ hide }) => (
+        content={() => (
           <div
             className="flex flex-col items-end p-3 gap-4 bg-background-950"
             style={{
@@ -55,9 +55,9 @@ export function FormDialog({
             </button>
 
             {type === "artist" && <CreateArtistForm />}
-            {type === "album" && <CreateAlbumForm hide={hide} />}
-            {type === "genre" && <CreateGenreForm hide={hide} />}
-            {type === "track" && data && <CreateTrackForm hide={hide} genres={data} />}
+            {type === "album" && <CreateAlbumForm />}
+            {type === "genre" && <CreateGenreForm />}
+            {type === "track" && data && <CreateTrackForm genres={data} />}
             {children && (
               <div className="p-4 border border-background-100/20 rounded-lg">{children}</div>
             )}

@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "primereact/button";
 import { useActionState, useEffect, useState } from "react";
 import CustomInputAdminForm from "../../inputs/CustomInputAdminForm";
 import { createGenreServer } from "@/actions/genre";
@@ -11,7 +10,7 @@ const initialState = {
   success: false,
 };
 
-export function CreateGenreForm({ hide }: { hide: (e: React.SyntheticEvent) => void }) {
+export function CreateGenreForm() {
   const [state, formAction] = useActionState(createGenreServer, initialState);
   const [inputs, setInputs] = useState(1);
   const pathname = usePathname();
@@ -39,34 +38,29 @@ export function CreateGenreForm({ hide }: { hide: (e: React.SyntheticEvent) => v
           ))}
       </ul>
       <div className="flex w-full justify-end pr-4 gap-4">
-        <Button
+        <button
           type="button"
-          className="!bg-accent-700 text-content-900 hover:bg-accent-800 hover:text-content-950 !font-bold"
-          icon="pi pi-minus"
+          className="flex gap-2 items-center bg-background-700/30 p-4 rounded-md cursor-pointer border border-background-400"
           disabled={inputs === 1}
           onClick={() => setInputs(inputs - 1)}
-        ></Button>
-        <Button
+        >
+          <i className="pi pi-minus"></i>
+        </button>
+        <button
           type="button"
-          className="!bg-accent-700 text-content-900 hover:bg-accent-800 hover:text-content-950 !font-bold"
-          icon="pi pi-plus"
+          className="flex gap-2 items-center bg-background-700/30 p-4 rounded-md cursor-pointer border border-background-400"
           onClick={() => setInputs(inputs + 1)}
-        ></Button>
+        >
+          <i className="pi pi-plus"></i>
+        </button>
       </div>
       <div className="flex justify-end gap-2 p-2 pt-4">
-        <Button
+        <button
+          className="bg-accent-950/20 border border-accent-950/50 p-4 text-white hover:bg-accent-950/25 cursor-pointer font-bold rounded-md flex"
           type="submit"
-          className="!bg-accent-700 text-content-900 hover:bg-accent-800 hover:text-content-950 !font-bold"
         >
           Crear
-        </Button>
-        <Button
-          label="Cancel"
-          type="button"
-          onClick={(e) => hide(e)}
-          text
-          className="text-primary-50 !bg-background"
-        ></Button>
+        </button>
       </div>
     </form>
   );
