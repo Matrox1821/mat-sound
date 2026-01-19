@@ -9,8 +9,8 @@ import {
   deleteTrack,
   trackIsExists,
   updateTrackResourses,
-} from "@/shared/server/track/trackRepository";
-import { handleTrackResizeAndUpload, uploadSong } from "@/shared/server/track/trackStorage";
+} from "@/shared/server/track/track.repository";
+import { handleTrackResizeAndUpload, uploadSong } from "@/shared/server/track/track.storage";
 import { GET_BUCKET_URL } from "@/shared/utils/constants";
 import { prisma } from "@config/db";
 
@@ -28,13 +28,13 @@ export async function POST(req: NextRequest) {
       });
 
     const newTrack = await createTrack(body);
-    const song_path = await uploadSong(body.song, newTrack.id);
+    const song_path = body.song && (await uploadSong(body.song, newTrack.id));
 
-    if (!body.cover) {
-      const updatedTrack = await updateTrackResourses({
+    let updatedTrack: any = newTrack;
+    if (song_path) {
+      updatedTrack = await updateTrackResourses({
         id: newTrack.id,
         paths: { song: GET_BUCKET_URL + song_path },
-        albumId: Object.keys(body.order_and_disk)[0],
       });
 
       if (!song_path || !updatedTrack) {
@@ -51,33 +51,32 @@ export async function POST(req: NextRequest) {
         data: updatedTrack,
       });
     }
+    if (body.cover) {
+      const { buffer, dbPath, r2Path, trackUploads } = await handleTrackResizeAndUpload(
+        body.cover,
+        newTrack.id,
+      );
 
-    const { buffer, dbPath, r2Path, trackUploads } = await handleTrackResizeAndUpload(
-      body.cover,
-      newTrack.id
-    );
-
-    const updatedTrack = await updateTrackResourses({
-      id: newTrack.id,
-      paths: { cover: dbPath, song: GET_BUCKET_URL + song_path },
-    });
-
-    if (!buffer || !dbPath || !r2Path || !trackUploads || !song_path || !updatedTrack) {
-      await Promise.all([
-        deleteTrack(newTrack.id),
-        ...Object.entries(r2Path).map(async ([key, path]) => {
-          const currentBuffer = buffer[key as "sm" | "md" | "lg"];
-          if (currentBuffer) await deleteFileToBucket(currentBuffer, path);
-        }),
-        deleteFileToBucket(body.song, song_path),
-      ]);
-      throw new CustomError({
-        errors: [{ message: "The track has not been updated" }],
-        msg: "The track has not been updated",
-        httpStatusCode: HttpStatusCode.CONFLICT,
+      updatedTrack = await updateTrackResourses({
+        id: newTrack.id,
+        paths: { cover: dbPath, song: GET_BUCKET_URL ? GET_BUCKET_URL + r2Path : "" },
       });
+      if (!buffer || !dbPath || !r2Path || !trackUploads || !song_path || !updatedTrack) {
+        await Promise.all([
+          deleteTrack(newTrack.id),
+          ...Object.entries(r2Path).map(async ([key, path]) => {
+            const currentBuffer = buffer[key as "sm" | "md" | "lg"];
+            if (currentBuffer) await deleteFileToBucket(currentBuffer, path);
+          }),
+          deleteFileToBucket(body.song, song_path),
+        ]);
+        throw new CustomError({
+          errors: [{ message: "The track has not been updated" }],
+          msg: "The track has not been updated",
+          httpStatusCode: HttpStatusCode.CONFLICT,
+        });
+      }
     }
-
     return onSuccessRequest({
       httpStatusCode: 200,
       data: updatedTrack,
@@ -89,32 +88,44 @@ export async function POST(req: NextRequest) {
 }
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams.getAll("artists_id") as string[];
-    if (searchParams.length === 0) {
-      throw new CustomError({
-        errors: [{ message: "Artists ID not provided." }],
-        msg: "Artists ID not provided.",
-        httpStatusCode: HttpStatusCode.BAD_REQUEST,
+    const searchParams = req.nextUrl.searchParams.getAll("artists_id") as string | string[];
+
+    if (searchParams) {
+      let tracks = [];
+      const newArtistsId = [...searchParams];
+
+      tracks = await prisma.track.findMany({
+        where: {
+          artists: {
+            some: {
+              id: { in: newArtistsId },
+            },
+          },
+        },
+      });
+
+      if (tracks.length === 0) {
+        throw new CustomError({
+          errors: [{ message: "Album not found." }],
+          msg: "Album not found.",
+          httpStatusCode: HttpStatusCode.NOT_FOUND,
+        });
+      }
+      return onSuccessRequest({
+        httpStatusCode: 200,
+        data: tracks,
       });
     }
 
-    const artists_id = [...searchParams];
-
     const tracks = await prisma.track.findMany({
-      where: {
-        artists: {
-          some: {
-            id: { in: artists_id },
-          },
-        },
-      },
+      select: { name: true, id: true, cover: true },
+      orderBy: { name: "asc" },
     });
     return onSuccessRequest({
       httpStatusCode: 200,
       data: tracks,
     });
   } catch (error) {
-    console.log(error);
     return onThrowError(error);
   }
 }

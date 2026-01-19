@@ -1,20 +1,20 @@
 "use client";
 import { Button } from "primereact/button";
-import { FirstStep } from "./Steps/FirstStep";
-import { SecondStep } from "./Steps/SecondStep";
+import { FirstStep } from "./steps/FirstStep";
+import { SecondStep } from "./steps/SecondStep";
 import { Stepper } from "primereact/stepper";
 import { StepperPanel } from "primereact/stepperpanel";
 import { useEffect, useRef, useState } from "react";
-import { ThirdStep } from "./Steps/ThirdStep";
+import { ThirdStep } from "./steps/ThirdStep";
 import { createTrackServer } from "@/actions/track";
 import { initialTrackFormData, toTrackFormData } from "@/shared/formData/trackForm";
 import { redirect, usePathname } from "next/navigation";
-import { TrackFormData } from "@/types/apiTypes";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
+import { TrackFormData } from "@/types/form.types";
 
 const stepTitles = ["Información", "Detalles", "Relaciones"];
 
-export function TrackForm({
+export function CreateTrackForm({
   hide,
   genres,
 }: {

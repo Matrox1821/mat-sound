@@ -1,8 +1,8 @@
 "use client";
-import CustomInputAdminForm from "@/components/ui/inputs/CustomInputAdminForm";
+import CustomInputAdminForm from "@/components/features/inputs/CustomInputAdminForm";
 import { genreCapitalize } from "@/shared/utils/helpers";
 import { MultiSelect } from "primereact/multiselect";
-import { use, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export function SecondStep({
   formData,
@@ -11,13 +11,13 @@ export function SecondStep({
 }: {
   formData: any;
   onChange: (field: any, value: any) => void;
-  genres: Promise<{ name: string; id: string }[] | undefined>;
+  genres?: { name: string; id: string }[] | null;
 }) {
-  const genresData = use(genres);
   const genresInputRef = useRef<HTMLInputElement>(null);
-  const [genresSelected, setGenresSelected] = useState([]);
+  const initialGenres = genres?.filter((genre) => formData.genres.includes(genre.id));
+  const [genresSelected, setGenresSelected] = useState(initialGenres);
 
-  const capitalizeWords = (arr: { name: string; id: string }[] | undefined) => {
+  const capitalizeWords = (arr: { name: string; id: string }[] | null | undefined) => {
     if (arr)
       return arr.map(({ name, id }) => ({
         name: genreCapitalize(name),
@@ -25,23 +25,24 @@ export function SecondStep({
       }));
   };
 
-  const capitalizedGenres = capitalizeWords(genresData);
+  const capitalizedGenres = capitalizeWords(genres);
 
   return (
-    <section className="p-8 w-full flex flex-col gap-4">
-      <div className="flex w-full gap-4 justify-between mt-4">
+    <section className="p-4 w-full flex flex-col gap-4">
+      <div className="flex w-full gap-4 justify-between items-end">
         <label className="flex flex-col gap-2 w-6/12 ">
           <span className="text-base">Fecha de lanzamiento:</span>
           <input
             type="date"
-            name="release_date"
-            className="fill-accent-950 date-input text-white rounded-md bg-background-950 border-2 border-content-700 h-9 p-2"
+            name="releaseDate"
+            className="fill-accent-950 date-input text-white rounded-md bg-background-950 border border-background-100/50 h-9 p-2"
             required
-            value={formData.release_date}
-            onChange={(e: any) => onChange("release_date", e.target.value)}
+            value={formData.releaseDate ? formData.releaseDate.split("T")[0] : ""}
+            onChange={(e: any) => onChange("releaseDate", e.target.value)}
           />
         </label>
         <input type="hidden" name="genres" value={formData.genres} ref={genresInputRef} />
+
         <MultiSelect
           value={genresSelected}
           onChange={(e: any) => {
@@ -57,7 +58,7 @@ export function SecondStep({
           optionLabel="name"
           placeholder="Select Genres"
           maxSelectedLabels={3}
-          className="w-full md:w-20rem"
+          className="!w-1/2 !flex !items-center !h-10 !bg-background-950 !border !border-background-100/50"
         />
       </div>
       <div className="flex w-full gap-4">

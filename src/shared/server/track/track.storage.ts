@@ -1,3 +1,4 @@
+"use server";
 import { uploadFileToBucket, resizeImage } from "@/shared/server/files";
 import { formatR2FilePath } from "@/shared/utils/helpers";
 

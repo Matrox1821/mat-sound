@@ -1,6 +1,6 @@
 "use client";
-import { OrderAlbumInput } from "@/components/ui/inputs/OrderInAlbumInput";
-import { SelectInput } from "@/components/ui/inputs/SelectInput";
+import { OrderAlbumInput } from "@/components/features/inputs/OrderInAlbumInput";
+import { SelectInput } from "@/components/features/inputs/SelectInput";
 import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { useEffect, useState } from "react";
@@ -17,16 +17,14 @@ export function ThirdStep({ onChange }: { onChange: (field: any, value: any) => 
 
   useEffect(() => {
     if (artistsId.length > 0) {
-      const params = new URLSearchParams();
-      artistsId.forEach((artistsId) => params.append("artists_id", artistsId));
-      albumAdminApi.getAlbumsByArtistsId(params.toString()).then((data) => setAlbums(data));
+      albumAdminApi.getAlbumsByArtistsId(artistsId).then((data) => setAlbums(data));
     }
   }, [artistsId]);
   return (
     <section className="p-8 w-full">
       <SelectInput
         data={artists}
-        name="artists_id"
+        name="artistsId"
         zIndex={50}
         callback={(artists: string[]) => {
           setArtistsId(artists);
@@ -37,7 +35,7 @@ export function ThirdStep({ onChange }: { onChange: (field: any, value: any) => 
       />
       <SelectInput
         data={albums}
-        name="albums_id"
+        name="albumsId"
         zIndex={30}
         title="Seleccione álbumes"
         callback={(_, albums: { [key: string]: string }[]) => setChosenAlbums(albums)}
@@ -45,10 +43,10 @@ export function ThirdStep({ onChange }: { onChange: (field: any, value: any) => 
       />
       <OrderAlbumInput
         data={chosenAlbums}
-        name="order_and_disk"
+        name="orderAndDisk"
         zIndex={20}
         title="Seleccione el orden de la cancion en su respectivo álbum:"
-        onChange={(val) => onChange("order_and_disk", val)}
+        onChange={(val) => onChange("orderAndDisk", val)}
       />
     </section>
   );
