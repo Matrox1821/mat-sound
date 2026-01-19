@@ -1,5 +1,5 @@
 import { artistApi } from "@/queryFn/client/artistApi";
-import { TracksByArtistIdQuery } from "@/types";
+import { TracksByArtistIdQuery } from "@/types/common.types";
 import { parseArtist, parsePopularTracks } from "../parsers/artistParser";
 
 export const fetchArtistDataById = async (id: string) => {

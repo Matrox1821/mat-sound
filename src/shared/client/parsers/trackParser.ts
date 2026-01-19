@@ -1,4 +1,4 @@
-import { trackPageProps } from "@/types";
+import { trackPageProps } from "@/types/common.types";
 import { APITrack, playerTrackProps } from "@/types/trackProps";
 
 export function parseTracks(data: APITrack[] | null): trackPageProps[] | null {

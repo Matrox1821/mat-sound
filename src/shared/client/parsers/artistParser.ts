@@ -1,4 +1,4 @@
-import { artistPageProps, artistTracksProps } from "@/types";
+import { artistPageProps, artistTracksProps } from "@/types/common.types";
 import { APIArtist, APIArtistTrack } from "@/types/apiTypes";
 
 export function parseArtist(data: APIArtist | null): artistPageProps | null {

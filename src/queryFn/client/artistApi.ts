@@ -1,6 +1,6 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { TracksByArtistIdQuery } from "@/types";
+import { TracksByArtistIdQuery } from "@/types/common.types";
 import { APIArtist, APIArtistTrack } from "@/types/apiTypes";
 
 const getArtistById = async (id: string) => {

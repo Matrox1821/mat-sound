@@ -16,7 +16,7 @@ export const getUserPlaylists = async ({ userId = "" }: { userId: string }) => {
         select: {
           id: true,
           name: true,
-          images: true,
+          cover: true,
           tracks: { select: { track: { select: { id: true, cover: true } } } },
         },
       },
