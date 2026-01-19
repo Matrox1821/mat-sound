@@ -4,8 +4,6 @@ export const SigninFormSchema = z.object({
   email: z.string().email({ message: "Introduce un correo electrónico válido." }).trim(),
 
   password: z.string().min(1, { message: "La contraseña es requerida." }),
-
-  /* rememberMe: z.boolean().optional(), */
 });
 
 export const SignupFormSchema = z
@@ -21,7 +19,7 @@ export const SignupFormSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"], // El error se marcará en este campo
+    path: ["confirmPassword"],
   });
 
 export type SigninFormValues = z.infer<typeof SigninFormSchema>;
