@@ -1,6 +1,6 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { ContentType } from "@/types";
+import { ContentType } from "@/types/common.types";
 import { APIContent } from "@/types/apiTypes";
 
 interface TrackQuery {

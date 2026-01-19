@@ -1,6 +1,6 @@
 "use client";
 import { usePlayerStore } from "@/store/playerStore";
-import type { contentProps } from "@/types";
+import type { contentProps } from "@/types/common.types";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { useProgressStore } from "@/store/progressStore";
 import { useUIStore } from "@/store/activeStore";

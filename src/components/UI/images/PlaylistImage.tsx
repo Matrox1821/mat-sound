@@ -21,7 +21,7 @@ export const PlaylistImage = ({
   imageClassName,
   sizeImage,
 }: {
-  trackImages?: { id: string; cover: { sm: string; md: string; lg: string } }[];
+  trackImages?: { cover: { sm: string; md: string; lg: string } }[];
   image?: string;
   imageClassName?: string;
   sizeImage?: number;
@@ -33,7 +33,7 @@ export const PlaylistImage = ({
         alt=""
         height={sizeImage || 40}
         width={sizeImage || 40}
-        className={imageClassName}
+        className={`object-fill aspect-square ${imageClassName}`}
       ></Image>
     );
   let images = trackImages;
@@ -45,14 +45,14 @@ export const PlaylistImage = ({
         alt=""
         width={sizeImage || 40}
         height={sizeImage || 40}
-        className="h-10 w-10 rounded-md"
+        className={`object-fill aspect-square ${imageClassName}`}
       />
     );
   if (images && images.length > 4) images = images.slice(0, 4);
 
   return (
     <figure
-      className={`h-10 w-10 rounded-md bg-background grid grid-cols-2 grid-row-2 ${imageClassName}`}
+      className={`h-10 w-10 rounded-md bg-black/85 grid grid-cols-2 grid-row-2 ${imageClassName}`}
     >
       {images &&
         images.map((image, i) =>
@@ -60,7 +60,7 @@ export const PlaylistImage = ({
             <Image
               src={image.cover.sm}
               alt=""
-              key={image.id}
+              key={`playlist-image-${i}`}
               height={sizeImage ? sizeImage / 2 : 20}
               width={sizeImage ? sizeImage / 2 : 20}
               className={`${roundedByIndex(i)}`}

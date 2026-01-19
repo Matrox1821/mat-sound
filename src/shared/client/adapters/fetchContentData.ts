@@ -1,5 +1,5 @@
 import { contentApi } from "@/queryFn/client/contentApi";
-import { contentProps, ContentType } from "@/types";
+import { contentProps, ContentType } from "@/types/common.types";
 import { parseContent } from "../parsers/contentParser";
 
 export const fetchContentData = async ({

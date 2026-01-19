@@ -1,4 +1,4 @@
-import { contentProps } from "@/types";
+import { contentProps } from "@/types/common.types";
 import { APIContent, ImageSizes } from "@/types/apiTypes";
 export function parseContent(content: APIContent[]): contentProps[] {
   return content.map((data) => {
