@@ -468,3 +468,13 @@ section::-webkit-scrollbar-thumb {
     transform: rotate(360deg);
   }
 }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #333; /* Color oscuro */
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}

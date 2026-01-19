@@ -6,7 +6,7 @@ import "primeicons/primeicons.css";
 import Player from "@/components/media/player";
 import { Poppins } from "next/font/google";
 import { Toaster } from "sonner";
-import { CreatePlaylistDialog } from "@/components/ui/dialogs/CreatePlaylistDialog";
+import { CreatePlaylistDialog } from "@/components/features/dialogs/CreatePlaylistDialog";
 
 export const metadata: Metadata = {
   title: "Mat Sound",
