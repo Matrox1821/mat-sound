@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import type { RefObject } from "react";
-import type { contentProps } from "@/types";
+import type { contentProps } from "@/types/common.types";
 
 export const useMediaSession = (
   audio: RefObject<HTMLAudioElement> | undefined,
