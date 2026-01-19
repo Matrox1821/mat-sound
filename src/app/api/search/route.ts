@@ -28,10 +28,10 @@ export async function GET(request: Request) {
     (
       SELECT json_agg(json_build_object('id', ar.id, 'name', ar.name))
       FROM "_ArtistToTrack" att
-      JOIN "Artist" ar ON ar.id = att."A"
+      JOIN "artist" ar ON ar.id = att."A"
       WHERE att."B" = t.id
     ) AS artists
-    FROM "Track" t
+    FROM "track" t
     WHERE to_tsvector('simple', t.name) @@ to_tsquery('simple', ${searchPattern})
       OR t.name ILIKE ${ilikePattern}
     ORDER BY priority DESC, rank DESC LIMIT 5
@@ -50,14 +50,14 @@ export async function GET(request: Request) {
     (
       SELECT json_agg(t_sub) FROM (
         SELECT tr.id, tr.name, tr.cover AS image
-        FROM "Track" tr
+        FROM "track" tr
         JOIN "_ArtistToTrack" att ON att."B" = tr.id
         WHERE att."A" = a.id
         ORDER BY tr.reproductions DESC
         LIMIT 5
       ) t_sub
     ) AS tracks
-    FROM "Artist" a
+    FROM "artist" a
     WHERE to_tsvector('simple', a.name) @@ to_tsquery('simple', ${searchPattern})
       OR a.name ILIKE ${ilikePattern}
     ORDER BY priority DESC, rank DESC LIMIT 5
@@ -75,20 +75,20 @@ export async function GET(request: Request) {
     END AS priority,
     (
       SELECT json_agg(json_build_object('id', ar.id, 'name', ar.name))
-      FROM "_AlbumToArtist" ata
-      JOIN "Artist" ar ON ar.id = ata."B"
-      WHERE ata."A" = al.id
+      FROM "_ArtistToAlbum" ata
+      JOIN "artist" ar ON ar.id = ata."A"
+      WHERE ata."B" = al.id
     ) AS artists,
     (
       SELECT json_agg(ordered_tracks) FROM (
         SELECT tr.id, tr.name, tr.cover AS image
-        FROM "TracksOnAlbums" toa
-        JOIN "Track" tr ON tr.id = toa.track_id
+        FROM "track_on_album" toa
+        JOIN "track" tr ON tr.id = toa.track_id
         WHERE toa.album_id = al.id
         ORDER BY toa.order ASC
       ) ordered_tracks
     ) AS tracks
-    FROM "Album" al
+    FROM "album" al
     WHERE to_tsvector('simple', al.name) @@ to_tsquery('simple', ${searchPattern})
       OR al.name ILIKE ${ilikePattern}
     ORDER BY priority DESC, rank DESC LIMIT 5
@@ -97,18 +97,19 @@ export async function GET(request: Request) {
 
     const combined = [...artists, ...tracks, ...albums]
       .sort((a, b) => {
-        // 1) Artistas primero
         if (a.type === "artist" && b.type !== "artist") return -1;
         if (b.type === "artist" && a.type !== "artist") return 1;
-        // 2) Prioridad
         if (a.priority !== b.priority) {
           return b.priority - a.priority;
         }
-        // 3) Rank (más relevante primero)
         return b.rank - a.rank;
       })
       .slice(0, 15)
-      .map(({ priority, rank, ...rest }) => rest);
+      .map((item) => {
+        delete item.priority;
+        delete item.rank;
+        return item;
+      });
 
     return onSuccessRequest({
       httpStatusCode: 200,

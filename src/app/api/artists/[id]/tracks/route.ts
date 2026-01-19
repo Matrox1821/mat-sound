@@ -47,7 +47,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         name: true,
         cover: true,
         song: true,
-        release_date: true,
+        releaseDate: true,
         duration: true,
         reproductions: true,
         lyrics: true,

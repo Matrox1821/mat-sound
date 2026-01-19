@@ -1,7 +1,6 @@
-import { NextRequest } from "next/server";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { prisma } from "@config/db";
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET({ params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
@@ -13,14 +12,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         id: true,
         name: true,
         avatar: true,
-        main_cover: true,
+        mainCover: true,
         description: true,
         covers: true,
-        is_verified: true,
+        isVerified: true,
         listeners: true,
         socials: true,
-        regional_listeners: true,
-        followers_default: true,
+        regionalListeners: true,
+        followersDefault: true,
         _count: {
           select: {
             followers: true,
@@ -33,17 +32,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       httpStatusCode: 200,
       data: response,
     });
-    /* if (!elements || elements.length === 0) {
-      throw new CustomError({
-        errors: [
-          {
-            message: "The search returned no results. No elements were found.",
-          },
-        ],
-        msg: "The search returned no results. No elements were found.",
-        httpStatusCode: HttpStatusCode.NOT_FOUND,
-      });
-    } */
   } catch (error) {
     return onThrowError(error);
   }

@@ -14,8 +14,11 @@ export async function GET(request: Request) {
     const ilikePattern = `%${q}%`;
     const startPattern = `${q}%`;
     const artists = (await prisma.$queryRaw`
-     WITH main_results AS (
-      SELECT a.id, a.name, a.avatar AS image,
+  WITH main_results AS (
+    SELECT 
+      a.id, 
+      a.name, 
+      a.avatar AS image,
       ts_rank(to_tsvector('simple', coalesce(a.name, '')), to_tsquery('simple', ${searchPattern})) AS rank,
       CASE
         WHEN a.name ILIKE ${q} THEN 10
@@ -26,49 +29,51 @@ export async function GET(request: Request) {
       (
         SELECT json_agg(t_sub) FROM (
           SELECT tr.id, tr.name, tr.cover AS image
-          FROM "Track" tr
+          FROM "track" tr -- Minúsculas por @@map("track")
           JOIN "_ArtistToTrack" att ON att."B" = tr.id
           WHERE att."A" = a.id
           ORDER BY tr.reproductions DESC
           LIMIT 5
         ) t_sub
       ) AS tracks
-      FROM "Artist" a
-      WHERE to_tsvector('simple', a.name) @@ to_tsquery('simple', ${searchPattern})
-        OR a.name ILIKE ${ilikePattern}
-    )
-    SELECT * FROM main_results
-    UNION ALL
-    (
-      SELECT artist.id, artist.name, artist.avatar AS image, 0 AS rank, -1 AS priority,
+    FROM "artist" a -- Minúsculas por @@map("artist")
+    WHERE to_tsvector('simple', a.name) @@ to_tsquery('simple', ${searchPattern})
+       OR a.name ILIKE ${ilikePattern}
+  )
+  SELECT * FROM main_results
+  UNION ALL
+  (
+    SELECT 
+      art.id, 
+      art.name, 
+      art.avatar AS image, 
+      0 AS rank, 
+      -1 AS priority,
       (
         SELECT json_agg(t_sub) FROM (
           SELECT tr.id, tr.name, tr.cover AS image
-          FROM "Track" tr
+          FROM "track" tr
           JOIN "_ArtistToTrack" att ON att."B" = tr.id
-          WHERE att."A" = artist.id
+          WHERE att."A" = art.id
           ORDER BY tr.reproductions DESC
           LIMIT 5
         ) t_sub
       ) AS tracks
-      FROM "Artist" artist
-      WHERE artist.id NOT IN (SELECT id FROM main_results)
-      ORDER BY RANDOM()
-      LIMIT 25
-    )
-    ORDER BY priority DESC, rank DESC LIMIT 25
-    `) as any[];
+    FROM "artist" art
+    WHERE art.id NOT IN (SELECT id FROM main_results)
+    ORDER BY RANDOM()
+    LIMIT 25
+  )
+  ORDER BY priority DESC, rank DESC LIMIT 25
+`) as any[];
     const combined = artists
-      .sort((a, b) => {
-        // 2) Prioridad
-        if (a.priority !== b.priority) {
-          return b.priority - a.priority;
-        }
-        // 3) Rank (más relevante primero)
-        return b.rank - a.rank;
-      })
+      .sort((a, b) => b.priority - a.priority || b.rank - a.rank)
       .slice(0, 15)
-      .map(({ priority, rank, ...rest }) => rest);
+      .map((item) => {
+        delete item.priority;
+        delete item.rank;
+        return item;
+      });
 
     return onSuccessRequest({
       httpStatusCode: 200,

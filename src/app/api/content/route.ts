@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import { getContent } from "@/shared/server/content/contentService";
+import { getContent } from "@/shared/server/content/content.service";
 
 export async function GET(req: NextRequest) {
   try {

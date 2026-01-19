@@ -1,14 +1,23 @@
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
-import { NextRequest } from "next/server";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { prisma } from "@config/db";
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET({ params }: { params: Promise<{ id?: string }> }) {
   try {
-    const { id } = await params;
-
+    const param = await params;
+    if (!param?.id) {
+      throw new CustomError({
+        errors: [
+          {
+            message: "User not found",
+          },
+        ],
+        msg: "User not found",
+        httpStatusCode: HttpStatusCode.NOT_FOUND,
+      });
+    }
     const userLibrary = await prisma.user.findFirst({
-      where: { id },
+      where: { id: param.id },
       select: {
         likes: {
           select: {

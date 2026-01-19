@@ -1,9 +1,8 @@
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
-import { NextRequest } from "next/server";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { prisma } from "@config/db";
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET({ params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
@@ -19,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         id: true,
         name: true,
         cover: true,
-        release_date: true,
+        releaseDate: true,
       },
     });
     if (!response || response.length === 0) {
