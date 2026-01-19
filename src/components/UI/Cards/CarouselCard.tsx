@@ -1,8 +1,9 @@
+"use client";
 import Image from "next/image";
 
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import Link from "next/link";
-import { contentProps } from "@/types";
+import { contentProps } from "@/types/common.types";
 import CarouselCardPlayButton from "../buttons/CarouselCardPlayButton";
 
 export default function CarouselCard({ element }: { element: contentProps }) {

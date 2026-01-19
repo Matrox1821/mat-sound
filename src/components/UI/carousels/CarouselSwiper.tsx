@@ -9,7 +9,7 @@ import { slidesPerView } from "@/shared/utils/helpers";
 import SwiperButtons from "../buttons/SwiperButtons";
 import CarouselCard from "../cards/CarouselCard";
 import { use } from "react";
-import { contentProps } from "@/types";
+import { contentProps } from "@/types/common.types";
 
 export default function CarouselSwiper({ data }: { data: Promise<contentProps[] | undefined> }) {
   const { isMobile, size } = useDevice();
