@@ -1,5 +1,5 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import { createGenre, genreIsExist, getGenres } from "@/shared/server/genre/genreRepository";
+import { createGenre, genreIsExist, getGenres } from "@/shared/server/genre/genre.repository";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const genres = await getGenres();
     return onSuccessRequest({

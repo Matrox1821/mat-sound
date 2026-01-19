@@ -1,4 +1,4 @@
-import { artistTracksProps } from "@/types";
+import { artistTracksProps } from "@/types/common.types";
 import Image from "next/image";
 
 export default async function NewArtistTrack({

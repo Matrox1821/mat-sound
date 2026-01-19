@@ -1,5 +1,5 @@
 "use client";
-import { artistPageProps } from "@/types";
+import { artistPageProps } from "@/types/common.types";
 import Image from "next/image";
 import { useState } from "react";
 import { Dialog } from "primereact/dialog";
@@ -20,16 +20,13 @@ function sortSocials(obj: Record<string, any>) {
       const aHasIcon = a in SOCIAL_ICONS;
       const bHasIcon = b in SOCIAL_ICONS;
 
-      // 1. Si ambos tienen icono → ordenar alfabéticamente
       if (aHasIcon && bHasIcon) {
         return a.localeCompare(b);
       }
 
-      // 2. Los que NO tienen icono van al final
-      if (aHasIcon && !bHasIcon) return -1; // a primero
-      if (!aHasIcon && bHasIcon) return 1; // b primero
+      if (aHasIcon && !bHasIcon) return -1;
+      if (!aHasIcon && bHasIcon) return 1;
 
-      // 3. Si ninguno tiene icono → ordenar alfabéticamente
       return a.localeCompare(b);
     })
   );

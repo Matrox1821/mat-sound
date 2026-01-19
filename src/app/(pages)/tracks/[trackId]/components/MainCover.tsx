@@ -1,5 +1,5 @@
 "use client";
-import { trackPageProps } from "@/types";
+import { trackPageProps } from "@/types/common.types";
 import Image from "next/image";
 import { use } from "react";
 

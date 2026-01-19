@@ -1,5 +1,5 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import { getGenresByPagination } from "@/shared/server/genre/genreRepository";
+import { getGenresByPagination } from "@/shared/server/genre/genre.repository";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 

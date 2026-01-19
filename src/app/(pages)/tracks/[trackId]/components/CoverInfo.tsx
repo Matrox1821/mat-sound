@@ -1,6 +1,6 @@
 "use client";
 import { formatTime, parseNumberListeners } from "@/shared/utils/helpers";
-import { trackPageProps } from "@/types";
+import { trackPageProps } from "@/types/common.types";
 import Image from "next/image";
 import Link from "next/link";
 import { use } from "react";

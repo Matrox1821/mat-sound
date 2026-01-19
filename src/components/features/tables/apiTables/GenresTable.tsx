@@ -1,12 +1,11 @@
 "use client";
-import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { use, useRef } from "react";
+import { use } from "react";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
-import { Toast } from "primereact/toast";
-import { usePathname, useSearchParams } from "next/navigation";
 import { genreCapitalize } from "@/shared/utils/helpers";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
+import { deleteGenreServer } from "@/actions/genre";
 
 export default function GenresTable({
   data,
@@ -16,9 +15,7 @@ export default function GenresTable({
   rows?: string;
 }) {
   const genres = use(data);
-  const toast = useRef<Toast>(null);
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const { message, error } = useToast();
   if (!genres) return;
 
   const capitalizeWords = (arr: { name: string; id: string }[]) => {
@@ -38,65 +35,40 @@ export default function GenresTable({
 
     return filled;
   };
-  const accept = async (id: string) => {
-    const params = new URLSearchParams(searchParams);
-    toast.current?.show({
-      severity: "info",
-      summary: "Confirmed",
-      detail: "You have accepted",
-      life: 3000,
-    });
-    const pathToRedirect = `${pathname}?${params.toString()}`;
-    /* await deleteGenreById({ id, pathToRedirect }); */
-  };
 
-  const reject = () => {
-    toast.current?.show({
-      severity: "warn",
-      summary: "Rejected",
-      detail: "You have rejected",
-      life: 3000,
-    });
+  const handleDelete = async ({ id, name }: { id: string; name: string }) => {
+    try {
+      await deleteGenreServer(id);
+      message(`Género ${name} eliminado.`);
+    } catch {
+      error(`Error al eliminar el género ${name}.`);
+    }
   };
-
-  const confirm = async (event: any, id: string) => {
+  const confirm = async ({ event, id, name }: { event: any; id: string; name: string }) => {
     confirmPopup({
       target: event.currentTarget,
-      message: "Do you want to delete this record?",
+      message: "Quieres eliminar este género?",
       icon: "pi pi-info-circle",
       defaultFocus: "reject",
       acceptClassName: "p-button-danger",
-      accept: () => accept(id),
-      reject,
+      accept: () => handleDelete({ id, name }),
     });
   };
 
   const capitalizedGenres = fillEmptyRows(capitalizeWords(genres), Number(rows));
-  const editBodyTemplate = (genre: any) => {
-    if (!genre.name) return null;
-    return (
-      <div>
-        <Button type="button" className="!p-3" severity="warning">
-          <i className="pi pi-pencil !text-xl !font-semibold leading-5" />
-        </Button>
-      </div>
-    );
-  };
 
   const deleteBodyTemplate = (genre: any) => {
     if (!genre.name) return <div className="h-[46px]" />;
     return (
       <div>
-        <Toast />
         <ConfirmPopup />
-        <Button
+        <button
           type="button"
-          className="!p-3"
-          severity="danger"
-          onClick={(e: any) => confirm(e, genre.id)}
+          className="h-11 w-11 bg-red-500/20 border border-red-500 rounded-lg flex items-center justify-center cursor-pointer hover:bg-red-500/10"
+          onClick={(event: any) => confirm({ event, id: genre.id, name: genre.name })}
         >
-          <i className="pi pi-trash !text-xl !font-semibold leading-5" />
-        </Button>
+          <i className="pi pi-trash !text-xl !text-white leading-5" />
+        </button>
       </div>
     );
   };
@@ -111,13 +83,8 @@ export default function GenresTable({
       <Column
         field="name"
         header="Nombre"
-        className="w-60 bg-background-900 !border-background"
+        className="w-full bg-background-900 !border-background"
       ></Column>
-      {/* <Column
-        header="Editar"
-        body={editBodyTemplate}
-        className="w-20 bg-background-800 !border-background"
-      ></Column> */}
       <Column
         header="Borrar"
         body={deleteBodyTemplate}

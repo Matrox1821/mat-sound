@@ -1,7 +1,7 @@
 "use client";
 import TrackTable from "@/components/ui/tables/TrackTable";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { albumPageProps } from "@/types";
+import { albumPageProps } from "@/types/common.types";
 import { use } from "react";
 
 export default function AlbumTable({

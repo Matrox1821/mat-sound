@@ -1,5 +1,6 @@
+"use client";
 import { formatTime } from "@/shared/utils/helpers";
-import { albumPageProps } from "@/types";
+import { albumPageProps } from "@/types/common.types";
 import Image from "next/image";
 import Link from "next/link";
 import { use } from "react";

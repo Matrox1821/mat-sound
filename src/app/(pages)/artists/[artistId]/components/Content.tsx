@@ -1,4 +1,5 @@
-import { artistPageProps, artistTracksProps } from "@/types";
+"use client";
+import { artistPageProps, artistTracksProps } from "@/types/common.types";
 import { Suspense, use } from "react";
 import Carousel from "@/components/ui/carousels";
 import dynamic from "next/dynamic";
@@ -30,10 +31,6 @@ export default function ArtistContent({
   const parsedTracks = tracks?.map((newTrack) => parseTrackByPlayer(newTrack));
   return (
     <article className="z-30 top-[calc(5/12*100vh)] left-0 w-full flex flex-col focus:none p-8 gap-8 relative bg-background">
-      {/*
-      ----- Posible fondo ----- 
-      <Background image={artist?.mainCover}>
-      */}
       <section className="flex gap-4 items-center">
         <PlayButton tracksList={popularTracks} artistName={artist?.name || ""} />
         <Sample newTrack={newTrack} />
@@ -63,7 +60,6 @@ export default function ArtistContent({
       <section>
         <About artist={artist} />
       </section>
-      {/* </Background> */}
       <hr className="text-background-700 pb-20 mt-20" />
     </article>
   );

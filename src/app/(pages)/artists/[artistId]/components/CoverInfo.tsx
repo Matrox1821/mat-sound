@@ -1,5 +1,6 @@
+"use client";
 import { Verified } from "@/components/ui/icons/Verified";
-import { artistPageProps } from "@/types";
+import { artistPageProps } from "@/types/common.types";
 import Image from "next/image";
 import { use } from "react";
 

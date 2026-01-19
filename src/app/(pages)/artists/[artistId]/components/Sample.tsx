@@ -1,5 +1,5 @@
 import { Play } from "@/components/ui/icons/playback/Play";
-import { artistTracksProps } from "@/types";
+import { artistTracksProps } from "@/types/common.types";
 import Image from "next/image";
 
 export default async function Sample({ newTrack }: { newTrack: artistTracksProps[] | null }) {

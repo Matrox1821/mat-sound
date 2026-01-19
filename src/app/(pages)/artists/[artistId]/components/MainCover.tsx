@@ -1,4 +1,5 @@
-import { artistPageProps } from "@/types";
+"use client";
+import { artistPageProps } from "@/types/common.types";
 import Image from "next/image";
 import { Skeleton } from "primereact/skeleton";
 import { use } from "react";

@@ -6,7 +6,7 @@ import { formatTime } from "@/shared/utils/helpers";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { artistPageProps } from "@/types";
+import { artistPageProps } from "@/types/common.types";
 import { playerTrackProps } from "@/types/trackProps";
 import Image from "next/image";
 import Link from "next/link";

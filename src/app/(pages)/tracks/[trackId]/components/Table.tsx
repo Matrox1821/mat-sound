@@ -1,7 +1,7 @@
 "use client";
 import { use } from "react";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { trackPageProps } from "@/types";
+import { trackPageProps } from "@/types/common.types";
 import TrackTable from "@/components/ui/tables/TrackTable";
 
 export default function SingleTrackTable({

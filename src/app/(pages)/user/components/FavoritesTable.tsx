@@ -1,3 +1,4 @@
+"use client";
 import TrackTable from "@/components/ui/tables/TrackTable";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { playerTrackProps } from "@/types/trackProps";

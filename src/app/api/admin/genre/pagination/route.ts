@@ -1,8 +1,7 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import { getGenresPaginationInfo } from "@/shared/server/genre/genreService";
-import { NextRequest } from "next/server";
+import { getGenresPaginationInfo } from "@/shared/server/genre/genre.service";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const info = await getGenresPaginationInfo();
     return onSuccessRequest({
