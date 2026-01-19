@@ -3,7 +3,7 @@ import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { Prisma } from "../../generated/prisma/client";
 
-const validateOrReject = async (input: any) => {};
+/* const validateOrReject = async (input: any) => {}; */
 
 const generateErrorMessage = <E = any>({
   httpStatusCode,
@@ -91,10 +91,4 @@ const onThrowError = (error: any) => {
   );
 };
 
-export {
-  validateOrReject,
-  generateErrorMessage,
-  onThrowError,
-  generateSuccessMessage,
-  onSuccessRequest,
-};
+export { generateErrorMessage, onThrowError, generateSuccessMessage, onSuccessRequest };

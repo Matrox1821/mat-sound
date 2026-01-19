@@ -1,6 +1,7 @@
 "use server";
+
 import { auth } from "@/lib/auth";
-import { signinAdminUser } from "@/queryFn/admin/account";
+import { signinAdminUser } from "@/queryFn/admin/accountApi";
 import { setLoginCookies } from "@/shared/client/apiShared";
 import {
   type FormSigninState,
