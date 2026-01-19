@@ -23,10 +23,7 @@ export default function Header({ initialSession }: { initialSession: any }) {
   const { back, canGoBack, canGoForward, forward } = useNavigation();
   const { isMobile } = useDevice();
   const isAdminPage = pathname.split("/").includes("admin");
-  const isAuthPage =
-    pathname.split("/").includes("signin") || pathname.split("/").includes("signup");
-
-  if (isMobile || isAdminPage) return null;
+  const isAuthPage = ["signin", "signup"].some((p) => pathname.includes(p));
 
   if (isAuthPage)
     return (
@@ -45,6 +42,8 @@ export default function Header({ initialSession }: { initialSession: any }) {
         </Link>
       </header>
     );
+
+  if (isMobile || isAdminPage) return null;
 
   const asideWidth = isExpanded ? 288 : 80;
   const spacing = 28;
