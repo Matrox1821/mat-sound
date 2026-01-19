@@ -1,6 +1,6 @@
 "use client";
 import { adminSigninFormValidation } from "@/actions/auth";
-import CustomInputAdminForm from "@/components/ui/inputs/CustomInputAdminForm";
+import CustomInputAdminForm from "@/components/features/inputs/CustomInputAdminForm";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { redirect } from "next/navigation";
 import { useActionState, useEffect } from "react";

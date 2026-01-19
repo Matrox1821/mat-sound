@@ -1,10 +1,14 @@
-import CustomInputAdminForm from "@/components/ui/inputs/CustomInputAdminForm";
+import CustomInputAdminForm from "@/components/features/inputs/CustomInputAdminForm";
 export function FirstStep({
   formData,
   onChange,
+  avatar,
+  mainCover,
 }: {
   formData: any;
   onChange: (field: any, value: any) => void;
+  avatar?: string;
+  mainCover?: string | null;
 }) {
   return (
     <section className="p-8 w-full">
@@ -24,15 +28,19 @@ export function FirstStep({
             type="file"
             value={formData.avatar}
             onChange={(val: any) => onChange("avatar", val)}
+            defaultImage={avatar}
             isRequired
+            disabled={false}
           />
           <CustomInputAdminForm
             title="Portada principal:"
-            name="main_cover"
+            name="mainCover"
             type="file"
-            value={formData.main_cover}
-            onChange={(val: any) => onChange("main_cover", val)}
+            value={formData.mainCover}
+            onChange={(val: any) => onChange("mainCover", val)}
             isRequired
+            defaultImage={mainCover || ""}
+            disabled={false}
           />
         </div>
       </div>
