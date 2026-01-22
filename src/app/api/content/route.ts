@@ -13,17 +13,16 @@ export async function GET(req: NextRequest) {
       | "playlists"
       | "none"
       | undefined;
-    const filterId = req.nextUrl.searchParams.get("filter_id") ?? undefined;
-    const idToRemove = req.nextUrl.searchParams.get("remove") ?? undefined;
-    const userId = req.nextUrl.searchParams.get("user_id") ?? undefined;
-
+    const filterId = req.nextUrl.searchParams.get("filter_id") || undefined;
+    const idToRemove = req.nextUrl.searchParams.get("remove") || undefined;
+    const userId = req.nextUrl.searchParams.get("user_id") || undefined;
     const response = await getContent({ type, limit, filter, filterId, idToRemove, userId });
-
     return onSuccessRequest({
       httpStatusCode: 200,
       data: response,
     });
   } catch (error) {
+    console.log(error);
     return onThrowError(error);
   }
 }

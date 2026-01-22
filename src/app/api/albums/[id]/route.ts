@@ -2,7 +2,7 @@ import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { getAlbumById } from "@/shared/server/album/album.repository";
-export async function GET({ params }: { params: Promise<{ id: string }> }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
@@ -25,6 +25,7 @@ export async function GET({ params }: { params: Promise<{ id: string }> }) {
       data: response,
     });
   } catch (error) {
+    console.log(error);
     return onThrowError(error);
   }
 }
