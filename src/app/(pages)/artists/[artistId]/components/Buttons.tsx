@@ -5,13 +5,13 @@ import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { artistTracksProps } from "@/types/common.types";
+import { ArtistTracks } from "@/types/artist.types";
 
 export function PlayButton({
   tracksList,
   artistName,
 }: {
-  tracksList: artistTracksProps[] | null;
+  tracksList: ArtistTracks[] | null;
   artistName: string | null;
 }) {
   const { setTrack, currentTrack, setPlayingFrom, playingFrom } = usePlayerStore((state) => state);

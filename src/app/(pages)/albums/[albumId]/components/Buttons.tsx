@@ -45,7 +45,7 @@ export function PlayButton({
 
   return (
     <button
-      className="flex bg-content-900 text-background font-semibold py-2 pl-3 pr-4 rounded-2xl gap-2 cursor-pointer hover:brightness-70 transition-[filter] duration-200"
+      className="flex bg-content-900 text-background font-semibold py-2 pl-3 pr-4 rounded-lg gap-2 cursor-pointer hover:brightness-70 transition-[filter] duration-200"
       onClick={playAlbum}
     >
       <Play />
@@ -80,7 +80,7 @@ export function RandButton({ tracksList }: { tracksList: any[] | null }) {
 
   return (
     <button
-      className="flex bg-background-700 text-content-950 font-semibold py-2 pl-3 pr-4 rounded-2xl gap-2 cursor-pointer hover:brightness-130 transition-[filter] duration-200"
+      className="flex bg-background-700 text-content-950 font-semibold py-2 pl-3 pr-4 rounded-lg gap-2 cursor-pointer hover:brightness-130 transition-[filter] duration-200"
       onClick={playAlbum}
     >
       <Shuffle />

@@ -1,13 +1,12 @@
 "use client";
-import { artistPageProps, artistTracksProps } from "@/types/common.types";
 import { Suspense, use } from "react";
-import Carousel from "@/components/ui/carousels";
 import dynamic from "next/dynamic";
 import Sample from "./Sample";
 import NewArtistTrack from "./NewTrack";
 import About from "./About";
 import { PlayButton } from "./Buttons";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
+import { ArtistServer, ArtistTracks } from "@/types/artist.types";
 
 const PopularTracks = dynamic(() => import("./PopularTracks"));
 
@@ -15,10 +14,12 @@ export default function ArtistContent({
   artistPromise,
   popularTracksPromise,
   newTrackPromise,
+  albumsCarousel,
 }: {
-  artistPromise: Promise<artistPageProps | null>;
-  popularTracksPromise: Promise<artistTracksProps[] | null>;
-  newTrackPromise: Promise<artistTracksProps[] | null>;
+  artistPromise: Promise<ArtistServer | null>;
+  popularTracksPromise: Promise<ArtistTracks[] | null>;
+  newTrackPromise: Promise<ArtistTracks[] | null>;
+  albumsCarousel: React.ReactNode;
 }) {
   const artist = use(artistPromise);
   const popularTracks = use(popularTracksPromise);
@@ -28,15 +29,12 @@ export default function ArtistContent({
     ...track,
     artists: [{ name: artist?.name, id: artist?.id, avatar: artist?.avatar }],
   }));
-  const parsedTracks = tracks?.map((newTrack) => parseTrackByPlayer(newTrack));
+  const parsedTracks = tracks?.map((track) => parseTrackByPlayer(track));
   return (
-    <article className="z-30 top-[calc(5/12*100vh)] left-0 w-full flex flex-col focus:none p-8 gap-8 relative bg-background">
+    <article className="z-30 top-[calc(1/2*100vh)] left-0 w-full flex flex-col focus:none p-8 gap-8 relative bg-background">
       <section className="flex gap-4 items-center">
         <PlayButton tracksList={popularTracks} artistName={artist?.name || ""} />
         <Sample newTrack={newTrack} />
-        <button className="rounded-full h-8 px-6 cursor-pointer border-[1px] text-sm font-semibold border-background-200 text-background-50 hover:scale-105 hover:text-content-950 hover:border-content-950 ">
-          Seguir
-        </button>
       </section>
       <section className="flex gap-8 max-xl:flex-col lg:flex lg:gap-10 max-lg:w-11/12 max-xl:w-11/12 xl:w-10/12">
         <Suspense fallback={<div>Cargando...</div>}>
@@ -48,15 +46,7 @@ export default function ArtistContent({
           artistName={artist?.name}
         />
       </section>
-      <section className="flex gap-8 w-full">
-        {artist && (
-          <Carousel
-            title="Álbumes"
-            options={{ type: ["albums"] }}
-            filter={{ type: "artists", id: artist?.id }}
-          />
-        )}
-      </section>
+      <section className="flex gap-8 w-full">{albumsCarousel}</section>
       <section>
         <About artist={artist} />
       </section>
