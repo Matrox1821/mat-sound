@@ -9,30 +9,39 @@ import { slidesPerView } from "@/shared/utils/helpers";
 import SwiperButtons from "../buttons/SwiperButtons";
 import CarouselCard from "../cards/CarouselCard";
 import { use } from "react";
-import { contentProps } from "@/types/common.types";
+import { ContentElement } from "@/types/content.types";
 
-export default function CarouselSwiper({ data }: { data: Promise<contentProps[] | undefined> }) {
+export default function CarouselSwiper({
+  data,
+  title,
+}: {
+  data: Promise<ContentElement[] | null>;
+  title?: string;
+}) {
   const { isMobile, size } = useDevice();
-  if (!data) return;
   const content = use(data);
+  if (!content) return;
   const slidesPerViewAmount = slidesPerView(isMobile, size);
   return (
-    <Swiper
-      style={{ position: "initial" }}
-      className="w-full"
-      modules={[Navigation]}
-      slidesPerView={slidesPerViewAmount}
-      spaceBetween={16}
-    >
-      {content && content?.length > slidesPerViewAmount && <SwiperButtons />}
-      {content &&
-        content.map((element, i) => {
-          return (
-            <SwiperSlide className="!w-40" key={i}>
-              <CarouselCard element={element} />
-            </SwiperSlide>
-          );
-        })}
-    </Swiper>
+    <>
+      {title && <h2 className="h-12 font-semibold text-2xl ">{title}</h2>}
+      <Swiper
+        style={{ position: "initial" }}
+        className="w-full [&>.swiper-wrapper]:gap-8"
+        modules={[Navigation]}
+        slidesPerView={slidesPerViewAmount}
+        spaceBetween={16}
+      >
+        {content && content?.length > slidesPerViewAmount && <SwiperButtons />}
+        {content &&
+          content.map((element, i) => {
+            return (
+              <SwiperSlide className="!w-40 !m-0" key={i}>
+                <CarouselCard element={element} />
+              </SwiperSlide>
+            );
+          })}
+      </Swiper>
+    </>
   );
 }

@@ -22,9 +22,9 @@ export const SaveInPlaylist = ({
   const { error: toastError, message } = useToast();
   const [optimisticSaved, addOptimisticSaved] = useOptimistic(
     initialIsSaved,
-    (newIsSaved: boolean) => newIsSaved
+    (newIsSaved: boolean) => newIsSaved,
   );
-  const handleLike = async (e: any) => {
+  const handleSave = async (e: any) => {
     e.stopPropagation();
     e.preventDefault();
 
@@ -44,7 +44,7 @@ export const SaveInPlaylist = ({
 
   return (
     <button
-      onClick={handleLike}
+      onClick={handleSave}
       disabled={isPending}
       className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full  transition-all hover:opacity-75 ${
         optimisticSaved ? "text-accent-950" : "text-content-900"

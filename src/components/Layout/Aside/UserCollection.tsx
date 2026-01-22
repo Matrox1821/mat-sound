@@ -1,9 +1,9 @@
 "use client";
 import { use } from "react";
-import { AsideLink } from "./AsideLink";
-import Image from "next/image";
+/* import { AsideLink } from "./AsideLink";
 import { PlaylistImage } from "@/components/ui/images/PlaylistImage";
-
+import { SafeImage } from "@/components/ui/images/SafeImage";
+ */
 export function UserCollection({ promise, isExpanded, pathname }: any) {
   const items = use(promise);
   if (!items) return null;
@@ -19,18 +19,16 @@ export function UserCollection({ promise, isExpanded, pathname }: any) {
       </p>
 
       <ul className="flex flex-col gap-1">
-        {items.collection.map((item: any) => {
+        {/*  {items.collection.map((item: any) => {
           // Decidimos qué mostrar: Imagen de portada o Icono por defecto
-          let visual = item.cover ? (
-            <Image
+          let visual = (
+            <SafeImage
               src={item.cover}
               alt={item.name}
               width={32}
               height={32}
-              className="object-cover w-full h-full "
+              className="!object-cover !w-full !h-full "
             />
-          ) : (
-            <i className="pi pi-music text-xl" /> // Icono fallback
           );
           if (item.type === "playlist")
             visual = (
@@ -50,7 +48,7 @@ export function UserCollection({ promise, isExpanded, pathname }: any) {
               isActive={pathname === `/${item.type}/${item.id}`}
             />
           );
-        })}
+        })} */}
       </ul>
     </div>
   );

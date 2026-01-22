@@ -1,7 +1,6 @@
 "use client";
-
 import { usePlaybackStore } from "@/store/playbackStore";
-import { RefObject, useCallback, useState } from "react";
+import { RefObject, useCallback } from "react";
 import {
   Slider as SliderRoute,
   SliderRange,
@@ -11,7 +10,6 @@ import {
 
 export const Volume = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
   const { volume, setVolume } = usePlaybackStore((state) => state);
-  const [isVisible, setIsVisible] = useState(false);
 
   const handleVolumeChange = useCallback(
     (value: number[]) => {
@@ -21,16 +19,12 @@ export const Volume = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) 
         setVolume(newCurrentVolume);
       }
     },
-    [audioRef, setVolume]
+    [audioRef, setVolume],
   );
 
   return (
-    <div className="flex items-center gap-2 relative justify-center">
-      <div
-        className={`left-0 w-8 h-20 absolute -translate-y-3/4 bg-background-800 border-[1px] border-background-300 -right-2  items-center justify-center rounded-md ${
-          isVisible ? "flex" : "hidden"
-        }`}
-      >
+    <div className="flex items-center gap-2 relative justify-center group">
+      <div className="left-0 w-8 h-20 absolute -translate-y-3/4 bg-background-800 border-[1px] border-background-300 -right-2  items-center justify-center rounded-md hidden group-hover:!flex">
         <div className="relative flex h-20 touch-none w-8 select-none items-center slider-container py-2 justify-center">
           <SliderRoute
             className="relative flex w-[3px] h-full touch-none select-none items-center slider-route justify-center"
@@ -52,20 +46,22 @@ export const Volume = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) 
         </div>
       </div>
 
-      <button
-        className="relative flex items-center cursor-pointer"
-        onClick={() => setIsVisible(!isVisible)}
-      >
+      <span className="w-8 h-8 flex items-center justify-center">
         <i
-          className={`w-8 h-8 !text-xl ${
+          className={`relative  cursor-pointer !text-xl ${
             volume === 0
               ? "pi pi-volume-off"
               : volume <= 0.4
-              ? "pi pi-volume-down"
-              : "pi pi-volume-up"
+                ? "pi pi-volume-down"
+                : "pi pi-volume-up"
           }`}
         />
-      </button>
+      </span>
+      {/* <button
+        className="relative flex items-center cursor-pointer"
+        onClick={() => setIsVisible(!isVisible)}
+      >
+      </button> */}
     </div>
   );
 };

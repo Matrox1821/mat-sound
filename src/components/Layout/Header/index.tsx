@@ -27,7 +27,7 @@ export default function Header({ initialSession }: { initialSession: any }) {
 
   if (isAuthPage)
     return (
-      <header className="flex h-18 items-center absolute z-10">
+      <header className="flex h-18 items-center absolute z-10 m-1">
         <Link
           href={"/"}
           className={`flex items-center justify-center transition-all duration-200 w-12 h-12 ml-3 ${
