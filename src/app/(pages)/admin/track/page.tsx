@@ -33,24 +33,30 @@ export default async function Page({
     trackName,
   });
 
-  const tracks = trackAdminApi.getTracksByPage({ page, rows, artistName, albumName, trackName });
+  const tracks = trackAdminApi.getTracksByPage({
+    page,
+    rows,
+    artistName,
+    albumName,
+    trackName,
+  });
   const genres = genreAdminApi.getGenres();
 
   return (
     <main className="w-full h-screen bg-background">
-      <section className="w-full h-1/6 flex items-center justify-evenly">
+      <section className="w-full h-1/8 flex items-center justify-evenly">
         <FormDialog type="track" data={genres} />
         <BulkDialog>
           <BulkTrackUpload />
         </BulkDialog>
       </section>
       <hr className="text-background-700 w-full" />
-      <section className="w-full flex items-center justify-center pt-8 gap-6">
+      <section className="w-full flex  items-center justify-center pt-8 gap-6">
         <SearchFilter queryName="artistNameFilter" placeholder="Buscar por nombre de artista" />
         <SearchFilter queryName="albumNameFilter" placeholder="Buscar por nombre de album" />
         <SearchFilter queryName="trackNameFilter" placeholder="Buscar por nombre de cancion" />
       </section>
-      <section className="flex justify-center items-center w-full py-20 flex-col">
+      <section className="flex justify-center items-center w-full pt-10 flex-col">
         <div className="w-1/2 rounded-xl bg-background-900 p-2 flex flex-col gap-4">
           <Suspense fallback={<ProgressSpinner className="w-full h-[480px]" />}>
             <TracksTable data={tracks} rows={rows} genres={genres} />

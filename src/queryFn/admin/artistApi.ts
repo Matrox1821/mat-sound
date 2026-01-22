@@ -13,14 +13,15 @@ const getArtists = async (searchQuery?: string) => {
     const params = new URLSearchParams({ search: searchQuery });
     url += `?${params.toString()}`;
   }
-
-  const response = await handleCustomApiRequest(url, "GET", null, true);
-
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+  try {
+    const response = await handleCustomApiRequest(url, "GET", null, true);
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 
 const getArtistsByPage = async ({
@@ -31,37 +32,41 @@ const getArtistsByPage = async ({
   page?: string;
   rows?: string;
   query?: string;
-}): Promise<ArtistByPagination[] | undefined> => {
+}): Promise<ArtistByPagination[] | null> => {
   const searchParams = new URLSearchParams();
   searchParams.append("page", page);
   searchParams.append("rows", rows);
   searchParams.append("query", query);
-
-  const response = await handleCustomApiRequest<ArtistByPagination[]>(
-    GET_URL + "/api/admin/artist/list" + "?" + searchParams,
-    "GET",
-    null,
-  );
-
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+  try {
+    const response = await handleCustomApiRequest<ArtistByPagination[]>(
+      GET_URL + "/api/admin/artist/list" + "?" + searchParams,
+      "GET",
+      null,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-  return response.data;
 };
 
 const getArtistsPaginationInfo = async ({ query = "" }: { query?: string }) => {
   const searchParams = new URLSearchParams();
   searchParams.append("query", query);
-  const response = await handleCustomApiRequest<{
-    amount: number;
-    pages: number;
-  }>(GET_URL + "/api/admin/artist/pagination" + "?" + searchParams, "GET", null);
-
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+  try {
+    const response = await handleCustomApiRequest<{
+      amount: number;
+      pages: number;
+    }>(GET_URL + "/api/admin/artist/pagination" + "?" + searchParams, "GET", null);
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 const createArtistsBulk = async (data: any) => {
   try {
@@ -71,7 +76,7 @@ const createArtistsBulk = async (data: any) => {
       data,
       true,
     );
-    if (response.errors?.length) {
+    if (response.errors?.length || !response.data) {
       throw new Error(response.message || "Error en la petición");
     }
     return response.data;
@@ -96,7 +101,20 @@ const deleteArtist = async (id: any) => {
   }
 };
 const updateArtist = async (artist: any) => {
-  return await handleCustomApiRequest(GET_URL + "/api/admin/artist", "PATCH", artist, true);
+  try {
+    const response = await handleCustomApiRequest(
+      GET_URL + "/api/admin/artist",
+      "PATCH",
+      artist,
+      true,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
+  }
 };
 export const artistAdminApi = {
   createArtist,

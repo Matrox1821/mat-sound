@@ -16,7 +16,7 @@ const stepTitles = ["Información", "Detalles", "Relaciones"];
 export function CreateTrackForm({
   genres,
 }: {
-  genres: Promise<{ name: string; id: string }[] | undefined>;
+  genres: Promise<{ name: string; id: string }[] | null>;
 }) {
   const stepperRef = useRef<any>(null);
   const [step, setStep] = useState(1);

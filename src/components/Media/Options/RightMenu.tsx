@@ -1,9 +1,9 @@
 "use client";
 import { Play } from "@/components/ui/icons/playback/Play";
 import { RightMenuIcon } from "@/components/ui/icons/playback/RightMenu";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 import { useUIStore } from "@/store/activeStore";
 import { usePlayerStore } from "@/store/playerStore";
-import Image from "next/image";
 import Link from "next/link";
 import { Sidebar } from "primereact/sidebar";
 export const RightMenu = () => {
@@ -45,12 +45,12 @@ export const RightMenu = () => {
                   className="flex gap-4 hover:[&>button>.play]:!flex hover:[&>button>img]:!brightness-25 hover:bg-background-800 p-2 rounded-xl"
                 >
                   <button className="relative h-12 w-12 flex items-center justify-center cursor-pointer ">
-                    <Image
-                      src={track.cover.lg}
+                    <SafeImage
+                      src={track.cover && track.cover.lg}
                       alt={track.name}
                       width={48}
                       height={48}
-                      className="rounded-sm opacity-60"
+                      className="!rounded-sm !opacity-60"
                     />
                     <Play className="play absolute hidden z-50 opacity-95" />
                   </button>
@@ -86,12 +86,12 @@ export const RightMenu = () => {
               }`}
             >
               <button className="relative h-12 w-12 flex items-center justify-center cursor-pointer ">
-                <Image
-                  src={currentTrack.cover.lg}
+                <SafeImage
+                  src={currentTrack.cover && currentTrack.cover.lg}
                   alt={currentTrack.name}
                   width={48}
                   height={48}
-                  className="rounded-sm "
+                  className="!rounded-sm"
                 />
                 <Play className="play absolute hidden z-50 " />
               </button>
@@ -126,12 +126,12 @@ export const RightMenu = () => {
                   className="flex gap-4 hover:[&>button>.play]:!flex hover:[&>button>img]:!brightness-25 hover:bg-background-800 p-2 rounded-xl"
                 >
                   <button className="relative h-12 w-12 flex items-center justify-center cursor-pointer ">
-                    <Image
-                      src={track.cover.lg}
+                    <SafeImage
+                      src={track.cover && track.cover.lg}
                       alt={track.name}
                       width={48}
                       height={48}
-                      className="rounded-sm "
+                      className="!rounded-sm"
                     />
                     <Play className="play absolute hidden z-50 " />
                   </button>

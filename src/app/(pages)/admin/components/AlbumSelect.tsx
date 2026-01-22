@@ -11,7 +11,6 @@ export function AlbumSelect({
   artistId: string[];
 }) {
   const [albums, setAlbums] = useState<any>(null);
-  console.log(albums);
   useEffect(() => {
     if (!artistId) return;
 

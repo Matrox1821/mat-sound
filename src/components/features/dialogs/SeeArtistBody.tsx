@@ -3,8 +3,7 @@ import { ArtistFormData } from "@/types/form.types";
 import { ArtistByPagination } from "@/types/artist.types";
 import CustomInputAdminForm from "../inputs/CustomInputAdminForm";
 import { useState } from "react";
-import Image from "next/image";
-import { NoImage } from "@/components/ui/icons/NoImage";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 export const mapArtistToEditFormData = (artist: ArtistByPagination): ArtistFormData => {
   return {
     id: artist.id,
@@ -47,7 +46,6 @@ export function SeeArtistBody({ artist }: { artist: ArtistByPagination }) {
   const parsedArtist = mapArtistToEditFormData(artist);
 
   const [formData, _setFormData] = useState<ArtistFormData>(parsedArtist);
-  console.log(artist?.socials && Object.entries(artist?.socials));
   return (
     <div className="w-[750px] flex flex-col gap-4 text-xs overflow-auto">
       <article className="flex flex-col p-4 w-full h-[420px] overflow-y-auto gap-6">
@@ -62,39 +60,27 @@ export function SeeArtistBody({ artist }: { artist: ArtistByPagination }) {
           <div className="flex w-full gap-4 text-lg items-center">
             <div className="flex flex-col gap-2 w-1/4 items-center">
               <h3>Avatar</h3>
-              {artist.avatar && artist.avatar.sm ? (
-                <figure className="h-22 w-22 border border-background-100/40 flex items-center justify-center rounded-md">
-                  <Image
-                    src={artist.avatar?.sm}
-                    alt=""
-                    width={30}
-                    height={30}
-                    className="w-16 h-16 object-cover rounded-sm  "
-                  />
-                </figure>
-              ) : (
-                <span className="h-22 w-22 border border-background-100/40 flex items-center justify-center rounded-md">
-                  <NoImage className="w-16 h-16" />
-                </span>
-              )}
+              <figure className="h-22 w-22 border border-background-100/40 flex items-center justify-center rounded-md">
+                <SafeImage
+                  src={artist.avatar && artist.avatar.sm}
+                  alt=""
+                  width={30}
+                  height={30}
+                  className="!w-16 !h-16 !object-cover !rounded-sm"
+                />
+              </figure>
             </div>
             <div className="flex flex-col gap-2 w-1/4 items-center">
               <h3>Portada</h3>
-              {artist.mainCover && artist.mainCover ? (
-                <figure className="h-22 w-22 border border-background-100/40 flex items-center justify-center rounded-md">
-                  <Image
-                    src={artist.mainCover}
-                    alt=""
-                    width={30}
-                    height={30}
-                    className="w-16 h-16 object-cover rounded-sm  "
-                  />
-                </figure>
-              ) : (
-                <span className="h-22 w-22 border border-background-100/40 flex items-center justify-center rounded-md">
-                  <NoImage className="w-16 h-16" />
-                </span>
-              )}
+              <figure className="h-22 w-22 border border-background-100/40 flex items-center justify-center rounded-md">
+                <SafeImage
+                  src={artist.mainCover}
+                  alt=""
+                  width={30}
+                  height={30}
+                  className="w-16 h-16 object-cover rounded-sm  "
+                />
+              </figure>
             </div>
             <div className="flex w-1/2 gap-4 text-sm">
               <CustomInputAdminForm

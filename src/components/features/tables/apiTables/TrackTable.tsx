@@ -3,28 +3,27 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { use } from "react";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
-import Image from "next/image";
-import { NoImage } from "@/components/ui/icons/NoImage";
 import { TrackByPagination } from "@/types/track.types";
 import { FormDialog } from "../../dialogs/FormDialog";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { EditTrackForm } from "../../forms/trackForm/editTrack";
 import { SeeTrackBody } from "../../dialogs/SeeTrackBody";
 import { deleteTrackServer } from "@/actions/track";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 
 export default function TracksTable({
   data,
   rows = "6",
   genres,
 }: {
-  data: Promise<TrackByPagination[] | undefined>;
+  data: Promise<TrackByPagination[] | null>;
   rows?: string;
-  genres: Promise<{ name: string; id: string }[] | undefined>;
+  genres: Promise<{ name: string; id: string }[] | null>;
 }) {
   const tracks = use(data);
   const { message, error } = useToast();
 
-  const fillEmptyRows = (arr: TrackByPagination[] | undefined, minRows: number) => {
+  const fillEmptyRows = (arr: TrackByPagination[] | null, minRows: number) => {
     const filled = [...(arr || [])];
     const emptyCount = minRows - (arr?.length || 0);
 
@@ -108,19 +107,19 @@ export default function TracksTable({
   };
 
   const imageBodyTemplate = (track: any) => {
-    if (track.name !== "" && (!track.cover || track.cover.sm === ""))
-      return <NoImage className="h-[45px] w-[45px]" />;
-    if (!track.cover || track.cover.sm === "") return;
-    return (
-      <Image
-        src={track.cover.sm}
-        alt={track.name}
-        height={45}
-        width={45}
-        loading="lazy"
-        className="rounded-sm"
-      />
-    );
+    if (track.name !== "")
+      return (
+        <SafeImage
+          src={track.cover && track.cover.sm}
+          alt={track.name}
+          height={45}
+          width={45}
+          loading="lazy"
+          className="!rounded-sm !w-[45px] !h-[45px]"
+        />
+      );
+
+    return null;
   };
 
   return (

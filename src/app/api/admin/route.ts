@@ -9,7 +9,6 @@ import { prisma } from "@config/db";
 export async function POST(req: NextRequest) {
   try {
     const body: { email: string; password: string } = await req.json();
-
     const request = await prisma.admin.findFirst({
       where: {
         email: body.email,
@@ -34,7 +33,6 @@ export async function POST(req: NextRequest) {
 
     const { password: _password, ...user } = request;
     const jwt = logInUser(user);
-
     return onSuccessRequest({
       httpStatusCode: 200,
       data: { admin_token: jwt, user },

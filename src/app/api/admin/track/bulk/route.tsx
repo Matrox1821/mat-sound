@@ -39,9 +39,13 @@ export async function POST(req: NextRequest) {
         });
 
         if (existingTrack) {
-          console.log(`Track "${track.name}" ya existe, saltando...`);
           continue;
         }
+
+        const albumCover = await tx.album.findFirst({
+          where: { id: albumId },
+          select: { cover: true },
+        });
 
         const newTrack = await tx.track.create({
           data: {
@@ -52,6 +56,7 @@ export async function POST(req: NextRequest) {
             artists: {
               connect: [{ id: artistId }],
             },
+            cover: albumCover?.cover || { sm: "", md: "", lg: "" },
             genres: {
               connectOrCreate: track.genres.map((genreName) => ({
                 where: { name: genreName },

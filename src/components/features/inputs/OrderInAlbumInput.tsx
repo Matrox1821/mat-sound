@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 import { useState, useEffect, useRef } from "react";
 
 interface Element {
@@ -84,15 +84,13 @@ export function OrderAlbumInput({
                 className="w-full flex flex-col md:flex-row items-start md:items-center justify-between p-3 bg-background-950 border border-background-200/60 rounded-lg gap-4"
               >
                 <div className="flex items-center gap-3">
-                  {item.cover && item.cover.sm !== "" && (
-                    <Image
-                      src={item.cover.sm}
-                      alt={item.name}
-                      width={48}
-                      height={48}
-                      className="w-12 h-12 rounded shadow-md object-cover"
-                    />
-                  )}
+                  <SafeImage
+                    src={item.cover && item.cover.sm}
+                    alt={item.name}
+                    width={48}
+                    height={48}
+                    className="!w-12 !h-12 !rounded !shadow-md !object-cover"
+                  />
                   <div className="flex flex-col max-w-[200px]">
                     <span className="text-sm font-bold text-white truncate">{item.name}</span>
                     {item.artist && (

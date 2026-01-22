@@ -1,7 +1,6 @@
 "use client";
 import { FirstStep } from "./steps/FirstStep";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { redirect, usePathname } from "next/navigation";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
 import { AlbumFormData } from "@/types/form.types";
 import { AlbumByPagination } from "@/types/album.types";
@@ -10,6 +9,7 @@ import { updateAlbumServer } from "@/actions/album";
 import { SecondStep } from "./steps/SecondStep";
 import { Stepper } from "primereact/stepper";
 import { StepperPanel } from "primereact/stepperpanel";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
 export const mapAlbumToEditFormData = (album: AlbumByPagination): AlbumFormData => {
   const tracksOrder: { [key: string]: { order: number; disk: number } } = {};
 
@@ -34,13 +34,13 @@ export function EditAlbumForm({ album }: { album: AlbumByPagination }) {
   const stepperRef = useRef<any>(null);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<AlbumFormData>(parsedAlbum);
-  const { createEntity, success } = useCreateEntity({
+  const { createEntity, success, errors } = useCreateEntity({
     toFormData: toUpdateAlbumFormData,
     serverAction: updateAlbumServer,
     successMessage: "Album editado con éxito",
     errorMessage: "Ocurrió un error al editar el album",
   });
-  const pathname = usePathname();
+  const { error, success: successMessage } = useToast();
 
   const handleChange = useCallback(
     <K extends keyof AlbumFormData>(field: K, value: AlbumFormData[K]) => {
@@ -64,9 +64,15 @@ export function EditAlbumForm({ album }: { album: AlbumByPagination }) {
 
   useEffect(() => {
     if (success) {
-      redirect(pathname);
+      successMessage("Success!");
+      /* redirect("/admin/track"); */
     }
-  }, [success, pathname]);
+    if (errors.length !== 0) {
+      Object.entries(errors).forEach(([key, value]) => {
+        error(key);
+      });
+    }
+  }, [success, errors, successMessage, error]);
   return (
     <form
       onSubmit={handleSubmit}

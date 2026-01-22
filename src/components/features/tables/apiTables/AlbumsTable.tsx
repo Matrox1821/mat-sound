@@ -3,14 +3,13 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { use } from "react";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
-import Image from "next/image";
-import { NoImage } from "@/components/ui/icons/NoImage";
 import { AlbumByPagination } from "@/types/album.types";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { FormDialog } from "../../dialogs/FormDialog";
 import { deleteAlbumServer } from "@/actions/album";
 import { EditAlbumForm } from "../../forms/albumForm/editAlbum";
 import { SeeAlbumBody } from "../../dialogs/SeeAlbumBody";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 
 export default function AlbumsTable({
   data,
@@ -105,19 +104,19 @@ export default function AlbumsTable({
   };
 
   const imageBodyTemplate = (album: any) => {
-    if (album.name !== "" && (!album.cover || album.cover.sm === ""))
-      return <NoImage className="h-[45px] w-[45px]" />;
-    if (!album.cover || album.cover.sm === "") return;
-    return (
-      <Image
-        src={album.cover.sm}
-        alt={album.name}
-        height={45}
-        width={45}
-        loading="lazy"
-        className="rounded-sm"
-      />
-    );
+    if (album.name !== "")
+      return (
+        <SafeImage
+          src={album.cover && album.cover.sm}
+          alt={album.name}
+          height={45}
+          width={45}
+          loading="lazy"
+          className="!rounded-sm !w-[45px] !h-[45px]"
+        />
+      );
+
+    return null;
   };
   return (
     <DataTable value={filledAlbums} scrollable scrollHeight="531px" className="bg-background-900 ">

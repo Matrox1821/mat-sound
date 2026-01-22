@@ -1,9 +1,15 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { artistAdminApi } from "@/queryFn/admin/artistApi";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 
-export function ArtistSearchInput({ onSelect, placeholder }: { onSelect: (artist: any) => void, placeholder: string }) {
+export function ArtistSearchInput({
+  onSelect,
+  placeholder,
+}: {
+  onSelect: (artist: any) => void;
+  placeholder: string;
+}) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,9 +63,13 @@ export function ArtistSearchInput({ onSelect, placeholder }: { onSelect: (artist
                 setIsOpen(false);
               }}
             >
-              {artist.avatar?.sm && (
-                <Image src={artist.avatar.sm} className="w-8 h-8 rounded-full object-cover" alt={artist.name} width={10} height={10} />
-              )}
+              <SafeImage
+                src={artist.avatar && artist.avatar.sm}
+                className="!w-8 !h-8 !rounded-full !object-cover"
+                alt={artist.name}
+                width={10}
+                height={10}
+              />
               <span className="text-white text-sm">{artist.name}</span>
             </li>
           ))}

@@ -4,23 +4,40 @@ import { AlbumByPagination } from "@/types/album.types";
 import { ImageSizes } from "@/types/common.types";
 
 const createAlbum = async (album: any) => {
-  return await handleCustomApiRequest(GET_URL + "/api/admin/album", "POST", album, true);
+  try {
+    const response = await handleCustomApiRequest(
+      GET_URL + "/api/admin/album",
+      "POST",
+      album,
+      true,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
+  }
 };
 const getAlbumsByArtistsId = async (artists: string[]) => {
   const searchParams = new URLSearchParams();
   artists.forEach((artistsId) => searchParams.append("artists_id", artistsId));
-  const response = await handleCustomApiRequest(
-    GET_URL + "/api/admin/album" + "?" + searchParams,
-    "GET",
-    null,
-    true,
-  );
+  try {
+    const response = await handleCustomApiRequest(
+      GET_URL + "/api/admin/album" + "?" + searchParams,
+      "GET",
+      null,
+      true,
+    );
 
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 
 const getAlbumsByPage = async ({
@@ -33,23 +50,27 @@ const getAlbumsByPage = async ({
   rows?: string;
   artistName?: string;
   albumName?: string;
-}): Promise<AlbumByPagination[] | undefined> => {
+}): Promise<AlbumByPagination[] | null> => {
   const searchParams = new URLSearchParams();
   searchParams.append("page", page);
   searchParams.append("rows", rows);
   searchParams.append("artistName", artistName);
   searchParams.append("albumName", albumName);
-  const response = await handleCustomApiRequest<AlbumByPagination[]>(
-    GET_URL + "/api/admin/album/list" + "?" + searchParams,
-    "GET",
-    null,
-  );
+  try {
+    const response = await handleCustomApiRequest<AlbumByPagination[]>(
+      GET_URL + "/api/admin/album/list" + "?" + searchParams,
+      "GET",
+      null,
+    );
 
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 
 const getAlbumsPaginationInfo = async ({
@@ -62,16 +83,18 @@ const getAlbumsPaginationInfo = async ({
   const searchParams = new URLSearchParams();
   searchParams.append("artistName", artistName);
   searchParams.append("albumName", albumName);
-  const response = await handleCustomApiRequest<{
-    amount: number;
-    pages: number;
-  }>(GET_URL + "/api/admin/album/pagination" + "?" + searchParams, "GET", null);
-
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+  try {
+    const response = await handleCustomApiRequest<{
+      amount: number;
+      pages: number;
+    }>(GET_URL + "/api/admin/album/pagination" + "?" + searchParams, "GET", null);
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 
 const createAlbumsBulk = async (data: any) => {
@@ -82,7 +105,7 @@ const createAlbumsBulk = async (data: any) => {
       data,
       true,
     );
-    if (response.errors?.length) {
+    if (response.errors?.length || !response.data) {
       throw new Error(response.message || "Error en la petición");
     }
     return response.data;
@@ -91,21 +114,37 @@ const createAlbumsBulk = async (data: any) => {
   }
 };
 const updateAlbum = async (album: any) => {
-  return await handleCustomApiRequest(GET_URL + "/api/admin/album", "PATCH", album, true);
+  try {
+    const response = await handleCustomApiRequest(
+      GET_URL + "/api/admin/album",
+      "PATCH",
+      album,
+      true,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
+  }
 };
 const getAlbums = async () => {
-  const response = await handleCustomApiRequest<
-    {
-      name: string;
-      id: string;
-      cover: ImageSizes;
-    }[]
-  >(GET_URL + "/api/admin/album", "GET", null, true);
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+  try {
+    const response = await handleCustomApiRequest<
+      {
+        name: string;
+        id: string;
+        cover: ImageSizes;
+      }[]
+    >(GET_URL + "/api/admin/album", "GET", null, true);
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 export const albumAdminApi = {
   getAlbums,

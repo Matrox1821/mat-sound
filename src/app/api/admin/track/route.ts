@@ -3,10 +3,11 @@ import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 import { deleteFileToBucket } from "@/shared/server/files";
-import { parseTrackFormData } from "@/shared/formData/trackForm";
+import { parseTrackFormData, parseUpdatedTrackFormData } from "@/shared/formData/trackForm";
 import {
   createTrack,
   deleteTrack,
+  getTrackById,
   trackIsExists,
   updateTrackResourses,
 } from "@/shared/server/track/track.repository";
@@ -124,6 +125,71 @@ export async function GET(req: NextRequest) {
     return onSuccessRequest({
       httpStatusCode: 200,
       data: tracks,
+    });
+  } catch (error) {
+    return onThrowError(error);
+  }
+}
+export async function PATCH(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const body = parseUpdatedTrackFormData(formData);
+
+    const track = await getTrackById({ trackId: body.id });
+    if (!track)
+      throw new CustomError({
+        errors: [{ message: "Track already exists." }],
+        msg: "Track already exists.",
+        httpStatusCode: HttpStatusCode.CONFLICT,
+      });
+
+    const song_path = body.song && (await uploadSong(body.song, track.id));
+    console.log(GET_BUCKET_URL && GET_BUCKET_URL + song_path);
+    let updatedTrack: any = track;
+    if (song_path) {
+      updatedTrack = await updateTrackResourses({
+        id: track.id,
+        paths: { song: GET_BUCKET_URL && GET_BUCKET_URL + song_path },
+      });
+      console.log(updatedTrack);
+      if (!song_path || !updatedTrack) {
+        await Promise.all([deleteTrack(track.id), deleteFileToBucket(body.song, song_path)]);
+        throw new CustomError({
+          errors: [{ message: "The track has not been updated" }],
+          msg: "The track has not been updated",
+          httpStatusCode: HttpStatusCode.CONFLICT,
+        });
+      }
+    }
+    if (body.cover) {
+      const { buffer, dbPath, r2Path, trackUploads } = await handleTrackResizeAndUpload(
+        body.cover,
+        track.id,
+      );
+
+      updatedTrack = await updateTrackResourses({
+        id: track.id,
+        paths: { cover: dbPath, song: GET_BUCKET_URL ? GET_BUCKET_URL + r2Path : "" },
+      });
+      if (!buffer || !dbPath || !r2Path || !trackUploads || !song_path || !updatedTrack) {
+        await Promise.all([
+          deleteTrack(track.id),
+          ...Object.entries(r2Path).map(async ([key, path]) => {
+            const currentBuffer = buffer[key as "sm" | "md" | "lg"];
+            if (currentBuffer) await deleteFileToBucket(currentBuffer, path);
+          }),
+          deleteFileToBucket(body.song, song_path),
+        ]);
+        throw new CustomError({
+          errors: [{ message: "The track has not been updated" }],
+          msg: "The track has not been updated",
+          httpStatusCode: HttpStatusCode.CONFLICT,
+        });
+      }
+    }
+    return onSuccessRequest({
+      httpStatusCode: 200,
+      data: updatedTrack,
     });
   } catch (error) {
     return onThrowError(error);

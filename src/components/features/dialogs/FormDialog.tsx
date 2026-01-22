@@ -13,7 +13,7 @@ export function FormDialog({
   children,
   newButton,
 }: {
-  data?: Promise<{ name: string; id: string }[] | undefined>;
+  data?: Promise<{ name: string; id: string }[] | null>;
   type?: "artist" | "album" | "track" | "genre";
   children?: ReactNode;
   newButton?: { buttonStyle?: string; buttonImage?: ReactNode; buttonLabel?: string };

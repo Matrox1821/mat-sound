@@ -21,22 +21,24 @@ export const mapTrackToEditFormData = (track: TrackByPagination): TrackFormData 
     artists: track.artists?.map((a) => a.id) ?? [],
 
     orderAndDisk:
-      track.albums?.reduce((acc, curr) => {
-        if (curr.album?.id) {
-          acc[curr.album.id] = {
-            order: curr.order,
-            disk: curr.disk,
-          };
-        }
-        return acc;
-      }, {} as { [key: string]: { order: number; disk: number } }) ?? {},
+      track.albums?.reduce(
+        (acc, curr) => {
+          if (curr.album?.id) {
+            acc[curr.album.id] = {
+              order: curr.order,
+              disk: curr.disk,
+            };
+          }
+          return acc;
+        },
+        {} as { [key: string]: { order: number; disk: number } },
+      ) ?? {},
   };
 };
 
 export function SeeTrackBody({ track }: { track: TrackByPagination }) {
   const parsedTrack = mapTrackToEditFormData(track);
   const [formData, _setFormData] = useState<TrackFormData>(parsedTrack);
-  console.log(new Date(formData.releaseDate).toISOString());
   return (
     <div className="w-[750px] flex flex-col gap-4 text-xs overflow-auto">
       <section className="p-4 w-full flex flex-col gap-12 overflow-y-auto !h-[420px]">
@@ -56,17 +58,14 @@ export function SeeTrackBody({ track }: { track: TrackByPagination }) {
             defaultImage={track.cover?.sm}
             disabled
           />
-          <div className="w-5/12 h-12">
-            <CustomInputAdminForm
-              title="Audio de la Canción:"
-              isAudio
-              name="song"
-              type="file"
-              value={formData.song}
-              defaultAudio={track.song}
-              disabled
-            />
-          </div>
+          {track.song && (
+            <div className="w-5/12 flex flex-col gap-2 ">
+              <h3 className="text-lg">Canción</h3>
+              <span className="fill-accent-950 date-input text-white rounded-md bg-background-950 border border-background-100/50 h-10 w-1/2 p-2 flex items-center justify-center">
+                song.mp3
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex w-full gap-4 justify-between items-start">
           <label className="flex flex-col gap-2 w-6/12 ">

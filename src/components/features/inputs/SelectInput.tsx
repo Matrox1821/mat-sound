@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 import { useEffect, useState } from "react";
 
 interface Element {
@@ -117,7 +117,6 @@ export function SelectInput({
             data.map((item) => {
               const isSelected = elements.some((e) => String(e.id) === String(item.id));
               const source = item.avatar || item.cover;
-              const imgSource = !!(source && source.sm !== "") && source.sm;
 
               return (
                 <button
@@ -131,15 +130,13 @@ export function SelectInput({
                         : "bg-background-900 border-background-800 hover:border-background-400"
                     }`}
                 >
-                  {imgSource && (
-                    <Image
-                      width={40}
-                      height={40}
-                      src={imgSource}
-                      alt={item.name}
-                      className="w-10 h-10 rounded shadow-sm object-cover flex-shrink-0"
-                    />
-                  )}
+                  <SafeImage
+                    width={40}
+                    height={40}
+                    src={source && source.sm}
+                    alt={item.name}
+                    className="!w-10 !h-10 !rounded !shadow-sm !object-cover !flex-shrink-0"
+                  />
                   <div className="flex flex-col overflow-hidden">
                     <span
                       className={`text-sm font-medium truncate ${isSelected ? "text-white" : "text-background-50"}`}

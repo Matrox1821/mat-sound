@@ -3,28 +3,51 @@ import { GET_URL } from "@/shared/utils/constants";
 import { TrackByPagination } from "@/types/track.types";
 
 const createTrack = async (track: any) => {
-  return await handleCustomApiRequest(GET_URL + "/api/admin/track", "POST", track, true);
+  try {
+    const response = await handleCustomApiRequest(
+      GET_URL + "/api/admin/track",
+      "POST",
+      track,
+      true,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
+  }
 };
 
 const getTracksByArtistsId = async (artists: string[]) => {
   const searchParams = new URLSearchParams();
   artists.forEach((artistsId) => searchParams.append("artists_id", artistsId));
-  const response = await handleCustomApiRequest(
-    GET_URL + "/api/admin/track" + "?" + searchParams,
-    "GET",
-    null,
-    true,
-  );
-
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+  try {
+    const response = await handleCustomApiRequest(
+      GET_URL + "/api/admin/track" + "?" + searchParams,
+      "GET",
+      null,
+      true,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 
 const getTracks = async () => {
-  return await handleCustomApiRequest(GET_URL + "/api/admin/track", "GET", null, true);
+  try {
+    const response = await handleCustomApiRequest(GET_URL + "/api/admin/track", "GET", null, true);
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
+  }
 };
 
 const getTracksByPage = async ({
@@ -39,7 +62,7 @@ const getTracksByPage = async ({
   artistName?: string;
   albumName?: string;
   trackName?: string;
-}): Promise<TrackByPagination[] | undefined> => {
+}): Promise<TrackByPagination[] | null> => {
   const searchParams = new URLSearchParams();
   searchParams.append("page", page);
   searchParams.append("rows", rows);
@@ -47,17 +70,19 @@ const getTracksByPage = async ({
   searchParams.append("albumName", albumName);
   searchParams.append("trackName", trackName);
 
-  const response = await handleCustomApiRequest<TrackByPagination[]>(
-    GET_URL + "/api/admin/track/list" + "?" + searchParams,
-    "GET",
-    null,
-  );
-
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+  try {
+    const response = await handleCustomApiRequest<TrackByPagination[]>(
+      GET_URL + "/api/admin/track/list" + "?" + searchParams,
+      "GET",
+      null,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 
 const getTracksPaginationInfo = async ({
@@ -73,16 +98,18 @@ const getTracksPaginationInfo = async ({
   searchParams.append("artistName", artistName);
   searchParams.append("albumName", albumName);
   searchParams.append("trackName", trackName);
-  const response = await handleCustomApiRequest<{
-    amount: number;
-    pages: number;
-  }>(GET_URL + "/api/admin/track/pagination" + "?" + searchParams, "GET", null);
-
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+  try {
+    const response = await handleCustomApiRequest<{
+      amount: number;
+      pages: number;
+    }>(GET_URL + "/api/admin/track/pagination" + "?" + searchParams, "GET", null);
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-
-  return response.data;
 };
 
 const createTracksBulk = async (data: any) => {
@@ -102,7 +129,20 @@ const createTracksBulk = async (data: any) => {
   }
 };
 const updateTrack = async (track: any) => {
-  return await handleCustomApiRequest(GET_URL + "/api/admin/track", "PATCH", track, true);
+  try {
+    const response = await handleCustomApiRequest(
+      GET_URL + "/api/admin/track",
+      "PATCH",
+      track,
+      true,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
+  }
 };
 export const trackAdminApi = {
   createTrack,

@@ -3,20 +3,19 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { use } from "react";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
-import Image from "next/image";
 import { deleteArtistServer } from "@/actions/artist";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { ArtistByPagination } from "@/types/artist.types";
 import { EditArtistForm } from "../../forms/artistForm/editArtist";
 import { FormDialog } from "../../dialogs/FormDialog";
-import { NoImage } from "@/components/ui/icons/NoImage";
 import { SeeArtistBody } from "../../dialogs/SeeArtistBody";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 
 export default function ArtistsTable({
   data,
   rows = "6",
 }: {
-  data: Promise<ArtistByPagination[] | undefined>;
+  data: Promise<ArtistByPagination[] | null>;
   rows?: string;
 }) {
   const artists = use(data);
@@ -104,32 +103,34 @@ export default function ArtistsTable({
   };
 
   const imageBodyTemplate = (artist: any) => {
-    if (artist.name !== "" && (!artist.avatar || artist.avatar.sm === ""))
-      return <NoImage className="h-[45px] w-[45px]" />;
-    if (!artist.avatar || artist.avatar.sm === "") return;
-    return (
-      <Image
-        src={artist.avatar.sm}
-        alt={artist.name}
-        height={45}
-        width={45}
-        loading="lazy"
-        className="rounded-sm"
-      />
-    );
+    if (artist.name !== "")
+      return (
+        <div className="w-[45px] h-[45px] flex items-center justify-center">
+          <SafeImage
+            src={artist.avatar && artist.avatar.sm}
+            alt={artist.name}
+            height={45}
+            width={45}
+            loading="lazy"
+            className="!rounded-sm !w-[45px] !h-[45px]"
+          />
+        </div>
+      );
+
+    return null;
   };
 
   return (
     <DataTable value={filledArtists} scrollable scrollHeight="531px" className="bg-background-900">
       <Column
         header="Image"
-        className="w-60 bg-background-900 !border-background"
+        className="w-auto bg-background-900 !border-background"
         body={imageBodyTemplate}
       ></Column>
       <Column
         field="name"
         header="Nombre"
-        className="w-60 bg-background-900 !border-background"
+        className="w-full bg-background-900 !border-background"
       ></Column>
       <Column
         header=""

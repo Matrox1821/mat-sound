@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { Pause } from "@/components/ui/icons/playback/Pause";
 import { Play } from "@/components/ui/icons/playback/Play";
@@ -8,11 +7,12 @@ import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { playerTrackProps } from "@/types/trackProps";
-import { LikeButton } from "../buttons/Like";
 import { DropdownMenu } from "../menus/DropdownMenu";
 import { GET_URL } from "@/shared/utils/constants";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import PlaylistSelector from "@/components/features/inputs/PlaylistSelector";
+import { SafeImage } from "@/components/ui/images/SafeImage";
+import { LikeButton } from "@/components/ui/buttons/Like";
 
 interface TrackTableProps {
   tracks: playerTrackProps[];
@@ -30,7 +30,7 @@ export default function TrackTable({
   const { setTrack, setUpcoming, currentTrack, setPlayingFrom } = usePlayerStore();
   const { isPlaying, play, pause } = usePlaybackStore();
   const { playerBarIsActive, activePlayerBar } = useUIStore();
-  const { default: message } = useToast();
+  const { message } = useToast();
 
   const handlePlay = (e: any, track: playerTrackProps) => {
     e.stopPropagation();
@@ -102,7 +102,7 @@ export default function TrackTable({
 
                 {showCover && (
                   <td className="w-12">
-                    <Image
+                    <SafeImage
                       src={track.cover.sm}
                       alt=""
                       width={40}

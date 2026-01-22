@@ -11,13 +11,13 @@ export function SecondStep({
 }: {
   formData: any;
   onChange: (field: any, value: any) => void;
-  genres: Promise<{ name: string; id: string }[] | undefined>;
+  genres: Promise<{ name: string; id: string }[] | null>;
 }) {
   const genresData = use(genres);
   const genresInputRef = useRef<HTMLInputElement>(null);
   const [genresSelected, setGenresSelected] = useState([]);
 
-  const capitalizeWords = (arr: { name: string; id: string }[] | undefined) => {
+  const capitalizeWords = (arr: { name: string; id: string }[] | null) => {
     if (arr)
       return arr.map(({ name, id }) => ({
         name: genreCapitalize(name),

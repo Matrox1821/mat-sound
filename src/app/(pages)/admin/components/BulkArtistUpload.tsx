@@ -1,5 +1,5 @@
 "use client";
-import { artistAdminApi } from "@/queryFn/admin/artistApi";
+import { createArtistsBulkServer } from "@/actions/artist";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { artistBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 import { useState } from "react";
@@ -21,7 +21,7 @@ export default function BulkArtistUpload() {
         return;
       }
 
-      const response = await artistAdminApi.createArtistsBulk(parsedData);
+      const response = await createArtistsBulkServer(parsedData);
 
       if (response) {
         success("¡Carga exitosa!");

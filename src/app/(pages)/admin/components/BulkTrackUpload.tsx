@@ -1,11 +1,11 @@
 "use client";
 import { useState, useTransition } from "react";
-import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { trackBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 import { AlbumSelect } from "./AlbumSelect";
 import z from "zod";
 import { ArtistSearchInput } from "@/components/features/inputs/ArtistSearchInput";
+import { createTracksBulkServer } from "@/actions/track";
 
 export default function BulkTrackUpload() {
   const [jsonInput, setJsonInput] = useState("");
@@ -36,7 +36,7 @@ export default function BulkTrackUpload() {
       }
 
       startTransition(async () => {
-        const response = await trackAdminApi.createTracksBulk({
+        const response = await createTracksBulkServer({
           artistId: selectedArtist.id,
           albumId: selectedAlbumId,
           tracks: validation.data,

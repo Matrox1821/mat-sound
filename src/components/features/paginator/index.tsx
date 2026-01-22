@@ -6,7 +6,7 @@ import { use, useState } from "react";
 export default function Paginator({
   paginationInfo,
 }: {
-  paginationInfo: Promise<{ amount: number; pages: number } | undefined>;
+  paginationInfo: Promise<{ amount: number; pages: number } | null>;
 }) {
   const info = use(paginationInfo);
   const searchParams = useSearchParams();
