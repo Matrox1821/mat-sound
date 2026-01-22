@@ -6,28 +6,29 @@ import { formatTime } from "@/shared/utils/helpers";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { artistPageProps } from "@/types/common.types";
 import { playerTrackProps } from "@/types/trackProps";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ArtistServer } from "@/types/artist.types";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 
 export default function PopularTracks({
   tracks,
   artist,
 }: {
   tracks: playerTrackProps[] | null;
-  artist: artistPageProps | null;
+  artist: ArtistServer | null;
 }) {
   const { setTrack, currentTrack, setPlayingFrom } = usePlayerStore((state) => state);
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
 
   const [tracksList, setTracksList] = useState<playerTrackProps[] | null>(
-    tracks?.slice(0, 5) || null
+    tracks?.slice(0, 5) || null,
   );
 
-  if (!tracks || !artist) return;
+  if (!tracks || !artist || !tracksList || !tracksList.length) return;
+
   const playTrack = (e: any, track: playerTrackProps) => {
     e.stopPropagation();
     e.preventDefault();
@@ -60,7 +61,7 @@ export default function PopularTracks({
           </tr>
         </thead>
         <tbody>
-          {tracksList?.map((track, i) => {
+          {tracksList.map((track, i) => {
             return (
               <tr
                 key={track.id}
@@ -93,13 +94,12 @@ export default function PopularTracks({
                   </button>
                 </td>
                 <td>
-                  <Image
-                    src={track.cover.sm}
+                  <SafeImage
+                    src={track.cover && track.cover.sm}
                     alt={track.name}
                     width={100}
                     height={100}
-                    sizes=""
-                    className="w-10 h-10 rounded-md"
+                    className="!w-10 !h-10 !rounded-md"
                   />
                 </td>
                 <td className="gap-4 ">
@@ -130,16 +130,17 @@ export default function PopularTracks({
           })}
         </tbody>
       </table>
-      <button
-        onClick={() => {
-          if (tracksList && tracksList.length === 5) setTracksList(tracks);
-          if (tracksList && tracksList.length === 10)
-            setTracksList(tracksList?.slice(0, 5) || null);
-        }}
-        className="pl-6 cursor-pointer text-sm font-bold text-background-50 hover:text-content-950"
-      >
-        {tracksList?.length === 5 ? "Ver más" : "Ver menos"}
-      </button>
+      {tracksList.length > 5 && (
+        <button
+          onClick={() => {
+            if (tracksList.length === 5) setTracksList(tracks);
+            if (tracksList.length === 10) setTracksList(tracksList.slice(0, 5) || null);
+          }}
+          className="pl-6 cursor-pointer text-sm font-bold text-background-50 hover:text-content-950"
+        >
+          {tracksList.length === 5 ? "Ver más" : "Ver menos"}
+        </button>
+      )}
     </div>
   );
 }

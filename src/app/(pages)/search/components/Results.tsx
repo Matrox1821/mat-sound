@@ -1,7 +1,7 @@
 "use client";
-import { ImageSizes } from "@/types/apiTypes";
+import { SafeImage } from "@/components/ui/images/SafeImage";
+import { ImageSizes } from "@/types/common.types";
 import { APITrack } from "@/types/trackProps";
-import Image from "next/image";
 import Link from "next/link";
 import { use } from "react";
 
@@ -33,12 +33,12 @@ export default function Results({
             className="p-2 hover:bg-background-800/40 rounded-md cursor flex flex-col relative"
           >
             <div className="flex gap-2">
-              <Image
-                src={result.image.sm}
+              <SafeImage
+                src={result.image && result.image.sm}
                 alt={result.name}
                 width={64}
                 height={64}
-                className={`h-16 w-16 ${result.type === "artist" ? "rounded-full" : "rounded-sm"}`}
+                className={`!h-16 !w-16 ${result.type === "artist" ? "!rounded-full" : "!rounded-sm"}`}
               />
               <div>
                 <span>{result.name}</span>

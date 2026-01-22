@@ -1,17 +1,18 @@
 "use client";
 import { Verified } from "@/components/ui/icons/Verified";
-import { artistPageProps } from "@/types/common.types";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/images/SafeImage";
+import { ArtistServer } from "@/types/artist.types";
 import { use } from "react";
 
 export default function CoverInfo({
   artistPromise,
 }: {
-  artistPromise: Promise<artistPageProps | null>;
+  artistPromise: Promise<ArtistServer | null>;
 }) {
   const artist = use(artistPromise);
+  if (!artist) return null;
   return (
-    <section className="h-[calc(5/12*100vh)] absolute w-full flex items-end  z-40">
+    <section className="h-[calc(1/2*100vh)] absolute w-full flex items-end  z-40">
       <div className="w-full flex flex-col items-start p-8 gap-4">
         {artist?.isVerified && (
           <span className="flex justify-center items-center font-bold">
@@ -20,19 +21,22 @@ export default function CoverInfo({
           </span>
         )}
         <div className="flex items-center gap-4">
-          <Image
-            src={artist?.avatar.md || ""}
-            alt={artist?.name || ""}
+          <SafeImage
+            src={artist.avatar && artist.avatar.md}
+            alt={artist.name}
             width={100}
             height={100}
-            className="h-16 w-16 rounded-full content-cover"
+            className="!h-16 !w-16 !rounded-full !content-cover"
             priority
           />
-          <h1 className="text-5xl font-black">{artist?.name}</h1>
+          <h1 className="text-5xl font-black">{artist.name}</h1>
         </div>
         <span className="text-xl font-normal">
-          {artist?.listeners.toLocaleString("en-US")} oyentes mensuales
+          {artist.listeners.toLocaleString("en-US")} oyentes mensuales
         </span>
+        <button className="rounded-full h-8 px-6 cursor-pointer border-[1px] text-sm font-semibold border-background-200 text-background-50 hover:scale-105 hover:text-content-950 hover:border-content-950 ">
+          Seguir
+        </button>
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 "use client";
-import Image from "next/image";
 import { useState } from "react";
+import { SafeImage } from "../images/SafeImage";
 
 interface CustomFiles {
   styles: {
@@ -38,8 +38,8 @@ export default function CustomFiles({
         options.isAudio
           ? "flex flex-col items-center gap-2"
           : options.isMultiple
-          ? "flex flex-col gap-2"
-          : "flex h-22 gap-4"
+            ? "flex flex-col gap-2"
+            : "flex h-22 gap-4"
       }`}
     >
       <label className={`${styles.labelStyle} flex`}>
@@ -130,22 +130,22 @@ const ImagesPreview = ({
     >
       {previewImages.length > 0 ? (
         previewImages.map((image, index) => (
-          <Image
+          <SafeImage
             width={64}
             height={64}
             key={index}
             src={image}
             alt=""
-            className="w-16 h-16 object-cover rounded-xs"
+            className="!w-16 !h-16 !object-cover !rounded-xs"
           />
         ))
       ) : previewImage !== "" ? (
-        <Image
+        <SafeImage
           width={64}
           height={64}
           src={previewImage}
           alt=""
-          className="w-16 h-16 object-cover rounded-xs"
+          className="!w-16 !h-16 !object-cover !rounded-xs"
         />
       ) : (
         <div className="w-22 h-22 object-cover rounded-xs" />

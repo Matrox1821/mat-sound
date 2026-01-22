@@ -10,9 +10,10 @@ import { Play } from "@/components/ui/icons/playback/Play";
 
 const PlayerController = () => {
   const { isShuffled, isPlaying, setLoopMode, loopMode, toggleShuffle } = usePlaybackStore();
-  const { next, prev, shuffleOff, shuffleOn } = usePlayerStore();
+  const { next, prev, shuffleOff, shuffleOn, currentTrack, history, queue, upcoming, snapshot } =
+    usePlayerStore();
   const { handlePlayPause, hasNext, hasPrevious } = usePlaylistManager(); // Traemos los nuevos valores
-
+  console.log({ currentTrack, history, queue, upcoming, snapshot });
   const shuffle = () => {
     if (isShuffled) {
       shuffleOff();

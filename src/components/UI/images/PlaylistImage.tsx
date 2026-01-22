@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SafeImage } from "./SafeImage";
 
 const roundedByIndex = (index: number) => {
   switch (index) {
@@ -28,24 +28,24 @@ export const PlaylistImage = ({
 }) => {
   if (image)
     return (
-      <Image
+      <SafeImage
         src={image}
         alt=""
         height={sizeImage || 40}
         width={sizeImage || 40}
         className={`object-fill aspect-square ${imageClassName}`}
-      ></Image>
+      />
     );
   let images = trackImages;
   if (images && images.length === 0) return;
   if (images && images.length === 1)
     return (
-      <Image
+      <SafeImage
         src={images[0].cover.sm}
         alt=""
         width={sizeImage || 40}
         height={sizeImage || 40}
-        className={`object-fill aspect-square ${imageClassName}`}
+        className={`!object-fill !aspect-square ${imageClassName}`}
       />
     );
   if (images && images.length > 4) images = images.slice(0, 4);
@@ -55,18 +55,16 @@ export const PlaylistImage = ({
       className={`h-10 w-10 rounded-md bg-black/85 grid grid-cols-2 grid-row-2 ${imageClassName}`}
     >
       {images &&
-        images.map((image, i) =>
-          image ? (
-            <Image
-              src={image.cover.sm}
-              alt=""
-              key={`playlist-image-${i}`}
-              height={sizeImage ? sizeImage / 2 : 20}
-              width={sizeImage ? sizeImage / 2 : 20}
-              className={`${roundedByIndex(i)}`}
-            />
-          ) : null
-        )}
+        images.map((image, i) => (
+          <SafeImage
+            src={image && image.cover.sm}
+            alt=""
+            key={`playlist-image-${i}`}
+            height={sizeImage ? sizeImage / 2 : 20}
+            width={sizeImage ? sizeImage / 2 : 20}
+            className={`${roundedByIndex(i)}`}
+          />
+        ))}
     </figure>
   );
 };

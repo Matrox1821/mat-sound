@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 import { use } from "react";
 
 export default function Cover({ userPromise }: { userPromise: Promise<any | null> }) {
@@ -9,30 +9,30 @@ export default function Cover({ userPromise }: { userPromise: Promise<any | null
       {user.image && (
         <>
           <span className="h-full w-full overflow-hidden">
-            <Image
-              src={user.image.lg}
+            <SafeImage
+              src={user.image && user.image.lg}
               alt={user.name}
               width={1200}
               height={1200}
-              className="object-cover w-full h-full blur-2xl"
+              className="!object-cover !w-full !h-full !blur-2xl"
             />
           </span>
           <span className="h-full w-full">
-            <Image
-              src={user.image.lg}
+            <SafeImage
+              src={user.image && user.image.lg}
               alt={user.name}
               width={1200}
               height={1200}
-              className="object-cover w-full h-full"
+              className="!object-cover !w-full !h-full"
             />
           </span>
           <span className="h-full w-full overflow-hidden">
-            <Image
-              src={user.image.lg}
+            <SafeImage
+              src={user.image && user.image.lg}
               alt={user.name}
               width={1200}
               height={1200}
-              className="object-cover w-full h-full blur-2xl"
+              className="!object-cover !w-full !h-full !blur-2xl"
             />
           </span>
         </>

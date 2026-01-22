@@ -1,9 +1,9 @@
 "use client";
-import { artistPageProps } from "@/types/common.types";
-import Image from "next/image";
 import { useState } from "react";
 import { Dialog } from "primereact/dialog";
 import Link from "next/link";
+import { ArtistServer } from "@/types/artist.types";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 
 type SocialKey = keyof typeof SOCIAL_ICONS;
 
@@ -28,11 +28,11 @@ function sortSocials(obj: Record<string, any>) {
       if (!aHasIcon && bHasIcon) return 1;
 
       return a.localeCompare(b);
-    })
+    }),
   );
 }
 
-export default function About({ artist }: { artist: artistPageProps | null }) {
+export default function About({ artist }: { artist: ArtistServer | null }) {
   const [visible, setVisible] = useState(false);
   if (!artist) return;
   return (
@@ -42,16 +42,14 @@ export default function About({ artist }: { artist: artistPageProps | null }) {
         className="flex-none w-3/5 h-[516px] relative rounded-xl after:absolute after:content-[''] after:w-full after:h-[101%] after:bg-linear-to-t after:from-background after:to-60% after:to-background/10 after:left-0 after:top-0 after:rounded-xl after:z-10 cursor-pointer hover:scale-101 transition-[scale] duration-400"
         onClick={() => setVisible(true)}
       >
-        <Image
-          src={artist.avatar.lg}
+        <SafeImage
+          src={artist.avatar && artist.avatar.lg}
           alt={artist.name}
-          fill
-          className="object-cover rounded-xl [display:block]"
-          sizes="(max-width: 1200px)"
-          placeholder="blur"
-          blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAzIDInPjwvc3ZnPg=="
+          height={1200}
+          width={1200}
+          className="!object-cover !rounded-xl !w-full !h-[516px]"
         />
-        <div className="relative w-full h-full top-0 z-20 p-6 flex items-end">
+        <div className="absolute w-full h-full top-0 z-20 p-6 flex items-end">
           <span className="gap-4 bottom-4 flex flex-col items-start">
             <h3 className="text-content-950 font-semibold overflow-hidden text-ellipsis whitespace-nowrap">
               {artist.listeners} oyentes mensuales
@@ -89,12 +87,12 @@ export default function About({ artist }: { artist: artistPageProps | null }) {
               </button>
               <section className="w-[900px] h-[800px] relative rounded-xl overflow-y-scroll">
                 <figure className="w-full h-[432px] flex justify-center bg-black/90 rounded-tl-xl">
-                  <Image
-                    src={artist.covers![0]}
+                  <SafeImage
+                    src={artist.covers.length > 0 ? artist.covers![0] : null}
                     alt={artist.name}
                     width={516}
                     height={516}
-                    className=" object-contain"
+                    className="!object-contain"
                   />
                 </figure>
                 <div className="flex p-12 gap-12">
@@ -126,7 +124,7 @@ export default function About({ artist }: { artist: artistPageProps | null }) {
                                 </span>
                               </li>
                             );
-                          }
+                          },
                         )}
                     </ul>
                     <ul className="flex flex-col gap-4">
@@ -145,16 +143,16 @@ export default function About({ artist }: { artist: artistPageProps | null }) {
                                 <span className="text-sm font-semibold">{key}</span>
                               </Link>
                             );
-                          }
+                          },
                         )}
                     </ul>
                   </div>
                   <div className="flex flex-col gap-8">
                     <p className="text-background-200">{artist.description}</p>
                     <span className="flex gap-3 items-center">
-                      <Image
-                        className="rounded-full w-8 h-8"
-                        src={artist.avatar.sm}
+                      <SafeImage
+                        className="!rounded-full !w-8 !h-8"
+                        src={artist.avatar && artist.avatar.sm}
                         alt={artist.name}
                         width={16}
                         height={16}

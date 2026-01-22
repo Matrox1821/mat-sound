@@ -1,9 +1,9 @@
 "use client";
+import { SafeImage } from "@/components/ui/images/SafeImage";
 import { fetchSearchData } from "@/shared/client/adapters/fetchSearchData";
 import { useClickAway } from "@/shared/client/hooks/ui/useClickAway";
-import { ImageSizes } from "@/types/apiTypes";
+import { ImageSizes } from "@/types/common.types";
 import { APITrack } from "@/types/trackProps";
-import Image from "next/image";
 import Link from "next/link";
 import { redirect, useSearchParams } from "next/navigation";
 import { IconField } from "primereact/iconfield";
@@ -134,14 +134,14 @@ export default function Search() {
                       setIsFocused(false);
                     }}
                   >
-                    <Image
-                      src={res.image.sm}
+                    <SafeImage
+                      src={res.image && res.image.sm}
                       alt={res.name}
                       height={48}
                       width={48}
                       unoptimized
-                      className={`w-12 h-12 ${
-                        res.type === "artist" ? "rounded-full" : "rounded-md"
+                      className={`!w-12 !h-12 ${
+                        res.type === "artist" ? "!rounded-full" : "!rounded-md"
                       }`}
                     />
                   </Link>

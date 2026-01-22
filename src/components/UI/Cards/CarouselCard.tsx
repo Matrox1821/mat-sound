@@ -1,17 +1,15 @@
 "use client";
-import Image from "next/image";
-
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import Link from "next/link";
-import { contentProps } from "@/types/common.types";
 import CarouselCardPlayButton from "../buttons/CarouselCardPlayButton";
+import { SafeImage } from "../images/SafeImage";
+import { ContentElement } from "@/types/content.types";
 
-export default function CarouselCard({ element }: { element: contentProps }) {
+export default function CarouselCard({ element }: { element: ContentElement }) {
   const { isMobile } = useDevice();
   const desktopStyle = isMobile
     ? "[&_.play-button]:opacity-100 [&_.play-button]:!-translate-y-1"
     : "hover:[&_.play-button]:opacity-100 hover:[&_.play-button]:!transition-all hover:[&_.play-button]:!duration-300 hover:[&_.play-button]:!-translate-y-1 not-hover:[&_.play-button]:!transition-all not-hover:[&_.play-button]:!duration-300";
-  const fallbackImage = "/placeholder.png";
   return (
     <li className="w-full color-content-950 duration-150 gap-2">
       <Link
@@ -20,13 +18,13 @@ export default function CarouselCard({ element }: { element: contentProps }) {
       >
         <figure className="w-full aspect-square relative">
           {element.type !== "playlists" && (
-            <Image
-              src={element.image.md || fallbackImage}
+            <SafeImage
+              src={element.type === "artists" ? element.avatar?.md : element.cover?.md}
               alt={element.name}
               width={160}
               height={160}
-              className={`object-fill aspect-square w-full ${
-                element.type === "artists" ? "rounded-full" : "rounded-md"
+              className={`!object-fill !aspect-square !w-full !h-full ${
+                element.type === "artists" ? "!rounded-full" : "!rounded-md"
               }`}
               loading="lazy"
               quality={50}
@@ -64,8 +62,7 @@ export default function CarouselCard({ element }: { element: contentProps }) {
           </h2>
           {(element.type === "tracks" || element.type === "albums") && (
             <span className="m-0 leading-5 font-normal text-sm text-content-600/70">
-              {element.artists && element.artists[0].name}
-              {element.artist && element.artist.name}
+              <span>{element.artists[0]?.name}</span>
             </span>
           )}
         </span>
