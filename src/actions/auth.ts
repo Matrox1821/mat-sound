@@ -17,14 +17,13 @@ export async function adminSigninFormValidation(prevState: any, formData: FormDa
   try {
     const email = formData.get("email"),
       password = formData.get("password");
-
     const user = await signinAdminUser({ email, password });
+    console.log({ user });
+    if ((user.errors && user.errors.length !== 0) || !user) throw new Error();
 
-    if (user.errors.length !== 0 || !user) throw new Error();
+    const userStringify = JSON.stringify(user.user);
 
-    const userStringify = JSON.stringify(user.data.user);
-
-    await setLoginCookies(userStringify, user.data.admin_token, true);
+    await setLoginCookies(userStringify, user.admin_token, true);
     return { success: true, errors: [] };
   } catch (error: any) {
     return { errors: [{ message: "Unknown error" }, { message: error.message }], success: false };
@@ -33,7 +32,7 @@ export async function adminSigninFormValidation(prevState: any, formData: FormDa
 
 export async function signupFormValidation(
   prevState: FormSignupState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormSignupState> {
   try {
     const email = formData.get("email") as string,
@@ -80,7 +79,7 @@ export async function signupFormValidation(
 
 export async function signinFormValidation(
   prevState: FormSigninState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormSigninState> {
   try {
     const email = formData.get("email") as string,

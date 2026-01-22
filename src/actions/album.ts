@@ -44,7 +44,7 @@ export async function createAlbumsBulkServer(data: { artistId: string; albums: a
     const response = await albumAdminApi.createAlbumsBulk(data);
 
     if (response) {
-      revalidatePath("/admin/albums");
+      revalidatePath("/admin/album");
       return { success: true };
     }
 

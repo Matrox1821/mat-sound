@@ -38,3 +38,19 @@ export async function updateArtistServer(currentState: any, formData: FormData) 
     return { errors: [{ message: "Unknown error" }], success: false };
   }
 }
+
+export async function createArtistsBulkServer(data: any) {
+  try {
+    const response = await artistAdminApi.createArtistsBulk(data);
+
+    if (response) {
+      revalidatePath("/admin/artist");
+      return { success: true };
+    }
+
+    return { success: false, error: "La API no devolvió una respuesta exitosa." };
+  } catch (err: any) {
+    console.error("Error en Server Action:", err);
+    return { success: false, error: "Error de conexión con la API." };
+  }
+}

@@ -18,10 +18,12 @@ export async function createTrackServer(currentState: any, formData: FormData) {
 export async function updateTrackServer(currentState: any, formData: FormData) {
   try {
     const track = await trackAdminApi.updateTrack(formData);
-    if (track.errors.length !== 0) return { errors: [track.errors], success: false };
+    if (!track) {
+      throw new Error("Error en la edición");
+    }
     return { success: true, errors: [] };
-  } catch {
-    return { errors: [{ message: "Unknown error" }], success: false };
+  } catch (error: any) {
+    return { errors: [{ message: error.message }], success: false };
   }
 }
 
@@ -37,5 +39,24 @@ export async function deleteTrackServer(id: string) {
       success: false,
       error: error.errors?.[0]?.message || "Error al eliminar la canción",
     };
+  }
+}
+export async function createTracksBulkServer(data: {
+  artistId: string;
+  albumId: string;
+  tracks: any[];
+}) {
+  try {
+    const response = await trackAdminApi.createTracksBulk(data);
+
+    if (response) {
+      revalidatePath("/admin/track");
+      return { success: true };
+    }
+
+    return { success: false, error: "La API no devolvió una respuesta exitosa." };
+  } catch (err: any) {
+    console.error("Error en Server Action:", err);
+    return { success: false, error: "Error de conexión con la API." };
   }
 }
