@@ -1,7 +1,7 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
 import { ContentType } from "@/types/common.types";
-import { APIContent } from "@/types/apiTypes";
+import { ContentElement } from "@/types/content.types";
 
 interface TrackQuery {
   type?: ContentType[];
@@ -17,7 +17,7 @@ const getContent = async ({
   remove = "",
   filter = { type: "none", id: "" },
   userId = "",
-}: TrackQuery) => {
+}: TrackQuery): Promise<ContentElement[] | null> => {
   const searchParams = new URLSearchParams();
   type.forEach((t) => searchParams.append("type", t));
   searchParams.set("limit", limit.toString());
@@ -25,17 +25,19 @@ const getContent = async ({
   searchParams.set("filter", filter.type);
   searchParams.set("filter_id", filter.id);
   searchParams.set("user_id", userId);
-
-  const response = await handleCustomApiRequest<APIContent[]>(
-    GET_URL + "/api/content" + "?" + searchParams.toString(),
-    "GET",
-    null
-  );
-  /* 
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
-  } */
-  return response.data;
+  try {
+    const response = await handleCustomApiRequest<ContentElement[]>(
+      GET_URL + "/api/content" + "?" + searchParams.toString(),
+      "GET",
+      null,
+    );
+    if (response.errors?.length || !response.data) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
+  }
 };
 
 export const contentApi = {

@@ -1,9 +1,54 @@
 "use server";
 
-import { ArtistByPagination } from "@/types/artist.types";
+import { ArtistByPagination, ArtistRepository, ArtistTracksRepository } from "@/types/artist.types";
 import { ImageSizes } from "@/types/common.types";
 import { ArtistFormData } from "@/types/form.types";
 import { prisma } from "@config/db";
+
+export const getArtistById = async ({
+  id,
+  userId,
+}: {
+  id: string;
+  userId?: string | null;
+}): Promise<ArtistRepository | null> => {
+  if (!id) return null;
+
+  return (await prisma.artist.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      name: true,
+      avatar: true,
+      mainCover: true,
+      description: true,
+      covers: true,
+      isVerified: true,
+      listeners: true,
+      socials: true,
+      regionalListeners: true,
+      followersDefault: true,
+      _count: {
+        select: {
+          followers: true,
+        },
+      },
+      followers: userId
+        ? {
+            where: {
+              userId: userId,
+            },
+            select: {
+              userId: true,
+            },
+            take: 1,
+          }
+        : false,
+    },
+  })) as unknown as ArtistRepository;
+};
 
 export const getArtists = async (
   limit?: number,
@@ -214,4 +259,63 @@ export const deleteArtistById = async (id: string) => {
       select: { id: true, name: true },
     });
   });
+};
+
+export const getArtistTracks = async ({
+  id,
+  limit,
+  orderBy,
+  userId,
+}: {
+  id?: string;
+  limit: number;
+  userId: string | null;
+  orderBy: Record<
+    string,
+    | "desc"
+    | "asc"
+    | {
+        _count: "asc" | "desc";
+      }
+  >;
+}): Promise<ArtistTracksRepository[] | null> => {
+  if (!id) return null;
+  return (await prisma.track.findMany({
+    where: {
+      artists: {
+        some: {
+          id,
+        },
+      },
+    },
+    orderBy: { ...orderBy },
+    take: limit || 10,
+    select: {
+      id: true,
+      name: true,
+      cover: true,
+      song: true,
+      releaseDate: true,
+      duration: true,
+      reproductions: true,
+      lyrics: true,
+      likes: userId
+        ? {
+            where: {
+              userId: userId,
+            },
+            select: {
+              userId: true,
+            },
+            take: 1,
+          }
+        : false,
+      _count: {
+        select: { likes: true },
+      },
+      albums: {
+        select: { album: { select: { id: true, name: true, cover: true } } },
+      },
+    },
+  })) as unknown as ArtistTracksRepository[];
 };

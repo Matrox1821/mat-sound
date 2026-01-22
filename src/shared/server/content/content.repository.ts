@@ -1,14 +1,12 @@
-import { AlbumWithArtists } from "@/types/album.types";
 import { prisma } from "@config/db";
 import { Prisma } from "../../../../generated/prisma/client";
-import { ImageSizes } from "@/types/common.types";
-import { TrackWithRelations } from "@/types/track.types";
 import { ArtistBase } from "@/types/artist.types";
+import { AlbumWithArtistsRepo, PlaylistRepo, TrackWithRelationsRepo } from "@/types/content.types";
 
 export const getAlbumsForContent = async (
   limit: number,
-  find?: { by: "artists" | "tracks" | "albums" | "playlists" | "none"; id?: string }
-): Promise<AlbumWithArtists[]> => {
+  find?: { by: "artists" | "tracks" | "albums" | "playlists" | "none"; id?: string },
+): Promise<AlbumWithArtistsRepo[]> => {
   const filters: Record<string, Prisma.AlbumWhereInput> = {
     artist: { artists: { some: { id: find?.id } } },
     track: { tracks: { some: { track: { id: find?.id } } } },
@@ -26,7 +24,7 @@ export const getAlbumsForContent = async (
       },
     },
   });
-  return albums as unknown as AlbumWithArtists[];
+  return albums as unknown as AlbumWithArtistsRepo[];
 };
 
 export const getArtistsForContent = async (limit?: number): Promise<ArtistBase[]> => {
@@ -36,26 +34,16 @@ export const getArtistsForContent = async (limit?: number): Promise<ArtistBase[]
   })) as unknown as ArtistBase[];
 };
 
-export const getPlaylistsForContent = async (
-  limit: number
-): Promise<
-  {
-    type: string;
-    id: string;
-    name: string;
-    cover: ImageSizes;
-  }[]
-> => {
-  const playlists = await prisma.playlist.findMany({
+export const getPlaylistsForContent = async (limit: number): Promise<PlaylistRepo[]> => {
+  return (await prisma.playlist.findMany({
     take: limit,
-    select: { id: true, name: true, cover: true },
-  });
-  return playlists.map((playlist) => ({ ...playlist, type: "playlists" })) as unknown as {
-    type: string;
-    id: string;
-    name: string;
-    cover: ImageSizes;
-  }[];
+    select: {
+      id: true,
+      name: true,
+      cover: true,
+      tracks: { select: { track: { select: { cover: true, id: true } } }, take: 4 },
+    },
+  })) as unknown as PlaylistRepo[];
 };
 
 export const getTracksForContent = async ({
@@ -66,7 +54,7 @@ export const getTracksForContent = async ({
   limit: number;
   ids: string[];
   userId?: string;
-}): Promise<TrackWithRelations[]> => {
+}): Promise<TrackWithRelationsRepo[]> => {
   return (await prisma.track.findMany({
     take: limit,
     where: { id: { in: ids } },
@@ -81,7 +69,6 @@ export const getTracksForContent = async ({
       lyrics: true,
       collections: true,
       playlists: true,
-
       likes: userId
         ? {
             where: {
@@ -102,26 +89,31 @@ export const getTracksForContent = async ({
         select: { order: true, disk: true, album: { select: { id: true, name: true } } },
       },
     },
-  })) as unknown as TrackWithRelations[];
+  })) as unknown as TrackWithRelationsRepo[];
 };
 
-export const getUserPlaylistsForSelection = async ({ userId = "" }: { userId: string }) => {
-  if (userId === "") return;
+export const getUserPlaylistsForSelection = async ({
+  userId = "",
+}: {
+  userId: string;
+}): Promise<PlaylistRepo[] | null> => {
+  if (userId === "") return null;
 
-  const response = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      playlists: {
-        select: {
-          id: true,
-          name: true,
-          cover: true,
-          tracks: { select: { track: { select: { id: true, cover: true } } } },
+  return (
+    await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        playlists: {
+          select: {
+            id: true,
+            name: true,
+            cover: true,
+            tracks: { select: { track: { select: { id: true, cover: true } } }, take: 4 },
+          },
         },
       },
-    },
-  });
-  return response;
+    })
+  )?.playlists as unknown as PlaylistRepo[];
 };

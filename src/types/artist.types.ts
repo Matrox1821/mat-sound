@@ -20,3 +20,83 @@ export interface ArtistByPagination {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface ArtistTracksRepository {
+  name: string;
+  id: string;
+  albums: {
+    album: {
+      name: string;
+      id: string;
+      cover: ImageSizes;
+    };
+  }[];
+  _count: {
+    likes: number;
+  };
+  likes?: {
+    userId: string;
+    trackId: string;
+    likedAt: Date;
+  }[];
+  cover: ImageSizes;
+  song: string | null;
+  releaseDate: Date;
+  duration: number;
+  lyrics: string | null;
+  reproductions: number;
+}
+
+export interface ArtistTracks {
+  isLiked: boolean;
+  likes: number;
+  albums: {
+    name: string;
+    id: string;
+    cover: ImageSizes;
+  }[];
+  name: string;
+  id: string;
+  cover: ImageSizes;
+  song: string | null;
+  releaseDate: Date;
+  duration: number;
+  lyrics: string | null;
+  reproductions: number;
+}
+
+export interface ArtistRepository {
+  _count: {
+    followers: number;
+  };
+  name: string;
+  id: string;
+  listeners: number;
+  avatar: ImageSizes;
+  mainCover: string | null;
+  description: string | null;
+  isVerified: boolean;
+  regionalListeners: ImageSizes;
+  socials: ImageSizes;
+  covers: string[];
+  followersDefault: number;
+  followers: {
+    userId: string;
+    artistId: string;
+    followedAt: Date;
+  }[];
+}
+export interface ArtistServer {
+  followers: number;
+  isFollowing: boolean;
+  name: string;
+  id: string;
+  listeners: number;
+  avatar: ImageSizes;
+  mainCover: string | null;
+  description: string | null;
+  isVerified: boolean;
+  regionalListeners: ImageSizes;
+  socials: ImageSizes;
+  covers: string[];
+}

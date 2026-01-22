@@ -182,7 +182,7 @@ export interface artistTracksProps {
 }
 
 export interface TracksByArtistIdQuery {
-  sortBy?: "id" | "name" | "release_date" | "reproductions" | "duration" | "created_at";
+  sortBy?: "id" | "name" | "releaseDate" | "reproductions" | "duration" | "createdAt";
   order?: "asc" | "desc";
   limit?: number;
 }

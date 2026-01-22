@@ -52,6 +52,7 @@ export const getAlbumById = async (id: string): Promise<AlbumById> => {
       },
     },
   });
+
   return mapAlbumDetails(response);
 };
 

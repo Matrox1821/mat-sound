@@ -1,7 +1,7 @@
 import { ImageSizes } from "./common.types";
 import { ArtistBase } from "./artist.types";
 import { AlbumBase } from "./album.types";
-import { TrackPlaylistStatus } from "./playlist.types";
+import { PlaylistSelectionItem, TrackPlaylistStatus } from "./playlist.types";
 
 export interface TrackGenre {
   id: string;
@@ -149,4 +149,8 @@ export interface TrackByPagination {
       cover: ImageSizes;
     };
   }[];
+}
+
+export interface TrackByIdApiResponse extends TrackWithRecommendations {
+  playlists: PlaylistSelectionItem[];
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast, ToasterProps } from "sonner";
+import { useToast } from "./useToast";
 
 type ServerResponse = {
   success: boolean;
@@ -23,8 +24,9 @@ export function useCreateEntity<T>({
 }: UseCreateEntityOptions<T>) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }[]>([]);
+  const { success: successToast, error } = useToast();
 
+  const [errors, setErrors] = useState<{ [key: string]: string }[]>([]);
   const createEntity = async (data: T) => {
     setLoading(true);
     setSuccess(false);
@@ -35,16 +37,16 @@ export function useCreateEntity<T>({
       const result = await serverAction({ success: false, errors: [] }, form);
 
       if (result.success) {
-        toast(successMessage, toastOptions);
+        successToast(successMessage);
         setSuccess(true);
       } else {
-        toast(errorMessage, toastOptions);
+        error(errorMessage);
 
         setErrors(result.errors || []);
       }
     } catch (err) {
       console.error(err);
-      toast("Error inesperado en la creación", toastOptions);
+      error("Error inesperado en la creación");
       setErrors([{ message: "Error inesperado" }]);
     } finally {
       setLoading(false);

@@ -15,7 +15,6 @@ export const initialTrackFormData: TrackFormData = {
 
 //CREATE FORM
 
-
 export const toTrackFormData = (data: TrackFormData) => {
   const form = new FormData();
 

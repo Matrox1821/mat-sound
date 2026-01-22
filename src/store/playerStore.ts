@@ -139,57 +139,58 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
     if (!current) return;
 
-    if (loop === "once" && store.currentTrack) {
+    // Lógica de bucle "once": Reinicia la misma canción
+    if (loop === "once") {
+      // Aquí podrías disparar un evento para reiniciar el progreso a 0
       return;
     }
 
-    const hasNext = store.queue.length > 1;
-    if (hasNext) {
-      const nextTrack = store.queue[1];
-      const newQueue = store.queue.slice(1);
-      setDuration(nextTrack.duration);
-      set({
-        currentTrack: nextTrack,
-        queue: newQueue,
-        history: [...store.history, current],
-      });
-      return;
+    // 1. Determinar cuál es la siguiente canción
+    let nextTrack: playerTrackProps | null = null;
+    let newQueue = [...store.queue];
+    let newUpcoming = [...store.upcoming];
+    let newHistory = [...store.history, current];
+
+    if (store.queue.length > 1) {
+      // Caso normal: Hay más canciones en la cola (mezclada o no)
+      nextTrack = store.queue[1];
+      newQueue = store.queue.slice(1);
+    } else if (loop === "all") {
+      // Caso Loop All: Reconstruimos la cola desde el historial
+      const fullCycle = [...store.history, current];
+      nextTrack = fullCycle[0];
+      newQueue = fullCycle;
+      newHistory = [];
+    } else if (store.upcoming.length > 0) {
+      // Caso Upcoming: No hay más en cola, pero hay sugerencias
+      nextTrack = store.upcoming[0];
+      newQueue = [nextTrack];
+      newUpcoming = store.upcoming.slice(1);
     }
 
-    if (loop === "all") {
-      const full = [...store.history, current];
+    // 2. Si no hay siguiente canción, terminamos
+    if (!nextTrack) return;
 
-      if (full.length === 0) return;
-
-      const nextTrack = full[0];
-      const newQueue = full;
-      setDuration(nextTrack.duration);
-      set({
-        currentTrack: nextTrack,
-        queue: newQueue,
-        history: [],
-      });
-      return;
+    // 3. ACTUALIZACIÓN DEL SNAPSHOT (Crucial para que ShuffleOff funcione)
+    let newSnapshot = store.snapshot;
+    if (store.snapshot) {
+      // Si estamos en shuffle, el snapshot debe reflejar que el track actual
+      // ya pasó al historial para que al apagar el shuffle la posición sea correcta.
+      newSnapshot = {
+        history: [...store.snapshot.history, current],
+        queue: store.snapshot.queue.filter((t) => t.id !== current.id),
+      };
     }
 
-    if (store.upcoming.length > 0) {
-      const nextTrack = store.upcoming[0];
-      const newQueue = [nextTrack];
-
-      // push current into history
-      const newHistory = store.currentTrack
-        ? [...store.history, store.currentTrack]
-        : [...store.history];
-      setDuration(nextTrack.duration);
-      set({
-        currentTrack: nextTrack,
-        queue: newQueue,
-        history: newHistory,
-        upcoming: store.upcoming.slice(1),
-      });
-      return;
-    }
-    return;
+    // 4. Aplicar cambios al estado
+    setDuration(nextTrack.duration);
+    set({
+      currentTrack: nextTrack,
+      queue: newQueue,
+      history: newHistory,
+      upcoming: newUpcoming,
+      snapshot: newSnapshot, // Mantenemos la integridad del orden original
+    });
   },
 
   prev: () => {
@@ -233,53 +234,32 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
   shuffleOff: () => {
     const store = get();
+    if (!store.snapshot || !store.currentTrack) return;
 
-    const { history, queue, currentTrack } = store;
-    if (!currentTrack) return;
+    const { history: oldHistory, queue: oldQueue } = store.snapshot;
+    const currentId = store.currentTrack.id;
 
-    const indexInHistory = history.findIndex((t) => t.id === currentTrack.id);
-    const indexInQueue = queue.findIndex((t) => t.id === currentTrack.id);
+    // Unimos todo el orden original para encontrar dónde estamos parados
+    const fullOriginalList = [...oldHistory, ...oldQueue];
+    const currentIndex = fullOriginalList.findIndex((t) => t.id === currentId);
 
-    let newHistory = [...history];
-    let newQueue = [...queue];
-    if (indexInHistory !== -1) {
-      const before = history.slice(0, indexInHistory);
-
-      const after = history.slice(indexInHistory);
-
-      newHistory = before;
-      newQueue = [...after, ...queue];
-
+    if (currentIndex === -1) {
+      // Si por alguna razón el track actual no estaba en el snapshot (ej. cambió por upcoming)
       set({
-        history: newHistory,
-        queue: newQueue,
-        currentTrack,
+        snapshot: null,
+        // Mantenemos lo que hay pero limpiamos el snapshot
       });
       return;
     }
 
-    if (indexInQueue !== -1) {
-      const before = queue.slice(0, indexInQueue);
-
-      const after = queue.slice(indexInQueue);
-
-      newHistory = [...history, ...before];
-      newQueue = after;
-
-      set({
-        history: newHistory,
-        queue: newQueue,
-        currentTrack,
-      });
-      return;
-    }
-
-    newQueue = [currentTrack, ...queue];
+    // Re-seccionamos la lista original basada en la posición actual
+    const newHistory = fullOriginalList.slice(0, currentIndex);
+    const newQueue = fullOriginalList.slice(currentIndex);
 
     set({
       history: newHistory,
       queue: newQueue,
-      currentTrack,
+      snapshot: null, // Limpiamos el snapshot para que el próximo shuffle sea limpio
     });
   },
   updateTrackMetadata: (trackId, metadata) => {
@@ -287,7 +267,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
     // 1. Clonamos y actualizamos la Queue (incluye el current si está ahí)
     const newQueue = queue.map((track) =>
-      track.id === trackId ? { ...track, ...metadata } : track
+      track.id === trackId ? { ...track, ...metadata } : track,
     );
 
     // 2. Actualizamos el CurrentTrack si coincide
@@ -296,12 +276,12 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
     // 3. Actualizamos el Historial
     const newHistory = history.map((track) =>
-      track.id === trackId ? { ...track, ...metadata } : track
+      track.id === trackId ? { ...track, ...metadata } : track,
     );
 
     // 4. Actualizamos Upcoming (Sugerencias)
     const newUpcoming = upcoming.map((track) =>
-      track.id === trackId ? { ...track, ...metadata } : track
+      track.id === trackId ? { ...track, ...metadata } : track,
     );
 
     // Aplicamos todos los cambios de una sola vez para evitar re-renders innecesarios

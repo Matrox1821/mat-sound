@@ -8,10 +8,12 @@ const validateUserAndFetch = async (userId: string | undefined, endpoint: string
     const response = await handleCustomApiRequest(
       `${GET_URL}/api/user/${userId}${endpoint}`,
       "GET",
-      null
+      null,
     );
 
-    if (response.errors?.length) return null;
+    if (response.errors?.length || !response.data || !response.data.length) {
+      throw new Error(response.message || "Error en la petición");
+    }
 
     return response.data;
   } catch {

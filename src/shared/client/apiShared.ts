@@ -22,6 +22,7 @@ const setCookie = async (cookieKey: string, value: any) => {
 };
 
 const setLoginCookies = async (user: string, token?: string, isAdmin: boolean = false) => {
+  console.log({ user, token, isAdmin });
   await setUserCookie(user, isAdmin);
   if (token) await setCookie(isAdmin ? "admin_token" : "token", token);
 };

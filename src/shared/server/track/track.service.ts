@@ -28,6 +28,22 @@ export const getTracksPaginationInfo = async ({
   return { amount, pages };
 };
 
+export const getTracksByPaginationService = async ({
+  page,
+  rows,
+  artistName = "",
+  albumName = "",
+  trackName = "",
+}: {
+  page: number;
+  rows: number;
+  artistName?: string;
+  albumName?: string;
+  trackName?: string;
+}) => {
+  return await getTracksByPagination({ page, rows, artistName, albumName, trackName });
+};
+
 export const deleteTrackById = async ({ id }: { id: string }) => {
   await deleteTrack(id);
 };

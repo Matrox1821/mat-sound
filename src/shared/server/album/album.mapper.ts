@@ -2,9 +2,12 @@ import { AlbumById } from "@/types/album.types";
 import { ImageSizes } from "@/types/common.types";
 
 export const mapAlbumDetails = (rawData: any): AlbumById => {
-  const duration = rawData.tracks
-    .map(({ track }: any) => track.duration)
-    .reduce((a: number, b: number) => a + b);
+  const duration =
+    rawData.tracks.length > 0
+      ? rawData.tracks
+          .map(({ track }: any) => track.duration)
+          .reduce((a: number, b: number) => a + b)
+      : 0;
   return {
     id: rawData.id,
     name: rawData.name,

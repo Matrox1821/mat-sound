@@ -5,12 +5,14 @@ import {
   artistIsExists,
   updateArtistImages,
   getArtistsByPagination,
+  getArtistTracks,
 } from "./artist.repository";
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { GET_BUCKET_URL } from "@/shared/utils/constants";
 import { ImageSizes } from "@/types/common.types";
 import { ArtistByPagination } from "@/types/artist.types";
+import { mapArtistTracks } from "./artist.mapper";
 
 const ARTISTS_PER_PAGES = 6;
 
@@ -140,4 +142,56 @@ export const addAvatarToArtist = async ({
       httpStatusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
     });
   return updatedArtist;
+};
+
+export const getSortedArtistTracks = async ({
+  id,
+  sort,
+  limit,
+  order,
+  userId,
+}: {
+  id?: string;
+  sort: string;
+  order: "asc" | "desc";
+  limit: number;
+  userId: string | null;
+}) => {
+  const validSortFields = ["id", "name", "releaseDate", "reproductions", "duration", "createdAt"];
+
+  const setOrderBy = ({
+    fields,
+    sort,
+    order,
+  }: {
+    fields: string[];
+    sort: string;
+    order: "asc" | "desc";
+  }) => {
+    let orderBy: Record<string, ("asc" | "desc") | { _count: "asc" | "desc" }> = {
+      release_date: "desc",
+    };
+    if (fields.includes(sort)) orderBy = { [sort]: order };
+
+    if (sort === "likes") {
+      orderBy = { likes: { _count: order } };
+    }
+    return orderBy;
+  };
+
+  const filter = setOrderBy({ sort, order, fields: validSortFields });
+  const tracks = await getArtistTracks({ id, limit, orderBy: filter, userId });
+
+  if (!tracks || tracks.length === 0) {
+    throw new CustomError({
+      errors: [
+        {
+          message: "The search returned no results. No elements were found.",
+        },
+      ],
+      msg: "The search returned no results. No elements were found.",
+      httpStatusCode: HttpStatusCode.NOT_FOUND,
+    });
+  }
+  return mapArtistTracks(tracks);
 };

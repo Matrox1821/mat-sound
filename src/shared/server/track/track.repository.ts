@@ -77,25 +77,25 @@ export const getUserPlaylistsForSelection = async ({ userId = "" }: { userId: st
 
 export async function getRandomTracksIds(
   limit = 5,
-  excludeId: string | null,
-): Promise<
-  {
-    id: string;
-  }[]
-> {
+  excludeId: string | null = null,
+): Promise<{ id: string }[]> {
   if (excludeId) {
     return await prisma.$queryRaw<{ id: string }[]>`
-      SELECT "id" 
-      FROM "Track"
-      WHERE "id" <> ${excludeId}
+      SELECT id 
+      FROM track
+      WHERE id <> ${excludeId}::uuid
+      AND song IS NOT NULL 
+      AND song <> ''
       ORDER BY RANDOM()
       LIMIT ${limit};
     `;
   }
 
   return await prisma.$queryRaw<{ id: string }[]>`
-    SELECT "id"
-    FROM "Track"
+    SELECT id
+    FROM track
+    WHERE song IS NOT NULL 
+    AND song <> ''
     ORDER BY RANDOM()
     LIMIT ${limit};
   `;
@@ -105,9 +105,10 @@ export const getTrackById = async ({
   trackId,
   userId = "",
 }: {
-  trackId: string;
-  userId: string;
-}): Promise<TrackById> => {
+  trackId?: string;
+  userId?: string;
+}): Promise<TrackById | null> => {
+  if (!trackId) return null;
   return (await prisma.track.findUnique({
     where: {
       id: trackId,
@@ -319,24 +320,81 @@ export const updateTrackResourses = async ({
   id: string;
   paths: {
     cover?: { sm: string; md: string; lg: string };
-    song: string;
+    song?: string;
   };
 }): Promise<{
   id: string;
-  cover: ImageSizes;
-  song: string;
+  cover?: ImageSizes;
+  song?: string;
 }> => {
   return (await prisma.track.update({
     where: {
       id,
     },
     data: {
-      song: paths.song,
-      cover: paths.cover,
+      ...(paths.song && { song: paths.song }),
+      ...(paths.cover && { cover: paths.cover }),
     },
   })) as unknown as {
     id: string;
-    cover: ImageSizes;
-    song: string;
+    cover?: ImageSizes;
+    song?: string;
   };
+};
+
+export const updateTrack = async (
+  body: TrackFormData,
+  cover?: ImageSizes,
+  song?: string,
+): Promise<{ id: string; name: string } | null> => {
+  if (!body.id) return null;
+  const track = await prisma.track.update({
+    where: {
+      id: body.id,
+    },
+    data: {
+      ...(body.name && { name: body.name }),
+      ...(cover && { cover: cover as any }),
+      ...(song && { song }),
+      ...(body.releaseDate && { releaseDate: new Date(body.releaseDate) }),
+      ...(body.duration && { duration: body.duration }),
+      ...(body.reproductions && { reproductions: body.reproductions }),
+      ...(body.lyrics && { lyrics: body.lyrics }),
+
+      /*       artists: {
+        connect: body.artists.map((artistId: string) => {
+          return { id: artistId };
+        }),
+      },
+      albums: {
+        create: Object.entries(body.orderAndDisk).map(([albumId, { order, disk }]) => {
+          return { albumId, order, disk };
+        }),
+      }, */
+      genres: {
+        connect: body.genres.map((id) => ({ id })),
+      },
+    },
+    select: { id: true, name: true },
+  });
+
+  const album = await prisma.track.findFirst({
+    where: { id: track.id },
+    select: { albums: { select: { albumId: true } } },
+  });
+  const artist = await prisma.track.findFirst({
+    where: { id: track.id },
+    select: { artists: { select: { id: true } } },
+  });
+  if (track && album && artist)
+    await Promise.all([
+      ...album.albums.map(
+        async ({ albumId }) => await updateAlbumGenre({ albumId, genresId: body.genres }),
+      ),
+      ...artist.artists.map(
+        async (artist) => await updateArtistGenre({ artistId: artist.id, genresId: body.genres }),
+      ),
+    ]);
+
+  return track;
 };

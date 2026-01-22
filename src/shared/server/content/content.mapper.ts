@@ -1,56 +1,46 @@
-import { AlbumBase } from "@/types/album.types";
 import { ArtistBase } from "@/types/artist.types";
-import { ImageSizes } from "@/types/common.types";
+import {
+  MappedArtistService,
+  MappedAlbumService,
+  MappedTrackService,
+  TrackWithRelationsRepo,
+  PlaylistRepo,
+  PlaylistService,
+  AlbumWithArtistsRepo,
+} from "@/types/content.types";
 
-export const mapArtistsToContent = (
-  artists: ArtistBase[],
-): {
-  type: "artists";
-  name: string;
-  id: string;
-  avatar: ImageSizes | null;
-}[] => {
+export const mapArtistsToContent = (artists: ArtistBase[]): MappedArtistService[] => {
   return artists.map((artist) => ({
     ...artist,
     type: "artists",
   }));
 };
 
-export const mapAlbumsToContent = (
-  albums: AlbumBase[],
-): {
-  type: "albums";
-  name: string;
-  id: string;
-  cover: ImageSizes | null;
-}[] => {
+export const mapAlbumsToContent = (albums: AlbumWithArtistsRepo[]): MappedAlbumService[] => {
   return albums.map((album) => ({ ...album, type: "albums" }));
 };
-export const mapPlaylistsToContent = (
-  playlists: {
-    name: string;
-    id: string;
-    cover: ImageSizes | null;
-  }[],
-): {
-  type: "playlists";
-  name: string;
-  id: string;
-  cover: ImageSizes | null;
-}[] => {
-  return playlists.map((playlist) => ({ ...playlist, type: "playlists" }));
+
+export const mapPlaylistToContent = (playlists: PlaylistRepo[]): PlaylistService[] => {
+  return playlists.map(({ cover, tracks, ...newPlaylist }) => ({
+    ...newPlaylist,
+    type: "playlists",
+    image: cover,
+    tracks: tracks?.map(({ track }) => track.cover),
+  }));
 };
 
-export const mapTrackToContent = (track: any, userId?: string, userPlaylists?: any) => {
+export const mapTrackToContent = (
+  { _count, ...track }: TrackWithRelationsRepo,
+  userPlaylists: PlaylistService[] | null,
+): MappedTrackService => {
   return {
     ...track,
     type: "tracks",
-    isLiked: userId ? track.likes.length > 0 : false,
-    likes: undefined, // Limpiamos para no enviar basura al cliente
-    userPlaylists: userPlaylists?.playlists.map((playlist: any) => ({
+    isLiked: !!track.likes,
+    likes: _count.likes || 0,
+    userPlaylists: userPlaylists?.map(({ tracks, ...playlist }) => ({
       ...playlist,
-      isInPlaylist: playlist.tracks.some((t: any) => t.track.id === track.id),
-      tracks: undefined, // No necesitamos enviar todos los tracks de la playlist aquí
+      isInPlaylist: tracks?.some((t: any) => t.track.id === track.id) || false,
     })),
   };
 };

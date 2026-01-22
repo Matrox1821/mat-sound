@@ -32,7 +32,7 @@ export const useAudioController = (audioRef: RefObject<HTMLAudioElement | null>)
       cancelled = true;
       el.removeEventListener("loadedmetadata", onLoadedMetadata);
     };
-  }, [songUrl, isPlaying]);
+  }, [songUrl]);
 
   useEffect(() => {
     const el = audioRef.current;

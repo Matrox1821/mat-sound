@@ -1,8 +1,12 @@
 "use server";
 import { CustomError } from "@/types/apiTypes";
 import { HttpStatusCode } from "@/types/httpStatusCode";
-import { mapAlbumsToContent, mapArtistsToContent, mapTrackToContent } from "./content.mapper";
-import { ImageSizes } from "@/types/common.types";
+import {
+  mapAlbumsToContent,
+  mapArtistsToContent,
+  mapPlaylistToContent,
+  mapTrackToContent,
+} from "./content.mapper";
 import { getRandomTracksIds } from "../track/track.repository";
 import {
   getAlbumsForContent,
@@ -11,17 +15,14 @@ import {
   getTracksForContent,
   getUserPlaylistsForSelection,
 } from "./content.repository";
+import {
+  ContentElement,
+  DiscoveryTrack,
+  MappedAlbumService,
+  MappedArtistService,
+} from "@/types/content.types";
 
-export const getArtistsForDiscovery = async (
-  limit: number,
-): Promise<
-  {
-    type: string;
-    name: string;
-    id: string;
-    avatar: ImageSizes | null;
-  }[]
-> => {
+export const getArtistsForDiscovery = async (limit: number): Promise<MappedArtistService[]> => {
   const artists = await getArtistsForContent(limit);
   if (!artists || artists.length === 0) {
     throw new CustomError({
@@ -37,16 +38,7 @@ export const getArtistsForDiscovery = async (
   return mapArtistsToContent(artists);
 };
 
-export const getAlbumsForDiscovery = async (
-  limit: number,
-): Promise<
-  {
-    type: string;
-    name: string;
-    id: string;
-    cover: ImageSizes | null;
-  }[]
-> => {
+export const getAlbumsForDiscovery = async (limit: number): Promise<MappedAlbumService[]> => {
   const albums = await getAlbumsForContent(limit);
   if (!albums || albums.length === 0) {
     throw new CustomError({
@@ -62,7 +54,11 @@ export const getAlbumsForDiscovery = async (
   return mapAlbumsToContent(albums);
 };
 
-export const getTracksForDiscovery = async (limit: number, userId?: string, filter?: any) => {
+export const getTracksForDiscovery = async (
+  limit: number,
+  userId?: string,
+  filter?: any,
+): Promise<DiscoveryTrack[] | null> => {
   const discoveryBaseIds = await getRandomTracksIds(
     limit,
     filter?.by === "tracks" ? filter.id : null,
@@ -72,7 +68,6 @@ export const getTracksForDiscovery = async (limit: number, userId?: string, filt
   const recommendationsResponses = await Promise.all(
     mainIds.map((id) => getRandomTracksIds(5, id)),
   );
-
   const recsMap = mainIds.reduce(
     (acc, id, i) => {
       acc[id] = recommendationsResponses[i].map((r) => r.id);
@@ -80,7 +75,6 @@ export const getTracksForDiscovery = async (limit: number, userId?: string, filt
     },
     {} as Record<string, string[]>,
   );
-
   const allNeededIds = [
     ...new Set([...mainIds, ...recommendationsResponses.flat().map((r) => r.id)]),
   ];
@@ -99,32 +93,32 @@ export const getTracksForDiscovery = async (limit: number, userId?: string, filt
   }
 
   const userPlaylists = userId ? await getUserPlaylistsForSelection({ userId }) : null;
+  const userPlaylistsMapped = userPlaylists && mapPlaylistToContent(userPlaylists);
+  const rawResults = mainIds.map((id) => {
+    const mainTrack = allTracksRaw.find((t) => t.id === id);
+    if (!mainTrack) return null;
 
-  return mainIds
-    .map((id) => {
-      const mainTrack = allTracksRaw.find((t) => t.id === id);
-      if (!mainTrack) return null;
+    const recommendedIds = recsMap[id] || [];
+    const recommendedTracks = allTracksRaw
+      .filter((t) => recommendedIds.includes(t.id))
+      .map((t) => mapTrackToContent(t, userPlaylistsMapped));
 
-      const recommendedIds = recsMap[id] || [];
-      const recommendedTracks = allTracksRaw
-        .filter((t) => recommendedIds.includes(t.id))
-        .map((t) => mapTrackToContent(t, userId, userPlaylists));
+    return {
+      ...mapTrackToContent(mainTrack, userPlaylistsMapped),
+      recommendedTracks,
+    } as DiscoveryTrack;
+  });
 
-      return {
-        ...mapTrackToContent(mainTrack, userId, userPlaylists),
-        recommendedTracks,
-      };
-    })
-    .filter(Boolean);
+  return rawResults.filter((track): track is DiscoveryTrack => track !== null);
 };
 
 export const getContent = async ({
   type = ["tracks"],
   limit = 10,
   filter = "none",
-  filterId = "",
+  filterId,
   idToRemove,
-  userId = "",
+  userId,
 }: {
   type?: string[];
   limit?: number;
@@ -132,24 +126,34 @@ export const getContent = async ({
   filterId?: string;
   idToRemove?: string;
   userId?: string;
-}) => {
-  let elements: any[] = [];
+}): Promise<ContentElement[]> => {
+  // 1. Creamos un array de promesas para ejecutar todas las fuentes en paralelo
+  const promises: Promise<ContentElement[]>[] = [];
+
   if (type.includes("tracks")) {
-    const tracksData = await getTracksForDiscovery(limit, userId, { by: filter, id: filterId });
-
-    const newTracks = await Promise.all(
-      tracksData.map(async (track: any) => ({
-        tracks: await getTracksForDiscovery(5, userId, { by: "tracks", id: track.id }),
-        ...track,
-      })),
+    promises.push(
+      getTracksForDiscovery(limit, userId, { by: filter, id: filterId }).then((data) => data ?? []),
     );
-    elements = elements.concat(newTracks);
   }
-  if (type.includes("albums")) elements = elements.concat(await getAlbumsForDiscovery(limit));
-  if (type.includes("artists")) elements = elements.concat(await getArtistsForDiscovery(limit));
-  if (type.includes("playlists")) elements = elements.concat(await getPlaylistsForContent(limit));
 
-  if (!elements.length) {
+  if (type.includes("albums")) {
+    promises.push(getAlbumsForDiscovery(limit).then((data) => data ?? []));
+  }
+
+  if (type.includes("artists")) {
+    promises.push(getArtistsForDiscovery(limit).then((data) => data ?? []));
+  }
+
+  if (type.includes("playlists")) {
+    promises.push(getPlaylistsForContent(limit).then((data) => mapPlaylistToContent(data ?? [])));
+  }
+
+  // 2. Esperamos a que todas las fuentes respondan
+  const results = await Promise.all(promises);
+  let elements: ContentElement[] = results.flat();
+
+  // 3. Validamos si hay resultados
+  if (elements.length === 0) {
     throw new CustomError({
       errors: [{ message: "The search returned no results. No elements were found." }],
       msg: "The search returned no results. No elements were found.",
@@ -158,7 +162,13 @@ export const getContent = async ({
   }
 
   if (idToRemove) {
-    elements = elements.filter((e: any) => e.id !== idToRemove);
+    elements = elements.filter((e) => e.id !== idToRemove);
   }
-  return elements.sort(() => Math.random() - 0.5).slice(0, limit);
+
+  for (let i = elements.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [elements[i], elements[j]] = [elements[j], elements[i]];
+  }
+
+  return elements.slice(0, limit);
 };

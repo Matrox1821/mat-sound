@@ -1,29 +1,44 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { APITrack } from "@/types/trackProps";
+import { TrackByIdApiResponse } from "@/types/track.types";
 
-const getTrackById = async (id: string, userId: string = "") => {
-  const response = await handleCustomApiRequest<APITrack>(
-    GET_URL + "/api/tracks/" + id + "?user_id=" + userId,
-    "GET",
-    null
-  );
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+const getTrackById = async (
+  id: string,
+  userId: string = "",
+): Promise<TrackByIdApiResponse[] | null> => {
+  try {
+    const response = await handleCustomApiRequest<TrackByIdApiResponse[]>(
+      GET_URL + "/api/tracks/" + id + "?user_id=" + userId,
+      "GET",
+      null,
+    );
+    if (response.errors?.length || !response.data || response.data.length === 0) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-  return response.data;
 };
 
-const getTracksExceptId = async (id: string, limit: number, userId: string = "") => {
-  const response = await handleCustomApiRequest<APITrack[]>(
-    GET_URL + "/api/tracks/" + id + "?limit=" + limit + "&user_id=" + userId,
-    "GET",
-    null
-  );
-  if (response.errors?.length) {
-    throw new Error(response.message || "Error en la petición");
+const getTracksExceptId = async (
+  id: string,
+  limit: number,
+  userId: string = "",
+): Promise<TrackByIdApiResponse[] | null> => {
+  try {
+    const response = await handleCustomApiRequest<TrackByIdApiResponse[]>(
+      GET_URL + "/api/tracks/" + id + "?limit=" + limit + "&user_id=" + userId,
+      "GET",
+      null,
+    );
+    if (response.errors?.length || !response.data || !response.data.length) {
+      throw new Error(response.message || "Error en la petición");
+    }
+    return response.data;
+  } catch {
+    return null;
   }
-  return response.data;
 };
 
 export const trackApi = { getTrackById, getTracksExceptId };

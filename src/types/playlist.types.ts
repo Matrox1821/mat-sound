@@ -7,7 +7,7 @@ export interface PlaylistTrackReference {
   };
 }
 
-export interface PlaylistSelectionItem {
+export interface PlaylistRepo {
   id: string;
   name: string;
   cover?: ImageSizes;
@@ -16,12 +16,20 @@ export interface PlaylistSelectionItem {
   tracks: PlaylistTrackReference[];
 }
 
-export interface UserPlaylistsResponse {
-  playlists: PlaylistSelectionItem[];
+export interface UserPlaylistsRepo {
+  playlists: PlaylistRepo[];
 }
 export interface TrackPlaylistStatus {
   id: string;
   name: string;
   cover?: ImageSizes;
   isInPlaylist: boolean; // Indica si el track actual pertenece a esta lista
+}
+export interface PlaylistSelectionItem {
+  id: string;
+  name: string;
+  cover?: ImageSizes;
+  images?: string[];
+  isInPlaylist: boolean;
+  tracks: PlaylistRepo[];
 }

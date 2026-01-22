@@ -1,5 +1,5 @@
-import { contentProps } from "@/types/common.types";
-import { APIContent, ImageSizes } from "@/types/apiTypes";
+import { contentProps, ImageSizes } from "@/types/common.types";
+import { APIContent } from "@/types/apiTypes";
 export function parseContent(content: APIContent[]): contentProps[] {
   return content.map((data) => {
     const { release_date, cover, avatar, _count, albums, artists, tracks, song, isLiked, ...rest } =
