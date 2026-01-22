@@ -163,7 +163,7 @@ CREATE TABLE "user" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "emailVerified" BOOLEAN,
-    "image" TEXT,
+    "avatar" TEXT,
     "username" TEXT NOT NULL,
     "displayUsername" TEXT NOT NULL,
     "biography" TEXT,

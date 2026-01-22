@@ -220,7 +220,7 @@ model User {
   name            String
   email           String    @unique
   emailVerified   Boolean?
-  image           String?
+  avatar           String?
   username        String    @unique
   displayUsername String
   biography       String?
