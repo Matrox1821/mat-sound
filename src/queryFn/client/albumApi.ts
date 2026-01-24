@@ -1,14 +1,19 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
 import { AlbumById } from "@/types/album.types";
+import { TrackById } from "@/types/track.types";
 
-const getAlbumById = async (id: string): Promise<AlbumById | null> => {
+const getAlbumById = async (
+  id: string,
+): Promise<{
+  album: AlbumById;
+  recommendedTracks: TrackById[];
+} | null> => {
   try {
-    const response = await handleCustomApiRequest<AlbumById>(
-      GET_URL + "/api/albums/" + id,
-      "GET",
-      null,
-    );
+    const response = await handleCustomApiRequest<{
+      album: AlbumById;
+      recommendedTracks: TrackById[];
+    } | null>(GET_URL + "/api/albums/" + id, "GET", null);
     if (response.errors?.length || !response.data) {
       throw new Error(response.message || "Error en la petición");
     }

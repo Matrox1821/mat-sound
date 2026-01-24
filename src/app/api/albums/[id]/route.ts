@@ -2,13 +2,14 @@ import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { getAlbumById } from "@/shared/server/album/album.repository";
+import { getRandomTracksIds, getTracksByIds } from "@/shared/server/track/track.repository";
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
-    const response = await getAlbumById(id);
+    const album = await getAlbumById(id);
 
-    if (!response) {
+    if (!album) {
       throw new CustomError({
         errors: [
           {
@@ -20,9 +21,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       });
     }
 
+    const tracksIds = album.tracks.map(({ track }) => track.id);
+
+    const recommendedTracksIds = await getRandomTracksIds(20, tracksIds);
+
+    const recommendedTracks = await getTracksByIds({
+      trackIds: recommendedTracksIds.map(({ id }) => id),
+    });
+
     return onSuccessRequest({
       httpStatusCode: 200,
-      data: response,
+      data: { album, recommendedTracks },
     });
   } catch (error) {
     console.log(error);

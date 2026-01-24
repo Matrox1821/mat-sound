@@ -20,11 +20,13 @@ function shuffleArray<T>(array: T[]): T[] {
 export function PlayButton({
   currently,
   tracksList,
+  upcoming,
 }: {
   currently: any | null;
   tracksList: any[] | null;
+  upcoming: any[] | null;
 }) {
-  const { setTrack, setPlayingFrom } = usePlayerStore((state) => state);
+  const { setTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
   const { play } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
@@ -40,6 +42,7 @@ export function PlayButton({
     setTrack(track, tracks);
     setDuration(track.duration);
     setPlayingFrom(track.name);
+    if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
     play();
   };
 
@@ -54,8 +57,14 @@ export function PlayButton({
   );
 }
 
-export function RandButton({ tracksList }: { tracksList: any[] | null }) {
-  const { setTrack, setPlayingFrom } = usePlayerStore((state) => state);
+export function RandButton({
+  tracksList,
+  upcoming,
+}: {
+  tracksList: any[] | null;
+  upcoming: any[] | null;
+}) {
+  const { setTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
   const { play } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
@@ -71,9 +80,10 @@ export function RandButton({ tracksList }: { tracksList: any[] | null }) {
     e.stopPropagation();
     e.preventDefault();
     if (!playerBarIsActive) activePlayerBar();
+
     setTrack(track, tracks);
     setDuration(track.duration);
-
+    if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
     setPlayingFrom(track.name);
     play();
   };

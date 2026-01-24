@@ -5,10 +5,19 @@ import { use } from "react";
 import { PlayButton, RandButton } from "./Buttons";
 import { SafeImage } from "@/components/ui/images/SafeImage";
 import { AlbumById } from "@/types/album.types";
+import { TrackById } from "@/types/track.types";
 
-export default function CoverInfo({ albumPromise }: { albumPromise: Promise<AlbumById | null> }) {
-  const album = use(albumPromise);
-  if (!album) return;
+export default function CoverInfo({
+  albumPromise,
+}: {
+  albumPromise: Promise<{
+    album: AlbumById;
+    recommendedTracks: TrackById[];
+  } | null>;
+}) {
+  const albumResponse = use(albumPromise);
+  if (!albumResponse) return null;
+  const { album, recommendedTracks } = albumResponse;
   return (
     <section className="flex flex-col justify-end items-start gap-12 z-30 relative h-[calc(1/2*100vh)] pb-4">
       <div className="w-full flex gap-4 relative">
@@ -59,8 +68,15 @@ export default function CoverInfo({ albumPromise }: { albumPromise: Promise<Albu
       </div>
       {album.tracks.length !== 0 ? (
         <div className="flex gap-4">
-          <PlayButton currently={album?.tracks![0] || null} tracksList={album.tracks || null} />
-          <RandButton tracksList={album.tracks || null} />
+          <PlayButton
+            currently={album?.tracks![0].track || null}
+            tracksList={album.tracks.map(({ track }) => track) || null}
+            upcoming={recommendedTracks}
+          />
+          <RandButton
+            tracksList={album.tracks.map(({ track }) => track) || null}
+            upcoming={recommendedTracks}
+          />
         </div>
       ) : (
         <span className="h-10 w-10"></span>
