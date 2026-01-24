@@ -1,43 +1,38 @@
-import { useOptimistic, useTransition } from "react";
+import { useTransition } from "react";
 import { Bookmark } from "../icons/Bookmark";
-import { usePlayerStore } from "@/store/playerStore";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { togglePlaylist } from "@/actions/user";
-import { usePathname } from "next/navigation";
+import { usePlaylistStore } from "@/store/playlistStore";
+import { ImageSizes } from "@/types/common.types";
 
 export const SaveInPlaylist = ({
   playlistName,
   playlistId,
-  trackId,
-  initialIsSaved,
+  track,
 }: {
   playlistName: string;
   playlistId: string;
-  trackId: string;
-  initialIsSaved: boolean;
+  track: { id: string; cover: ImageSizes };
 }) => {
-  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  const updateTrackInStore = usePlayerStore((state) => state.updateTrackMetadata);
   const { error: toastError, message } = useToast();
-  const [optimisticSaved, addOptimisticSaved] = useOptimistic(
-    initialIsSaved,
-    (newIsSaved: boolean) => newIsSaved,
-  );
+
+  const hydrated = usePlaylistStore((s) => s.hydrated);
+  const isTrackInPlaylist = usePlaylistStore((s) => s.isTrackInPlaylist(playlistId, track.id));
+  const toggleTrackInPlaylist = usePlaylistStore((s) => s.toggleTrackInPlaylist);
+
   const handleSave = async (e: any) => {
     e.stopPropagation();
     e.preventDefault();
 
     startTransition(async () => {
-      const nextState = !optimisticSaved;
-      addOptimisticSaved(nextState);
-      updateTrackInStore(trackId, { isLiked: nextState });
+      toggleTrackInPlaylist(playlistId, track);
       try {
-        await togglePlaylist(playlistId, trackId, nextState, pathname);
-        message(`${nextState ? "Agregado a" : "Eliminado de"} ${playlistName}`);
+        await togglePlaylist(playlistId, track.id);
+        message(`${isTrackInPlaylist ? "Eliminado de" : "Agregado a"} ${playlistName}`);
       } catch {
         toastError("No tienes una sesión iniciada.");
-        updateTrackInStore(trackId, { isLiked: !nextState });
+        toggleTrackInPlaylist(playlistId, track);
       }
     });
   };
@@ -47,10 +42,14 @@ export const SaveInPlaylist = ({
       onClick={handleSave}
       disabled={isPending}
       className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full  transition-all hover:opacity-75 ${
-        optimisticSaved ? "text-accent-950" : "text-content-900"
+        isTrackInPlaylist ? "text-accent-950" : "text-content-900"
       }`}
     >
-      <Bookmark isFilled={optimisticSaved} className="!h-7 !w-7" />
+      {hydrated ? (
+        <Bookmark isFilled={isTrackInPlaylist} className="!h-7 !w-7" />
+      ) : (
+        <Bookmark isFilled={false} className="!h-7 !w-7" />
+      )}
     </button>
   );
 };

@@ -7,6 +7,10 @@ import Player from "@/components/media/player";
 import { Poppins } from "next/font/google";
 import { Toaster } from "sonner";
 import { CreatePlaylistDialog } from "@/components/features/dialogs/CreatePlaylistDialog";
+import { LikeHydrator } from "@/components/hydrators/LikeHydrator";
+import { getUserArtistFollowingIds, getUserLikedTrackIds, getUserPlaylists } from "@/actions/user";
+import { PlaylistsHydrator } from "@/components/hydrators/PlaylistsHidrator";
+import { FollowHydrator } from "@/components/hydrators/FollowHydrator";
 
 export const metadata: Metadata = {
   title: "Mat Sound",
@@ -19,9 +23,16 @@ const nunitoSans = Poppins({
 });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const likedIds = getUserLikedTrackIds();
+  const playlists = getUserPlaylists();
+  const artistFolloingIds = getUserArtistFollowingIds();
   return (
     <html lang="es" className={nunitoSans.className}>
       <body className="bg-background h-screen w-screen">
+        <LikeHydrator likedIds={likedIds} />
+        <PlaylistsHydrator playlists={playlists} />
+        <FollowHydrator artistFolloingIds={artistFolloingIds} />
+
         {children}
         <Player />
         <Toaster theme="dark" richColors className="!h-6 " position="top-center" />

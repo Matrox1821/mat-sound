@@ -1,45 +1,43 @@
 "use client";
 
-import { useOptimistic, useTransition } from "react";
+import { useTransition } from "react";
 import { Heart } from "../icons/Heart";
-import { usePlayerStore } from "@/store/playerStore";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { toggleLikeAction } from "@/actions/user";
+import { toggleLike as toggleLikeAction } from "@/actions/user";
+import { useLikeStore } from "@/store/likeStore";
 import { usePathname } from "next/navigation";
 
 interface LikeButtonProps {
   trackId: string;
-  initialIsLiked: boolean;
-  initialCount: number;
 }
 
-export function LikeButton({ trackId, initialIsLiked, initialCount }: LikeButtonProps) {
+export function LikeButton({ trackId }: LikeButtonProps) {
   const pathname = usePathname();
-
   const [isPending, startTransition] = useTransition();
-  const updateTrackInStore = usePlayerStore((state) => state.updateTrackMetadata);
   const { error: toastError } = useToast();
-  const [optimisticLike, addOptimisticLike] = useOptimistic(
-    { isLiked: initialIsLiked, count: initialCount },
-    (state, newIsLiked: boolean) => ({
-      isLiked: newIsLiked,
-      count: newIsLiked ? state.count + 1 : state.count - 1,
-    })
-  );
 
-  const handleLike = async (e: any) => {
+  const hydrated = useLikeStore((s) => s.hydrated);
+  const isLiked = useLikeStore((s) => s.isLiked(trackId));
+  const toggleLike = useLikeStore((s) => s.toggleLike);
+
+  if (!hydrated) {
+    return <button className="like-button h-5 w-5 opacity-0 pointer-events-none" aria-hidden />;
+  }
+
+  const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
 
     startTransition(async () => {
-      const nextState = !optimisticLike.isLiked;
-      addOptimisticLike(nextState);
-      updateTrackInStore(trackId, { isLiked: nextState });
+      // optimistic
+      toggleLike(trackId);
+
       try {
-        await toggleLikeAction(trackId, nextState, pathname);
+        await toggleLikeAction(trackId, pathname);
       } catch {
         toastError("No tienes una sesión iniciada.");
-        updateTrackInStore(trackId, { isLiked: !nextState });
+        // rollback
+        toggleLike(trackId);
       }
     });
   };
@@ -48,11 +46,11 @@ export function LikeButton({ trackId, initialIsLiked, initialCount }: LikeButton
     <button
       onClick={handleLike}
       disabled={isPending}
-      className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full h-2 w-5 transition-all hover:opacity-75 ${
-        optimisticLike.isLiked ? "text-accent-950" : "text-content-900"
+      className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full h-2 w-5 transition-all hover:opacity-75  ${
+        isLiked ? "text-accent-950" : "text-content-900"
       }`}
     >
-      <Heart isFilled={optimisticLike.isLiked} className="h-5" />
+      <Heart isFilled={isLiked} className="h-5" />
     </button>
   );
 }
