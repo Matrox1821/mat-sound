@@ -299,6 +299,7 @@ export const getArtistTracks = async ({
       duration: true,
       reproductions: true,
       lyrics: true,
+      genres: { select: { id: true, name: true } },
       likes: userId
         ? {
             where: {
@@ -316,6 +317,12 @@ export const getArtistTracks = async ({
       albums: {
         select: { album: { select: { id: true, name: true, cover: true } } },
       },
+      ...(userId && {
+        playlists: {
+          where: { playlist: { userId: userId } },
+          select: { playlist: { select: { id: true } } },
+        },
+      }),
     },
   })) as unknown as ArtistTracksRepository[];
 };

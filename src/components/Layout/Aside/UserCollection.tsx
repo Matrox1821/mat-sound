@@ -4,7 +4,7 @@ import { use } from "react";
 import { PlaylistImage } from "@/components/ui/images/PlaylistImage";
 import { SafeImage } from "@/components/ui/images/SafeImage";
  */
-export function UserCollection({ promise, isExpanded, pathname }: any) {
+export function UserCollection({ promise, isExpanded }: any) {
   const items = use(promise);
   if (!items) return null;
 

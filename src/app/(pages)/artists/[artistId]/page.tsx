@@ -18,11 +18,13 @@ export default async function ArtistPage({ params }: { params: Promise<{ artistI
     id: artistId,
     userId: session?.user.id,
     query: { sortBy: "reproductions", order: "desc", limit: 10 },
+    tracksRecommended: true,
   });
   const newTrackPromise = artistApi.getTracksByArtistId({
     id: artistId,
     userId: session?.user.id,
     query: { sortBy: "releaseDate", order: "desc", limit: 1 },
+    tracksRecommended: false,
   });
   return (
     <section className="w-full z-20 h-full flex flex-col relative md:bg-background md:transition-[heigth] md:duration-200 focus-visible:outline-0">

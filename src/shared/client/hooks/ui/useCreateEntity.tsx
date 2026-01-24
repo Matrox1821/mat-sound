@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast, ToasterProps } from "sonner";
+import { ToasterProps } from "sonner";
 import { useToast } from "./useToast";
 
 type ServerResponse = {
@@ -20,7 +20,6 @@ export function useCreateEntity<T>({
   serverAction,
   successMessage = "Elemento creado con éxito",
   errorMessage = "Error al crear el elemento",
-  toastOptions = {},
 }: UseCreateEntityOptions<T>) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);

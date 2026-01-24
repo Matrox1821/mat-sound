@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 
 const secret = process.env.JWT_SECRET_KEY || "";
@@ -22,7 +22,6 @@ const setCookie = async (cookieKey: string, value: any) => {
 };
 
 const setLoginCookies = async (user: string, token?: string, isAdmin: boolean = false) => {
-  console.log({ user, token, isAdmin });
   await setUserCookie(user, isAdmin);
   if (token) await setCookie(isAdmin ? "admin_token" : "token", token);
 };

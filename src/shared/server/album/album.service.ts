@@ -1,5 +1,5 @@
 import { albumIsExists, countAlbums, deleteAlbum, getAlbumsByPagination } from "./album.repository";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { AlbumBase } from "@/types/album.types";
 

@@ -78,7 +78,7 @@ export function CreateAlbumForm() {
             </div>
           </StepperPanel>
           <StepperPanel header={stepTitles[1]}>
-            <SecondStep onChange={handleChange} formData={formData} />
+            <SecondStep onChange={handleChange} />
             <div className="flex pt-4 gap-4">
               <button
                 className="flex gap-2 items-center bg-background-700 p-4 rounded-md cursor-pointer"

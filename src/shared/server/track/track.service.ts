@@ -4,10 +4,10 @@ import {
   deleteTrack,
   getRandomTracksIds,
   getTracks,
+  getTracksByIds,
   getTracksByPagination,
-  getUserPlaylistsForSelection,
 } from "./track.repository";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { mapTrack } from "./track.mapper";
 import { TrackWithRecommendations } from "@/types/track.types";
@@ -52,19 +52,28 @@ export const getTracksByPage = async ({ page, rows }: { page: number; rows: numb
   return await getTracksByPagination({ page, rows });
 };
 
+export const getTracksWithoutTrackById = async ({
+  limit,
+  trackId,
+}: {
+  limit: number;
+  trackId: string;
+}) => {
+  const ids = await getRandomTracksIds(limit, [trackId]);
+  return await getTracksByIds({ trackIds: ids.map(({ id }) => id) });
+};
+
 export const getTrackWithRecommendationsService = async ({
   limit,
   trackIds,
-  userId,
 }: {
   limit: number;
   trackIds: string[];
-  userId?: string;
 }): Promise<TrackWithRecommendations[]> => {
   const targetTrackIds = trackIds.slice(0, limit);
 
   const randomIdsResponses = await Promise.all(
-    targetTrackIds.map((id) => getRandomTracksIds(5, id)),
+    targetTrackIds.map((id) => getRandomTracksIds(5, [id])),
   );
 
   const recommendationsMap = targetTrackIds.reduce(
@@ -82,7 +91,6 @@ export const getTrackWithRecommendationsService = async ({
   const allTracksRaw = await getTracks({
     limit: allNeededIds.length,
     ids: allNeededIds,
-    userId,
   });
 
   if (!allTracksRaw || allTracksRaw.length === 0) {
@@ -93,7 +101,6 @@ export const getTrackWithRecommendationsService = async ({
     });
   }
 
-  const userPlaylists = userId ? await getUserPlaylistsForSelection({ userId }) : null;
   return targetTrackIds
     .map((mainId) => {
       const mainTrack = allTracksRaw.find((t) => t.id === mainId);
@@ -102,10 +109,10 @@ export const getTrackWithRecommendationsService = async ({
       const recommendedIds = recommendationsMap[mainId] || [];
       const recommendedTracks = allTracksRaw
         .filter((t) => recommendedIds.includes(t.id))
-        .map((t) => mapTrack(t, userId, userPlaylists));
+        .map((t) => mapTrack(t));
 
       return {
-        ...mapTrack(mainTrack, userId, userPlaylists),
+        ...mapTrack(mainTrack),
         recommendedTracks,
       };
     })

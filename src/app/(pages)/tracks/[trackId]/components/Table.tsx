@@ -1,19 +1,18 @@
 "use client";
 import { use } from "react";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { TrackByIdApiResponse } from "@/types/track.types";
+import { TrackWithRecommendations } from "@/types/track.types";
 import TrackTable from "@/components/features/tables/TrackTable";
 
 export default function SingleTrackTable({
   trackPromise,
   tracksPromise,
 }: {
-  trackPromise: Promise<TrackByIdApiResponse[] | null>;
-  tracksPromise: Promise<TrackByIdApiResponse[] | null>;
+  trackPromise: Promise<TrackWithRecommendations[] | null>;
+  tracksPromise: Promise<TrackWithRecommendations[] | null>;
 }) {
   const pageTrack = use(trackPromise);
   const tracksData = use(tracksPromise);
-
   if (!pageTrack || !pageTrack[0] || !tracksData) return null;
   const track = pageTrack[0];
   const mainTrack = parseTrackByPlayer(track);

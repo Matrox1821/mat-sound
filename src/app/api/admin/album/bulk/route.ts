@@ -1,6 +1,6 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { albumBulkSchema } from "@/shared/utils/schemas/bulkValidations";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { prisma } from "@config/db";
 import { NextRequest } from "next/server";
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
             },
           },
         });
-      })
+      }),
     );
 
     if (results.length === 0) {

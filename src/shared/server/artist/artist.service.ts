@@ -7,12 +7,13 @@ import {
   getArtistsByPagination,
   getArtistTracks,
 } from "./artist.repository";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { GET_BUCKET_URL } from "@/shared/utils/constants";
 import { ImageSizes } from "@/types/common.types";
 import { ArtistByPagination } from "@/types/artist.types";
 import { mapArtistTracks } from "./artist.mapper";
+import { getRandomTracksIdsByGenre, getTracksByIds } from "../track/track.repository";
 
 const ARTISTS_PER_PAGES = 6;
 
@@ -150,12 +151,14 @@ export const getSortedArtistTracks = async ({
   limit,
   order,
   userId,
+  tracksRecommended,
 }: {
   id?: string;
   sort: string;
   order: "asc" | "desc";
   limit: number;
   userId: string | null;
+  tracksRecommended?: boolean;
 }) => {
   const validSortFields = ["id", "name", "releaseDate", "reproductions", "duration", "createdAt"];
 
@@ -178,7 +181,6 @@ export const getSortedArtistTracks = async ({
     }
     return orderBy;
   };
-
   const filter = setOrderBy({ sort, order, fields: validSortFields });
   const tracks = await getArtistTracks({ id, limit, orderBy: filter, userId });
 
@@ -193,5 +195,20 @@ export const getSortedArtistTracks = async ({
       httpStatusCode: HttpStatusCode.NOT_FOUND,
     });
   }
-  return mapArtistTracks(tracks);
+  if (!tracksRecommended) {
+    return {
+      tracks: mapArtistTracks(tracks),
+    };
+  }
+  const genres = tracks.map((track) => track.genres.map((genre) => genre.id));
+  const uniqueGenres = [...new Set(genres?.flat())].filter(Boolean);
+  const trackIds = tracks.map((track) => track.id);
+  const recommendedIds = await getRandomTracksIdsByGenre(20, trackIds, uniqueGenres);
+  const idsList = recommendedIds.map((item) => item.id);
+  const recommendedTracks = await getTracksByIds({ trackIds: idsList });
+  const mappedTracks = {
+    tracks: mapArtistTracks(tracks),
+    ...(recommendedTracks !== null && { recommended: mapArtistTracks(recommendedTracks) }),
+  };
+  return mappedTracks;
 };

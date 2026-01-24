@@ -15,7 +15,7 @@ export function SelectInput({
   data,
   zIndex = 30,
   title,
-  options: { isRequired, isMultiple, sendImage, sendName },
+  options: { isRequired, isMultiple, sendName },
   callback,
   initialElements,
 }: {
@@ -23,7 +23,7 @@ export function SelectInput({
   data: Element[];
   zIndex?: number;
   title: string;
-  options: { isRequired?: boolean; isMultiple?: boolean; sendImage?: boolean; sendName?: boolean };
+  options: { isRequired?: boolean; isMultiple?: boolean; sendName?: boolean };
   initialElements?: Element[];
   callback?: (value: string[], elements: Element[]) => void;
 }) {

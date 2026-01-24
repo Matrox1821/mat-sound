@@ -1,5 +1,5 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 import { createArtist } from "@/shared/server/artist/artist.repository";

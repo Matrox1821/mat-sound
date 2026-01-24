@@ -15,7 +15,7 @@ export default function AlbumsTable({
   data,
   rows = "6",
 }: {
-  data: Promise<AlbumByPagination[] | undefined>;
+  data: Promise<AlbumByPagination[] | null>;
   rows?: string;
 }) {
   const albums = use(data);

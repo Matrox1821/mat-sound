@@ -1,4 +1,4 @@
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -131,7 +131,7 @@ export const resizeImage = async ({
       result.buffer[key as "sm" | "md" | "lg"] = risizedBuffer;
       result.dbPath![key as "sm" | "md" | "lg"] = dbPath;
       result.r2Path![key as "sm" | "md" | "lg"] = r2Path;
-    })
+    }),
   );
 
   return result;

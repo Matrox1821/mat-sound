@@ -38,7 +38,9 @@ export function parseAlbumFormData(formData: FormData): AlbumFormData {
     name: formData.get("name") as string,
     cover: formData.get("cover") as File | null,
     artists: formData.getAll("artists") as string[],
-    tracksOrder: parseJSON<Record<string, string>>(formData.get("tracksOrder")),
+    tracksOrder: parseJSON<{ [key: string]: { order: number; disk: number } }>(
+      formData.get("tracksOrder"),
+    ),
     releaseDate: formData.get("releaseDate") as string,
   };
 }

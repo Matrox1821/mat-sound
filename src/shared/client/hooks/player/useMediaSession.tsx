@@ -1,11 +1,11 @@
 "use client";
+import { playerTrackProps } from "@/types/track.types";
 import { useEffect } from "react";
 import type { RefObject } from "react";
-import type { contentProps } from "@/types/common.types";
 
 export const useMediaSession = (
   audio: RefObject<HTMLAudioElement> | undefined,
-  currentTrack: contentProps | null = null
+  currentTrack: playerTrackProps | null = null,
 ) => {
   useEffect(() => {
     if (!audio?.current || !currentTrack) return;
@@ -13,10 +13,10 @@ export const useMediaSession = (
     if ("mediaSession" in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentTrack.name,
-        artist: currentTrack.artists ? currentTrack.artists[0].name : currentTrack.artist?.name,
+        artist: currentTrack.artists ? currentTrack.artists[0].name : "",
         artwork: [
           {
-            src: currentTrack.image.sm,
+            src: currentTrack.cover.sm,
             sizes: "512x512",
             type: "image/jpeg",
           },

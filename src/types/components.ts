@@ -1,5 +1,5 @@
 import { ContentType, ImageSizes } from "./common.types";
-import { playerTrackProps } from "./trackProps";
+import { playerTrackProps } from "./track.types";
 
 export interface CarousellContentProps {
   id: string;

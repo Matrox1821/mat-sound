@@ -1,14 +1,14 @@
 import { ArtistBase } from "./artist.types";
 import { ImageSizes } from "./common.types";
 
-export interface MappedArtistService {
+export interface ArtistContentService {
   type: "artists";
   name: string;
   id: string;
   avatar: ImageSizes | null;
 }
 
-export interface MappedAlbumService {
+export interface AlbumContentService {
   id: string;
   name: string;
   cover: ImageSizes | null;
@@ -16,7 +16,7 @@ export interface MappedAlbumService {
   artists: ArtistBase[];
 }
 
-export interface MappedTrackService {
+export interface TrackContentService {
   type: "tracks";
   id: string;
   name: string;
@@ -26,41 +26,20 @@ export interface MappedTrackService {
   duration: number;
   lyrics: string | null;
   reproductions: number;
-
+  likes: number;
   artists: ArtistBase[];
   albums: TrackAlbumRelation[];
-  playlists: TrackPlaylistRelation[];
-  isLiked: boolean;
-  collections: TrackCollectionRelation[];
-
-  likes: number;
-  userPlaylists: UserPlaylistMappedTrackService[] | undefined | null;
 }
 
-export interface UserPlaylistMappedTrackService {
-  id: string;
-  name: string;
-  image?: ImageSizes;
-  isInPlaylist: boolean;
-  type: "playlists";
-}
-
-export interface PLaylistRepo {
-  type: string;
-  id: string;
-  name: string;
-  cover: ImageSizes;
-}
-
-export interface DiscoveryTrack extends Omit<MappedTrackService, "recommendedTracks"> {
-  recommendedTracks: MappedTrackService[];
+export interface ContentTrack extends Omit<TrackContentService, "recommendedTracks"> {
+  recommendedTracks: TrackContentService[];
 }
 
 export type ContentElement =
-  | DiscoveryTrack
-  | MappedAlbumService
-  | MappedArtistService
-  | PlaylistService;
+  | ContentTrack
+  | AlbumContentService
+  | ArtistContentService
+  | PlaylistContentService;
 
 //Repo
 
@@ -70,7 +49,7 @@ export interface AlbumBase {
   cover: ImageSizes;
 }
 
-export interface AlbumWithArtistsRepo extends AlbumBase {
+export interface AlbumContentRepository extends AlbumBase {
   artists: ArtistBase[];
 }
 
@@ -80,25 +59,7 @@ export interface TrackAlbumRelation {
   disk: number;
 }
 
-export interface TrackLike {
-  userId: string;
-  trackId: string;
-  likedAt: Date;
-}
-
-export interface TrackPlaylistRelation {
-  trackId: string;
-  playlistId: string;
-  addedAt: Date;
-}
-
-export interface TrackCollectionRelation {
-  trackId: string;
-  addedAt: Date;
-  collectionId: string;
-}
-
-export interface TrackWithRelationsRepo {
+export interface TrackContentRepository {
   id: string;
   name: string;
   cover: ImageSizes;
@@ -107,36 +68,24 @@ export interface TrackWithRelationsRepo {
   duration: number;
   lyrics: string | null;
   reproductions: number;
-
   artists: ArtistBase[];
   albums: TrackAlbumRelation[];
-  playlists: TrackPlaylistRelation[];
-  likes?: TrackLike[];
-  collections: TrackCollectionRelation[];
-
   _count: {
     likes: number;
   };
 }
-export interface PlaylistRepo {
+
+export interface PlaylistContentService {
   id: string;
   name: string;
   cover?: ImageSizes;
-  tracks?: {
-    track: {
-      id: string;
-      cover: ImageSizes;
-    };
-  }[];
-}
-export interface UserPlaylistsRepo {
-  playlists: PlaylistRepo[];
+  tracks?: { id: string; name: string; cover: ImageSizes }[];
+  type: "playlists";
 }
 
-export interface PlaylistService {
+export interface PlaylistContentRepository {
   id: string;
   name: string;
-  image?: ImageSizes;
-  tracks?: ImageSizes[];
-  type: "playlists";
+  cover?: ImageSizes;
+  tracks?: { track: { id: string; name: string; cover: ImageSizes } }[];
 }

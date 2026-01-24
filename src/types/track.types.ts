@@ -1,7 +1,6 @@
 import { ImageSizes } from "./common.types";
 import { ArtistBase } from "./artist.types";
 import { AlbumBase } from "./album.types";
-import { PlaylistSelectionItem, TrackPlaylistStatus } from "./playlist.types";
 
 export interface TrackGenre {
   id: string;
@@ -17,7 +16,6 @@ export interface TrackById {
   song: string;
   reproductions: number;
   lyrics: string | null;
-  artists: ArtistBase[];
   albums: {
     album: AlbumBase;
   }[];
@@ -25,33 +23,14 @@ export interface TrackById {
   _count: {
     likes: number;
   };
-  likes?: {
-    userId: string;
-  }[];
+
+  artists: ArtistBase[];
 }
 
 export interface TrackAlbumRelation {
   album: AlbumBase;
   order: number;
   disk: number;
-}
-
-export interface TrackLike {
-  userId: string;
-  trackId: string;
-  likedAt: Date;
-}
-
-export interface TrackPlaylistRelation {
-  trackId: string;
-  playlistId: string;
-  addedAt: Date;
-}
-
-export interface TrackCollectionRelation {
-  trackId: string;
-  addedAt: Date;
-  collectionId: string;
 }
 
 export interface TrackWithRelations {
@@ -67,9 +46,6 @@ export interface TrackWithRelations {
   // Relaciones
   artists: ArtistBase[];
   albums: TrackAlbumRelation[];
-  playlists: TrackPlaylistRelation[];
-  likes: TrackLike[];
-  collections: TrackCollectionRelation[];
 
   // Metadatos de Prisma
   _count: {
@@ -93,7 +69,6 @@ export interface TrackByIdMapped {
     disk: number;
   }[];
   likes: number; // Antes _count.likes
-  isLiked: boolean; // Antes likes: []
   type: "track";
 }
 export interface TrackMapped {
@@ -113,8 +88,6 @@ export interface TrackMapped {
     disk: number;
   }[];
   likes: number;
-  isLiked: boolean;
-  userPlaylists?: TrackPlaylistStatus[];
 }
 
 export interface TrackWithRecommendations extends TrackMapped {
@@ -151,6 +124,28 @@ export interface TrackByPagination {
   }[];
 }
 
-export interface TrackByIdApiResponse extends TrackWithRecommendations {
-  playlists: PlaylistSelectionItem[];
+export interface playerTrackProps {
+  id: string;
+  cover: ImageSizes;
+  name: string;
+  song: string;
+  duration: number;
+  reproductions: number;
+  releaseDate: string;
+  likes: number;
+  lyrics: string;
+  albums?:
+    | {
+        name: string;
+        id: string;
+        cover: ImageSizes;
+      }[]
+    | null;
+  artists?:
+    | {
+        name: string;
+        id: string;
+        avatar: ImageSizes;
+      }[]
+    | null;
 }

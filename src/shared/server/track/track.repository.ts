@@ -6,15 +6,14 @@ import { updateAlbumGenre } from "../album/album.repository";
 import { TrackById, TrackByPagination, TrackWithRelations } from "@/types/track.types";
 import { ImageSizes } from "@/types/common.types";
 import { TrackFormData } from "@/types/form.types";
+import { Prisma } from "../../../../generated/prisma/client";
 
 export const getTracks = async ({
   limit,
   ids,
-  userId,
 }: {
   limit: number;
   ids: string[];
-  userId?: string;
 }): Promise<TrackWithRelations[]> => {
   return (await prisma.track.findMany({
     take: limit,
@@ -28,21 +27,6 @@ export const getTracks = async ({
       reproductions: true,
       releaseDate: true,
       lyrics: true,
-      collections: true,
-      playlists: true,
-
-      likes: userId
-        ? {
-            where: {
-              userId: userId,
-            },
-            select: {
-              userId: true,
-            },
-            take: 1,
-          }
-        : false,
-
       _count: { select: { likes: true } },
       artists: {
         select: { name: true, id: true, avatar: true },
@@ -54,48 +38,56 @@ export const getTracks = async ({
   })) as unknown as TrackWithRelations[];
 };
 
-export const getUserPlaylistsForSelection = async ({ userId = "" }: { userId: string }) => {
-  if (userId === "") return;
-
-  const response = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      playlists: {
-        select: {
-          id: true,
-          name: true,
-          cover: true,
-          tracks: { select: { track: { select: { id: true, cover: true } } } },
-        },
-      },
-    },
-  });
-  return response;
-};
-
 export async function getRandomTracksIds(
   limit = 5,
-  excludeId: string | null = null,
+  excludeId: string[] | null = null,
 ): Promise<{ id: string }[]> {
-  if (excludeId) {
-    return await prisma.$queryRaw<{ id: string }[]>`
-      SELECT id 
-      FROM track
-      WHERE id <> ${excludeId}::uuid
-      AND song IS NOT NULL 
-      AND song <> ''
-      ORDER BY RANDOM()
-      LIMIT ${limit};
-    `;
-  }
+  const idsToExclude = Array.isArray(excludeId) ? excludeId : excludeId ? [excludeId] : [];
+
+  const excludeCondition =
+    idsToExclude.length > 0
+      ? Prisma.sql`AND id NOT IN (SELECT unnest(${idsToExclude}::uuid[]))`
+      : Prisma.empty;
 
   return await prisma.$queryRaw<{ id: string }[]>`
     SELECT id
     FROM track
+    WHERE song IS NOT NULL
+    AND song <> ''
+    ${excludeCondition}
+    ORDER BY RANDOM()
+    LIMIT ${limit};
+  `;
+}
+
+export async function getRandomTracksIdsByGenre(
+  limit = 5,
+  excludeId: string | string[] | null = null,
+  genresIds?: string[],
+): Promise<{ id: string }[]> {
+  const idsToExclude = Array.isArray(excludeId) ? excludeId : excludeId ? [excludeId] : [];
+
+  const excludeCondition =
+    idsToExclude.length > 0
+      ? Prisma.sql`AND id NOT IN (SELECT unnest(${idsToExclude}::uuid[]))`
+      : Prisma.empty;
+
+  const genresCondition =
+    genresIds && genresIds.length > 0
+      ? Prisma.sql`AND EXISTS (
+        SELECT 1 FROM "_GenreToTrack" 
+        WHERE "_GenreToTrack"."B" = track.id 
+        AND "_GenreToTrack"."A" IN (SELECT unnest(${genresIds}::uuid[]))
+      )`
+      : Prisma.empty;
+
+  return await prisma.$queryRaw<{ id: string }[]>`
+    SELECT id 
+    FROM track
     WHERE song IS NOT NULL 
     AND song <> ''
+    ${excludeCondition}
+    ${genresCondition}
     ORDER BY RANDOM()
     LIMIT ${limit};
   `;
@@ -103,10 +95,8 @@ export async function getRandomTracksIds(
 
 export const getTrackById = async ({
   trackId,
-  userId = "",
 }: {
   trackId?: string;
-  userId?: string;
 }): Promise<TrackById | null> => {
   if (!trackId) return null;
   return (await prisma.track.findUnique({
@@ -123,18 +113,6 @@ export const getTrackById = async ({
       },
       duration: true,
       song: true,
-      likes: userId
-        ? {
-            where: {
-              userId: userId,
-            },
-            select: {
-              userId: true,
-            },
-            take: 1,
-          }
-        : false,
-
       _count: { select: { likes: true } },
       reproductions: true,
       lyrics: true,
@@ -154,6 +132,49 @@ export const getTrackById = async ({
     },
   })) as unknown as TrackById;
 };
+
+export async function getTracksByIds({
+  trackIds,
+}: {
+  trackIds: string[];
+}): Promise<TrackById[] | null> {
+  if (trackIds.length === 0) return null;
+
+  return (await prisma.track.findMany({
+    where: {
+      id: {
+        in: trackIds,
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      cover: true,
+      releaseDate: true,
+      artists: {
+        select: { id: true, avatar: true, name: true },
+      },
+      duration: true,
+      song: true,
+      _count: { select: { likes: true } },
+      reproductions: true,
+      lyrics: true,
+      albums: {
+        select: {
+          album: {
+            select: { id: true, cover: true, name: true },
+          },
+        },
+      },
+      genres: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  })) as unknown as TrackById[];
+}
 
 export const countTracks = async ({
   artistName = "",

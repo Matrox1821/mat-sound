@@ -1,41 +1,28 @@
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import { getUserPlaylists } from "@/shared/server/user/user.repository";
-import { getTrackWithRecommendationsService } from "@/shared/server/track/track.service";
-import { TrackWithRecommendations } from "@/types/track.types";
+import {
+  getTracksWithoutTrackById,
+  getTrackWithRecommendationsService,
+} from "@/shared/server/track/track.service";
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const limit = req.nextUrl.searchParams.get("limit");
-    const userId = req.nextUrl.searchParams.get("user_id") || "";
-    const userPlaylists = await getUserPlaylists({ userId });
-    if (limit) {
-      const tracks = await getTrackWithRecommendationsService({
+    const excludeId = req.nextUrl.searchParams.get("exclude_id") || "";
+    if (!!limit && excludeId !== "") {
+      const tracks = await getTracksWithoutTrackById({
         limit: Number(limit),
-        trackIds: [id],
-        userId,
+        trackId: id,
       });
 
       return onSuccessRequest({
         httpStatusCode: HttpStatusCode.OK,
-        data: tracks.map((track) => {
-          if (!userPlaylists) return track as TrackWithRecommendations;
-
-          return {
-            ...track,
-            playlists: userPlaylists.playlists.map((playlist) => ({
-              ...playlist,
-              isInPlaylist: playlist.tracks.some(
-                ({ track: playlistTrack }) => playlistTrack.id === track.id,
-              ),
-            })),
-          };
-        }),
+        data: tracks,
       });
     }
     /* let trackResponse; */
-    const response = await getTrackWithRecommendationsService({ limit: 1, trackIds: [id], userId });
+    const response = await getTrackWithRecommendationsService({ limit: 1, trackIds: [id] });
 
     return onSuccessRequest({
       httpStatusCode: HttpStatusCode.OK,

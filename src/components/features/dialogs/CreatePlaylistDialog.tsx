@@ -2,7 +2,7 @@
 import { createPlaylist as createUserPlaylist } from "@/actions/user";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { useCreatePlaylistDialogStore } from "@/store/createPlaylistDialogStore";
-import { usePathname } from "next/navigation";
+import { usePlaylistStore } from "@/store/playlistStore";
 import { Dialog as PrimeReactDialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { FloatLabel } from "primereact/floatlabel";
@@ -10,8 +10,6 @@ import { InputText } from "primereact/inputtext";
 import { useState, useTransition } from "react";
 
 export function CreatePlaylistDialog() {
-  const pathname = usePathname();
-
   const options = [
     { name: "Privada", icon: "pi-lock" },
     { name: "Pública", icon: "pi-globe" },
@@ -19,6 +17,7 @@ export function CreatePlaylistDialog() {
   const { isVisible, setIsVisible, trackId } = useCreatePlaylistDialogStore();
   const [selectedVisibility, setSelectedVisibility] = useState(options[0]);
   const [value, setValue] = useState("");
+  const createPlaylist = usePlaylistStore((state) => state.createPlaylist);
 
   const [isPending, startTransition] = useTransition();
 
@@ -31,8 +30,9 @@ export function CreatePlaylistDialog() {
 
     startTransition(async () => {
       try {
-        await createUserPlaylist(trackId, value, pathname);
+        const playlist = await createUserPlaylist(value, trackId);
         toastSuccess(`Playlist "${value}" creada con éxito`);
+        createPlaylist(playlist.id, playlist.name);
         setIsVisible(false);
         setValue("");
       } catch {

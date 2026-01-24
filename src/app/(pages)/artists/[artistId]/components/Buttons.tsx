@@ -10,16 +10,21 @@ import { ArtistTracks } from "@/types/artist.types";
 export function PlayButton({
   tracksList,
   artistName,
+  upcomingList,
 }: {
   tracksList: ArtistTracks[] | null;
+  upcomingList?: ArtistTracks[] | null;
   artistName: string | null;
 }) {
-  const { setTrack, currentTrack, setPlayingFrom, playingFrom } = usePlayerStore((state) => state);
+  const { setTrack, currentTrack, setPlayingFrom, playingFrom, setUpcoming } = usePlayerStore(
+    (state) => state,
+  );
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
 
   if (!tracksList) return null;
   const tracks = tracksList.map((newTrack) => parseTrackByPlayer(newTrack));
+
   const playAlbum = (e: any) => {
     e.stopPropagation();
     e.preventDefault();
@@ -34,6 +39,10 @@ export function PlayButton({
     } else {
       setTrack(tracks[0], tracks);
       setPlayingFrom(artistName || "");
+      if (upcomingList) {
+        const upcoming = upcomingList.map((newTrack) => parseTrackByPlayer(newTrack));
+        setUpcoming(upcoming);
+      }
       play();
     }
   };

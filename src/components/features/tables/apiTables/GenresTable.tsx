@@ -11,7 +11,7 @@ export default function GenresTable({
   data,
   rows = "6",
 }: {
-  data: Promise<{ name: string; id: string }[] | undefined>;
+  data: Promise<{ name: string; id: string }[] | null>;
   rows?: string;
 }) {
   const genres = use(data);

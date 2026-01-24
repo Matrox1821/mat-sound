@@ -1,7 +1,8 @@
 "use client";
-import TrackTable from "@/components/ui/tables/TrackTable";
+import TrackTable from "@/components/features/tables/TrackTable";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { playerTrackProps } from "@/types/trackProps";
+import { playerTrackProps } from "@/types/track.types";
+
 import { use } from "react";
 
 export default function FavoritesTable({
@@ -10,8 +11,8 @@ export default function FavoritesTable({
   tracksPromise: Promise<playerTrackProps[] | null>;
 }) {
   const tracksData = use(tracksPromise);
-  if (!tracksData) return null;
 
+  if (!tracksData) return null;
   const tracks = tracksData.map((t) => parseTrackByPlayer(t));
 
   return (

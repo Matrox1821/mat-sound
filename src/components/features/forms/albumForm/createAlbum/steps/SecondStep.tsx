@@ -5,13 +5,7 @@ import { SelectInput } from "@/components/features/inputs/SelectInput";
 import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { useEffect, useState, useRef } from "react";
 
-export function SecondStep({
-  formData,
-  onChange,
-}: {
-  formData: any;
-  onChange: (field: any, value: any) => void;
-}) {
+export function SecondStep({ onChange }: { onChange: (field: any, value: any) => void }) {
   const [selectedArtists, setSelectedArtists] = useState<any[]>([]);
   const [tracks, setTracks] = useState<any[]>([]);
   const [chosenTracks, setChosenTracks] = useState<any[]>([]);

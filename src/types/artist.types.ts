@@ -22,8 +22,20 @@ export interface ArtistByPagination {
 }
 
 export interface ArtistTracksRepository {
-  name: string;
   id: string;
+  name: string;
+  cover: ImageSizes;
+  releaseDate: Date;
+  duration: number;
+  song: string | null;
+  reproductions: number;
+  lyrics: string | null;
+  playlists: {
+    addedAt: Date;
+    trackId: string;
+    playlistId: string;
+    tracks: { id: string; cover: string; name: string }[];
+  }[];
   albums: {
     album: {
       name: string;
@@ -34,35 +46,37 @@ export interface ArtistTracksRepository {
   _count: {
     likes: number;
   };
+  genres: {
+    id: string;
+    name: string;
+  }[];
   likes?: {
     userId: string;
     trackId: string;
     likedAt: Date;
   }[];
-  cover: ImageSizes;
-  song: string | null;
-  releaseDate: Date;
-  duration: number;
-  lyrics: string | null;
-  reproductions: number;
 }
 
 export interface ArtistTracks {
-  isLiked: boolean;
+  id: string;
+  name: string;
+  cover: ImageSizes;
+  releaseDate: Date;
+  duration: number;
+  song: string | null;
+  reproductions: number;
+  lyrics: string | null;
   likes: number;
+  artists?: ArtistBase[];
   albums: {
     name: string;
     id: string;
     cover: ImageSizes;
   }[];
-  name: string;
-  id: string;
-  cover: ImageSizes;
-  song: string | null;
-  releaseDate: Date;
-  duration: number;
-  lyrics: string | null;
-  reproductions: number;
+  genres: {
+    id: string;
+    name: string;
+  }[];
 }
 
 export interface ArtistRepository {

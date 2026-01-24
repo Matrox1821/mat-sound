@@ -25,23 +25,29 @@ const getTracksByArtistId = async ({
   id,
   userId,
   query,
+  tracksRecommended,
 }: {
   id: string;
   userId?: string;
   query?: TracksByArtistIdQuery;
-}): Promise<ArtistTracks[] | null> => {
+  tracksRecommended?: boolean;
+}): Promise<{
+  recommended?: ArtistTracks[] | undefined;
+  tracks: ArtistTracks[];
+} | null> => {
   const params = new URLSearchParams();
   if (query?.sortBy) params.set("sort", query.sortBy);
   if (query?.order) params.set("order", query.order);
   if (query?.limit) params.set("limit", String(query.limit));
   if (userId) params.set("user_id", String(userId));
+  if (tracksRecommended) params.set("tracks_recommended", String(tracksRecommended));
+
   try {
-    const response = await handleCustomApiRequest<ArtistTracks[]>(
-      GET_URL + "/api/artists/" + id + "/tracks" + "?" + params.toString(),
-      "GET",
-      null,
-    );
-    if (response.errors?.length || !response.data || !response.data?.length) {
+    const response = await handleCustomApiRequest<{
+      recommended?: ArtistTracks[] | undefined;
+      tracks: ArtistTracks[];
+    }>(GET_URL + "/api/artists/" + id + "/tracks" + "?" + params.toString(), "GET", null);
+    if (response.errors?.length || !response.data) {
       throw new Error(response.message || "Error en la petición");
     }
     return response.data;
@@ -49,13 +55,6 @@ const getTracksByArtistId = async ({
     return null;
   }
 };
-/* const getAlbumsByArtistId = async (id: string) => {
-  return await handleCustomApiRequest<APIContent[]>(
-    GET_URL + "/api/artists/" + id + "/albums",
-    "GET",
-    null
-  );
-}; */
 
 export const artistApi = {
   getArtistById,

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { Prisma } from "../../generated/prisma/client";
 
@@ -66,7 +66,7 @@ const onThrowError = (error: any) => {
           errors: [{ message: "Email already in use." }],
           message: "Database Error.",
         }),
-        { status: 500 }
+        { status: 500 },
       );
     }
   }
@@ -78,7 +78,7 @@ const onThrowError = (error: any) => {
         errors: error.errorData.errors,
         message: error.errorData.message,
       }),
-      { status: error.errorData.httpStatusCode }
+      { status: error.errorData.httpStatusCode },
     );
 
   return NextResponse.json(
@@ -87,7 +87,7 @@ const onThrowError = (error: any) => {
       errors: [{ message: error.message }],
       message: "Unexpected error.",
     }),
-    { status: 500 }
+    { status: 500 },
   );
 };
 

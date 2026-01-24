@@ -6,23 +6,26 @@ import { formatTime } from "@/shared/utils/helpers";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { playerTrackProps } from "@/types/trackProps";
 import Link from "next/link";
 import { useState } from "react";
-import { ArtistServer } from "@/types/artist.types";
+import { ArtistServer, ArtistTracks } from "@/types/artist.types";
 import { SafeImage } from "@/components/ui/images/SafeImage";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
+import { playerTrackProps } from "@/types/track.types";
 
 export default function PopularTracks({
   tracks,
   artist,
+  upcomingList,
 }: {
   tracks: playerTrackProps[] | null;
   artist: ArtistServer | null;
+  upcomingList?: ArtistTracks[] | null;
 }) {
-  const { setTrack, currentTrack, setPlayingFrom } = usePlayerStore((state) => state);
+  const { setTrack, currentTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
-
+  const { error } = useToast();
   const [tracksList, setTracksList] = useState<playerTrackProps[] | null>(
     tracks?.slice(0, 5) || null,
   );
@@ -32,6 +35,10 @@ export default function PopularTracks({
   const playTrack = (e: any, track: playerTrackProps) => {
     e.stopPropagation();
     e.preventDefault();
+    if (!track.song || track.song === "") {
+      error("Pista de audio no disponible");
+      return;
+    }
     if (!playerBarIsActive) activePlayerBar();
     if (track.id === currentTrack?.id) {
       if (isPlaying) {
@@ -42,6 +49,10 @@ export default function PopularTracks({
     } else {
       setTrack(track, tracks);
       setPlayingFrom(artist.name);
+      if (upcomingList) {
+        const upcoming = upcomingList?.map((track) => parseTrackByPlayer(track));
+        setUpcoming(upcoming);
+      }
       play();
     }
   };

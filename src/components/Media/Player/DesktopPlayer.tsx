@@ -4,7 +4,6 @@ import { RefObject, useRef } from "react";
 import PlayerController from "../playerController";
 import { usePlayerStore } from "@/store/playerStore";
 import { useAudioController } from "@/shared/client/hooks/player/useAudioController";
-import { playerTrackProps } from "@/types/trackProps";
 import Link from "next/link";
 
 import { LikeButton } from "@/components/ui/buttons/Like";
@@ -13,6 +12,7 @@ import { RightMenu } from "../options/RightMenu";
 import { ScreenPlaylistMenu } from "../options/ScreenPlaylistMenu";
 import PlaylistSelector from "@/components/features/inputs/PlaylistSelector";
 import { SafeImage } from "@/components/ui/images/SafeImage";
+import { playerTrackProps } from "@/types/track.types";
 
 export default function DesktopPlayer() {
   const { currentTrack: track, playingFrom } = usePlayerStore();
@@ -59,11 +59,7 @@ const CurrentMusicWidget = ({
             {track.name}
           </Link>
           <div className="flex gap-2 items-center">
-            <LikeButton
-              trackId={track.id}
-              initialCount={track.likes}
-              initialIsLiked={track.isLiked}
-            />
+            <LikeButton trackId={track.id} />
             <PlaylistSelector track={track} />
           </div>
         </div>

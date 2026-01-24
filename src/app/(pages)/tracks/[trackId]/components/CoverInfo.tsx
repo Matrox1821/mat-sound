@@ -1,14 +1,14 @@
 "use client";
 import { SafeImage } from "@/components/ui/images/SafeImage";
 import { formatTime, parseNumberListeners } from "@/shared/utils/helpers";
-import { TrackByIdApiResponse } from "@/types/track.types";
+import { TrackWithRecommendations } from "@/types/track.types";
 import Link from "next/link";
 import { use } from "react";
 
 export default function CoverInfo({
   trackPromise,
 }: {
-  trackPromise: Promise<TrackByIdApiResponse[] | null>;
+  trackPromise: Promise<TrackWithRecommendations[] | null>;
 }) {
   const pageTrack = use(trackPromise);
   if (!pageTrack || !pageTrack[0]) return;

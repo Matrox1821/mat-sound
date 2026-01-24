@@ -34,9 +34,6 @@ export default function CoverInfo({
         <span className="text-xl font-normal">
           {artist.listeners.toLocaleString("en-US")} oyentes mensuales
         </span>
-        <button className="rounded-full h-8 px-6 cursor-pointer border-[1px] text-sm font-semibold border-background-200 text-background-50 hover:scale-105 hover:text-content-950 hover:border-content-950 ">
-          Seguir
-        </button>
       </div>
     </section>
   );

@@ -4,7 +4,7 @@ import { usePlaybackStore } from "@/store/playbackStore";
 import { useProgressStore } from "@/store/progressStore";
 import { useMainHeight } from "../ui/useMainHeight";
 import { useUIStore } from "@/store/activeStore";
-import { playerTrackProps } from "@/types/trackProps";
+import { playerTrackProps } from "@/types/track.types";
 
 export const usePlaylistManager = () => {
   const { togglePlay } = usePlaybackStore();

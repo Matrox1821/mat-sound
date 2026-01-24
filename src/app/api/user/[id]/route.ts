@@ -1,4 +1,4 @@
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { prisma } from "@config/db";
@@ -25,7 +25,7 @@ export async function GET({ params }: { params: Promise<{ id: string }> }) {
         name: true,
         biography: true,
         displayUsername: true,
-        image: true,
+        avatar: true,
         location: true,
         collection: {
           include: {

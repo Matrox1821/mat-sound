@@ -1,4 +1,4 @@
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { getAlbumById } from "@/shared/server/album/album.repository";

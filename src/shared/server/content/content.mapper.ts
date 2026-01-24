@@ -1,46 +1,46 @@
 import { ArtistBase } from "@/types/artist.types";
 import {
-  MappedArtistService,
-  MappedAlbumService,
-  MappedTrackService,
-  TrackWithRelationsRepo,
-  PlaylistRepo,
-  PlaylistService,
-  AlbumWithArtistsRepo,
+  ArtistContentService,
+  AlbumContentService,
+  TrackContentService,
+  TrackContentRepository,
+  AlbumContentRepository,
+  PlaylistContentService,
+  PlaylistContentRepository,
 } from "@/types/content.types";
 
-export const mapArtistsToContent = (artists: ArtistBase[]): MappedArtistService[] => {
+export const mapArtistsToContent = (artists: ArtistBase[]): ArtistContentService[] => {
   return artists.map((artist) => ({
     ...artist,
     type: "artists",
   }));
 };
 
-export const mapAlbumsToContent = (albums: AlbumWithArtistsRepo[]): MappedAlbumService[] => {
+export const mapAlbumsToContent = (albums: AlbumContentRepository[]): AlbumContentService[] => {
   return albums.map((album) => ({ ...album, type: "albums" }));
 };
 
-export const mapPlaylistToContent = (playlists: PlaylistRepo[]): PlaylistService[] => {
-  return playlists.map(({ cover, tracks, ...newPlaylist }) => ({
+export const mapPlaylistToContent = (
+  playlists: PlaylistContentRepository[],
+): PlaylistContentService[] => {
+  return playlists.map(({ tracks, ...newPlaylist }) => ({
     ...newPlaylist,
     type: "playlists",
-    image: cover,
-    tracks: tracks?.map(({ track }) => track.cover),
+    tracks: tracks?.map((item) => ({
+      id: item.track.id,
+      name: item.track.name,
+      cover: item.track.cover,
+    })),
   }));
 };
 
-export const mapTrackToContent = (
-  { _count, ...track }: TrackWithRelationsRepo,
-  userPlaylists: PlaylistService[] | null,
-): MappedTrackService => {
+export const mapTrackToContent = ({
+  _count,
+  ...track
+}: TrackContentRepository): TrackContentService => {
   return {
     ...track,
     type: "tracks",
-    isLiked: !!track.likes,
     likes: _count.likes || 0,
-    userPlaylists: userPlaylists?.map(({ tracks, ...playlist }) => ({
-      ...playlist,
-      isInPlaylist: tracks?.some((t: any) => t.track.id === track.id) || false,
-    })),
   };
 };

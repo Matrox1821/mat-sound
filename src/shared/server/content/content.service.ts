@@ -1,5 +1,5 @@
 "use server";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import {
   mapAlbumsToContent,
@@ -13,16 +13,15 @@ import {
   getArtistsForContent,
   getPlaylistsForContent,
   getTracksForContent,
-  getUserPlaylistsForSelection,
 } from "./content.repository";
 import {
   ContentElement,
-  DiscoveryTrack,
-  MappedAlbumService,
-  MappedArtistService,
+  ContentTrack,
+  AlbumContentService,
+  ArtistContentService,
 } from "@/types/content.types";
 
-export const getArtistsForDiscovery = async (limit: number): Promise<MappedArtistService[]> => {
+export const getArtistsForDiscovery = async (limit: number): Promise<ArtistContentService[]> => {
   const artists = await getArtistsForContent(limit);
   if (!artists || artists.length === 0) {
     throw new CustomError({
@@ -38,7 +37,7 @@ export const getArtistsForDiscovery = async (limit: number): Promise<MappedArtis
   return mapArtistsToContent(artists);
 };
 
-export const getAlbumsForDiscovery = async (limit: number): Promise<MappedAlbumService[]> => {
+export const getAlbumsForDiscovery = async (limit: number): Promise<AlbumContentService[]> => {
   const albums = await getAlbumsForContent(limit);
   if (!albums || albums.length === 0) {
     throw new CustomError({
@@ -58,7 +57,7 @@ export const getTracksForDiscovery = async (
   limit: number,
   userId?: string,
   filter?: any,
-): Promise<DiscoveryTrack[] | null> => {
+): Promise<ContentTrack[] | null> => {
   const discoveryBaseIds = await getRandomTracksIds(
     limit,
     filter?.by === "tracks" ? filter.id : null,
@@ -66,7 +65,7 @@ export const getTracksForDiscovery = async (
   const mainIds = discoveryBaseIds.map((t) => t.id);
 
   const recommendationsResponses = await Promise.all(
-    mainIds.map((id) => getRandomTracksIds(5, id)),
+    mainIds.map((id) => getRandomTracksIds(5, [id])),
   );
   const recsMap = mainIds.reduce(
     (acc, id, i) => {
@@ -92,24 +91,23 @@ export const getTracksForDiscovery = async (
     });
   }
 
-  const userPlaylists = userId ? await getUserPlaylistsForSelection({ userId }) : null;
-  const userPlaylistsMapped = userPlaylists && mapPlaylistToContent(userPlaylists);
   const rawResults = mainIds.map((id) => {
     const mainTrack = allTracksRaw.find((t) => t.id === id);
     if (!mainTrack) return null;
 
     const recommendedIds = recsMap[id] || [];
+
     const recommendedTracks = allTracksRaw
       .filter((t) => recommendedIds.includes(t.id))
-      .map((t) => mapTrackToContent(t, userPlaylistsMapped));
+      .map((t) => mapTrackToContent(t));
 
     return {
-      ...mapTrackToContent(mainTrack, userPlaylistsMapped),
+      ...mapTrackToContent(mainTrack),
       recommendedTracks,
-    } as DiscoveryTrack;
+    } as ContentTrack;
   });
 
-  return rawResults.filter((track): track is DiscoveryTrack => track !== null);
+  return rawResults.filter((track): track is ContentTrack => track !== null);
 };
 
 export const getContent = async ({

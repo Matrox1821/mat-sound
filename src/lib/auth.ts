@@ -22,17 +22,11 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      displayUsername: { type: "string" },
-      biography: { type: "string" },
-      location: { type: "string" },
+      displayUsername: { type: "string", required: true },
     },
+    username: { type: "string" },
   },
-  plugins: [
-    username({
-      usernameNormalization: (u) => u.toLowerCase().trim(),
-    }),
-    nextCookies(),
-  ],
+  plugins: [username(), nextCookies()],
   session: {
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,

@@ -1,19 +1,4 @@
-import { trackPageProps } from "@/types/common.types";
-import { APITrack, playerTrackProps } from "@/types/trackProps";
-
-export function parseTracks(data: APITrack[] | null): trackPageProps[] | null {
-  if (!data) return null;
-  return data.map((newData) => {
-    const { release_date, albums, artists, playlists, ...restData } = newData;
-    return {
-      ...restData,
-      releaseDate: release_date,
-      artists: artists?.map((artist) => ({ ...artist })) || null,
-      albums: albums?.map((album) => ({ ...album.album })) || null,
-      playlists: playlists,
-    };
-  });
-}
+import { playerTrackProps } from "@/types/track.types";
 
 export function parseTrackByPlayer(track: any): playerTrackProps {
   return {
@@ -26,7 +11,6 @@ export function parseTrackByPlayer(track: any): playerTrackProps {
     releaseDate: track.releaseDate ?? track.release_date ?? "",
     likes: track?.likes || 0,
     lyrics: track.lyrics || "",
-    isLiked: track.isLiked,
     artists: track.artists
       ? track.artists.map((a: any) => ({
           id: a.id ?? a.artist?.id,
@@ -34,7 +18,6 @@ export function parseTrackByPlayer(track: any): playerTrackProps {
           avatar: a.avatar ?? a.artist?.avatar,
         }))
       : [],
-    playlists: track.playlists,
     albums: track.albums
       ? track.albums.map((a: any) => ({
           id: a.id ?? a.album?.id,

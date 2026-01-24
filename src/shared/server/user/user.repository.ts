@@ -1,18 +1,16 @@
 "use server";
 
-import { CustomError } from "@/types/apiTypes";
-import { HttpStatusCode } from "@/types/httpStatusCode";
-import { UserPlaylistsRepo } from "@/types/playlist.types";
+import { UserPlaylistRepository } from "@/types/playlist.types";
 import { prisma } from "@config/db";
 
 export const getUserPlaylists = async ({
   userId = "",
 }: {
   userId: string;
-}): Promise<UserPlaylistsRepo | null> => {
+}): Promise<UserPlaylistRepository[] | null> => {
   if (userId === "") return null;
   try {
-    const response = (await prisma.user.findUnique({
+    const response = await prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -26,18 +24,8 @@ export const getUserPlaylists = async ({
           },
         },
       },
-    })) as unknown as UserPlaylistsRepo | null;
-    if (!response)
-      throw new CustomError({
-        errors: [
-          {
-            message: "Track not found.",
-          },
-        ],
-        msg: "Track not found.",
-        httpStatusCode: HttpStatusCode.NOT_FOUND,
-      });
-    return response;
+    });
+    return response as unknown as UserPlaylistRepository[];
   } catch {
     return null;
   }

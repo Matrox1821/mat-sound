@@ -8,8 +8,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const sort = (req.nextUrl.searchParams.get("sort") as string) || "releaseDate";
     const order = (req.nextUrl.searchParams.get("order") as "desc" | "asc") || "desc";
     const limit = parseInt(req.nextUrl.searchParams.get("limit") as string) || 10;
+    const tracksRecommended = !!req.nextUrl.searchParams.get("tracks_recommended") || false;
 
-    const response = await getSortedArtistTracks({ id, limit, order, sort, userId });
+    const response = await getSortedArtistTracks({
+      id,
+      limit,
+      order,
+      sort,
+      userId,
+      tracksRecommended,
+    });
 
     return onSuccessRequest({
       httpStatusCode: 200,

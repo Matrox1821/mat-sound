@@ -1,14 +1,16 @@
 import {
   ArtistTracksRepository,
-  ArtistTracks,
   ArtistRepository,
   ArtistServer,
+  ArtistTracks,
 } from "@/types/artist.types";
+import { TrackById } from "@/types/track.types";
 
-export const mapArtistTracks = (rawData: ArtistTracksRepository[]): ArtistTracks[] => {
-  return rawData.map(({ _count, likes, albums, ...track }) => ({
+export const mapArtistTracks = (
+  rawData: ArtistTracksRepository[] | TrackById[],
+): ArtistTracks[] => {
+  return rawData.map(({ _count, albums, ...track }) => ({
     ...track,
-    isLiked: !!likes,
     likes: _count.likes,
     albums: albums.map(({ album }) => album),
   }));

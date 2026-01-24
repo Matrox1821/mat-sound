@@ -1,5 +1,5 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { NextRequest } from "next/server";
 import { deleteFileToBucket } from "@/shared/server/files";
@@ -144,14 +144,12 @@ export async function PATCH(req: NextRequest) {
       });
 
     const song_path = body.song && (await uploadSong(body.song, track.id));
-    console.log(GET_BUCKET_URL && GET_BUCKET_URL + song_path);
     let updatedTrack: any = track;
     if (song_path) {
       updatedTrack = await updateTrackResourses({
         id: track.id,
         paths: { song: GET_BUCKET_URL && GET_BUCKET_URL + song_path },
       });
-      console.log(updatedTrack);
       if (!song_path || !updatedTrack) {
         await Promise.all([deleteTrack(track.id), deleteFileToBucket(body.song, song_path)]);
         throw new CustomError({

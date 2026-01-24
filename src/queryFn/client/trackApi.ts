@@ -1,14 +1,11 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { TrackByIdApiResponse } from "@/types/track.types";
+import { TrackWithRecommendations } from "@/types/track.types";
 
-const getTrackById = async (
-  id: string,
-  userId: string = "",
-): Promise<TrackByIdApiResponse[] | null> => {
+const getTrackById = async (id: string): Promise<TrackWithRecommendations[] | null> => {
   try {
-    const response = await handleCustomApiRequest<TrackByIdApiResponse[]>(
-      GET_URL + "/api/tracks/" + id + "?user_id=" + userId,
+    const response = await handleCustomApiRequest<TrackWithRecommendations[]>(
+      GET_URL + "/api/tracks/" + id,
       "GET",
       null,
     );
@@ -24,11 +21,14 @@ const getTrackById = async (
 const getTracksExceptId = async (
   id: string,
   limit: number,
-  userId: string = "",
-): Promise<TrackByIdApiResponse[] | null> => {
+): Promise<TrackWithRecommendations[] | null> => {
+  const params = new URLSearchParams();
+  params.set("exclude_id", String(id));
+  params.set("limit", String(limit));
+
   try {
-    const response = await handleCustomApiRequest<TrackByIdApiResponse[]>(
-      GET_URL + "/api/tracks/" + id + "?limit=" + limit + "&user_id=" + userId,
+    const response = await handleCustomApiRequest<TrackWithRecommendations[]>(
+      GET_URL + "/api/tracks/" + id + "?" + params.toString(),
       "GET",
       null,
     );

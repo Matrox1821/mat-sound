@@ -1,5 +1,5 @@
 "use server";
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { countGenres, deleteGenre } from "./genre.repository";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 

@@ -6,13 +6,13 @@ import { formatTime } from "@/shared/utils/helpers";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { playerTrackProps } from "@/types/trackProps";
 import { DropdownMenu } from "../menus/DropdownMenu";
 import { GET_URL } from "@/shared/utils/constants";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import PlaylistSelector from "@/components/features/inputs/PlaylistSelector";
 import { SafeImage } from "@/components/ui/images/SafeImage";
 import { LikeButton } from "@/components/ui/buttons/Like";
+import { playerTrackProps } from "@/types/track.types";
 
 interface TrackTableProps {
   tracks: playerTrackProps[];
@@ -31,7 +31,6 @@ export default function TrackTable({
   const { isPlaying, play, pause } = usePlaybackStore();
   const { playerBarIsActive, activePlayerBar } = useUIStore();
   const { message } = useToast();
-
   const handlePlay = (e: any, track: playerTrackProps) => {
     e.stopPropagation();
     if (!playerBarIsActive) activePlayerBar();
@@ -154,11 +153,7 @@ export default function TrackTable({
 
                 <td className="rounded-r-xl">
                   <div className="flex items-center gap-4">
-                    <LikeButton
-                      trackId={track.id}
-                      initialIsLiked={track.isLiked ?? false}
-                      initialCount={track?.likes ?? 0}
-                    />
+                    <LikeButton trackId={track.id} />
                     <PlaylistSelector track={track} />
                   </div>
                 </td>

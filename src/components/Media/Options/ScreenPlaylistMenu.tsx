@@ -8,13 +8,13 @@ import { parseLyricsToObject } from "@/shared/utils/helpers";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { playerTrackProps } from "@/types/trackProps";
 import Link from "next/link";
 import { Sidebar } from "primereact/sidebar";
 import { Fragment, RefObject, useState } from "react";
 import { SafeImage } from "@/components/ui/images/SafeImage";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { Pause } from "@/components/ui/icons/playback/Pause";
+import { playerTrackProps } from "@/types/track.types";
 
 export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
   const [showQueue, setShowQueue] = useState(true);

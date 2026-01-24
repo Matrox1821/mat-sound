@@ -1,8 +1,9 @@
-import { CustomError } from "@/types/apiTypes";
+import { CustomError } from "@/types/error.type";
 import { HttpStatusCode } from "@/types/httpStatusCode";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { prisma } from "@config/db";
-export async function GET({ params }: { params: Promise<{ id?: string }> }) {
+import { NextRequest } from "next/server";
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id?: string }> }) {
   try {
     const param = await params;
     if (!param?.id) {
