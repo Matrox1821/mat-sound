@@ -18,7 +18,6 @@ export async function adminSigninFormValidation(prevState: any, formData: FormDa
     const email = formData.get("email"),
       password = formData.get("password");
     const user = await signinAdminUser({ email, password });
-    console.log({ user });
     if ((user.errors && user.errors.length !== 0) || !user) throw new Error();
 
     const userStringify = JSON.stringify(user.user);
@@ -42,7 +41,6 @@ export async function signupFormValidation(
     const values = { email, username, password, confirmPassword };
 
     const validatedFields = SignupFormSchema.safeParse(values);
-
     if (!validatedFields.success) {
       const flattenedErrors = z.flattenError(validatedFields.error);
       return {
@@ -59,9 +57,8 @@ export async function signupFormValidation(
         name: username,
         username,
         displayUsername: username,
-        biography: "",
-        location: "",
       },
+      headers: await headers(),
     });
     if (!user) {
       throw new Error();
@@ -97,11 +94,13 @@ export async function signinFormValidation(
         data: { ...prevState.data, ...values },
       };
     }
+
     const user = await auth.api.signInEmail({
       body: {
         email,
         password,
       },
+      headers: await headers(),
     });
     if (!user) {
       throw new Error();
