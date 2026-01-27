@@ -1,12 +1,12 @@
 import { Suspense } from "react";
-import { ContentSkeleton, CoverInfoSkeleton, MainCoverSkeleton } from "@components/Skeleton";
-import MainCover from "@components/MainCover";
-import CoverInfo from "@components/CoverInfo";
-import Content from "@components/Content";
 import Carousel from "@components/ui/carousels";
 import { artistApi } from "@/queryFn/client/artistApi";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { ContentSkeleton, CoverInfoSkeleton, MainCoverSkeleton } from "./components/Skeleton";
+import MainCover from "./components/MainCover";
+import CoverInfo from "./components/CoverInfo";
+import ArtistContent from "./components/Content";
 
 export default async function ArtistPage({ params }: { params: Promise<{ artistId: string }> }) {
   const { artistId } = await params;
@@ -35,7 +35,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ artistI
         <CoverInfo artistPromise={artistPromise} />
       </Suspense>
       <Suspense fallback={<ContentSkeleton />}>
-        <Content
+        <ArtistContent
           artistPromise={artistPromise}
           popularTracksPromise={popularTracksPromise}
           newTrackPromise={newTrackPromise}

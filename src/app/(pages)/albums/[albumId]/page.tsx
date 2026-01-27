@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "@components/Skeleton";
-import MainCover from "@components/MainCover";
-import Table from "@components/Table";
-import CoverInfo from "@components/CoverInfo";
 import { albumApi } from "@/queryFn/client/albumApi";
+import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "./components/Skeleton";
+import MainCover from "./components/MainCover";
+import CoverInfo from "./components/CoverInfo";
+import AlbumTable from "./components/Table";
 
 export default async function AlbumPage({ params }: { params: Promise<{ albumId: string }> }) {
   const { albumId } = await params;
@@ -20,7 +20,7 @@ export default async function AlbumPage({ params }: { params: Promise<{ albumId:
         </Suspense>
       </article>
       <Suspense fallback={<TableSkeleton />}>
-        <Table albumPromise={albumPromise} />
+        <AlbumTable albumPromise={albumPromise} />
       </Suspense>
     </section>
   );

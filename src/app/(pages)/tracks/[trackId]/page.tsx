@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import MainCover from "@components/MainCover";
-import CoverInfo from "@components/CoverInfo";
-import Table from "@components/Table";
-import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "@components/Skeleton";
 import { trackApi } from "@/queryFn/client/trackApi";
+import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "./components/Skeleton";
+import MainCover from "./components/MainCover";
+import CoverInfo from "./components/CoverInfo";
+import SingleTrackTable from "./components/Table";
 
 export default async function TrackPage({ params }: { params: Promise<{ trackId: string }> }) {
   const { trackId } = await params;
@@ -21,7 +21,7 @@ export default async function TrackPage({ params }: { params: Promise<{ trackId:
         </Suspense>
       </article>
       <Suspense fallback={<TableSkeleton />}>
-        <Table trackPromise={trackPromise} tracksPromise={tracksPromise} />
+        <SingleTrackTable trackPromise={trackPromise} tracksPromise={tracksPromise} />
       </Suspense>
     </section>
   );

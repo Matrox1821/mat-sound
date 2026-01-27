@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { userApi } from "@/queryFn/client/userApi";
 import { headers } from "next/headers";
-import FavoritesTable from ".@components/FavoritesTable";
 import { Suspense } from "react";
+import FavoritesTable from "../components/FavoritesTable";
 
 export default async function FavoritesPage() {
   const session = await auth.api.getSession({
@@ -13,7 +13,7 @@ export default async function FavoritesPage() {
   return (
     <section className="flex flex-col gap-12 w-full h-full overflow-y-auto overflow-x-hidden md:pt-8 md:bg-background md:transition-[heigth] md:duration-200 lg:pt-24 lg:pl-18">
       <Suspense fallback={"loading"}>
-        <FavoritesTable tracksPromise={favoritesPromise} />
+        {/* <FavoritesTable tracksPromise={favoritesPromise} /> */}
       </Suspense>
     </section>
   );
