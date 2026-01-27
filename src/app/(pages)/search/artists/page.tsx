@@ -1,5 +1,5 @@
 import { fetchSearchData } from "@/shared/client/adapters/fetchSearchData";
-import Results from "../components/Results";
+import Results from ".@components/Results";
 
 export default async function SearchArtistsPage({
   searchParams,

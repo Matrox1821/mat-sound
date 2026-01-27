@@ -1,6 +1,6 @@
 import { userApi } from "@/queryFn/client/userApi";
-import Cover from "../components/Cover";
-import CoverInfo from "../components/CoverInfo";
+import Cover from ".@components/Cover";
+import CoverInfo from ".@components/CoverInfo";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import UserCarousel from "@components/ui/carousels/UserCarousel";

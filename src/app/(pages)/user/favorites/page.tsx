@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { userApi } from "@/queryFn/client/userApi";
 import { headers } from "next/headers";
-import FavoritesTable from "../components/FavoritesTable";
+import FavoritesTable from ".@components/FavoritesTable";
 import { Suspense } from "react";
 
 export default async function FavoritesPage() {

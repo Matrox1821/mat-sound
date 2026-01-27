@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import { ContentSkeleton, CoverInfoSkeleton, MainCoverSkeleton } from "./components/Skeleton";
-import MainCover from "./components/MainCover";
-import CoverInfo from "./components/CoverInfo";
-import Content from "./components/Content";
+import { ContentSkeleton, CoverInfoSkeleton, MainCoverSkeleton } from "@components/Skeleton";
+import MainCover from "@components/MainCover";
+import CoverInfo from "@components/CoverInfo";
+import Content from "@components/Content";
 import Carousel from "@components/ui/carousels";
 import { artistApi } from "@/queryFn/client/artistApi";
 import { auth } from "@/lib/auth";

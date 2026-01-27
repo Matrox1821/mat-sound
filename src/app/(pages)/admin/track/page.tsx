@@ -5,9 +5,9 @@ import { genreAdminApi } from "@/queryFn/admin/genreApi";
 import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";
-import BulkTrackUpload from "../components/BulkTrackUpload";
+import BulkTrackUpload from ".@components/BulkTrackUpload";
 import { BulkDialog } from "@components/features/dialogs/BulkDialog";
-import { SearchFilter } from "../components/SearchFilter";
+import { SearchFilter } from ".@components/SearchFilter";
 
 export default async function Page({
   searchParams,

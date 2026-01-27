@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import MainCover from "./components/MainCover";
-import CoverInfo from "./components/CoverInfo";
-import Table from "./components/Table";
-import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "./components/Skeleton";
+import MainCover from "@components/MainCover";
+import CoverInfo from "@components/CoverInfo";
+import Table from "@components/Table";
+import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "@components/Skeleton";
 import { trackApi } from "@/queryFn/client/trackApi";
 
 export default async function TrackPage({ params }: { params: Promise<{ trackId: string }> }) {

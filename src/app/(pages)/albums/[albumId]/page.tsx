@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "./components/Skeleton";
-import MainCover from "./components/MainCover";
-import Table from "./components/Table";
-import CoverInfo from "./components/CoverInfo";
+import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "@components/Skeleton";
+import MainCover from "@components/MainCover";
+import Table from "@components/Table";
+import CoverInfo from "@components/CoverInfo";
 import { albumApi } from "@/queryFn/client/albumApi";
 
 export default async function AlbumPage({ params }: { params: Promise<{ albumId: string }> }) {
