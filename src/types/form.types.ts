@@ -39,6 +39,15 @@ export interface TrackFormData {
   artists: string[];
   lyrics: string;
 }
+
 export interface GenreFormData {
   genre: string | string[];
+}
+
+export interface UserFormData {
+  id: string;
+  avatar: File | null;
+  displayUsername: string;
+  biography: string;
+  location: string;
 }

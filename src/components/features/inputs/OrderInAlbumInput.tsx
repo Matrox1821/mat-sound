@@ -1,5 +1,5 @@
 "use client";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { SafeImage } from "@components/ui/images/SafeImage";
 import { useState, useEffect, useRef } from "react";
 
 interface Element {

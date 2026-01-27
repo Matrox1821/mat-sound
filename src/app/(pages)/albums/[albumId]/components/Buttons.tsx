@@ -1,6 +1,6 @@
 "use client";
-import { Play } from "@/components/ui/icons/playback/Play";
-import { Shuffle } from "@/components/ui/icons/playback/Shuffle";
+import { Play } from "@components/ui/icons/playback/Play";
+import { Shuffle } from "@components/ui/icons/playback/Shuffle";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";

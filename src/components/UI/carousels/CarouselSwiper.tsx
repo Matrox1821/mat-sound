@@ -9,7 +9,7 @@ import { slidesPerView } from "@/shared/utils/helpers";
 import SwiperButtons from "../buttons/SwiperButtons";
 import CarouselCard from "../cards/CarouselCard";
 import { use } from "react";
-import { ContentElement } from "@/types/content.types";
+import { ContentElement } from "@shared-types/content.types";
 
 export default function CarouselSwiper({
   data,

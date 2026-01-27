@@ -1,8 +1,8 @@
 "use client";
 import { use } from "react";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { TrackWithRecommendations } from "@/types/track.types";
-import TrackTable from "@/components/features/tables/TrackTable";
+import { TrackWithRecommendations } from "@shared-types/track.types";
+import TrackTable from "@components/features/tables/TrackTable";
 
 export default function SingleTrackTable({
   trackPromise,

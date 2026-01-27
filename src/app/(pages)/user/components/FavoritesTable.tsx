@@ -1,7 +1,7 @@
 "use client";
-import TrackTable from "@/components/features/tables/TrackTable";
+import TrackTable from "@components/features/tables/TrackTable";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { playerTrackProps } from "@/types/track.types";
+import { playerTrackProps } from "@shared-types/track.types";
 
 import { use } from "react";
 

@@ -1,11 +1,11 @@
 import { prisma } from "@config/db";
 import { Prisma } from "../../../../generated/prisma/client";
-import { ArtistBase } from "@/types/artist.types";
+import { ArtistBase } from "@shared-types/artist.types";
 import {
   AlbumContentRepository,
   TrackContentRepository,
   PlaylistContentRepository,
-} from "@/types/content.types";
+} from "@shared-types/content.types";
 
 export const getAlbumsForContent = async (
   limit: number,
@@ -58,7 +58,6 @@ export const getTracksForContent = async ({
 }: {
   limit: number;
   ids: string[];
-  userId?: string;
 }): Promise<TrackContentRepository[]> => {
   return (await prisma.track.findMany({
     take: limit,

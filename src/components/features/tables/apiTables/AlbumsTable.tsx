@@ -3,13 +3,13 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { use } from "react";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
-import { AlbumByPagination } from "@/types/album.types";
+import { AlbumByPagination } from "@shared-types/album.types";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { FormDialog } from "../../dialogs/FormDialog";
 import { deleteAlbumServer } from "@/actions/album";
 import { EditAlbumForm } from "../../forms/albumForm/editAlbum";
 import { SeeAlbumBody } from "../../dialogs/SeeAlbumBody";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { SafeImage } from "@components/ui/images/SafeImage";
 
 export default function AlbumsTable({
   data,

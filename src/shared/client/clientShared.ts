@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { getBearerAdminToken, getBearerToken } from "../server/cookies";
 /* import { getBearerToken, logoutUser } from "./cookies"; */
 
@@ -14,7 +14,7 @@ const handleCustomApiRequest = async <T = any>(
   request: string,
   method: "POST" | "GET" | "PATCH" | "DELETE",
   body: any = undefined,
-  withToken: boolean = false
+  withToken: boolean = false,
 ) => {
   try {
     const headers = new Headers();
@@ -60,7 +60,7 @@ const handleCustomApiRequest = async <T = any>(
 
 const handleStatusCode = async <T>(
   statusCode: HttpStatusCode,
-  petition: { message: string; data: string; errors: string[] }
+  petition: { message: string; data: string; errors: string[] },
 ) => {
   switch (statusCode) {
     case HttpStatusCode.OK:

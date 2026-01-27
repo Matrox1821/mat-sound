@@ -1,6 +1,6 @@
 "use client";
-import { OrderAlbumInput } from "@/components/features/inputs/OrderInAlbumInput";
-import { SelectInput } from "@/components/features/inputs/SelectInput";
+import { OrderAlbumInput } from "@components/features/inputs/OrderInAlbumInput";
+import { SelectInput } from "@components/features/inputs/SelectInput";
 import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { useEffect, useState } from "react";

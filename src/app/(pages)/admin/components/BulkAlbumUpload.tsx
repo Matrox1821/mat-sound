@@ -4,7 +4,7 @@ import { albumBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 import { useState } from "react";
 import z from "zod";
 import { createAlbumsBulkServer } from "@/actions/album";
-import { ArtistSearchInput } from "@/components/features/inputs/ArtistSearchInput";
+import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
 
 export default function BulkAlbumUpload() {
   const [jsonInput, setJsonInput] = useState("");

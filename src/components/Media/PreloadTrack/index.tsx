@@ -1,4 +1,4 @@
-import { ContentElement } from "@/types/content.types";
+import { ContentElement } from "@shared-types/content.types";
 
 interface CarouselCardPlayButtonProps {
   track: ContentElement;

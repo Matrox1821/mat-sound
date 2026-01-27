@@ -1,10 +1,10 @@
 "use server";
 
-import { ImageSizes } from "@/types/common.types";
+import { ImageSizes } from "@shared-types/common.types";
 import { prisma } from "@config/db";
 
 export const getPlaylists = async (
-  limit: number
+  limit: number,
 ): Promise<
   {
     type: string;

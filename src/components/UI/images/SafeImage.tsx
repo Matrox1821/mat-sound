@@ -6,8 +6,8 @@ import { Skeleton } from "primereact/skeleton";
 
 interface ImageSetter {
   src?: string | null;
-  height: number;
-  width: number;
+  height?: number;
+  width?: number;
   alt?: string;
   className?: string;
   loading?: "lazy" | "eager";

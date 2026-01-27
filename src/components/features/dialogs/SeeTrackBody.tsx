@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { TrackByPagination } from "@/types/track.types";
-import { TrackFormData } from "@/types/form.types";
+import { TrackByPagination } from "@shared-types/track.types";
+import { TrackFormData } from "@shared-types/form.types";
 import CustomInputAdminForm from "../inputs/CustomInputAdminForm";
 
 export const mapTrackToEditFormData = (track: TrackByPagination): TrackFormData => {

@@ -1,5 +1,5 @@
-import { CustomError } from "@/types/error.type";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { CustomError } from "@shared-types/error.type";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { s3Client } from "./s3Client";

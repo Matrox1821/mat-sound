@@ -3,9 +3,9 @@ import { formatTime } from "@/shared/utils/helpers";
 import Link from "next/link";
 import { use } from "react";
 import { PlayButton, RandButton } from "./Buttons";
-import { SafeImage } from "@/components/ui/images/SafeImage";
-import { AlbumById } from "@/types/album.types";
-import { TrackById } from "@/types/track.types";
+import { SafeImage } from "@components/ui/images/SafeImage";
+import { AlbumById } from "@shared-types/album.types";
+import { TrackById } from "@shared-types/track.types";
 
 export default function CoverInfo({
   albumPromise,

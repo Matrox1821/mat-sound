@@ -1,8 +1,8 @@
-import { SafeImage } from "@/components/ui/images/SafeImage";
-import { ArtistTracks } from "@/types/artist.types";
+import { SafeImage } from "@components/ui/images/SafeImage";
+import { ArtistTracks } from "@shared-types/artist.types";
 import Link from "next/link";
 
-export default function NewArtistTrack({
+export function NewArtistTrack({
   newTrack,
   artistImage,
   artistName,

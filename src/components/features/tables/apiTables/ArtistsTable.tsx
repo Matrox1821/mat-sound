@@ -5,11 +5,11 @@ import { use } from "react";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { deleteArtistServer } from "@/actions/artist";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { ArtistByPagination } from "@/types/artist.types";
+import { ArtistByPagination } from "@shared-types/artist.types";
 import { EditArtistForm } from "../../forms/artistForm/editArtist";
 import { FormDialog } from "../../dialogs/FormDialog";
 import { SeeArtistBody } from "../../dialogs/SeeArtistBody";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { SafeImage } from "@components/ui/images/SafeImage";
 
 export default function ArtistsTable({
   data,

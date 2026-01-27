@@ -9,5 +9,5 @@ export const ADMIN_LINKS = [
 export const USER_LINKS = [
   { label: "Home", href: "/", icon: "pi pi-home" },
   { label: "Favoritos", href: "/user/favorites", icon: "pi pi-heart" },
-  { label: "Colección", href: "/user/collection", icon: "pi pi-book" },
+  { label: "Colección", href: "/user/collections", icon: "pi pi-book" },
 ];

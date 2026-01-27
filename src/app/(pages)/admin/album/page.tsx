@@ -1,11 +1,11 @@
-import { FormDialog } from "@/components/features/dialogs/FormDialog";
-import Paginator from "@/components/features/paginator";
+import { FormDialog } from "@components/features/dialogs/FormDialog";
+import Paginator from "@components/features/paginator";
 import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";
 import BulkAlbumUpload from "../components/BulkAlbumUpload";
-import { BulkDialog } from "@/components/features/dialogs/BulkDialog";
-import AlbumsTable from "@/components/features/tables/apiTables/AlbumsTable";
+import { BulkDialog } from "@components/features/dialogs/BulkDialog";
+import AlbumsTable from "@components/features/tables/apiTables/AlbumsTable";
 import { SearchFilter } from "../components/SearchFilter";
 
 export default async function Page({

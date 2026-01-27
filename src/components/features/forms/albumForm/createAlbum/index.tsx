@@ -8,7 +8,7 @@ import { redirect, usePathname } from "next/navigation";
 import { createAlbumServer } from "@/actions/album";
 import { initialAlbumFormData, toAlbumFormData } from "@/shared/formData/albumForm";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
-import { AlbumFormData } from "@/types/form.types";
+import { AlbumFormData } from "@shared-types/form.types";
 
 const stepTitles = ["Información", "Relaciones"];
 

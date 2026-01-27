@@ -3,9 +3,9 @@
 import { prisma } from "@config/db";
 import { updateArtistGenre } from "../artist/artist.repository";
 import { updateAlbumGenre } from "../album/album.repository";
-import { TrackById, TrackByPagination, TrackWithRelations } from "@/types/track.types";
-import { ImageSizes } from "@/types/common.types";
-import { TrackFormData } from "@/types/form.types";
+import { TrackById, TrackByPagination, TrackWithRelations } from "@shared-types/track.types";
+import { ImageSizes } from "@shared-types/common.types";
+import { TrackFormData } from "@shared-types/form.types";
 import { Prisma } from "../../../../generated/prisma/client";
 
 export const getTracks = async ({

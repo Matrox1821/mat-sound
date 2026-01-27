@@ -1,4 +1,4 @@
-import { ImageSizes } from "@/types/common.types";
+import { ImageSizes } from "@shared-types/common.types";
 import { create } from "zustand";
 
 export interface TrackData {

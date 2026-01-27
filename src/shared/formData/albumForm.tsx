@@ -1,4 +1,4 @@
-import { AlbumFormData } from "@/types/form.types";
+import { AlbumFormData } from "@shared-types/form.types";
 
 export const initialAlbumFormData: AlbumFormData = {
   name: "",

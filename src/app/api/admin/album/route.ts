@@ -1,6 +1,6 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
-import { CustomError } from "@/types/error.type";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { CustomError } from "@shared-types/error.type";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { NextRequest } from "next/server";
 import { parseAlbumFormData, parseUpdatedAlbumFormData } from "@/shared/formData/albumForm";
 import {

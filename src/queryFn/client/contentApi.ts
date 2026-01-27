@@ -1,7 +1,7 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { ContentType } from "@/types/common.types";
-import { ContentElement } from "@/types/content.types";
+import { ContentType } from "@shared-types/common.types";
+import { ContentElement } from "@shared-types/content.types";
 
 interface TrackQuery {
   type?: ContentType[];

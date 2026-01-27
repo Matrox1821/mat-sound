@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { artistAdminApi } from "@/queryFn/admin/artistApi";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { SafeImage } from "@components/ui/images/SafeImage";
 
 export function ArtistSearchInput({
   onSelect,

@@ -1,7 +1,7 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { AlbumById } from "@/types/album.types";
-import { TrackById } from "@/types/track.types";
+import { AlbumById } from "@shared-types/album.types";
+import { TrackById } from "@shared-types/track.types";
 
 const getAlbumById = async (
   id: string,

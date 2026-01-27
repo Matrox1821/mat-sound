@@ -1,11 +1,11 @@
 "use client";
-import { Pause } from "@/components/ui/icons/playback/Pause";
-import { Play } from "@/components/ui/icons/playback/Play";
+import { Pause } from "@components/ui/icons/playback/Pause";
+import { Play } from "@components/ui/icons/playback/Play";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { ArtistTracks } from "@/types/artist.types";
+import { ArtistTracks } from "@shared-types/artist.types";
 
 export function PlayButton({
   tracksList,

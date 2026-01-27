@@ -1,7 +1,7 @@
 "use client";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { SafeImage } from "@components/ui/images/SafeImage";
 import { formatTime, parseNumberListeners } from "@/shared/utils/helpers";
-import { TrackWithRecommendations } from "@/types/track.types";
+import { TrackWithRecommendations } from "@shared-types/track.types";
 import Link from "next/link";
 import { use } from "react";
 

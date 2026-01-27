@@ -3,7 +3,7 @@ import { ContentSkeleton, CoverInfoSkeleton, MainCoverSkeleton } from "./compone
 import MainCover from "./components/MainCover";
 import CoverInfo from "./components/CoverInfo";
 import Content from "./components/Content";
-import Carousel from "@/components/ui/carousels";
+import Carousel from "@components/ui/carousels";
 import { artistApi } from "@/queryFn/client/artistApi";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";

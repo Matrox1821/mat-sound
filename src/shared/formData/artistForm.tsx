@@ -1,4 +1,4 @@
-import { ArtistFormData } from "@/types/form.types";
+import { ArtistFormData } from "@shared-types/form.types";
 
 export const initialArtistFormData: ArtistFormData = {
   name: "",
@@ -61,7 +61,6 @@ export function parseArtistFormData(formData: FormData): ArtistFormData {
 }
 
 //UPDATE FORM
-
 
 export const toUpdateArtistFormData = (data: ArtistFormData): FormData => {
   const form = new FormData();

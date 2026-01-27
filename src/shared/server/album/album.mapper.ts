@@ -1,5 +1,5 @@
-import { AlbumById } from "@/types/album.types";
-import { ImageSizes } from "@/types/common.types";
+import { AlbumById } from "@shared-types/album.types";
+import { ImageSizes } from "@shared-types/common.types";
 
 export const mapAlbumDetails = (rawData: any): AlbumById => {
   const duration =

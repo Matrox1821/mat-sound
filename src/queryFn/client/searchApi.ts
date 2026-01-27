@@ -1,7 +1,7 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { ImageSizes } from "@/types/common.types";
-import { APITrack } from "@/types/trackProps";
+import { ImageSizes } from "@shared-types/common.types";
+import { APITrack } from "@shared-types/trackProps";
 
 interface responseData {
   id: string;

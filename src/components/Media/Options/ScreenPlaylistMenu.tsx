@@ -1,8 +1,8 @@
 "use client";
-import { MusicNote } from "@/components/ui/icons/playback/MusicNote";
-import { Play } from "@/components/ui/icons/playback/Play";
-import { RightMenuIcon } from "@/components/ui/icons/playback/RightMenu";
-import { Lyrics as LyricIcon } from "@/components/ui/icons/playback/Lyrics";
+import { MusicNote } from "@components/ui/icons/playback/MusicNote";
+import { Play } from "@components/ui/icons/playback/Play";
+import { RightMenuIcon } from "@components/ui/icons/playback/RightMenu";
+import { Lyrics as LyricIcon } from "@components/ui/icons/playback/Lyrics";
 import { useProgress } from "@/shared/client/hooks/player/useProgress";
 import { parseLyricsToObject } from "@/shared/utils/helpers";
 import { useUIStore } from "@/store/activeStore";
@@ -11,10 +11,10 @@ import { usePlayerStore } from "@/store/playerStore";
 import Link from "next/link";
 import { Sidebar } from "primereact/sidebar";
 import { Fragment, RefObject, useState } from "react";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { SafeImage } from "@components/ui/images/SafeImage";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { Pause } from "@/components/ui/icons/playback/Pause";
-import { playerTrackProps } from "@/types/track.types";
+import { Pause } from "@components/ui/icons/playback/Pause";
+import { playerTrackProps } from "@shared-types/track.types";
 
 export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
   const [showQueue, setShowQueue] = useState(true);

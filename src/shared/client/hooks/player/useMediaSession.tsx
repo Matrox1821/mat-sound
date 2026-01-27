@@ -1,5 +1,5 @@
 "use client";
-import { playerTrackProps } from "@/types/track.types";
+import { playerTrackProps } from "@shared-types/track.types";
 import { useEffect } from "react";
 import type { RefObject } from "react";
 

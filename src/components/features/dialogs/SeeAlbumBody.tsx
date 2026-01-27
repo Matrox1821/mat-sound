@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { AlbumFormData } from "@/types/form.types";
-import { AlbumByPagination } from "@/types/album.types";
+import { AlbumFormData } from "@shared-types/form.types";
+import { AlbumByPagination } from "@shared-types/album.types";
 import CustomInputAdminForm from "../inputs/CustomInputAdminForm";
 export const mapAlbumToEditFormData = (album: AlbumByPagination): AlbumFormData => {
   return {

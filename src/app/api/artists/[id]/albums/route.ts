@@ -1,5 +1,5 @@
-import { CustomError } from "@/types/error.type";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { CustomError } from "@shared-types/error.type";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { prisma } from "@config/db";
 export async function GET({ params }: { params: Promise<{ id: string }> }) {

@@ -3,13 +3,13 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { use } from "react";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
-import { TrackByPagination } from "@/types/track.types";
+import { TrackByPagination } from "@shared-types/track.types";
 import { FormDialog } from "../../dialogs/FormDialog";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { EditTrackForm } from "../../forms/trackForm/editTrack";
 import { SeeTrackBody } from "../../dialogs/SeeTrackBody";
 import { deleteTrackServer } from "@/actions/track";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { SafeImage } from "@components/ui/images/SafeImage";
 
 export default function TracksTable({
   data,

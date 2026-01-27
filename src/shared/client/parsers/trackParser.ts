@@ -1,4 +1,4 @@
-import { playerTrackProps } from "@/types/track.types";
+import { playerTrackProps } from "@shared-types/track.types";
 
 export function parseTrackByPlayer(track: any): playerTrackProps {
   return {

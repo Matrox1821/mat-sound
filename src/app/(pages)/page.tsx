@@ -1,4 +1,4 @@
-import Carousel from "@/components/ui/carousels";
+import Carousel from "@components/ui/carousels";
 
 export default async function Home() {
   return (

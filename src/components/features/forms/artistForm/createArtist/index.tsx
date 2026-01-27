@@ -9,7 +9,7 @@ import { createArtistServer } from "@/actions/artist";
 import { redirect, usePathname } from "next/navigation";
 import { initialArtistFormData, toArtistFormData } from "@/shared/formData/artistForm";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
-import { ArtistFormData } from "@/types/form.types";
+import { ArtistFormData } from "@shared-types/form.types";
 
 const stepTitles = ["Información", "Detalles", "Relaciones"];
 

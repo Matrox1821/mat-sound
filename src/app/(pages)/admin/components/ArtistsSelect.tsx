@@ -1,5 +1,5 @@
 "use client";
-import { SelectInput } from "@/components/features/inputs/SelectInput";
+import { SelectInput } from "@components/features/inputs/SelectInput";
 import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { useEffect, useState } from "react";
 

@@ -1,6 +1,6 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { getArtistsByPagination } from "@/shared/server/artist/artist.repository";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {

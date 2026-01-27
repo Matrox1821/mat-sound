@@ -1,10 +1,10 @@
 import { uploadFileToBucket, resizeImage } from "@/shared/server/files";
-import { ImageSizes } from "@/types/common.types";
+import { ImageSizes } from "@shared-types/common.types";
 import { CompleteMultipartUploadCommandOutput } from "@aws-sdk/client-s3";
 
 export const handleCoverResizeAndUpload = async (
   file: File | null,
-  id: string
+  id: string,
 ): Promise<{
   buffer: {
     sm: Buffer | null;
@@ -21,7 +21,7 @@ export const handleCoverResizeAndUpload = async (
     Object.entries(r2Path).map(async ([key, path]) => {
       const currentBuffer = buffer[key as "sm" | "md" | "lg"];
       if (currentBuffer) return uploadFileToBucket(currentBuffer, path);
-    })
+    }),
   );
   return { buffer, dbPath, r2Path, coverUploads };
 };

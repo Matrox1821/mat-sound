@@ -1,6 +1,6 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { getTracksByPaginationService } from "@/shared/server/track/track.service";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {

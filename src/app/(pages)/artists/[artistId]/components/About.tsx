@@ -1,9 +1,9 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { Dialog } from "primereact/dialog";
-import Link from "next/link";
-import { ArtistServer } from "@/types/artist.types";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { ArtistServer } from "@shared-types/artist.types";
+import { SafeImage } from "@components/ui/images/SafeImage";
 
 type SocialKey = keyof typeof SOCIAL_ICONS;
 
@@ -32,7 +32,7 @@ function sortSocials(obj: Record<string, any>) {
   );
 }
 
-export default function About({ artist }: { artist: ArtistServer | null }) {
+export function About({ artist }: { artist: ArtistServer | null }) {
   const [visible, setVisible] = useState(false);
   if (!artist) return;
   return (

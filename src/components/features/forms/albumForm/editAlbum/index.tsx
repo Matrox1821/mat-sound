@@ -2,8 +2,8 @@
 import { FirstStep } from "./steps/FirstStep";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
-import { AlbumFormData } from "@/types/form.types";
-import { AlbumByPagination } from "@/types/album.types";
+import { AlbumFormData } from "@shared-types/form.types";
+import { AlbumByPagination } from "@shared-types/album.types";
 import { toUpdateAlbumFormData } from "@/shared/formData/albumForm";
 import { updateAlbumServer } from "@/actions/album";
 import { SecondStep } from "./steps/SecondStep";

@@ -1,4 +1,4 @@
-import { TrackFormData } from "@/types/form.types";
+import { TrackFormData } from "@shared-types/form.types";
 
 export const initialTrackFormData: TrackFormData = {
   name: "",

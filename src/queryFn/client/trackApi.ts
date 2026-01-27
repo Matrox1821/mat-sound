@@ -1,6 +1,6 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { TrackWithRecommendations } from "@/types/track.types";
+import { TrackWithRecommendations } from "@shared-types/track.types";
 
 const getTrackById = async (id: string): Promise<TrackWithRecommendations[] | null> => {
   try {

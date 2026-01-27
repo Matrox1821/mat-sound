@@ -3,14 +3,14 @@ import "./globals.css";
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import Player from "@/components/media/player";
+import { Player } from "@components/media/player";
 import { Poppins } from "next/font/google";
 import { Toaster } from "sonner";
-import { CreatePlaylistDialog } from "@/components/features/dialogs/CreatePlaylistDialog";
-import { LikeHydrator } from "@/components/hydrators/LikeHydrator";
+import { CreatePlaylistDialog } from "@components/features/dialogs/CreatePlaylistDialog";
+import { LikeHydrator } from "@components/hydrators/LikeHydrator";
 import { getUserArtistFollowingIds, getUserLikedTrackIds, getUserPlaylists } from "@/actions/user";
-import { PlaylistsHydrator } from "@/components/hydrators/PlaylistsHidrator";
-import { FollowHydrator } from "@/components/hydrators/FollowHydrator";
+import { PlaylistsHydrator } from "@components/hydrators/PlaylistsHidrator";
+import { FollowHydrator } from "@components/hydrators/FollowHydrator";
 
 export const metadata: Metadata = {
   title: "Mat Sound",

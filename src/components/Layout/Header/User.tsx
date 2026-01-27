@@ -1,6 +1,6 @@
 "use client";
 import { signoutFormValidation } from "@/actions/auth";
-import { User as UserIcon } from "@/components/ui/icons/User";
+import { User as UserIcon } from "@components/ui/icons/User";
 import { FormSignoutState } from "@/shared/utils/schemas/validations";
 import Link from "next/link";
 import { OverlayPanel } from "primereact/overlaypanel";
@@ -17,7 +17,7 @@ export default function User({ initialSession }: { initialSession: any }) {
   const op = useRef<OverlayPanel>(null);
   const options = [
     { label: "Perfil", href: `/user/${initialSession.user.username}` },
-    { label: "Configuración", href: "`/user/settings`" },
+    { label: "Configuración", href: `/user/settings` },
   ];
 
   useEffect(() => {

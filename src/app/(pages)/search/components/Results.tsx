@@ -1,7 +1,7 @@
 "use client";
-import { SafeImage } from "@/components/ui/images/SafeImage";
-import { ImageSizes } from "@/types/common.types";
-import { APITrack } from "@/types/trackProps";
+import { SafeImage } from "@components/ui/images/SafeImage";
+import { ImageSizes } from "@shared-types/common.types";
+import { APITrack } from "@shared-types/trackProps";
 import Link from "next/link";
 import { use } from "react";
 

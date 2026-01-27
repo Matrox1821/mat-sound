@@ -1,11 +1,11 @@
 "use client";
-import { Play } from "@/components/ui/icons/playback/Play";
-import { RightMenuIcon } from "@/components/ui/icons/playback/RightMenu";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { Play } from "@components/ui/icons/playback/Play";
+import { RightMenuIcon } from "@components/ui/icons/playback/RightMenu";
+import { SafeImage } from "@components/ui/images/SafeImage";
 import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { playerTrackProps } from "@/types/track.types";
+import { playerTrackProps } from "@shared-types/track.types";
 import Link from "next/link";
 import { Sidebar } from "primereact/sidebar";
 export const RightMenu = () => {

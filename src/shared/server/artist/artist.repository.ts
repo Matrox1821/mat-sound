@@ -1,8 +1,12 @@
 "use server";
 
-import { ArtistByPagination, ArtistRepository, ArtistTracksRepository } from "@/types/artist.types";
-import { ImageSizes } from "@/types/common.types";
-import { ArtistFormData } from "@/types/form.types";
+import {
+  ArtistByPagination,
+  ArtistRepository,
+  ArtistTracksRepository,
+} from "@shared-types/artist.types";
+import { ImageSizes } from "@shared-types/common.types";
+import { ArtistFormData } from "@shared-types/form.types";
 import { prisma } from "@config/db";
 
 export const getArtistById = async ({

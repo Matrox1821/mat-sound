@@ -1,7 +1,7 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { trackBulkSchema } from "@/shared/utils/schemas/bulkValidations";
-import { CustomError } from "@/types/error.type";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { CustomError } from "@shared-types/error.type";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { prisma } from "@config/db";
 import { NextRequest } from "next/server";
 import z from "zod";

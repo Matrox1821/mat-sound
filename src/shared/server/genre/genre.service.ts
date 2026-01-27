@@ -1,7 +1,7 @@
 "use server";
-import { CustomError } from "@/types/error.type";
+import { CustomError } from "@shared-types/error.type";
 import { countGenres, deleteGenre } from "./genre.repository";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 
 const GENRES_PER_PAGES = 6;
 

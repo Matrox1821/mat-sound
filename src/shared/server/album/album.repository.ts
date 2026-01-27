@@ -1,9 +1,9 @@
 import { prisma } from "@config/db";
 import { Prisma } from "../../../../generated/prisma/client";
-import { AlbumById, AlbumByPagination, type AlbumWithArtists } from "@/types/album.types";
+import { AlbumById, AlbumByPagination, type AlbumWithArtists } from "@shared-types/album.types";
 import { mapAlbumDetails } from "./album.mapper";
-import { ImageSizes } from "@/types/common.types";
-import { AlbumFormData } from "@/types/form.types";
+import { ImageSizes } from "@shared-types/common.types";
+import { AlbumFormData } from "@shared-types/form.types";
 
 export const getAlbumById = async (id: string): Promise<AlbumById> => {
   const response = await prisma.album.findUnique({
@@ -39,6 +39,7 @@ export const getAlbumById = async (id: string): Promise<AlbumById> => {
               albums: {
                 select: { album: { select: { name: true, id: true } } },
               },
+
               lyrics: true,
               reproductions: true,
               duration: true,

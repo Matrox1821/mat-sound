@@ -1,6 +1,6 @@
 "use client";
-import { SafeImage } from "@/components/ui/images/SafeImage";
-import { ArtistServer } from "@/types/artist.types";
+import { SafeImage } from "@components/ui/images/SafeImage";
+import { ArtistServer } from "@shared-types/artist.types";
 import { use } from "react";
 
 export default function MainCover({

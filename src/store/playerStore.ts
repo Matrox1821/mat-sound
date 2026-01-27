@@ -1,7 +1,7 @@
 import { usePlaybackStore } from "./playbackStore";
 import { create } from "zustand";
 import { useProgressStore } from "./progressStore";
-import { playerTrackProps } from "@/types/track.types";
+import { playerTrackProps } from "@shared-types/track.types";
 
 function shuffle<T>(arr: T[]): T[] {
   return arr

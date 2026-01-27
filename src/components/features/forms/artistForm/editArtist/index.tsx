@@ -9,8 +9,8 @@ import { updateArtistServer } from "@/actions/artist";
 import { redirect } from "next/navigation";
 import { toUpdateArtistFormData } from "@/shared/formData/artistForm";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
-import { ArtistFormData } from "@/types/form.types";
-import { ArtistByPagination } from "@/types/artist.types";
+import { ArtistFormData } from "@shared-types/form.types";
+import { ArtistByPagination } from "@shared-types/artist.types";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 export const mapArtistToEditFormData = (artist: ArtistByPagination): ArtistFormData => {
   return {

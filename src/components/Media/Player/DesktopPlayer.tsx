@@ -6,13 +6,13 @@ import { usePlayerStore } from "@/store/playerStore";
 import { useAudioController } from "@/shared/client/hooks/player/useAudioController";
 import Link from "next/link";
 
-import { LikeButton } from "@/components/ui/buttons/Like";
+import { LikeButton } from "@components/ui/buttons/Like";
 import { Volume } from "../options/Volume";
 import { RightMenu } from "../options/RightMenu";
 import { ScreenPlaylistMenu } from "../options/ScreenPlaylistMenu";
-import PlaylistSelector from "@/components/features/inputs/PlaylistSelector";
-import { SafeImage } from "@/components/ui/images/SafeImage";
-import { playerTrackProps } from "@/types/track.types";
+import PlaylistSelector from "@components/features/inputs/PlaylistSelector";
+import { SafeImage } from "@components/ui/images/SafeImage";
+import { playerTrackProps } from "@shared-types/track.types";
 
 export default function DesktopPlayer() {
   const { currentTrack: track, playingFrom } = usePlayerStore();

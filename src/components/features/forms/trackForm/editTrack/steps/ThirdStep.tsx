@@ -1,7 +1,7 @@
 "use client";
-import { ArtistSearchInput } from "@/components/features/inputs/ArtistSearchInput";
-import { OrderAlbumInput } from "@/components/features/inputs/OrderInAlbumInput";
-import { SelectInput } from "@/components/features/inputs/SelectInput";
+import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
+import { OrderAlbumInput } from "@components/features/inputs/OrderInAlbumInput";
+import { SelectInput } from "@components/features/inputs/SelectInput";
 import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { useEffect, useState } from "react";
 
@@ -20,7 +20,7 @@ export function ThirdStep({
   useEffect(() => {
     onChange(
       "artists",
-      selectedArtists.map((a) => a.id)
+      selectedArtists.map((a) => a.id),
     );
   }, [selectedArtists, onChange]);
 
@@ -36,7 +36,7 @@ export function ThirdStep({
 
           // Limpiar de los elegidos aquellos que ya no pertenecen a los artistas actuales
           setChosenAlbums((prev) =>
-            prev.filter((chosen) => fetchedAlbums.some((a: any) => a.id === chosen.id))
+            prev.filter((chosen) => fetchedAlbums.some((a: any) => a.id === chosen.id)),
           );
         })
         .catch((err) => console.error("Error cargando álbumes:", err));

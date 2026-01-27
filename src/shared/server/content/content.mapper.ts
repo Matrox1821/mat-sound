@@ -1,4 +1,4 @@
-import { ArtistBase } from "@/types/artist.types";
+import { ArtistBase } from "@shared-types/artist.types";
 import {
   ArtistContentService,
   AlbumContentService,
@@ -7,7 +7,7 @@ import {
   AlbumContentRepository,
   PlaylistContentService,
   PlaylistContentRepository,
-} from "@/types/content.types";
+} from "@shared-types/content.types";
 
 export const mapArtistsToContent = (artists: ArtistBase[]): ArtistContentService[] => {
   return artists.map((artist) => ({

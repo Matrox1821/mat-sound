@@ -6,11 +6,12 @@ import { useAsideStore } from "@/store/asideStore";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
-import { MatSound } from "@/components/ui/icons/MatSound";
+import { MatSound } from "@components/ui/icons/MatSound";
 import { authClient } from "@/lib/auth-client";
 import Search from "./Search";
 import User from "./User";
-export default function Header({ initialSession }: { initialSession: any }) {
+
+export function Header({ initialSession }: { initialSession: any }) {
   const pathname = usePathname();
   const push = useNavigationStore((s) => s.push);
   const { isExpanded } = useAsideStore();

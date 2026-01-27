@@ -4,7 +4,7 @@ import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { trackBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 import { AlbumSelect } from "./AlbumSelect";
 import z from "zod";
-import { ArtistSearchInput } from "@/components/features/inputs/ArtistSearchInput";
+import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
 import { createTracksBulkServer } from "@/actions/track";
 
 export default function BulkTrackUpload() {

@@ -3,8 +3,8 @@ import {
   ArtistRepository,
   ArtistServer,
   ArtistTracks,
-} from "@/types/artist.types";
-import { TrackById } from "@/types/track.types";
+} from "@shared-types/artist.types";
+import { TrackById } from "@shared-types/track.types";
 
 export const mapArtistTracks = (
   rawData: ArtistTracksRepository[] | TrackById[],

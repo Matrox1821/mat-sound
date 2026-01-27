@@ -1,14 +1,14 @@
 "use client";
-import { ArrowLine } from "@/components/ui/icons/ArrowLine";
+import { ArrowLine } from "@components/ui/icons/ArrowLine";
 import { AdminNavigation, UserNavigation } from "./AsideContent";
 import Link from "next/link";
-import { MatSound } from "@/components/ui/icons/MatSound";
+import { MatSound } from "@components/ui/icons/MatSound";
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import { usePathname } from "next/navigation";
 import { useAsideStore } from "@/store/asideStore";
 import { UserCollection } from "./UserCollection";
 
-export default function Aside({ userCollectionPromise }: { userCollectionPromise: Promise<any> }) {
+export function Aside({ userCollectionPromise }: { userCollectionPromise: Promise<any> }) {
   const { isMobile } = useDevice();
   const pathname = usePathname();
   const { isExpanded, setIsExpanded } = useAsideStore();

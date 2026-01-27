@@ -1,7 +1,7 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { TracksByArtistIdQuery } from "@/types/common.types";
-import { ArtistServer, ArtistTracks } from "@/types/artist.types";
+import { TracksByArtistIdQuery } from "@shared-types/common.types";
+import { ArtistServer, ArtistTracks } from "@shared-types/artist.types";
 
 const getArtistById = async (id: string, userId?: string): Promise<ArtistServer | null> => {
   const params = new URLSearchParams();

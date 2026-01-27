@@ -1,5 +1,5 @@
 "use server";
-import { ImageSizes } from "@/types/common.types";
+import { ImageSizes } from "@shared-types/common.types";
 import { deleteFileToBucket } from "../files";
 import { deleteArtistById } from "./artist.repository";
 

@@ -2,11 +2,11 @@ import { PrimeReactProvider } from "primereact/api";
 
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
 import "primeicons/primeicons.css";
-import Header from "@/components/layout/header";
-import Aside from "@/components/layout/aside";
+import { Header } from "@components/layout/header";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { userApi } from "@/queryFn/client/userApi";
+import { Aside } from "@components/layout/aside";
 
 export default async function DashboardLayout({
   children,
@@ -17,6 +17,7 @@ export default async function DashboardLayout({
     headers: await headers(),
   });
   const promise = userApi.getCollection(session?.user.id || "");
+
   return (
     <PrimeReactProvider>
       <div className="md:!w-screen md:!h-screen flex relative" id="root">

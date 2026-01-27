@@ -1,6 +1,6 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { ArtistByPagination } from "@/types/artist.types";
+import { ArtistByPagination } from "@shared-types/artist.types";
 
 const createArtist = async (artist: any) => {
   return await handleCustomApiRequest(GET_URL + "/api/admin/artist", "POST", artist, true);

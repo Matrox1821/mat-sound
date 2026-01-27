@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@types/*": ["./src/types/*"],
+      "@shared-types/*": ["./src/types/*"],
       "@app/*": ["./src/app/*"],
       "@api/*": ["./src/app/api/*"],
       "@components/*": ["./src/components/*"],

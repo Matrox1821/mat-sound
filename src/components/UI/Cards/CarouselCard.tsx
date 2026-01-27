@@ -3,7 +3,7 @@ import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import Link from "next/link";
 import CarouselCardPlayButton from "../buttons/CarouselCardPlayButton";
 import { SafeImage } from "../images/SafeImage";
-import { ContentElement } from "@/types/content.types";
+import { ContentElement } from "@shared-types/content.types";
 
 export default function CarouselCard({ element }: { element: ContentElement }) {
   const { isMobile } = useDevice();

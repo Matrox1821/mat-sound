@@ -1,12 +1,13 @@
-import { CustomError } from "@/types/error.type";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { CustomError } from "@shared-types/error.type";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { prisma } from "@config/db";
 import { NextRequest } from "next/server";
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id?: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ username: string }> }) {
   try {
     const param = await params;
-    if (!param?.id) {
+
+    if (!param?.username) {
       throw new CustomError({
         errors: [
           {
@@ -17,19 +18,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id?:
         httpStatusCode: HttpStatusCode.NOT_FOUND,
       });
     }
-    const userLibrary = await prisma.user.findFirst({
-      where: { id: param.id },
+    const userLibrary = await prisma.user.findUnique({
+      where: { username: param.username },
       select: {
-        likes: {
-          select: {
-            track: {
-              include: {
-                artists: { select: { id: true, name: true, avatar: true } },
-                _count: { select: { likes: true } },
-              },
-            },
-          },
-        },
+        id: true,
+        biography: true,
+        displayUsername: true,
+        avatar: true,
+        location: true,
+        _count: { select: { following: true, followedBy: true } },
+        username: true,
       },
     });
 
@@ -44,14 +42,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id?:
         httpStatusCode: HttpStatusCode.NOT_FOUND,
       });
     }
-
+    const { _count, ...user } = userLibrary;
     return onSuccessRequest({
       httpStatusCode: HttpStatusCode.OK,
-      data: userLibrary.likes.map(({ track }) => ({
-        isLiked: true,
-        likes: track._count.likes,
-        ...track,
-      })),
+      data: { ...user, following: _count.following, followedBy: _count.followedBy },
     });
   } catch (error) {
     console.log(error);

@@ -1,6 +1,6 @@
-import { FormDialog } from "@/components/features/dialogs/FormDialog";
-import GenresTable from "@/components/features/tables/apiTables/GenresTable";
-import GenresPaginator from "@/components/features/paginator";
+import { FormDialog } from "@components/features/dialogs/FormDialog";
+import GenresTable from "@components/features/tables/apiTables/GenresTable";
+import GenresPaginator from "@components/features/paginator";
 import { genreAdminApi } from "@/queryFn/admin/genreApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 

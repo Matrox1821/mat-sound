@@ -6,7 +6,7 @@ import { useCreatePlaylistDialogStore } from "@/store/createPlaylistDialogStore"
 import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { usePlaylistStore } from "@/store/playlistStore";
-import { playerTrackProps } from "@/types/track.types";
+import { playerTrackProps } from "@shared-types/track.types";
 
 export default function PlaylistSelector({ track }: { track: playerTrackProps }) {
   const { toggle, setTrackId } = useCreatePlaylistDialogStore((state) => state);
@@ -22,11 +22,7 @@ export default function PlaylistSelector({ track }: { track: playerTrackProps })
               render: () => (
                 <div className="w-full p-2 flex items-center justify-between gap-3 hover:bg-background-950 rounded-md transition-colors group/item">
                   <div className="flex items-center gap-3">
-                    <PlaylistImage
-                      trackImages={getImages(id)}
-                      sizeImage={40}
-                      imageClassName="!w-10 !h-10"
-                    />
+                    <PlaylistImage trackImages={getImages(id)} size={40} className="!w-10 !h-10" />
                     <span className="text-md font-semibold truncate max-w-[100px] overflow-ellipsis text-nowrap">
                       {data.name}
                     </span>

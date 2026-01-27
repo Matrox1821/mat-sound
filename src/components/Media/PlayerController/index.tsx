@@ -1,12 +1,12 @@
 "use client";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlaylistManager } from "@/shared/client/hooks/player/usePlaylistManager";
-import { Next, Prev } from "@/components/ui/icons/playback/SkipTo";
-import { Shuffle } from "@/components/ui/icons/playback/Shuffle";
-import { LoopAll, LoopOnce } from "@/components/ui/icons/playback/Loop";
+import { Next, Prev } from "@components/ui/icons/playback/SkipTo";
+import { Shuffle } from "@components/ui/icons/playback/Shuffle";
+import { LoopAll, LoopOnce } from "@components/ui/icons/playback/Loop";
 import { usePlayerStore } from "@/store/playerStore";
-import { Pause } from "@/components/ui/icons/playback/Pause";
-import { Play } from "@/components/ui/icons/playback/Play";
+import { Pause } from "@components/ui/icons/playback/Pause";
+import { Play } from "@components/ui/icons/playback/Play";
 
 const PlayerController = () => {
   const { isShuffled, isPlaying, setLoopMode, loopMode, toggleShuffle } = usePlaybackStore();

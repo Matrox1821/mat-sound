@@ -1,6 +1,6 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
-import { TrackByPagination } from "@/types/track.types";
+import { TrackByPagination } from "@shared-types/track.types";
 
 const createTrack = async (track: any) => {
   try {

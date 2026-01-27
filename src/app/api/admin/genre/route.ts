@@ -1,6 +1,6 @@
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { createGenre, genreIsExist, getGenres } from "@/shared/server/genre/genre.repository";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {

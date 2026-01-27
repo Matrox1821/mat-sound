@@ -1,12 +1,12 @@
 "use server";
 import { uploadFileToBucket, resizeImage } from "@/shared/server/files";
 import { formatR2FilePath } from "@/shared/utils/helpers";
-import { ImageSizes } from "@/types/common.types";
+import { ImageSizes } from "@shared-types/common.types";
 import { CompleteMultipartUploadCommandOutput } from "@aws-sdk/client-s3";
 
 export const handleAvatarResizeAndUpload = async (
   file: File | null,
-  id: string
+  id: string,
 ): Promise<{
   buffer: {
     sm: Buffer | null;
@@ -23,7 +23,7 @@ export const handleAvatarResizeAndUpload = async (
     Object.entries(r2Path).map(async ([key, path]) => {
       const currentBuffer = buffer[key as "sm" | "md" | "lg"];
       if (currentBuffer) return uploadFileToBucket(currentBuffer, path);
-    })
+    }),
   );
   return { buffer, dbPath, r2Path, avatarUploads };
 };
@@ -44,7 +44,7 @@ export const uploadCovers = async (covers: File[] | null, id: string): Promise<s
   await Promise.all(
     covers.map((cover, i) => {
       uploadFileToBucket(cover, paths[i]);
-    })
+    }),
   );
   return paths;
 };

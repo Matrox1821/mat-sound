@@ -1,4 +1,4 @@
-import { AMOUNTS } from "@/types/common.types";
+import { AMOUNTS } from "@shared-types/common.types";
 import { RefObject } from "react";
 const setAudioTrack = async ({
   audio,
@@ -48,7 +48,7 @@ const setAudioTrack = async ({
 
 const parseElementToString = <T extends Record<K, { name: string }>, K extends keyof T>(
   attributeName: K,
-  list?: T[] | null
+  list?: T[] | null,
 ): string => {
   if (!list || list.length === 0) {
     return "";
@@ -196,8 +196,8 @@ function parseNumberListeners(amount: number) {
         fixedNumber.endsWith(".0")
           ? fixedNumber.slice(0, -2)
           : fixedNumber.endsWith("0")
-          ? number
-          : fixedNumber
+            ? number
+            : fixedNumber
       } M`;
     case amount >= AMOUNTS.billion && amount < AMOUNTS.trillion:
       number = amount / AMOUNTS.billion;
@@ -265,9 +265,11 @@ const genreCapitalize = (genre: string) => {
       word
         .split(/([&/-])/g)
         .map((part) =>
-          /^[a-zA-Z]/.test(part) ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : part
+          /^[a-zA-Z]/.test(part)
+            ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            : part,
         )
-        .join("")
+        .join(""),
     )
     .join(" ");
 };

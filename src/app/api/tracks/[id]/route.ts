@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { NextRequest } from "next/server";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import {

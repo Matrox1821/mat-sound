@@ -1,6 +1,6 @@
 "use client";
-import { SafeImage } from "@/components/ui/images/SafeImage";
-import { TrackWithRecommendations } from "@/types/track.types";
+import { SafeImage } from "@components/ui/images/SafeImage";
+import { TrackWithRecommendations } from "@shared-types/track.types";
 import { use } from "react";
 
 export default function MainCover({

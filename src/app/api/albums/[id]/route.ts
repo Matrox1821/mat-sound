@@ -1,5 +1,5 @@
-import { CustomError } from "@/types/error.type";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { CustomError } from "@shared-types/error.type";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { onSuccessRequest, onThrowError } from "@/apiService";
 import { getAlbumById } from "@/shared/server/album/album.repository";
 import { getRandomTracksIds, getTracksByIds } from "@/shared/server/track/track.repository";

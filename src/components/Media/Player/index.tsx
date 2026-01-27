@@ -1,6 +1,6 @@
 import DesktopPlayer from "./DesktopPlayer";
 
-export default async function Player() {
+export async function Player() {
   return (
     <div>
       <DesktopPlayer />;

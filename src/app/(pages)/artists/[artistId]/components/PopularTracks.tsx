@@ -8,10 +8,10 @@ import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import Link from "next/link";
 import { useState } from "react";
-import { ArtistServer, ArtistTracks } from "@/types/artist.types";
-import { SafeImage } from "@/components/ui/images/SafeImage";
+import { ArtistServer, ArtistTracks } from "@shared-types/artist.types";
+import { SafeImage } from "@components/ui/images/SafeImage";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { playerTrackProps } from "@/types/track.types";
+import { playerTrackProps } from "@shared-types/track.types";
 
 export default function PopularTracks({
   tracks,

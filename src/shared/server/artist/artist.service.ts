@@ -7,11 +7,11 @@ import {
   getArtistsByPagination,
   getArtistTracks,
 } from "./artist.repository";
-import { CustomError } from "@/types/error.type";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { CustomError } from "@shared-types/error.type";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { GET_BUCKET_URL } from "@/shared/utils/constants";
-import { ImageSizes } from "@/types/common.types";
-import { ArtistByPagination } from "@/types/artist.types";
+import { ImageSizes } from "@shared-types/common.types";
+import { ArtistByPagination } from "@shared-types/artist.types";
 import { mapArtistTracks } from "./artist.mapper";
 import { getRandomTracksIdsByGenre, getTracksByIds } from "../track/track.repository";
 

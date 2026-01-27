@@ -6,11 +6,12 @@ import { useUIStore } from "@/store/activeStore";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { Pause } from "@components/ui/icons/playback/Pause";
 import { Play } from "@components/ui/icons/playback/Play";
-import { ContentElement } from "@/types/content.types";
+import { ContentElement } from "@shared-types/content.types";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
+import { TrackById } from "@shared-types/track.types";
 
 interface CarouselCardPlayButtonProps {
-  track: ContentElement;
+  track: ContentElement | TrackById;
 }
 
 const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
@@ -21,11 +22,17 @@ const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
-
-  if (track.type !== "tracks") {
+  function isContentTrack(
+    track: ContentElement | TrackById,
+  ): track is ContentElement & { type: "tracks" } {
+    return "type" in track && track.type === "tracks";
+  }
+  if (isContentTrack(track) && track.type !== "tracks") {
     return null;
   }
-  const parsedTracks = track.recommendedTracks?.map((newTrack) => parseTrackByPlayer(newTrack));
+  const parsedTracks = isContentTrack(track)
+    ? track.recommendedTracks?.map((newTrack) => parseTrackByPlayer(newTrack))
+    : [];
   const parsedTrack = parseTrackByPlayer(track);
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

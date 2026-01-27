@@ -161,7 +161,9 @@ section::-webkit-scrollbar-thumb {
     height: 70px;
     background: conic-gradient(rgb(190, 190, 190) var(--angle), transparent 0deg 360deg);
     z-index: 10;
-    animation: border-right 3s linear, border-completed 3s forwards;
+    animation:
+      border-right 3s linear,
+      border-completed 3s forwards;
   }
   &::before {
     content: "";
@@ -477,4 +479,36 @@ section::-webkit-scrollbar-thumb {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #444;
+}
+.p-carousel {
+  position: relative;
+}
+.p-carousel-prev,
+.p-carousel-next {
+  position: absolute;
+  top: -2.5rem;
+  right: 1rem !important;
+  z-index: 2;
+}
+.p-carousel-prev,
+.p-carousel-next {
+  transform: none;
+}
+.p-carousel-prev {
+  right: 3.75rem !important;
+}
+
+.p-carousel-next {
+  right: 0;
+}
+.p-carousel-prev,
+.p-carousel-next {
+  position: absolute !important;
+}
+.p-carousel-items-container {
+  gap: 1.5rem !important;
+}
+.p-carousel-item {
+  flex: none !important;
+  width: 150px !important;
 }

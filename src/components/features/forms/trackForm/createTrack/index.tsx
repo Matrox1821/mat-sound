@@ -9,7 +9,7 @@ import { createTrackServer } from "@/actions/track";
 import { initialTrackFormData, toTrackFormData } from "@/shared/formData/trackForm";
 import { redirect, usePathname } from "next/navigation";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
-import { TrackFormData } from "@/types/form.types";
+import { TrackFormData } from "@shared-types/form.types";
 
 const stepTitles = ["Información", "Detalles", "Relaciones"];
 

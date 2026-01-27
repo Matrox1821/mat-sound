@@ -1,7 +1,7 @@
 "use client";
-import { ArtistSearchInput } from "@/components/features/inputs/ArtistSearchInput";
-import { OrderAlbumInput } from "@/components/features/inputs/OrderInAlbumInput";
-import { SelectInput } from "@/components/features/inputs/SelectInput";
+import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
+import { OrderAlbumInput } from "@components/features/inputs/OrderInAlbumInput";
+import { SelectInput } from "@components/features/inputs/SelectInput";
 import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { useEffect, useState, useRef } from "react";
 

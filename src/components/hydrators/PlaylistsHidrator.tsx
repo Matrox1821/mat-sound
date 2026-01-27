@@ -1,7 +1,7 @@
 "use client";
 
 import { usePlaylistStore } from "@/store/playlistStore";
-import { ImageSizes } from "@/types/common.types";
+import { ImageSizes } from "@shared-types/common.types";
 import { use, useEffect } from "react";
 
 export function PlaylistsHydrator({

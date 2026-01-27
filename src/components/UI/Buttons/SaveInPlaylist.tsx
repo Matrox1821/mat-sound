@@ -3,7 +3,7 @@ import { Bookmark } from "../icons/Bookmark";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { togglePlaylist } from "@/actions/user";
 import { usePlaylistStore } from "@/store/playlistStore";
-import { ImageSizes } from "@/types/common.types";
+import { ImageSizes } from "@shared-types/common.types";
 
 export const SaveInPlaylist = ({
   playlistName,

@@ -1,10 +1,12 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { ImageSizes } from "@/types/common.types";
+import { userApi } from "@/queryFn/client/userApi";
+import { ImageSizes } from "@shared-types/common.types";
 import { prisma } from "@config/db";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { UserFormData } from "@/types/form.types";
 
 export async function createPlaylist(name: string, trackId?: string) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -35,6 +37,21 @@ export async function createPlaylist(name: string, trackId?: string) {
   });
 
   return newPlaylist;
+}
+
+export async function updateUserServer(currentState: any, formData: FormData) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  try {
+    if (!session?.user.id) throw new Error("El usuario no está logueado.");
+
+    const user = await userApi.updateProfile(session.user.id, formData as unknown as UserFormData);
+    if (!user) {
+      throw new Error("Error en la edición");
+    }
+    return { success: true, errors: [] };
+  } catch (error: any) {
+    return { errors: [{ message: error.message }], success: false };
+  }
 }
 
 /////////////

@@ -7,10 +7,10 @@ import {
   getTracksByIds,
   getTracksByPagination,
 } from "./track.repository";
-import { CustomError } from "@/types/error.type";
-import { HttpStatusCode } from "@/types/httpStatusCode";
+import { CustomError } from "@shared-types/error.type";
+import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { mapTrack } from "./track.mapper";
-import { TrackWithRecommendations } from "@/types/track.types";
+import { TrackWithRecommendations } from "@shared-types/track.types";
 
 const TRACKS_PER_PAGES = 6;
 

@@ -1,8 +1,8 @@
-import { Play } from "@/components/ui/icons/playback/Play";
-import { SafeImage } from "@/components/ui/images/SafeImage";
-import { ArtistTracks } from "@/types/artist.types";
+import { Play } from "@components/ui/icons/playback/Play";
+import { SafeImage } from "@components/ui/images/SafeImage";
+import { ArtistTracks } from "@shared-types/artist.types";
 
-export default function Sample({ newTrack }: { newTrack: ArtistTracks[] | null }) {
+export function Sample({ newTrack }: { newTrack: ArtistTracks[] | null }) {
   if (!newTrack) return null;
   return (
     <button className="h-[49px] w-[39px] rounded-[7px] flex justify-center items-center bg-[rgba(var(--bg),1)] image-button relative z-0 overflow-hidden cursor-pointer hover:[&>span>span]:!opacity-100">
