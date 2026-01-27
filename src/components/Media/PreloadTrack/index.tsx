@@ -1,7 +1,7 @@
-import { ContentElement } from "@shared-types/content.types";
+import { ContentTrack } from "@shared-types/content.types";
 
 interface CarouselCardPlayButtonProps {
-  track: ContentElement;
+  track: ContentTrack;
 }
 
 const PreloadTrack = ({ track }: CarouselCardPlayButtonProps) => {

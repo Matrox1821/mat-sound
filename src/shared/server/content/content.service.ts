@@ -81,7 +81,6 @@ export const getTracksForDiscovery = async (
   const allTracksRaw = await getTracksForContent({
     limit: allNeededIds.length,
     ids: allNeededIds,
-    userId,
   });
 
   if (!allTracksRaw || allTracksRaw.length === 0) {

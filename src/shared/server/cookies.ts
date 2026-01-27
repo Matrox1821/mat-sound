@@ -74,7 +74,7 @@ const logoutUser = async () => {
 const deleteCookie = async (cookieKey: string) => {
   try {
     return await (await cookies()).delete(cookieKey);
-  } catch (error: any) {
+  } catch {
     return undefined;
   }
 };

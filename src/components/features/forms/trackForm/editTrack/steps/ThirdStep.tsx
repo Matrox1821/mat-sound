@@ -96,7 +96,7 @@ export function ThirdStep({
             selectedArtists.length > 0 ? "Seleccionar álbumes" : "Selecciona un artista primero"
           }
           callback={(_, albumsData) => setChosenAlbums(albumsData)}
-          options={{ isMultiple: true, sendImage: true }}
+          options={{ isMultiple: true, sendName: true }}
         />
       </div>
 
