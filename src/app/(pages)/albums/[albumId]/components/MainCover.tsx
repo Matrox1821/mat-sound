@@ -4,7 +4,7 @@ import { AlbumById } from "@shared-types/album.types";
 import { TrackById } from "@shared-types/track.types";
 import { use } from "react";
 
-export default function MainCover({
+export function MainCover({
   albumPromise,
 }: {
   albumPromise: Promise<{

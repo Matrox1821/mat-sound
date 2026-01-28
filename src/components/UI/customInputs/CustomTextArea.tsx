@@ -8,7 +8,7 @@ interface CustomTextArea {
   defaultValue?: string;
   disabled?: boolean;
 }
-export default function CustomTextArea({
+export function CustomTextArea({
   styles,
   title,
   name,

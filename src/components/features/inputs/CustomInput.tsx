@@ -1,6 +1,6 @@
-import CustomCheckBox from "@components/ui/customInputs/CustomCheckBox";
-import CustomFiles from "@components/ui/customInputs/CustomFiles";
-import CustomTextArea from "@components/ui/customInputs/CustomTextArea";
+import { CustomCheckBox } from "@components/ui/customInputs/CustomCheckBox";
+import { CustomFiles } from "@components/ui/customInputs/CustomFiles";
+import { CustomTextArea } from "@components/ui/customInputs/CustomTextArea";
 
 interface CustomInputProps {
   title: string;

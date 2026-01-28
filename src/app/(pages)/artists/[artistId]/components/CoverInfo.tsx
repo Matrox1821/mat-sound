@@ -4,11 +4,7 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 import { ArtistServer } from "@shared-types/artist.types";
 import { use } from "react";
 
-export default function CoverInfo({
-  artistPromise,
-}: {
-  artistPromise: Promise<ArtistServer | null>;
-}) {
+export function CoverInfo({ artistPromise }: { artistPromise: Promise<ArtistServer | null> }) {
   const artist = use(artistPromise);
   if (!artist) return null;
   return (

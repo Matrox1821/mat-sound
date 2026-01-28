@@ -6,7 +6,7 @@ import z from "zod";
 import { createAlbumsBulkServer } from "@/actions/album";
 import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
 
-export default function BulkAlbumUpload() {
+export function BulkAlbumUpload() {
   const [jsonInput, setJsonInput] = useState("");
   const [selectedArtist, setSelectedArtist] = useState<any | null>(null);
   const { success, error, warning } = useToast();

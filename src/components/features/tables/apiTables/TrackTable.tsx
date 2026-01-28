@@ -11,7 +11,7 @@ import { SeeTrackBody } from "../../dialogs/SeeTrackBody";
 import { deleteTrackServer } from "@/actions/track";
 import { SafeImage } from "@components/ui/images/SafeImage";
 
-export default function TracksTable({
+export function TracksTable({
   data,
   rows = "6",
   genres,

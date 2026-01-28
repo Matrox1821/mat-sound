@@ -9,7 +9,7 @@ import {
 } from "@radix-ui/react-slider";
 import { RefObject, useRef, useState, useCallback } from "react";
 
-const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
+export const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const hoverTimeRef = useRef<HTMLTimeElement>(null);
   const { currentTime, duration, setIsDragging, setCurrentTime, isDragging } =
@@ -27,7 +27,7 @@ const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
         setCurrentTime(newCurrentTime);
       }
     },
-    [audioRef, setCurrentTime]
+    [audioRef, setCurrentTime],
   );
 
   const handlePointerMove = useCallback(
@@ -44,14 +44,14 @@ const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
         hover < hoverTimeRefSize
           ? hoverTimeRefSize
           : hover > rect.left - hoverTimeRefSize
-          ? rect.left - hoverTimeRefSize
-          : hover
+            ? rect.left - hoverTimeRefSize
+            : hover,
       );
       setIsVisible(time >= 0 && time <= duration);
       setHoverTime(formatTime(time));
     },
 
-    [duration]
+    [duration],
   );
 
   const formattedCurrentTime = formatTime(currentTime || 0);
@@ -108,5 +108,3 @@ const Slider = ({ audioRef }: { audioRef: RefObject<HTMLAudioElement> }) => {
     </div>
   );
 };
-
-export default Slider;

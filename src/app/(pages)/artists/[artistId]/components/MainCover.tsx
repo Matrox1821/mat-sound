@@ -3,11 +3,7 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 import { ArtistServer } from "@shared-types/artist.types";
 import { use } from "react";
 
-export default function MainCover({
-  artistPromise,
-}: {
-  artistPromise: Promise<ArtistServer | null>;
-}) {
+export function MainCover({ artistPromise }: { artistPromise: Promise<ArtistServer | null> }) {
   const artist = use(artistPromise);
   if (!artist) return;
   return (

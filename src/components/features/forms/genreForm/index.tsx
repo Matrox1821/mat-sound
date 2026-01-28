@@ -1,6 +1,6 @@
 "use client";
 import { useActionState, useEffect, useState } from "react";
-import CustomInputAdminForm from "../../inputs/CustomInputAdminForm";
+import { CustomInputAdminForm } from "../../inputs/CustomInputAdminForm";
 import { createGenreServer } from "@/actions/genre";
 import { redirect, usePathname } from "next/navigation";
 import { toast } from "sonner";

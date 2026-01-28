@@ -1,11 +1,11 @@
 import { FormDialog } from "@components/features/dialogs/FormDialog";
-import Paginator from "@components/features/paginator";
+import { Paginator } from "@components/features/paginator";
 import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";
 import { BulkDialog } from "@components/features/dialogs/BulkDialog";
-import ArtistsTable from "@components/features/tables/apiTables/ArtistsTable";
-import BulkArtistUpload from "../components/BulkArtistUpload";
+import { ArtistsTable } from "@components/features/tables/apiTables/ArtistsTable";
+import { BulkArtistUpload } from "../components/BulkArtistUpload";
 import { SearchFilter } from "../components/SearchFilter";
 
 export default async function Page({

@@ -1,11 +1,11 @@
 "use client";
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import Link from "next/link";
-import CarouselCardPlayButton from "../buttons/CarouselCardPlayButton";
+import { CarouselCardPlayButton } from "../buttons/CarouselCardPlayButton";
 import { SafeImage } from "../images/SafeImage";
 import { ContentElement } from "@shared-types/content.types";
 
-export default function CarouselCard({ element }: { element: ContentElement }) {
+export function CarouselCard({ element }: { element: ContentElement }) {
   const { isMobile } = useDevice();
   const desktopStyle = isMobile
     ? "[&_.play-button]:opacity-100 [&_.play-button]:!-translate-y-1"

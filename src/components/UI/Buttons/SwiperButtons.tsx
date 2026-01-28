@@ -3,7 +3,7 @@ import { useSwiper } from "swiper/react";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import { useEffect, useState } from "react";
-export default function SwiperButtons() {
+export function SwiperButtons() {
   const [slideConfig, setSlideConfig] = useState({
     isBeginning: true,
     isEnd: false,

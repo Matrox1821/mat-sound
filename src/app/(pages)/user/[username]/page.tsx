@@ -1,9 +1,9 @@
 import { userApi } from "@/queryFn/client/userApi";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import UserCarousel from "@components/ui/carousels/UserCarousel";
-import Cover from "../components/Cover";
-import CoverInfo from "../components/CoverInfo";
+import { UserCarousel } from "@components/ui/carousels/UserCarousel";
+import { Cover } from "../components/Cover";
+import { CoverInfo } from "../components/CoverInfo";
 export default async function UserPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return;

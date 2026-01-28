@@ -8,7 +8,7 @@ interface CustomCheckBox {
   defaultChecked?: boolean;
   disabled?: boolean;
 }
-export default function CustomCheckBox({
+export function CustomCheckBox({
   styles,
   title,
   name,

@@ -14,7 +14,7 @@ interface CarouselCardPlayButtonProps {
   track: ContentElement | TrackById;
 }
 
-const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
+export const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
   const { currentTrack, setTrack, setUpcoming, setPlayingFrom, reset } = usePlayerStore(
     (state) => state,
   );
@@ -69,5 +69,3 @@ const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
     </button>
   );
 };
-
-export default CarouselCardPlayButton;

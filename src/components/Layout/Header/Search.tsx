@@ -11,7 +11,7 @@ import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";
 
-export default function Search() {
+export function Search() {
   const searchParams = useSearchParams();
   const wrapperRef = useRef<HTMLFormElement>(null);
 

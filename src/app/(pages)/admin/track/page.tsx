@@ -1,12 +1,12 @@
 import { FormDialog } from "@components/features/dialogs/FormDialog";
-import Paginator from "@components/features/paginator";
-import TracksTable from "@components/features/tables/apiTables/TrackTable";
+import { Paginator } from "@components/features/paginator";
+import { TracksTable } from "@components/features/tables/apiTables/TrackTable";
 import { genreAdminApi } from "@/queryFn/admin/genreApi";
 import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";
 import { BulkDialog } from "@components/features/dialogs/BulkDialog";
-import BulkTrackUpload from "../components/BulkTrackUpload";
+import { BulkTrackUpload } from "../components/BulkTrackUpload";
 import { SearchFilter } from "../components/SearchFilter";
 
 export default async function Page({

@@ -12,7 +12,7 @@ const initialState: FormSignoutState = {
   message: undefined,
   errors: null,
 };
-export default function User({ initialSession }: { initialSession: any }) {
+export function User({ initialSession }: { initialSession: any }) {
   const [state, formAction] = useActionState(signoutFormValidation, initialState);
   const op = useRef<OverlayPanel>(null);
   const options = [

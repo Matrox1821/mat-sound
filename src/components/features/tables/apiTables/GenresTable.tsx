@@ -7,7 +7,7 @@ import { genreCapitalize } from "@/shared/utils/helpers";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { deleteGenreServer } from "@/actions/genre";
 
-export default function GenresTable({
+export function GenresTable({
   data,
   rows = "6",
 }: {

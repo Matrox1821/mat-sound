@@ -1,4 +1,4 @@
-import DesktopPlayer from "./DesktopPlayer";
+import { DesktopPlayer } from "./DesktopPlayer";
 
 export async function Player() {
   return (

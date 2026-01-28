@@ -5,7 +5,7 @@ import { APITrack } from "@shared-types/trackProps";
 import Link from "next/link";
 import { use } from "react";
 
-export default function Results({
+export function Results({
   resultsPromise,
 }: {
   resultsPromise: Promise<

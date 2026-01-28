@@ -7,7 +7,7 @@ import z from "zod";
 import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
 import { createTracksBulkServer } from "@/actions/track";
 
-export default function BulkTrackUpload() {
+export function BulkTrackUpload() {
   const [jsonInput, setJsonInput] = useState("");
   const [selectedArtist, setSelectedArtist] = useState<any | null>(null);
   const [selectedAlbumId, setSelectedAlbumId] = useState<string>("");

@@ -1,11 +1,11 @@
 "use client";
-import TrackTable from "@components/features/tables/TrackTable";
+import { TrackTable } from "@components/features/tables/TrackTable";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { AlbumById } from "@shared-types/album.types";
 import { TrackById } from "@shared-types/track.types";
 import { use } from "react";
 
-export default function AlbumTable({
+export function AlbumTable({
   albumPromise,
 }: {
   albumPromise: Promise<{

@@ -1,6 +1,6 @@
 import { CustomInput } from "./CustomInput";
 
-export default function CustomInputAdminForm({
+export function CustomInputAdminForm({
   disabled = false,
   ...props
 }: {

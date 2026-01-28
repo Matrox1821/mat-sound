@@ -1,6 +1,6 @@
 "use client";
 import { FormDialog } from "@components/features/dialogs/FormDialog";
-import CustomInputAdminForm from "@components/features/inputs/CustomInputAdminForm";
+import { CustomInputAdminForm } from "@components/features/inputs/CustomInputAdminForm";
 import { JsonElementsInput } from "@components/features/inputs/JsonElementsInput";
 import { JsonBulkEditor } from "../../editArtist/JsonBulkEditor";
 

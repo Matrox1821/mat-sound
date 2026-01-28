@@ -2,7 +2,7 @@
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { use } from "react";
 
-export default function Cover({ userPromise }: { userPromise: Promise<any> }) {
+export function Cover({ userPromise }: { userPromise: Promise<any> }) {
   const user = use(userPromise);
   if (!user) return;
   return (

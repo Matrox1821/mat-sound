@@ -3,7 +3,7 @@ import { redirect, usePathname, useSearchParams } from "next/navigation";
 import { Paginator as PrimeReactPaginator } from "primereact/paginator";
 import { use, useState } from "react";
 
-export default function Paginator({
+export function Paginator({
   paginationInfo,
 }: {
   paginationInfo: Promise<{ amount: number; pages: number } | null>;

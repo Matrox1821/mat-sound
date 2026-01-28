@@ -8,8 +8,8 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { MatSound } from "@components/ui/icons/MatSound";
 import { authClient } from "@/lib/auth-client";
-import Search from "./Search";
-import User from "./User";
+import { Search } from "./Search";
+import { User } from "./User";
 
 export function Header({ initialSession }: { initialSession: any }) {
   const pathname = usePathname();

@@ -4,7 +4,7 @@ import { use } from "react";
 import { MediaCard } from "@shared-types/user.types";
 import { UserDataTemplate } from "./UserDataTemplate";
 
-export default function UserCarousel({
+export function UserCarousel({
   dataPromise,
   title,
 }: {

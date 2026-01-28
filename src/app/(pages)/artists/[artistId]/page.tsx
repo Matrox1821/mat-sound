@@ -1,12 +1,12 @@
 import { Suspense } from "react";
-import Carousel from "@components/ui/carousels";
+import { Carousel } from "@components/ui/carousels/index";
 import { artistApi } from "@/queryFn/client/artistApi";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { ContentSkeleton, CoverInfoSkeleton, MainCoverSkeleton } from "./components/Skeleton";
-import MainCover from "./components/MainCover";
-import CoverInfo from "./components/CoverInfo";
-import ArtistContent from "./components/Content";
+import { MainCover } from "./components/MainCover";
+import { CoverInfo } from "./components/CoverInfo";
+import { ArtistContent } from "./components/Content";
 
 export default async function ArtistPage({ params }: { params: Promise<{ artistId: string }> }) {
   const { artistId } = await params;

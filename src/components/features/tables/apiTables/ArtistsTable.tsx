@@ -11,7 +11,7 @@ import { FormDialog } from "../../dialogs/FormDialog";
 import { SeeArtistBody } from "../../dialogs/SeeArtistBody";
 import { SafeImage } from "@components/ui/images/SafeImage";
 
-export default function ArtistsTable({
+export function ArtistsTable({
   data,
   rows = "6",
 }: {

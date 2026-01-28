@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export default function Nav() {
+export function Nav() {
   const params = useSearchParams();
   const pathname = usePathname();
   const buttons = [

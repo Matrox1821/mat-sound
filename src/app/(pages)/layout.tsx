@@ -2,11 +2,11 @@ import { PrimeReactProvider } from "primereact/api";
 
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
 import "primeicons/primeicons.css";
-import { Header } from "@components/layout/header";
+import { Header } from "@components/layout/header/index";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { userApi } from "@/queryFn/client/userApi";
-import { Aside } from "@components/layout/aside";
+import { Aside } from "@components/layout/aside/index";
 
 export default async function DashboardLayout({
   children,

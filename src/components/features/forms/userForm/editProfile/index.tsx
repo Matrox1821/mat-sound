@@ -7,7 +7,7 @@ import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { UserData } from "@shared-types/user.types";
 import { toUpdateUserFormData } from "@/shared/formData/userForm";
 import { updateUserServer } from "@/actions/user";
-import CustomInputAdminForm from "@components/features/inputs/CustomInputAdminForm";
+import { CustomInputAdminForm } from "@components/features/inputs/CustomInputAdminForm";
 
 export const maUserToEditFormData = (user: UserData): UserFormData => {
   return {

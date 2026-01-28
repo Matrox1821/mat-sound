@@ -5,7 +5,7 @@ import { TrackWithRecommendations } from "@shared-types/track.types";
 import Link from "next/link";
 import { use } from "react";
 
-export default function CoverInfo({
+export function CoverInfo({
   trackPromise,
 }: {
   trackPromise: Promise<TrackWithRecommendations[] | null>;

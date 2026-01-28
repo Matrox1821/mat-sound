@@ -1,14 +1,14 @@
 "use client";
-import { PlaylistImage } from "../../ui/images/PlaylistImage";
+import { PlaylistImage } from "@components/ui/images/PlaylistImage";
 import { DropdownMenu } from "../menus/DropdownMenu";
-import { SaveInPlaylist } from "../../ui/buttons/SaveInPlaylist";
+import { SaveInPlaylist } from "@components/ui/buttons/SaveInPlaylist";
 import { useCreatePlaylistDialogStore } from "@/store/createPlaylistDialogStore";
 import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { usePlaylistStore } from "@/store/playlistStore";
 import { playerTrackProps } from "@shared-types/track.types";
 
-export default function PlaylistSelector({ track }: { track: playerTrackProps }) {
+export function PlaylistSelector({ track }: { track: playerTrackProps }) {
   const { toggle, setTrackId } = useCreatePlaylistDialogStore((state) => state);
   const session = authClient.useSession();
   const { error } = useToast();

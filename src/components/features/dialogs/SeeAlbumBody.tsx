@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { AlbumFormData } from "@shared-types/form.types";
 import { AlbumByPagination } from "@shared-types/album.types";
-import CustomInputAdminForm from "../inputs/CustomInputAdminForm";
+import { CustomInputAdminForm } from "../inputs/CustomInputAdminForm";
 export const mapAlbumToEditFormData = (album: AlbumByPagination): AlbumFormData => {
   return {
     id: album.id,

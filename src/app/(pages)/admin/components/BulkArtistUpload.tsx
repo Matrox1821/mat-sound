@@ -5,7 +5,7 @@ import { artistBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 import { useState } from "react";
 import z from "zod";
 
-export default function BulkArtistUpload() {
+export function BulkArtistUpload() {
   const [jsonInput, setJsonInput] = useState("");
   const { success, error, warning } = useToast();
 

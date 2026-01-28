@@ -1,17 +1,17 @@
 "use client";
-import dynamic from "next/dynamic";
 import { Suspense, use } from "react";
+import dynamic from "next/dynamic";
 import { Sample } from "./Sample";
 import { NewArtistTrack } from "./NewTrack";
 import { About } from "./About";
 import { PlayButton } from "./Buttons";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { ArtistServer, ArtistTracks } from "@shared-types/artist.types";
-import { FollowButton } from "@components/ui/buttons/Follow";
+import { FollowButton } from "@/components/ui/buttons/FollowButton";
 
 const PopularTracks = dynamic(() => import("./PopularTracks"));
 
-export default function ArtistContent({
+export function ArtistContent({
   artistPromise,
   popularTracksPromise,
   newTrackPromise,

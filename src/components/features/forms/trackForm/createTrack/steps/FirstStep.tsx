@@ -1,4 +1,4 @@
-import CustomInputAdminForm from "@components/features/inputs/CustomInputAdminForm";
+import { CustomInputAdminForm } from "@components/features/inputs/CustomInputAdminForm";
 export function FirstStep({
   formData,
   onChange,

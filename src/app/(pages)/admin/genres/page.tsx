@@ -1,6 +1,6 @@
 import { FormDialog } from "@components/features/dialogs/FormDialog";
-import GenresTable from "@components/features/tables/apiTables/GenresTable";
-import GenresPaginator from "@components/features/paginator";
+import { GenresTable } from "@components/features/tables/apiTables/GenresTable";
+import { Paginator } from "@components/features/paginator";
 import { genreAdminApi } from "@/queryFn/admin/genreApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 
@@ -31,7 +31,7 @@ export default async function Page({
             <GenresTable data={data} rows={rows} />
           </Suspense>
           <Suspense fallback={<span></span>}>
-            <GenresPaginator paginationInfo={paginationInfo} />
+            <Paginator paginationInfo={paginationInfo} />
           </Suspense>
         </div>
       </section>

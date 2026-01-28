@@ -18,7 +18,7 @@ interface CustomFiles {
   defaultAudio?: string | null;
   disabled?: boolean;
 }
-export default function CustomFiles({
+export function CustomFiles({
   styles,
   title,
   name,

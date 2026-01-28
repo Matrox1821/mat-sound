@@ -5,7 +5,7 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 import { UserData } from "@shared-types/user.types";
 import { use } from "react";
 
-export default function CoverInfo({ userPromise }: { userPromise: Promise<UserData | null> }) {
+export function CoverInfo({ userPromise }: { userPromise: Promise<UserData | null> }) {
   const user = use(userPromise);
   console.log(user);
   if (!user) return;

@@ -4,11 +4,7 @@ import { MediaCard } from "@shared-types/user.types";
 import { Carousel } from "primereact/carousel";
 import { PlaylistTemplate } from "./PlaylistTemplate";
 
-export default function CarouselPlaylists({
-  dataPromise,
-}: {
-  dataPromise: Promise<MediaCard[] | null>;
-}) {
+export function CarouselPlaylists({ dataPromise }: { dataPromise: Promise<MediaCard[] | null> }) {
   const data = use(dataPromise);
   console.log(data);
   if (!data) return;

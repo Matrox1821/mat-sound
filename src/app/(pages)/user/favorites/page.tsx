@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { userApi } from "@/queryFn/client/userApi";
 import { headers } from "next/headers";
 import { Suspense } from "react";
-import FavoritesTable from "../components/FavoritesTable";
+import { FavoritesTable } from "../components/FavoritesTable";
 
 export default async function FavoritesPage() {
   const session = await auth.api.getSession({

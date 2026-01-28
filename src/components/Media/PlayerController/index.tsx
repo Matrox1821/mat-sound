@@ -8,7 +8,7 @@ import { usePlayerStore } from "@/store/playerStore";
 import { Pause } from "@components/ui/icons/playback/Pause";
 import { Play } from "@components/ui/icons/playback/Play";
 
-const PlayerController = () => {
+export const PlayerController = () => {
   const { isShuffled, isPlaying, setLoopMode, loopMode, toggleShuffle } = usePlaybackStore();
   const { next, prev, shuffleOff, shuffleOn } = usePlayerStore();
   const { handlePlayPause, hasNext, hasPrevious } = usePlaylistManager();
@@ -71,5 +71,3 @@ const PlayerController = () => {
     </div>
   );
 };
-
-export default PlayerController;

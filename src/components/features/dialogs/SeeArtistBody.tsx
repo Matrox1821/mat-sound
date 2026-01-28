@@ -1,7 +1,7 @@
 "use client";
 import { ArtistFormData } from "@shared-types/form.types";
 import { ArtistByPagination } from "@shared-types/artist.types";
-import CustomInputAdminForm from "../inputs/CustomInputAdminForm";
+import { CustomInputAdminForm } from "../inputs/CustomInputAdminForm";
 import { useState } from "react";
 import { SafeImage } from "@components/ui/images/SafeImage";
 export const mapArtistToEditFormData = (artist: ArtistByPagination): ArtistFormData => {

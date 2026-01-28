@@ -1,12 +1,12 @@
 import { CarouselProps } from "@shared-types/components";
-import CarouselSwiper from "./CarouselSwiper";
+import { CarouselSwiper } from "./CarouselSwiper";
 import { Suspense } from "react";
 import { CarouselSkeleton } from "@components/skeletons";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { contentApi } from "@/queryFn/client/contentApi";
 
-export default async function Carousel({ remove, options, filter, title }: CarouselProps) {
+export async function Carousel({ remove, options, filter, title }: CarouselProps) {
   const session = await auth.api.getSession({ headers: await headers() });
   const dataToRemove = remove?.artistId || remove?.albumId || remove?.trackId || "";
 

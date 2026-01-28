@@ -11,7 +11,7 @@ import { EditAlbumForm } from "../../forms/albumForm/editAlbum";
 import { SeeAlbumBody } from "../../dialogs/SeeAlbumBody";
 import { SafeImage } from "@components/ui/images/SafeImage";
 
-export default function AlbumsTable({
+export function AlbumsTable({
   data,
   rows = "6",
 }: {

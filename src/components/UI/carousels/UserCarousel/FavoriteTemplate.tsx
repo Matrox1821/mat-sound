@@ -1,7 +1,7 @@
 import { TrackById } from "@shared-types/track.types";
 import Link from "next/link";
 import { SafeImage } from "../../images/SafeImage";
-import CarouselCardPlayButton from "../../buttons/CarouselCardPlayButton";
+import { CarouselCardPlayButton } from "../../buttons/CarouselCardPlayButton";
 
 export const FavoriteTemplate = (track: TrackById) => {
   return (

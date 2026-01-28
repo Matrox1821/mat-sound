@@ -7,7 +7,7 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 import { AlbumById } from "@shared-types/album.types";
 import { TrackById } from "@shared-types/track.types";
 
-export default function CoverInfo({
+export function CoverInfo({
   albumPromise,
 }: {
   albumPromise: Promise<{
