@@ -7,7 +7,7 @@ import { About } from "./About";
 import { PlayButton } from "./Buttons";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { ArtistServer, ArtistTracks } from "@shared-types/artist.types";
-import { FollowButton } from "@/components/ui/buttons/FollowButton";
+import { FollowButton } from "@/components/ui/buttons";
 
 const PopularTracks = dynamic(() => import("./PopularTracks"));
 
