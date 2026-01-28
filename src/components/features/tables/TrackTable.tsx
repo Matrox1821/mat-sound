@@ -11,7 +11,7 @@ import { GET_URL } from "@/shared/utils/constants";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { PlaylistSelector } from "@components/features/inputs/PlaylistSelector";
 import { SafeImage } from "@components/ui/images/SafeImage";
-import { LikeButton } from "@/components/ui/buttons/LikeButton";
+import { LikeButton } from "@components/ui/buttons/LikeButton";
 import { playerTrackProps } from "@shared-types/track.types";
 
 interface TrackTableProps {

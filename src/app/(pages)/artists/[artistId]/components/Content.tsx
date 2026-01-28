@@ -7,7 +7,7 @@ import { About } from "./About";
 import { PlayButton } from "./Buttons";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { ArtistServer, ArtistTracks } from "@shared-types/artist.types";
-import { FollowButton } from "@/components/ui/buttons";
+import { FollowButton } from "@components/ui/buttons";
 
 const PopularTracks = dynamic(() => import("./PopularTracks"));
 
@@ -60,7 +60,7 @@ export function ArtistContent({
       <section className="flex gap-4 items-center">
         <PlayButton tracksList={tracks} upcomingList={upcoming} artistName={artist?.name || ""} />
         <Sample newTrack={newTrack} />
-        <FollowButton artistId={artist!.id} />
+        {artist && <FollowButton artistId={artist.id} />}
       </section>
       <section className="flex gap-8 max-xl:flex-col lg:flex lg:gap-10 max-lg:w-11/12 max-xl:w-11/12 xl:w-10/12">
         <Suspense fallback={<div>Cargando...</div>}>

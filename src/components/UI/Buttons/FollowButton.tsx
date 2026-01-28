@@ -20,7 +20,6 @@ export function FollowButton({ artistId }: FollowButtonProps) {
   if (!hydrated) {
     return <button className="like-button h-5 w-5 opacity-0 pointer-events-none" aria-hidden />;
   }
-
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();

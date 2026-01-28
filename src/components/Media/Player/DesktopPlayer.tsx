@@ -6,7 +6,7 @@ import { usePlayerStore } from "@/store/playerStore";
 import { useAudioController } from "@/shared/client/hooks/player/useAudioController";
 import Link from "next/link";
 
-import { LikeButton } from "@/components/ui/buttons/LikeButton";
+import { LikeButton } from "@components/ui/buttons/LikeButton";
 import { Volume } from "../options/Volume";
 import { RightMenu } from "../options/RightMenu";
 import { ScreenPlaylistMenu } from "../options/ScreenPlaylistMenu";
