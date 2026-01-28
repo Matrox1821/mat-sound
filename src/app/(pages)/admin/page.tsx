@@ -1,3 +1,3 @@
-export default function Page() {
+export default async function Page() {
   return <main className="w-full h-screen bg-background"></main>;
 }
