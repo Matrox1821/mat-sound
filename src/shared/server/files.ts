@@ -98,7 +98,7 @@ export const resizeImage = async ({
     | "trackCover"
     | "trackSong"
     | "playlist"
-    | "users";
+    | "userAvatar";
   id: string;
 }): Promise<ImageVariant> => {
   const sizes = {
@@ -135,4 +135,17 @@ export const resizeImage = async ({
   );
 
   return result;
+};
+export const resizeAvatarUser = async ({ file, id }: { file: File | null; id: string }) => {
+  if (!file) return null;
+  const buffer = await file.arrayBuffer();
+  const dbPath = GET_BUCKET_URL + formatR2FilePath({ type: "userAvatar", id });
+  const r2Path = formatR2FilePath({
+    type: "userAvatar",
+    id,
+  });
+
+  const risizedBuffer = await sharp(buffer).clone().resize(1600).toFormat("webp").toBuffer();
+
+  return { buffer: risizedBuffer, dbPath: dbPath, r2Path: r2Path };
 };

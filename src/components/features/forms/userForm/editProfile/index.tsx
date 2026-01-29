@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
 import { UserFormData } from "@shared-types/form.types";
@@ -8,6 +8,7 @@ import { UserData } from "@shared-types/user.types";
 import { toUpdateUserFormData } from "@/shared/formData/userForm";
 import { updateUserServer } from "@/actions/user";
 import { CustomInputAdminForm } from "@components/features/inputs/CustomInputAdminForm";
+import { InputUserAvatar } from "@/components/features/inputs/InputUserAvatar";
 
 export const maUserToEditFormData = (user: UserData): UserFormData => {
   return {
@@ -21,10 +22,10 @@ export const maUserToEditFormData = (user: UserData): UserFormData => {
 
 export function EditUserForm({ user }: { user: UserData }) {
   const parsedTrack = maUserToEditFormData(user);
-  const stepperRef = useRef<any>(null);
-  const [step, setStep] = useState(1);
   const { success: successMessage, error } = useToast();
   const [formData, setFormData] = useState<UserFormData>(parsedTrack);
+  const [isCropping, setIsCropping] = useState(false);
+
   const { createEntity, success, errors } = useCreateEntity({
     toFormData: toUpdateUserFormData,
     serverAction: updateUserServer,
@@ -54,6 +55,7 @@ export function EditUserForm({ user }: { user: UserData }) {
     }
     if (errors.length !== 0) {
       Object.entries(errors).forEach(([key, value]) => {
+        const _ = value;
         error(key);
       });
     }
@@ -61,10 +63,16 @@ export function EditUserForm({ user }: { user: UserData }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-[750px] flex flex-col gap-4 text-xs overflow-auto"
+      className={`w-[400px] flex flex-col gap-4 text-xs overflow-auto m-4 `}
       noValidate
     >
-      <article className="flex flex-col">
+      <article className="flex flex-col text-sm gap-6">
+        <InputUserAvatar
+          onChange={(val: any) => handleChange("avatar", val)}
+          defaultImage={user.avatar ? `${user.avatar}?t=${user.updatedAt}` : null}
+          setIsCropping={setIsCropping}
+          isCropping={isCropping}
+        />
         <CustomInputAdminForm
           title="Nombre de usuario:"
           name="displayUsername"
@@ -72,20 +80,23 @@ export function EditUserForm({ user }: { user: UserData }) {
           value={formData.displayUsername}
           onChange={(val: any) => handleChange("displayUsername", val)}
           isRequired
+          cssStyles={{ display: isCropping ? "none" : "flex" }}
         />
-        <div className="flex pt-4 gap-4">
+        <CustomInputAdminForm
+          title="Biografia:"
+          name="biography"
+          type="textarea"
+          value={formData.biography}
+          onChange={(val: any) => handleChange("biography", val)}
+          isRequired
+          cssStyles={{ display: isCropping ? "none" : "flex" }}
+        />
+        <div
+          className="flex pt-4 gap-4 w-full justify-end"
+          style={{ display: isCropping ? "none" : "flex" }}
+        >
           <button
-            className="flex gap-2 items-center bg-background-700 p-4 rounded-md cursor-pointer"
-            type="button"
-            onClick={() => {
-              stepperRef.current.prevCallback();
-              setStep(step - 1);
-            }}
-          >
-            <i className="pi pi-arrow-left"></i>Atrás
-          </button>
-          <button
-            className="bg-accent-950/20 border border-accent-950/50 p-4 text-white hover:bg-accent-950/25 cursor-pointer font-bold rounded-md"
+            className="bg-accent-950/20 border border-accent-950/50 p-4 text-white hover:bg-accent-950/25 cursor-pointer font-semibold rounded-md"
             type="submit"
           >
             Guardar Cambios

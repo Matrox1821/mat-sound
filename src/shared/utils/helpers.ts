@@ -133,10 +133,11 @@ const formatR2FilePath = (props: {
     | "trackCover"
     | "trackSong"
     | "playlist"
-    | "users";
+    | "userAvatar";
   id?: string;
   size?: "sm" | "md" | "lg";
   fileName?: string;
+  extension?: string;
 }): string => {
   const { id, type, fileName, size } = props;
 
@@ -159,6 +160,8 @@ const formatR2FilePath = (props: {
       return `tracks/${id}/cover/${size || "md"}.webp`;
     case "trackSong":
       return `tracks/${id}/song.mp3`;
+    case "userAvatar":
+      return `users/${id}/avatar.webp`;
     default:
       throw new Error("Invalid type specified");
   }

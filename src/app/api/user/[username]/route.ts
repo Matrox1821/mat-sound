@@ -28,6 +28,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ user
         location: true,
         _count: { select: { following: true, followedBy: true } },
         username: true,
+        updatedAt: true,
       },
     });
 

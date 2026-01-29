@@ -1,6 +1,7 @@
 import { CustomCheckBox } from "@components/ui/customInputs/CustomCheckBox";
 import { CustomFiles } from "@components/ui/customInputs/CustomFiles";
 import { CustomTextArea } from "@components/ui/customInputs/CustomTextArea";
+import { CSSProperties } from "react";
 
 interface CustomInputProps {
   title: string;
@@ -24,6 +25,7 @@ interface CustomInputProps {
   defaultImages?: string[] | null;
   defaultAudio?: string | null;
   disabled?: boolean;
+  cssStyles?: CSSProperties;
 }
 export function CustomInput({
   title,
@@ -37,6 +39,7 @@ export function CustomInput({
   defaultImages,
   defaultAudio,
   disabled = false,
+  cssStyles,
 }: CustomInputProps) {
   switch (type) {
     case "checkbox":
@@ -54,6 +57,7 @@ export function CustomInput({
     case "textarea":
       return (
         <CustomTextArea
+          cssStyles={cssStyles}
           styles={styles}
           isRequired={Boolean(options.isRequired)}
           name={name}
@@ -81,7 +85,7 @@ export function CustomInput({
 
     default:
       return (
-        <label className={`${styles.labelStyle} flex`}>
+        <label className={`${styles.labelStyle}`} style={cssStyles}>
           <h2 className={styles.titleStyle}>
             {title}
             {options.isRequired && <span className="text-red-400 pl-1">*</span>}

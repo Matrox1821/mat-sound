@@ -30,10 +30,11 @@ export interface UserData {
   biography: string | null;
   username: string;
   displayUsername: string;
-  avatar: ImageSizes | null;
+  avatar: string | null;
   location: string | null;
   following: number;
   followedBy: number;
+  updatedAt: Date;
 }
 
 export interface BaseMediaCard {
