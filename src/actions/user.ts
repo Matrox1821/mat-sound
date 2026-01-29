@@ -1,12 +1,12 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { userApi } from "@/queryFn/client/userApi";
 import { ImageSizes } from "@shared-types/common.types";
 import { prisma } from "@config/db";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { UserFormData } from "@/types/form.types";
+import { parseUpdatedUserFormData } from "@/shared/formData/userForm";
+import { handleAvatarUpload } from "@/shared/server/user/user.storage";
 
 export async function createPlaylist(name: string, trackId?: string) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -41,13 +41,30 @@ export async function createPlaylist(name: string, trackId?: string) {
 
 export async function updateUserServer(currentState: any, formData: FormData) {
   const session = await auth.api.getSession({ headers: await headers() });
+  const newUser = parseUpdatedUserFormData(formData);
   try {
-    if (!session?.user.id) throw new Error("El usuario no está logueado.");
+    if (!session?.user || !newUser) throw new Error("Unauthorized");
+    const userId = session.user.id;
+    const exists = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
 
-    const user = await userApi.updateProfile(session.user.id, formData as unknown as UserFormData);
-    if (!user) {
-      throw new Error("Error en la edición");
+    if (!exists) {
+      if (!session?.user || !newUser) throw new Error("Ek usuario no existe o no esta logueado");
     }
+    const avatar = await handleAvatarUpload(newUser.avatar, userId);
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        ...(newUser.biography && { biography: newUser.biography }),
+        ...(newUser.displayUsername && { displayUsername: newUser.displayUsername }),
+        ...(newUser.avatar && avatar && { avatar: avatar.dbPath }),
+      },
+    });
     return { success: true, errors: [] };
   } catch (error: any) {
     return { errors: [{ message: error.message }], success: false };

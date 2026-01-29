@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 interface CustomTextArea {
   styles: { labelStyle?: string; titleStyle?: string; inputStyle?: string };
   title: string;
@@ -7,6 +9,7 @@ interface CustomTextArea {
   onChange?: (value: any) => void;
   defaultValue?: string;
   disabled?: boolean;
+  cssStyles?: CSSProperties;
 }
 export function CustomTextArea({
   styles,
@@ -17,9 +20,10 @@ export function CustomTextArea({
   onChange,
   defaultValue,
   disabled = false,
+  cssStyles,
 }: CustomTextArea) {
   return (
-    <label className={`${styles.labelStyle} flex`}>
+    <label className={`${styles.labelStyle} flex`} style={cssStyles}>
       <h2 className={styles.titleStyle}>
         {title}
         {isRequired && <span className="text-red-400 pl-1">*</span>}

@@ -12,7 +12,7 @@ export default async function UserPage() {
   const favoritesPromise = userApi.getFavorites(session?.user.username);
   return (
     <section className="w-full z-20 h-full flex flex-col relative md:bg-background md:transition-[heigth] md:duration-200 focus-visible:outline-0">
-      <article className="w-full h-[calc(5/12*100vh)] flex flex-col justify-center px-26 relative">
+      <article className="w-full h-[calc(5/12*100vh)] flex flex-col justify-center pl-26 relative">
         <Cover userPromise={userPromise} />
         <CoverInfo userPromise={userPromise} />
       </article>

@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { CustomInput } from "./CustomInput";
 
 export function CustomInputAdminForm({
@@ -17,15 +18,17 @@ export function CustomInputAdminForm({
   defaultImages?: string[] | null;
   defaultAudio?: string | null;
   disabled?: boolean;
+  cssStyles?: CSSProperties;
 }) {
   return (
     <CustomInput
       disabled={disabled}
       {...props}
+      cssStyles={props.cssStyles}
       styles={{
         labelStyle: `${props.inBox ? "flex-col gap-2 w-full" : "flex-col gap-2"}`,
         titleStyle: "text-base",
-        inputStyle: `w-full bg-background-950 border border-background-100/50 rounded-md focus-visible:border-accent-900/60 focus:border outline-none ${
+        inputStyle: `w-full bg-background border border-background-100/50 rounded-md focus-visible:border-accent-900/60 focus:border outline-none ${
           props.type === "textarea" ? "h-32 py-1 pl-1 text-sm" : "h-10 py-4 pl-1"
         }`,
         previewImageStyle: `${
