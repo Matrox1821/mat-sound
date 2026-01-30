@@ -5,14 +5,12 @@ import { Heart } from "../icons/Heart";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { toggleLike as toggleLikeAction } from "@/actions/user";
 import { useLikeStore } from "@/store/likeStore";
-import { usePathname } from "next/navigation";
 
 interface LikeButtonProps {
   trackId: string;
 }
 
 export function LikeButton({ trackId }: LikeButtonProps) {
-  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const { error: toastError } = useToast();
 
@@ -33,7 +31,7 @@ export function LikeButton({ trackId }: LikeButtonProps) {
       toggleLike(trackId);
 
       try {
-        await toggleLikeAction(trackId, pathname);
+        await toggleLikeAction(trackId);
       } catch {
         toastError("No tienes una sesión iniciada.");
         // rollback
