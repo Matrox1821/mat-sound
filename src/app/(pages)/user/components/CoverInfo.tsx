@@ -1,10 +1,16 @@
 "use client";
+import { useUserAvatarStore } from "@/store/userAvatarStore";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { UserData } from "@shared-types/user.types";
-import { use } from "react";
+import { use, useEffect } from "react";
 
 export function CoverInfo({ userPromise }: { userPromise: Promise<UserData | null> }) {
   const user = use(userPromise);
+  const { hydrate } = useUserAvatarStore();
+  useEffect(() => {
+    if (!user) return;
+    hydrate({ avatar: user.avatar, updatedAt: user.updatedAt });
+  }, [hydrate, user]);
   if (!user) return;
   return (
     <article className="w-1/2 flex items-center z-30 relative h-[calc(5/12*100vh)]">

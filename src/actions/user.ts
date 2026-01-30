@@ -233,3 +233,21 @@ export async function toggleFollow(artistId: string) {
     });
   }
 }
+
+export async function getUserAvatar() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return {
+      updatedAt: new Date(),
+      avatar: null,
+    };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { avatar: true, updatedAt: true },
+  });
+
+  return user;
+}
