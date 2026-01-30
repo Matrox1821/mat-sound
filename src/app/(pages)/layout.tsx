@@ -16,7 +16,7 @@ export default async function DashboardLayout({
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  const promise = userApi.getCollection(session?.user.id || "");
+  const promise = userApi.getCollection(session?.user.username || "");
 
   return (
     <PrimeReactProvider>

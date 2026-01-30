@@ -6,6 +6,8 @@ import Link from "next/link";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { useActionState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { SafeImage } from "@/components/ui/images/SafeImage";
+import { useUserAvatarStore } from "@/store/userAvatarStore";
 
 const initialState: FormSignoutState = {
   success: false,
@@ -13,6 +15,8 @@ const initialState: FormSignoutState = {
   errors: null,
 };
 export function User({ initialSession }: { initialSession: any }) {
+  const { avatar, updatedAt } = useUserAvatarStore();
+
   const [state, formAction] = useActionState(signoutFormValidation, initialState);
   const op = useRef<OverlayPanel>(null);
   const options = [
@@ -26,13 +30,23 @@ export function User({ initialSession }: { initialSession: any }) {
       window.location.href = "/";
     }
   }, [state]);
+
   return (
     <>
       <button
-        className="w-10 h-10 !flex !items-center !justify-center !p-0 !rounded-full !bg-background-800 cursor-pointer"
+        className="w-10 h-10 !flex !items-center !justify-center !p-0 !rounded-full !bg-background-800 cursor-pointer relative"
         onClick={(e) => op.current?.toggle(e)}
       >
-        <UserIcon className="text-background-50 " />
+        {avatar ? (
+          <SafeImage
+            src={`${avatar}?t=${updatedAt}`}
+            width={0}
+            height={0}
+            className="!w-full !h-full !rounded-full"
+          />
+        ) : (
+          <UserIcon className="text-background-50 " />
+        )}
       </button>
       <OverlayPanel
         ref={op}

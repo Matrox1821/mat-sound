@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { useCreateEntity } from "@/shared/client/hooks/ui/useCreateEntity";
 import { UserFormData } from "@shared-types/form.types";
-import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { UserData } from "@shared-types/user.types";
 import { toUpdateUserFormData } from "@/shared/formData/userForm";
 import { updateUserServer } from "@/actions/user";
@@ -22,11 +21,10 @@ export const maUserToEditFormData = (user: UserData): UserFormData => {
 
 export function EditUserForm({ user }: { user: UserData }) {
   const parsedTrack = maUserToEditFormData(user);
-  const { success: successMessage, error } = useToast();
   const [formData, setFormData] = useState<UserFormData>(parsedTrack);
   const [isCropping, setIsCropping] = useState(false);
 
-  const { createEntity, success, errors } = useCreateEntity({
+  const { createEntity, success } = useCreateEntity({
     toFormData: toUpdateUserFormData,
     serverAction: updateUserServer,
     successMessage: "Canción editada con éxito",
@@ -50,16 +48,9 @@ export function EditUserForm({ user }: { user: UserData }) {
 
   useEffect(() => {
     if (success) {
-      successMessage("Success!");
-      redirect(`/user/${user.id}`);
+      redirect(`/user/${user.username}`);
     }
-    if (errors.length !== 0) {
-      Object.entries(errors).forEach(([key, value]) => {
-        const _ = value;
-        error(key);
-      });
-    }
-  }, [success, errors, successMessage, error]);
+  }, [success, formData.avatar, user]);
   return (
     <form
       onSubmit={handleSubmit}

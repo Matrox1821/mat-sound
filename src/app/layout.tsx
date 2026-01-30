@@ -8,9 +8,15 @@ import { Poppins } from "next/font/google";
 import { Toaster } from "sonner";
 import { CreatePlaylistDialog } from "@components/features/dialogs/CreatePlaylistDialog";
 import { LikeHydrator } from "@components/hydrators/LikeHydrator";
-import { getUserArtistFollowingIds, getUserLikedTrackIds, getUserPlaylists } from "@/actions/user";
+import {
+  getUserArtistFollowingIds,
+  getUserAvatar,
+  getUserLikedTrackIds,
+  getUserPlaylists,
+} from "@/actions/user";
 import { PlaylistsHydrator } from "@components/hydrators/PlaylistsHidrator";
 import { FollowHydrator } from "@components/hydrators/FollowHydrator";
+import { UserAvatarHydrator } from "@/components/hydrators/UserAvatarHydrator";
 
 export const metadata: Metadata = {
   title: "Mat Sound",
@@ -26,9 +32,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const likedIds = getUserLikedTrackIds();
   const playlists = getUserPlaylists();
   const artistFolloingIds = getUserArtistFollowingIds();
+  const userAvatarPromise = getUserAvatar();
   return (
     <html lang="es" className={nunitoSans.className}>
       <body className="bg-background h-screen w-screen">
+        <UserAvatarHydrator userAvatarPromise={userAvatarPromise} />
         <LikeHydrator likedIds={likedIds} />
         <PlaylistsHydrator playlists={playlists} />
         <FollowHydrator artistFolloingIds={artistFolloingIds} />
