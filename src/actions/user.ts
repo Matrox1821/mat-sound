@@ -3,7 +3,6 @@
 import { auth } from "@/lib/auth";
 import { ImageSizes } from "@shared-types/common.types";
 import { prisma } from "@config/db";
-import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { parseUpdatedUserFormData } from "@/shared/formData/userForm";
 import { handleAvatarUpload } from "@/shared/server/user/user.storage";
@@ -87,10 +86,9 @@ export async function getUserLikedTrackIds() {
   return likes.map((l) => l.trackId);
 }
 
-export async function toggleLike(trackId: string, pathname: string) {
+export async function toggleLike(trackId: string) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) throw new Error("Unauthorized");
-
   const userId = session.user.id;
 
   const exists = await prisma.like.findUnique({
@@ -113,7 +111,6 @@ export async function toggleLike(trackId: string, pathname: string) {
       data: { userId, trackId },
     });
   }
-  revalidatePath(pathname);
 }
 
 export async function getUserPlaylists(): Promise<
