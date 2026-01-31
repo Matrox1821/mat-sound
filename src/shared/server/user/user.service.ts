@@ -17,7 +17,7 @@ export const getPlaylistsToUserContent = async (username: string): Promise<Playl
       httpStatusCode: HttpStatusCode.NOT_FOUND,
     });
   }
-  return mapPlaylistsToMediaCard({ username, userPlaylists: playlists });
+  return mapPlaylistsToMediaCard({ userPlaylists: playlists });
 };
 
 export const getFavoritesToUserContent = async ({ username }: { username: string }) => {
@@ -33,5 +33,5 @@ export const getFavoritesToUserContent = async ({ username }: { username: string
       httpStatusCode: HttpStatusCode.NOT_FOUND,
     });
   }
-  return mapFavoritesToMediaCard({ username, userFavorites: favorites });
+  return mapFavoritesToMediaCard({ userFavorites: favorites });
 };
