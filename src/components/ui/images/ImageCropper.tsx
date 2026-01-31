@@ -45,24 +45,41 @@ const centerAspectCrop = (
     mediaHeight,
   );
 
-const getCroppedPngImage = async (
+const getCroppedImg = async (
   imageSrc: HTMLImageElement,
-  scaleFactor: number,
   pixelCrop: PixelCrop,
-  maxImageSize: number,
+  maxImageSize: number, // en bytes
+  quality = 0.9, // Calidad inicial
 ): Promise<string> => {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
-  if (!ctx) {
-    throw new Error("Context is null, this should never happen.");
-  }
+  if (!ctx) throw new Error("No 2d context");
 
   const scaleX = imageSrc.naturalWidth / imageSrc.width;
   const scaleY = imageSrc.naturalHeight / imageSrc.height;
 
-  canvas.width = Math.floor(pixelCrop.width * scaleX);
-  canvas.height = Math.floor(pixelCrop.height * scaleY);
+  // 1. Calculamos el tamaño real del recorte
+  let targetWidth = Math.floor(pixelCrop.width * scaleX);
+  let targetHeight = Math.floor(pixelCrop.height * scaleY);
+
+  // 2. IMPORTANTE: Limitamos la resolución máxima a 1024x1024.
+  // Esto evita que suban imágenes de 4000px que pesan mucho y rompen el servidor,
+  // pero mantiene calidad HD.
+  const MAX_DIMENSION = 1024;
+  if (targetWidth > MAX_DIMENSION || targetHeight > MAX_DIMENSION) {
+    const ratio = targetWidth / targetHeight;
+    if (targetWidth > targetHeight) {
+      targetWidth = MAX_DIMENSION;
+      targetHeight = Math.floor(MAX_DIMENSION / ratio);
+    } else {
+      targetHeight = MAX_DIMENSION;
+      targetWidth = Math.floor(MAX_DIMENSION * ratio);
+    }
+  }
+
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
 
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
@@ -75,19 +92,26 @@ const getCroppedPngImage = async (
     pixelCrop.height * scaleY,
     0,
     0,
-    canvas.width,
-    canvas.height,
+    targetWidth,
+    targetHeight,
   );
 
-  const croppedImageUrl = canvas.toDataURL("image/png");
-  const response = await fetch(croppedImageUrl);
-  const blob = await response.blob();
+  // Intentar convertir
+  const tryCompress = async (q: number): Promise<string> => {
+    // Usamos JPEG o WEBP. WebP es mejor, pero JPEG es más compatible si el servidor procesa.
+    // Usaremos WEBP que es lo que tenías.
+    const url = canvas.toDataURL("image/webp", q);
+    const res = await fetch(url);
+    const blob = await res.blob();
 
-  if (blob.size > maxImageSize) {
-    return await getCroppedPngImage(imageSrc, scaleFactor * 0.9, pixelCrop, maxImageSize);
-  }
+    // Si el archivo sigue siendo muy grande y la calidad es aceptable, reducimos calidad
+    if (blob.size > maxImageSize && q > 0.5) {
+      return tryCompress(q - 0.1); // Recursividad bajando calidad
+    }
+    return url;
+  };
 
-  return croppedImageUrl;
+  return tryCompress(quality);
 };
 interface ImageCropContextType {
   file: File;
@@ -126,13 +150,15 @@ export type ImageCropProps = {
 
 export const ImageCrop = ({
   file,
-  maxImageSize = 1024 * 1024 * 5,
+  // Bajamos el default a 4MB para asegurar que entra en Server Actions
+  maxImageSize = 1024 * 1024 * 4,
   onCrop,
   children,
   onChange,
   onComplete,
   ...reactCropProps
 }: ImageCropProps) => {
+  // ... (refs y estados iguales) ...
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [imgSrc, setImgSrc] = useState<string>("");
   const [crop, setCrop] = useState<PercentCrop>();
@@ -155,6 +181,7 @@ export const ImageCrop = ({
     [reactCropProps.aspect],
   );
 
+  // ... handlers handleChange y handleComplete iguales ...
   const handleChange = (pixelCrop: PixelCrop, percentCrop: PercentCrop) => {
     setCrop(percentCrop);
     onChange?.(pixelCrop, percentCrop);
@@ -166,15 +193,15 @@ export const ImageCrop = ({
   };
 
   const applyCrop = async () => {
-    if (!(imgRef.current && completedCrop)) {
-      return;
-    }
+    if (!(imgRef.current && completedCrop)) return;
 
-    const croppedImage = await getCroppedPngImage(imgRef.current, 1, completedCrop, maxImageSize);
+    // Usamos la nueva función
+    const croppedImage = await getCroppedImg(imgRef.current, completedCrop, maxImageSize);
 
     onCrop?.(croppedImage);
   };
 
+  // ... resto del componente (resetCrop, contextValue, return) igual ...
   const resetCrop = () => {
     if (initialCrop) {
       setCrop(initialCrop);
@@ -200,7 +227,6 @@ export const ImageCrop = ({
 
   return <ImageCropContext.Provider value={contextValue}>{children}</ImageCropContext.Provider>;
 };
-
 export interface ImageCropContentProps {
   style?: CSSProperties;
   className?: string;
