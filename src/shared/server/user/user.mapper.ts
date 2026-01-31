@@ -2,10 +2,8 @@ import { UserPlaylistRepository } from "@shared-types/playlist.types";
 import { PlaylistCard, TrackCard, UserFavoritesRepository } from "@shared-types/user.types";
 
 export const mapPlaylistsToMediaCard = ({
-  username,
   userPlaylists,
 }: {
-  username: string;
   userPlaylists: UserPlaylistRepository;
 }): PlaylistCard[] => {
   return userPlaylists.playlists.map((playlist) => ({
@@ -14,15 +12,13 @@ export const mapPlaylistsToMediaCard = ({
     title: playlist.name,
     image: playlist.cover,
     images: playlist.tracks.map(({ track }) => track.cover),
-    href: `/user/${username}/playlists/${playlist.id}`,
+    href: `/playlists/${playlist.id}`,
   }));
 };
 
 export const mapFavoritesToMediaCard = ({
-  username,
   userFavorites,
 }: {
-  username: string;
   userFavorites: UserFavoritesRepository;
 }): TrackCard[] => {
   return userFavorites.likes.map(({ track }) => ({
@@ -35,7 +31,7 @@ export const mapFavoritesToMediaCard = ({
       name,
       avatar,
     })),
-    href: `/user/${username}/tracks/${track.id}`,
+    href: `/tracks/${track.id}`,
     duration: track.duration,
     lyrics: track.lyrics,
     reproductions: track.reproductions,

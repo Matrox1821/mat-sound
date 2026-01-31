@@ -6,7 +6,6 @@ import { PlaylistTemplate } from "./PlaylistTemplate";
 
 export function CarouselPlaylists({ dataPromise }: { dataPromise: Promise<MediaCard[] | null> }) {
   const data = use(dataPromise);
-  console.log(data);
   if (!data) return;
   return (
     <div className="card w-full !relative flex flex-col gap-8">

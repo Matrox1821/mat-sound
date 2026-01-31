@@ -27,8 +27,8 @@ export function EditUserForm({ user }: { user: UserData }) {
   const { createEntity, success } = useCreateEntity({
     toFormData: toUpdateUserFormData,
     serverAction: updateUserServer,
-    successMessage: "Canción editada con éxito",
-    errorMessage: "Ocurrió un error al editar la canción",
+    successMessage: "Perfil editado con éxito",
+    errorMessage: "Ocurrió un error al editar el perfil",
   });
   const handleChange = useCallback(
     <K extends keyof UserFormData>(field: K, value: UserFormData[K]) => {
