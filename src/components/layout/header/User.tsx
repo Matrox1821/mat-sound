@@ -40,8 +40,11 @@ export function User({ initialSession }: { initialSession: any }) {
         {avatar ? (
           <SafeImage
             src={`${avatar}?t=${updatedAt}`}
-            width={0}
-            height={0}
+            sizes="100vw"
+            fill
+            priority
+            unoptimized
+            quality={100}
             className="!w-full !h-full !rounded-full"
           />
         ) : (

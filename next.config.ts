@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   experimental: {
     turbopackFileSystemCacheForDev: true,
     serverActions: {
-      bodySizeLimit: "1024mb",
+      bodySizeLimit: "5mb",
     },
     viewTransition: true,
     imgOptTimeoutInSeconds: 20000,

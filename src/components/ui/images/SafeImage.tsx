@@ -16,11 +16,13 @@ interface ImageSetter {
   skeleton?: boolean;
   unoptimized?: boolean;
   style?: CSSProperties;
+  sizes?: string;
   fill?: boolean;
 }
 
 export const SafeImage = ({
   src,
+  sizes,
   height,
   width,
   alt = "",
@@ -65,6 +67,7 @@ export const SafeImage = ({
         loading={loading}
         priority={priority}
         quality={quality}
+        sizes={sizes}
         className={`${className} ${
           isLoading ? "opacity-0 invisible" : "opacity-100 visible transition-opacity duration-300"
         }`}
