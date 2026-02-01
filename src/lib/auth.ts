@@ -9,7 +9,6 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-
   advanced: {
     database: {
       generateId: () => uuidv7(),
@@ -19,6 +18,7 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 6,
   },
   user: {
     additionalFields: {
