@@ -91,6 +91,13 @@ export async function toggleLike(trackId: string) {
   if (!session?.user) throw new Error("Unauthorized");
   const userId = session.user.id;
 
+  const userCollection = await prisma.collection.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+
+  if (!userCollection) throw new Error("Unauthorized");
+
   const exists = await prisma.like.findUnique({
     where: {
       userId_trackId: {
@@ -106,9 +113,23 @@ export async function toggleLike(trackId: string) {
         userId_trackId: { userId, trackId },
       },
     });
+    await prisma.trackOnCollection.delete({
+      where: {
+        trackId_collectionId: {
+          collectionId: userCollection.id,
+          trackId,
+        },
+      },
+    });
   } else {
     await prisma.like.create({
       data: { userId, trackId },
+    });
+    await prisma.trackOnCollection.create({
+      data: {
+        collectionId: userCollection.id,
+        trackId,
+      },
     });
   }
 }
@@ -250,4 +271,56 @@ export async function getUserAvatar() {
   });
 
   return user;
+}
+
+export async function getUserCollection() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    return {
+      updatedAt: new Date(),
+      avatar: null,
+    };
+  }
+  const collection = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      collection: {
+        select: {
+          albums: {
+            select: {
+              album: {
+                select: {
+                  id: true,
+                  name: true,
+                  cover: true,
+                  _count: { select: { tracks: true } },
+                  artists: { select: { id: true, avatar: true, name: true } },
+                },
+              },
+            },
+          },
+          tracks: {
+            select: {
+              track: {
+                select: {
+                  id: true,
+                  name: true,
+                  cover: true,
+                  artists: { select: { id: true, avatar: true, name: true } },
+                },
+              },
+            },
+          },
+          playlists: {
+            select: {
+              playlist: {
+                select: { id: true, name: true, cover: true, _count: { select: { tracks: true } } },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return collection;
 }

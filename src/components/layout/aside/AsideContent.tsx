@@ -1,3 +1,4 @@
+"use client";
 import { ADMIN_LINKS, USER_LINKS } from "./constants";
 import { AsideLink } from "./AsideLink";
 
