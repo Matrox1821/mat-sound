@@ -6,8 +6,8 @@ export const ADMIN_LINKS = [
   { label: "Genres", href: "/admin/genres?page=1", icon: "pi pi-tags" },
 ];
 
-export const USER_LINKS = [
+export const USER_LINKS = (username?: string) => [
   { label: "Home", href: "/", icon: "pi pi-home" },
-  { label: "Favoritos", href: "/user/favorites", icon: "pi pi-heart" },
-  { label: "Colección", href: "/user/collections", icon: "pi pi-book" },
+  { label: "Favoritos", href: `/user/${username}/favorites`, icon: "pi pi-heart" },
+  { label: "Colección", href: `/user/${username}/collection`, icon: "pi pi-book" },
 ];

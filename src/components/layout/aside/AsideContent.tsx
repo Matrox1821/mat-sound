@@ -15,9 +15,9 @@ export const AdminNavigation = ({ isExpanded, pathname }: any) => (
   </ul>
 );
 
-export const UserNavigation = ({ isExpanded, pathname }: any) => (
+export const UserNavigation = ({ isExpanded, pathname, username }: any) => (
   <ul className="flex flex-col gap-2">
-    {USER_LINKS.map((link) => (
+    {USER_LINKS(username).map((link) => (
       <AsideLink
         key={link.label}
         {...link}
