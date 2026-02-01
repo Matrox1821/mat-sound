@@ -22,7 +22,7 @@ export function CoverInfo({ userPromise }: { userPromise: Promise<UserData | nul
           fill
           priority
           quality={100}
-          className="!object-cover !w-60 !h-60 !rounded-lg border border-background-300/40"
+          className="!object-cover !w-60 !h-60 !rounded-lg border border-background-300/40 !relative"
         />
         <span className="flex flex-col gap-3">
           <span className="flex flex-col gap-2">

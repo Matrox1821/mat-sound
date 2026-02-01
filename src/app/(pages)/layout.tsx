@@ -21,7 +21,7 @@ export default async function DashboardLayout({
   return (
     <PrimeReactProvider>
       <div className="md:!w-screen md:!h-screen flex relative" id="root">
-        <Aside userCollectionPromise={promise} />
+        <Aside userCollectionPromise={promise} username={session?.user.username} />
         <main className="w-full overflow-y-auto overflow-x-hidden h-full focus:border-0 focus:outline-0 relative">
           <Header initialSession={session} />
           {children}
