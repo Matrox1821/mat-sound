@@ -7,9 +7,8 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "5mb",
     },
     viewTransition: true,
-    imgOptTimeoutInSeconds: 20000,
   },
-
+  serverExternalPackages: ["sharp"],
   images: {
     remotePatterns: [
       {
