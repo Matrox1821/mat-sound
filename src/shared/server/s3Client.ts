@@ -4,6 +4,7 @@ const endpoint = process.env.CLOUDFLARE_ENDPOINT;
 const accessKeyId = process.env.CLOUDFLARE_ACCESS_KEY;
 const secretAccessKey = process.env.CLOUDFLARE_SECRET_ACCESS_KEY;
 
+console.log(endpoint, accessKeyId, secretAccessKey);
 if (!endpoint) {
   throw new Error("Faltan variables de entorno de Cloudflare (ENDPOINT)");
 }
