@@ -7,7 +7,7 @@ export function CollectionCard({ element }: { element: UserCollection }) {
   const playlistImage =
     element.type === "playlist" && (element.cover?.md || element.tracksCover[0].md);
   const image = playlistImage || (element.cover && element.cover.md);
-  const { data } = usePalette(image || "");
+  const { data } = usePalette(image + "?solve-cors-error" || "");
   return (
     <li className="w-full h-68 relative">
       <div className={`w-full h-50 flex items-center justify-center rounded-md relative`}>
