@@ -82,3 +82,44 @@ export interface PlaylistCard extends BaseMediaCard {
     contextType: "playlist";
   };
 }
+
+export interface CollectionTrack {
+  type: "track";
+  id: string;
+  name: string;
+  cover: ImageSizes;
+  artists: {
+    id: string;
+    name: string;
+    avatar: ImageSizes;
+  }[];
+  addedAt: Date;
+}
+export interface CollectionAlbum {
+  type: "album";
+  id: string;
+  name: string;
+  cover: ImageSizes;
+  tracksCount: number;
+  artists: {
+    id: string;
+    name: string;
+    avatar: ImageSizes;
+  }[];
+  addedAt: Date;
+}
+export interface CollectionPlaylist {
+  type: "playlist";
+  id: string;
+  name: string;
+  cover?: ImageSizes;
+  tracksCount: number;
+  _count: {
+    tracks: number;
+  };
+  tracksCover: ImageSizes[];
+
+  addedAt: Date;
+}
+
+export type UserCollection = CollectionTrack | CollectionAlbum | CollectionPlaylist;
