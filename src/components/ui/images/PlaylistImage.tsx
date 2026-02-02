@@ -21,9 +21,16 @@ interface PlaylistImageProps {
   trackImages?: ImageSizes[] | null;
   size?: number;
   className?: string;
+  quality?: 50 | 75 | 100;
 }
 
-export const PlaylistImage = ({ image, trackImages, size = 40, className }: PlaylistImageProps) => {
+export const PlaylistImage = ({
+  image,
+  trackImages,
+  size = 40,
+  className,
+  quality,
+}: PlaylistImageProps) => {
   // --- CASO: cover único ---
   if (image || trackImages?.length === 1) {
     const src = image ?? trackImages?.[0]?.sm;
@@ -33,7 +40,7 @@ export const PlaylistImage = ({ image, trackImages, size = 40, className }: Play
         className={`relative rounded-md overflow-hidden bg-black/85 ${className}`}
         style={{ width: size, height: size }}
       >
-        <SafeImage src={src} alt="" fill className="!object-cover" />
+        <SafeImage src={src} alt="" fill className="!object-cover" quality={quality} />
       </figure>
     );
   }
@@ -62,6 +69,7 @@ export const PlaylistImage = ({ image, trackImages, size = 40, className }: Play
           return (
             <SafeImage
               src={img && img.sm}
+              quality={quality}
               alt=""
               height={size / 4}
               width={size / 4}

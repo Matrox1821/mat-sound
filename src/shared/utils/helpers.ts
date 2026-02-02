@@ -171,19 +171,6 @@ const parseStringToR2NamePath = (string: string) => {
   return string.replaceAll(" ", "-").toLowerCase();
 };
 
-/* const parseTrackStoreData = (data: contentProps) => {
-  return {
-    id: data.id,
-    name: data.name,
-    image: data.image.sm,
-    seconds: data.seconds,
-    song: data.song,
-    albums: data.albums,
-    artists: data.artists || null,
-    orderInPlaylist: 1,
-  };
-}; */
-
 function parseNumberListeners(amount: number) {
   let number, fixedNumber;
   switch (true) {
@@ -217,37 +204,7 @@ function parseNumberListeners(amount: number) {
       return `${amount}`;
   }
 }
-/* 
-function hexToRgb(hex?: string) {
-  if (!hex) return "20, 20, 20";
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  if (!result) return "20, 20, 20";
-  return `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`;
-}
-function rgbColor(image?: string | null, transparency?: number) {
-  const defaultValue = `rgba(20,20,20, ${transparency || 0})`;
-  if (!image)
-    return {
-      darkMuted: defaultValue,
-      darkVibrant: defaultValue,
-      lightMuted: defaultValue,
-      lightVibrant: defaultValue,
-      muted: defaultValue,
-      vibrant: defaultValue,
-    };
 
-  const { data } = usePalette(image + "?solve-cors-errorsadasd");
-
-  return {
-    darkMuted: `rgba(${hexToRgb(data.darkMuted)}, ${transparency || 1})`,
-    darkVibrant: `rgba(${hexToRgb(data.darkVibrant)}, ${transparency || 1})`,
-    lightMuted: `rgba(${hexToRgb(data.lightMuted)}, ${transparency || 1})`,
-    lightVibrant: `rgba(${hexToRgb(data.lightVibrant)}, ${transparency || 1})`,
-    muted: `rgba(${hexToRgb(data.muted)}, ${transparency || 1})`,
-    vibrant: `rgba(${hexToRgb(data.vibrant)}, ${transparency || 1})`,
-  };
-}
- */
 const slidesPerView = (isMobile: boolean, size: number) => {
   const asideSize = 272;
 

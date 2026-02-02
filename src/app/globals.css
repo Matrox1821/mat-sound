@@ -512,3 +512,6 @@ section::-webkit-scrollbar-thumb {
   flex: none !important;
   width: 150px !important;
 }
+.playlist-shadow {
+  box-shadow: rgba(0, 0, 0, 0.8) 0px 18px 100px -18px inset;
+}

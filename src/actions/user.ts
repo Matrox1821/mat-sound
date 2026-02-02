@@ -6,6 +6,12 @@ import { prisma } from "@config/db";
 import { headers } from "next/headers";
 import { parseUpdatedUserFormData } from "@/shared/formData/userForm";
 import { handleAvatarUpload } from "@/shared/server/user/user.storage";
+import {
+  CollectionAlbum,
+  CollectionPlaylist,
+  CollectionTrack,
+  UserCollection,
+} from "@/types/user.types";
 
 export async function createPlaylist(name: string, trackId?: string) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -15,24 +21,24 @@ export async function createPlaylist(name: string, trackId?: string) {
 
   if (trackId) {
     const newPlaylist = await prisma.playlist.create({
-      data: { name, tracks: { create: { trackId: trackId } }, userId },
+      data: { name, tracks: { create: { trackId: trackId } }, userId, createdAt: new Date() },
       select: { id: true, name: true },
     });
 
     await prisma.collection.upsert({
       where: { userId },
       update: {
-        playlists: { create: { playlistId: newPlaylist.id } },
+        playlists: { create: { playlistId: newPlaylist.id, addedAt: new Date() } },
       },
       create: {
         userId,
-        playlists: { create: { playlistId: newPlaylist.id } },
+        playlists: { create: { playlistId: newPlaylist.id, addedAt: new Date() } },
       },
     });
     return newPlaylist;
   }
   const newPlaylist = await prisma.playlist.create({
-    data: { name, userId },
+    data: { name, userId, createdAt: new Date() },
   });
 
   return newPlaylist;
@@ -62,6 +68,7 @@ export async function updateUserServer(currentState: any, formData: FormData) {
         ...(newUser.biography && { biography: newUser.biography }),
         ...(newUser.displayUsername && { displayUsername: newUser.displayUsername }),
         ...(newUser.avatar && avatar && { avatar: avatar.dbPath }),
+        updatedAt: new Date(),
       },
     });
     return { success: true, errors: [] };
@@ -123,12 +130,13 @@ export async function toggleLike(trackId: string) {
     });
   } else {
     await prisma.like.create({
-      data: { userId, trackId },
+      data: { userId, trackId, likedAt: new Date() },
     });
     await prisma.trackOnCollection.create({
       data: {
         collectionId: userCollection.id,
         trackId,
+        addedAt: new Date(),
       },
     });
   }
@@ -205,6 +213,7 @@ export async function togglePlaylist(playlistId: string, trackId: string) {
         tracks: {
           create: {
             trackId,
+            addedAt: new Date(),
           },
         },
       },
@@ -250,7 +259,7 @@ export async function toggleFollow(artistId: string) {
     });
   } else {
     await prisma.follow.create({
-      data: { userId, artistId },
+      data: { userId, artistId, followedAt: new Date() },
     });
   }
 }
@@ -273,21 +282,17 @@ export async function getUserAvatar() {
   return user;
 }
 
-export async function getUserCollection() {
+export async function getUserCollection(): Promise<UserCollection[]> {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    return {
-      updatedAt: new Date(),
-      avatar: null,
-    };
-  }
-  const collection = await prisma.user.findUnique({
+  if (!session?.user) return [];
+  const collectionObject = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
       collection: {
         select: {
           albums: {
             select: {
+              addedAt: true,
               album: {
                 select: {
                   id: true,
@@ -301,20 +306,28 @@ export async function getUserCollection() {
           },
           tracks: {
             select: {
+              addedAt: true,
               track: {
                 select: {
                   id: true,
                   name: true,
                   cover: true,
-                  artists: { select: { id: true, avatar: true, name: true } },
+                  artists: { select: { id: true, name: true, avatar: true } },
                 },
               },
             },
           },
           playlists: {
             select: {
+              addedAt: true,
               playlist: {
-                select: { id: true, name: true, cover: true, _count: { select: { tracks: true } } },
+                select: {
+                  id: true,
+                  name: true,
+                  cover: true,
+                  _count: { select: { tracks: true } },
+                  tracks: { select: { track: { select: { cover: true } } }, take: 4 },
+                },
               },
             },
           },
@@ -322,5 +335,245 @@ export async function getUserCollection() {
       },
     },
   });
-  return collection;
+
+  function parseImageSizes(value: unknown): ImageSizes | null {
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      "sm" in value &&
+      "md" in value &&
+      "lg" in value
+    ) {
+      return value as ImageSizes;
+    }
+    return null;
+  }
+
+  if (!collectionObject || !collectionObject.collection) return [];
+  const { albums, playlists, tracks } = collectionObject.collection;
+  const newCollections: UserCollection[] = [
+    ...albums.map(({ album, addedAt }) => {
+      const { _count, artists, cover, ...rest } = album;
+      return {
+        ...rest,
+        type: "album",
+        tracksCount: _count.tracks,
+        addedAt: addedAt,
+        cover: parseImageSizes(cover),
+        artists: artists.map((artist) => ({
+          ...artist,
+          avatar: parseImageSizes(artist.avatar),
+        })),
+      } as CollectionAlbum;
+    }),
+    ...playlists.map(({ playlist, addedAt }) => {
+      const { _count, tracks, ...rest } = playlist;
+      return {
+        ...rest,
+        type: "playlist",
+        tracksCount: _count.tracks,
+        addedAt,
+        cover: parseImageSizes(playlist.cover),
+        tracksCover: tracks.map(({ track }) => parseImageSizes(track.cover)),
+      } as CollectionPlaylist;
+    }),
+    ...tracks.map(({ track, addedAt }) => {
+      return {
+        ...track,
+        type: "track",
+        addedAt,
+        cover: parseImageSizes(track.cover),
+        artists: track.artists.map((artist) => {
+          return {
+            ...artist,
+            avatar: parseImageSizes(artist.avatar),
+          };
+        }),
+      } as CollectionTrack;
+    }),
+  ].sort((a, b) => +b.addedAt - +a.addedAt);
+
+  return newCollections;
+}
+
+export async function getUserAlbumsCollection(): Promise<UserCollection[]> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) return [];
+  const collectionObject = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      collection: {
+        select: {
+          albums: {
+            select: {
+              addedAt: true,
+              album: {
+                select: {
+                  id: true,
+                  name: true,
+                  cover: true,
+                  _count: { select: { tracks: true } },
+                  artists: { select: { id: true, avatar: true, name: true } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  function parseImageSizes(value: unknown): ImageSizes | null {
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      "sm" in value &&
+      "md" in value &&
+      "lg" in value
+    ) {
+      return value as ImageSizes;
+    }
+    return null;
+  }
+
+  if (!collectionObject || !collectionObject.collection) return [];
+  const { albums } = collectionObject.collection;
+  const newCollections: UserCollection[] = albums
+    .map(({ album, addedAt }) => {
+      const { _count, artists, cover, ...rest } = album;
+      return {
+        ...rest,
+        type: "album",
+        tracksCount: _count.tracks,
+        addedAt: addedAt,
+        cover: parseImageSizes(cover),
+        artists: artists.map((artist) => ({
+          ...artist,
+          avatar: parseImageSizes(artist.avatar),
+        })),
+      } as CollectionAlbum;
+    })
+    .sort((a, b) => +b.addedAt - +a.addedAt);
+
+  return newCollections;
+}
+
+export async function getUserTracksCollection(): Promise<UserCollection[]> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) return [];
+  const collectionObject = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      collection: {
+        select: {
+          tracks: {
+            select: {
+              addedAt: true,
+              track: {
+                select: {
+                  id: true,
+                  name: true,
+                  cover: true,
+                  artists: { select: { id: true, name: true, avatar: true } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  function parseImageSizes(value: unknown): ImageSizes | null {
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      "sm" in value &&
+      "md" in value &&
+      "lg" in value
+    ) {
+      return value as ImageSizes;
+    }
+    return null;
+  }
+
+  if (!collectionObject || !collectionObject.collection) return [];
+  const { tracks } = collectionObject.collection;
+  const newCollections: UserCollection[] = tracks
+    .map(({ track, addedAt }) => {
+      return {
+        ...track,
+        type: "track",
+        addedAt,
+        cover: parseImageSizes(track.cover),
+        artists: track.artists.map((artist) => {
+          return {
+            ...artist,
+            avatar: parseImageSizes(artist.avatar),
+          };
+        }),
+      } as CollectionTrack;
+    })
+    .sort((a, b) => +b.addedAt - +a.addedAt);
+
+  return newCollections;
+}
+
+export async function getUserPlaylistsCollection(): Promise<UserCollection[]> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) return [];
+  const collectionObject = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      collection: {
+        select: {
+          playlists: {
+            select: {
+              addedAt: true,
+              playlist: {
+                select: {
+                  id: true,
+                  name: true,
+                  cover: true,
+                  _count: { select: { tracks: true } },
+                  tracks: { select: { track: { select: { cover: true } } }, take: 4 },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  function parseImageSizes(value: unknown): ImageSizes | null {
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      "sm" in value &&
+      "md" in value &&
+      "lg" in value
+    ) {
+      return value as ImageSizes;
+    }
+    return null;
+  }
+
+  if (!collectionObject || !collectionObject.collection) return [];
+  const { playlists } = collectionObject.collection;
+  const newCollections: UserCollection[] = playlists
+    .map(({ playlist, addedAt }) => {
+      const { _count, tracks, ...rest } = playlist;
+      return {
+        ...rest,
+        type: "playlist",
+        tracksCount: _count.tracks,
+        addedAt,
+        cover: parseImageSizes(playlist.cover),
+        tracksCover: tracks.map(({ track }) => parseImageSizes(track.cover)),
+      } as CollectionPlaylist;
+    })
+    .sort((a, b) => +b.addedAt - +a.addedAt);
+
+  return newCollections;
 }
