@@ -2,7 +2,7 @@
 import { Pause } from "@components/ui/icons/playback/Pause";
 import { Play } from "@components/ui/icons/playback/Play";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { useUIStore } from "@/store/activeStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { ArtistTracks } from "@shared-types/artist.types";
@@ -16,11 +16,12 @@ export function PlayButton({
   upcomingList?: ArtistTracks[] | null;
   artistName: string | null;
 }) {
-  const { setTrack, currentTrack, setPlayingFrom, playingFrom, setUpcoming } = usePlayerStore(
+  const { setTrack, getCurrentTrack, setPlayingFrom, playingFrom, setUpcoming } = usePlayerStore(
     (state) => state,
   );
+  const currentTrack = getCurrentTrack();
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
-  const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
+  const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
 
   if (!tracksList) return null;
   const tracks = tracksList.map((newTrack) => parseTrackByPlayer(newTrack));

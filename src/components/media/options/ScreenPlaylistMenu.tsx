@@ -5,7 +5,7 @@ import { RightMenuIcon } from "@components/ui/icons/playback/RightMenu";
 import { Lyrics as LyricIcon } from "@components/ui/icons/playback/Lyrics";
 import { useProgress } from "@/shared/client/hooks/player/useProgress";
 import { parseLyricsToObject } from "@/shared/utils/helpers";
-import { useUIStore } from "@/store/activeStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import Link from "next/link";
@@ -23,12 +23,37 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
   const { error } = useToast();
 
   const { playerScreenIsActive, setPlayerScreenIsActive, setPlayerRightMenuIsActive } =
-    useUIStore();
+    useAppUIStore();
 
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
 
-  const { history, currentTrack, queue, playingFrom, upcoming, setPlayingFrom } = usePlayerStore();
+  // 1. Traemos los IDs y helpers del nuevo Store
+  const {
+    historyIds,
+    queueIds,
+    upcomingIds,
+    getCurrentTrack,
+    getTrackFromCache,
+    addTracksToCache,
+    playingFrom,
+    setPlayingFrom,
+  } = usePlayerStore();
+
+  const currentTrack = getCurrentTrack();
   const lyrics = parseLyricsToObject(currentTrack?.lyrics || "");
+
+  // 2. Transformamos los IDs en objetos para que la UI (el subcomponente Queue) los pueda renderizar
+  const historyTracks = historyIds
+    .map((id) => getTrackFromCache(id))
+    .filter((track): track is playerTrackProps => !!track);
+
+  const queueTracks = queueIds
+    .map((id) => getTrackFromCache(id))
+    .filter((track): track is playerTrackProps => !!track);
+
+  const upcomingTracks = upcomingIds
+    .map((id) => getTrackFromCache(id))
+    .filter((track): track is playerTrackProps => !!track);
 
   const handleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -51,70 +76,60 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
       return;
     }
 
-    // 3. Lógica de Movimiento de Estados
-    let newHistory = [...history];
-    let newQueue = [...queue];
-    let newUpcoming = [...upcoming];
+    // 3. Lógica de Movimiento de Estados (Ahora usando IDs)
+    let newHistoryIds = [...historyIds];
+    let newQueueIds = [...queueIds];
+    let newUpcomingIds = [...upcomingIds];
 
     switch (from) {
       case "history":
-        // Si clickeo en el historial (ej: el 3)
-        // h:[1,2,3,4] -> ct:3, q:[3,4,5,6...], h:[1,2]
-        const hIndex = history.findIndex((t) => t.id === track.id);
+        const hIndex = historyIds.indexOf(track.id);
         if (hIndex !== -1) {
-          newHistory = history.slice(0, hIndex);
-          // La nueva queue es lo que sacamos de history + la queue vieja
-          newQueue = [...history.slice(hIndex), ...queue];
+          newHistoryIds = historyIds.slice(0, hIndex);
+          newQueueIds = [...historyIds.slice(hIndex), ...queueIds];
         }
         break;
 
       case "queue":
-        // Si clickeo en la cola (ej: el 7)
-        // q:[5,6,7,8] -> ct:7, q:[7,8], h:[...prev, 5,6]
-        const qIndex = queue.findIndex((t) => t.id === track.id);
+        const qIndex = queueIds.indexOf(track.id);
         if (qIndex !== -1) {
-          const passedToHistory = queue.slice(0, qIndex);
-          newHistory = [...history, ...passedToHistory];
-          newQueue = queue.slice(qIndex);
+          const passedToHistory = queueIds.slice(0, qIndex);
+          newHistoryIds = [...historyIds, ...passedToHistory];
+          newQueueIds = queueIds.slice(qIndex);
         }
         break;
 
       case "upcoming":
-        // Si clickeo en upcoming (ej: el 12)
-        // Todo lo anterior (history + queue) pasa al history
-        const uIndex = upcoming.findIndex((t) => t.id === track.id);
+        const uIndex = upcomingIds.indexOf(track.id);
         if (uIndex !== -1) {
-          newHistory = [...history, ...queue, ...upcoming.slice(0, uIndex)];
-          newQueue = [upcoming[uIndex]];
-          newUpcoming = upcoming.slice(uIndex + 1);
+          newHistoryIds = [...historyIds, ...queueIds, ...upcomingIds.slice(0, uIndex)];
+          newQueueIds = [upcomingIds[uIndex]];
+          newUpcomingIds = upcomingIds.slice(uIndex + 1);
         }
         break;
 
       case "recomendations":
-        // Reset total y nueva lista
-        // En este caso 'track' es la primera y 'upcoming' serían las demás
-        newHistory = [];
-        newQueue = [track];
-        // Aquí asumo que si viene de recomendaciones, querrás setear las demás como upcoming
-        // Si tienes una lista de recomendaciones completa, pásala aquí
-        newUpcoming = [];
+        newHistoryIds = [];
+        newQueueIds = [track.id];
+        newUpcomingIds = [];
         setPlayingFrom("Recommendations");
         break;
     }
 
+    // Asegurarnos de que el track clickeado esté en caché por seguridad
+    addTracksToCache([track]);
+
     // 4. Aplicar cambios al store
-    // Usamos setTrack para actualizar currentTrack y la Queue reconstruida
-    // Nota: Tu setTrack actual hace un slice interno, quizás prefieras
-    // una acción custom o ajustar los estados manualmente con 'set'
     usePlayerStore.setState({
-      history: newHistory,
-      queue: newQueue,
-      currentTrack: track,
-      upcoming: newUpcoming,
+      historyIds: newHistoryIds,
+      queueIds: newQueueIds,
+      upcomingIds: newUpcomingIds,
+      currentTrackId: track.id, // Seteamos el ID actual
     });
 
     play();
   };
+
   return (
     <div className="flex items-center gap-2 relative justify-center ">
       <button
@@ -257,13 +272,14 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
                     </button>
                   )}
                 </header>
+                {/* 3. Pasamos las variables calculadas como prop */}
                 {currentTrack && showQueue && (
                   <Queue
                     currentTrack={currentTrack}
-                    history={history}
+                    history={historyTracks}
                     playingFrom={playingFrom}
-                    queue={queue}
-                    upcoming={upcoming}
+                    queue={queueTracks}
+                    upcoming={upcomingTracks}
                     setPlayerScreenIsActive={setPlayerScreenIsActive}
                     handleClick={handleClick}
                     isPlaying={isPlaying}
@@ -543,7 +559,9 @@ const Lyrics = ({
                 className="cursor-pointer"
                 onClick={() => {
                   pause();
-                  audioRef.current.currentTime = start;
+                  if (audioRef.current) {
+                    audioRef.current.currentTime = start;
+                  }
                   setCurrentTime(start);
                   play();
                 }}

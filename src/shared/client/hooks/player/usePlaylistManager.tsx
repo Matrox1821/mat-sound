@@ -3,19 +3,20 @@ import { usePlayerStore } from "@/store/playerStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { useProgressStore } from "@/store/progressStore";
 import { useMainHeight } from "../ui/useMainHeight";
-import { useUIStore } from "@/store/activeStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { playerTrackProps } from "@/types/track.types";
 
 export const usePlaylistManager = () => {
   const { togglePlay } = usePlaybackStore();
-  const { history, queue, upcoming } = usePlayerStore();
+  const { historyIds, queueIds, upcomingIds } = usePlayerStore();
+
   const { setDuration } = useProgressStore();
-  const { playerBarIsActive, activePlayerBar } = useUIStore();
+  const { playerBarIsActive, activePlayerBar } = useAppUIStore();
 
   useMainHeight();
 
-  const hasPrevious = history.length > 0;
-  const hasNext = queue.length > 1 || upcoming.length > 0;
+  const hasPrevious = historyIds.length > 0;
+  const hasNext = queueIds.length > 1 || upcomingIds.length > 0;
 
   const handlePlayPause = (track?: playerTrackProps) => {
     if (!playerBarIsActive) activePlayerBar();

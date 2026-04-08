@@ -10,8 +10,8 @@ export const UserDataTemplate = (data: MediaCard) => {
         className={`w-full h-full flex flex-col color-content-950 duration-150 gap-2 track rounded-lg relative active:not-[:has(&_.play-button:active,&_.like-button:active)]:scale-[.98] active:not-[:has(&_.play-button:active,&_.like-button:active)]:opacity-80 z-10`}
         href={data.href}
       >
-        {data.type !== "playlist" ? (
-          <figure className="w-full aspect-square relative">
+        <figure className="w-full aspect-square relative">
+          {data.type !== "playlist" ? (
             <SafeImage
               src={data.image && data.image.md}
               alt={data.title}
@@ -21,16 +21,17 @@ export const UserDataTemplate = (data: MediaCard) => {
               loading="lazy"
               quality={50}
             />
-            {/* <CarouselCardPlayButton playlist={playlist} /> */}
-          </figure>
-        ) : (
-          <PlaylistImage
-            trackImages={(data.images && data.images?.length > 0 && data.images) || null}
-            size={140}
-            /*  className={`!w-full !h-full`} */
-          />
-        )}
+          ) : (
+            <PlaylistImage
+              trackImages={(data.images && data.images?.length > 0 && data.images) || null}
+              size={160}
+              quality={100}
+              className={`!w-full !h-full `}
+            />
+          )}
+        </figure>
 
+        {/* <CarouselCardPlayButton playlist={playlist} /> */}
         <span>
           <h2
             className={` leading-5 text-base font-normal overflow-x-hidden overflow-ellipsis whitespace-nowrap`}

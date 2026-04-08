@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Pause } from "@components/ui/icons/playback/Pause";
 import { Play } from "@components/ui/icons/playback/Play";
 import { formatTime } from "@/shared/utils/helpers";
-import { useUIStore } from "@/store/activeStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { DropdownMenu } from "../menus/DropdownMenu";
@@ -27,10 +27,11 @@ export function TrackTable({
   showCover,
   playingFromLabel,
 }: TrackTableProps) {
-  const { setTrack, setUpcoming, currentTrack, setPlayingFrom } = usePlayerStore();
+  const { setTrack, setUpcoming, getCurrentTrack, setPlayingFrom } = usePlayerStore();
   const { isPlaying, play, pause } = usePlaybackStore();
-  const { playerBarIsActive, activePlayerBar } = useUIStore();
+  const { playerBarIsActive, activePlayerBar } = useAppUIStore();
   const { message } = useToast();
+  const currentTrack = getCurrentTrack();
   const handlePlay = (e: any, track: playerTrackProps) => {
     e.stopPropagation();
     if (!playerBarIsActive) activePlayerBar();
@@ -142,7 +143,7 @@ export function TrackTable({
                         image: <i className="pi pi-share-alt" />,
                         iconPosition: "left",
                         onClick: async () => {
-                          await navigator.clipboard.writeText(`${GET_URL}/tracks/${track.id}`);
+                          await navigator.clipboard.writeText(`${GET_URL}tracks/${track.id}`);
                           message("Copiado al portapapeles");
                         },
                       },

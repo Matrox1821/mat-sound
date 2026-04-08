@@ -2,14 +2,14 @@
 import { PlaylistImage } from "@components/ui/images/PlaylistImage";
 import { DropdownMenu } from "../menus/DropdownMenu";
 import { SaveInPlaylist } from "@components/ui/buttons/SaveInPlaylist";
-import { useCreatePlaylistDialogStore } from "@/store/createPlaylistDialogStore";
 import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { usePlaylistStore } from "@/store/playlistStore";
 import { playerTrackProps } from "@shared-types/track.types";
+import { useAppUIStore } from "@/store/appUIStore";
 
 export function PlaylistSelector({ track }: { track: playerTrackProps }) {
-  const { toggle, setTrackId } = useCreatePlaylistDialogStore((state) => state);
+  const { closePlaylistDialog, openPlaylistDialog } = useAppUIStore((state) => state);
   const session = authClient.useSession();
   const { error } = useToast();
   const playlists = usePlaylistStore((state) => state.playlists);
@@ -51,8 +51,8 @@ export function PlaylistSelector({ track }: { track: playerTrackProps }) {
             if (!session.data?.user) {
               error("No tienes una sesión iniciada.");
             } else {
-              setTrackId(track.id);
-              toggle();
+              openPlaylistDialog(track.id);
+              closePlaylistDialog();
             }
           },
         },

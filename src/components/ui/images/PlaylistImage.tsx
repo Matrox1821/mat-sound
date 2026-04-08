@@ -34,7 +34,6 @@ export const PlaylistImage = ({
   // --- CASO: cover único ---
   if (image || trackImages?.length === 1) {
     const src = image ?? trackImages?.[0]?.sm;
-
     return (
       <figure
         className={`relative rounded-md overflow-hidden bg-black/85 ${className}`}
@@ -57,7 +56,6 @@ export const PlaylistImage = ({
     images = images = [...images, ...Array(4 - images.length).fill(null)];
 
   if (images && images.length > 4) images = images.slice(0, 4);
-
   return (
     <figure
       className={`rounded-md overflow-hidden w-full h-full grid grid-cols-2 grid-rows-2 bg-black/85 ${className}`}
@@ -71,8 +69,8 @@ export const PlaylistImage = ({
               src={img && img.sm}
               quality={quality}
               alt=""
-              height={size / 4}
-              width={size / 4}
+              height={140}
+              width={140}
               className={`!object-cover !w-full !h-full ${roundedByIndex(i)}`}
               key={i}
             />

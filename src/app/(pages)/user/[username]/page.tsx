@@ -8,6 +8,7 @@ export default async function UserPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return;
   const userPromise = userApi.getUser(session?.user.username);
+
   const playlistsPromise = userApi.getPlaylists(session?.user.username);
   const favoritesPromise = userApi.getFavorites(session?.user.username);
   return (

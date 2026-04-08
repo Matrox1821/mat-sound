@@ -55,7 +55,10 @@ export const SafeImage = ({
   return (
     <>
       {skeleton && isLoading && (
-        <Skeleton className={`!aspect-square !absolute ${className}`} style={style} />
+        <Skeleton
+          className={`aspect-square! absolute! h-full! w-full! ${className}`}
+          style={style}
+        />
       )}
 
       <Image

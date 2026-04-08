@@ -2,11 +2,11 @@
 import { Play } from "@components/ui/icons/playback/Play";
 import { Shuffle } from "@components/ui/icons/playback/Shuffle";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { useUIStore } from "@/store/activeStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { useProgressStore } from "@/store/progressStore";
 import { useState } from "react";
+import { useAppUIStore } from "@/store/appUIStore";
 
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
@@ -29,7 +29,7 @@ export function PlayButton({
   const { setTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
   const { play } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
-  const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
+  const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
 
   if (!currently || !tracksList) return null;
 
@@ -67,7 +67,7 @@ export function RandButton({
   const { setTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
   const { play } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
-  const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
+  const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
   const [random] = useState(() => Math.random());
 
   if (!tracksList) return null;

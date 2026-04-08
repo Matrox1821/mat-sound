@@ -6,17 +6,17 @@ export interface TrackData {
   cover: ImageSizes;
 }
 
-interface PlaylistDetails {
+export interface PlaylistDetails {
   id: string;
   name: string;
-  cover: ImageSizes | null; // El cover propio de la playlist
-  tracks: Map<string, TrackData>;
+  cover: ImageSizes | null;
+  // 1. Cambiamos el Map por un Array
+  tracks: TrackData[];
 }
 
 interface PlaylistState {
   playlists: Map<string, PlaylistDetails>;
   hydrated: boolean;
-
   hydrate: (
     playlistsData: {
       id: string;
@@ -25,13 +25,14 @@ interface PlaylistState {
       tracks: TrackData[];
     }[],
   ) => void;
-
   toggleTrackInPlaylist: (playlistId: string, track: TrackData) => void;
   isTrackInPlaylist: (playlistId: string, trackId: string) => boolean;
+  isPlaylistInStore: (playlistId: string) => boolean;
   createPlaylist: (id: string, name: string) => void;
   removePlaylist: (playlistId: string) => void;
-
   getPlaylistDisplayImages: (playlistId: string) => ImageSizes[] | null;
+  // Función extra preparada para Drag & Drop
+  reorderTracks: (playlistId: string, startIndex: number, endIndex: number) => void;
 }
 
 export const usePlaylistStore = create<PlaylistState>((set, get) => ({
@@ -45,13 +46,12 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
         id: p.id,
         name: p.name,
         cover: p.cover ?? null,
-        tracks: new Map(p.tracks.map((t) => [t.id, t])),
+        // 2. Simplemente guardamos el array
+        tracks: [...p.tracks],
       });
     });
     set({ playlists: next, hydrated: true });
   },
-
-  // ... (toggleTrackInPlaylist, isTrackInPlaylist, removePlaylist se mantienen igual)
 
   toggleTrackInPlaylist: (playlistId, track) =>
     set((state) => {
@@ -59,25 +59,37 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
       const playlist = next.get(playlistId);
       if (!playlist) return state;
 
-      const updatedTracks = new Map(playlist.tracks);
-      if (updatedTracks.has(track.id)) {
-        updatedTracks.delete(track.id);
+      // 3. Usamos findIndex para saber si la pista ya está en el array
+      const trackIndex = playlist.tracks.findIndex((t) => t.id === track.id);
+      let updatedTracks: TrackData[];
+
+      if (trackIndex !== -1) {
+        // Si existe, la eliminamos filtrando el array
+        updatedTracks = playlist.tracks.filter((t) => t.id !== track.id);
       } else {
-        updatedTracks.set(track.id, track);
+        // Si no existe, la añadimos al final del array
+        updatedTracks = [...playlist.tracks, track];
       }
 
       next.set(playlistId, { ...playlist, tracks: updatedTracks });
       return { playlists: next };
     }),
 
-  isTrackInPlaylist: (playlistId, trackId) =>
-    get().playlists.get(playlistId)?.tracks.has(trackId) ?? false,
+  isTrackInPlaylist: (playlistId, trackId) => {
+    const playlist = get().playlists.get(playlistId);
+    if (!playlist) return false;
+    // 4. Usamos .some() que es la forma más rápida de verificar si algo existe en un array
+    return playlist.tracks.some((t) => t.id === trackId);
+  },
+
+  isPlaylistInStore: (playlistId) => get().playlists.has(playlistId),
 
   createPlaylist: (id, name) =>
     set((state) => {
       if (state.playlists.has(id)) return state;
       const next = new Map(state.playlists);
-      next.set(id, { id, name, cover: null, tracks: new Map() });
+      // 5. Inicializamos tracks como un array vacío
+      next.set(id, { id, name, cover: null, tracks: [] });
       return { playlists: next };
     }),
 
@@ -88,21 +100,35 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
       return { playlists: next };
     }),
 
-  // --- LÓGICA DE PRIORIDAD DE IMAGEN ---
   getPlaylistDisplayImages: (playlistId) => {
     const playlist = get().playlists.get(playlistId);
     if (!playlist) return null;
 
-    // prioridad absoluta: cover propio
     if (playlist.cover) {
       return [playlist.cover];
     }
 
-    const images = Array.from(playlist.tracks.values())
+    // 6. Al ser un array, podemos hacer un slice directo en lugar de usar Array.from()
+    const images = playlist.tracks
       .slice(0, 4)
       .map((track) => track.cover)
       .filter((cover): cover is ImageSizes => cover !== null && cover !== undefined);
 
     return images.length > 0 ? images : null;
   },
+
+  // 7. BONUS: Reordenar canciones (perfecto para integraciones con librerías como dnd-kit o react-beautiful-dnd)
+  reorderTracks: (playlistId, startIndex, endIndex) =>
+    set((state) => {
+      const next = new Map(state.playlists);
+      const playlist = next.get(playlistId);
+      if (!playlist) return state;
+
+      const updatedTracks = Array.from(playlist.tracks);
+      const [removed] = updatedTracks.splice(startIndex, 1);
+      updatedTracks.splice(endIndex, 0, removed);
+
+      next.set(playlistId, { ...playlist, tracks: updatedTracks });
+      return { playlists: next };
+    }),
 }));

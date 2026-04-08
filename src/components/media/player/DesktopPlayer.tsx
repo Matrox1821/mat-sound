@@ -15,7 +15,8 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 import { playerTrackProps } from "@shared-types/track.types";
 
 export function DesktopPlayer() {
-  const { currentTrack: track, playingFrom } = usePlayerStore();
+  const { getCurrentTrack, playingFrom } = usePlayerStore();
+  const track = getCurrentTrack();
   const audioRef = useRef<HTMLAudioElement>(null);
   useAudioController(audioRef);
   return (

@@ -15,6 +15,7 @@ const handleCustomApiRequest = async <T = any>(
   method: "POST" | "GET" | "PATCH" | "DELETE",
   body: any = undefined,
   withToken: boolean = false,
+  revalidate: number = 0,
 ) => {
   try {
     const headers = new Headers();
@@ -45,7 +46,7 @@ const handleCustomApiRequest = async <T = any>(
     const fetching = await fetch(request, {
       method,
       body: parsedBody,
-      next: { revalidate: 0 },
+      next: { revalidate },
       headers,
     });
 

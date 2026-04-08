@@ -1,5 +1,5 @@
-import { usePlaybackStore } from "./playbackStore";
 import { create } from "zustand";
+import { usePlaybackStore } from "./playbackStore";
 import { useProgressStore } from "./progressStore";
 import { playerTrackProps } from "@shared-types/track.types";
 
@@ -19,91 +19,46 @@ function setDuration(duration: number) {
 }
 
 interface PlayerState {
-  /**
-   * Indicates from which source the current track is being played
-   */
+  // --- FUENTE DE LA VERDAD ---
+  trackCache: Map<string, playerTrackProps>;
+
+  // --- ORDEN Y ESTADO (Solo IDs) ---
   playingFrom: string;
-
-  /**
-   * Tracks that were already played (history stack)
-   */
-  history: playerTrackProps[];
-
-  /**
-   * Current playback queue (current track is queue[0])
-   */
-  queue: playerTrackProps[];
-
-  /**
-   * Suggested tracks that are not part of the queue yet
-   */
-  upcoming: playerTrackProps[];
-
-  /**
-   * Current track playing
-   */
-  currentTrack: playerTrackProps | null;
-
-  /**
-   * Snapshot of the queue before shuffle (used to restore)
-   */
+  currentTrackId: string | null;
+  historyIds: string[];
+  queueIds: string[];
+  upcomingIds: string[];
   snapshot: {
-    history: playerTrackProps[];
-    queue: playerTrackProps[];
+    historyIds: string[];
+    queueIds: string[];
   } | null;
 
-  /**
-   * Sets the playback source label
-   */
+  // --- ACCIONES ---
   setPlayingFrom: (info: string) => void;
-
-  /**
-   * Sets a new current track and optionally replaces the queue
-   */
+  /** Agrega pistas al caché interno sin alterar las listas de reproducción */
+  addTracksToCache: (tracks: playerTrackProps[]) => void;
   setTrack: (track: playerTrackProps, queue?: playerTrackProps[]) => void;
-
-  /**
-   * Replaces the suggested upcoming tracks
-   */
   setUpcoming: (tracks: playerTrackProps[]) => void;
-
-  /**
-   * Plays the next track in queue or upcoming
-   */
   next: () => void;
-
-  /**
-   * Plays the previous track from history
-   */
   prev: () => void;
-
-  /**
-   * Shuffle: keeps current track first and randomizes the rest
-   */
   shuffleOn: () => void;
-
-  /**
-   * Restores queue order to what it was before shuffle
-   */
   shuffleOff: () => void;
-
-  /**
-   * Reset the store to its initial state
-   */
   reset: () => void;
-
   updateTrackMetadata: (trackId: string, metadata: Partial<playerTrackProps>) => void;
+
+  // --- SELECTORES (Helpers para la UI) ---
+  getCurrentTrack: () => playerTrackProps | null;
+  getTrackFromCache: (id: string) => playerTrackProps | undefined;
 }
 
 const initialState = {
   playingFrom: "",
-
-  currentTrack: null,
-  history: [],
-  queue: [],
-  upcoming: [],
-
+  currentTrackId: null,
+  historyIds: [],
+  queueIds: [],
+  upcomingIds: [],
   snapshot: null,
+  trackCache: new Map(),
 };
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -111,186 +66,187 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
   setPlayingFrom: (info) => set({ playingFrom: info }),
 
+  // Helper interno para popular el diccionario
+  addTracksToCache: (tracks) =>
+    set((state) => {
+      const nextCache = new Map(state.trackCache);
+      tracks.forEach((t) => nextCache.set(t.id, t));
+      return { trackCache: nextCache };
+    }),
+
+  getCurrentTrack: () => {
+    const { currentTrackId, trackCache } = get();
+    if (!currentTrackId) return null;
+    return trackCache.get(currentTrackId) || null;
+  },
+
+  getTrackFromCache: (id) => get().trackCache.get(id),
+
   setTrack: (track, newQueue) => {
     const store = get();
     setDuration(track.duration);
 
-    const trackIndex = newQueue?.findIndex((queueTrack) => queueTrack.id === track.id);
-    let history: playerTrackProps[] | null = [];
-    let queue: playerTrackProps[] | null = [];
+    // 1. Nos aseguramos de que el track actual y la nueva cola estén en caché
+    store.addTracksToCache(newQueue ? [track, ...newQueue] : [track]);
 
-    if (newQueue && trackIndex && trackIndex > -1) {
-      history = newQueue.slice(0, trackIndex);
-      queue = newQueue.slice(trackIndex);
+    // 2. Extraemos solo los IDs para las listas
+    const trackIndex = newQueue?.findIndex((queueTrack) => queueTrack.id === track.id);
+    let historyIds: string[] = [];
+    let queueIds: string[] = [];
+
+    if (newQueue && trackIndex !== undefined && trackIndex > -1) {
+      const newQueueIds = newQueue.map((t) => t.id);
+      historyIds = newQueueIds.slice(0, trackIndex);
+      queueIds = newQueueIds.slice(trackIndex);
+    } else {
+      queueIds = [track.id];
     }
 
     set({
-      history: history,
-      currentTrack: track,
-      queue: queue.length > 0 ? queue : newQueue ? newQueue : [track],
-      upcoming: store.upcoming,
+      historyIds,
+      currentTrackId: track.id,
+      queueIds,
+      // Mantenemos upcoming intacto
     });
   },
 
   next: () => {
     const store = get();
     const loop = getLoopMode();
-    const current = store.currentTrack;
+    const currentId = store.currentTrackId;
 
-    if (!current) return;
+    if (!currentId) return;
 
-    // Lógica de bucle "once": Reinicia la misma canción
     if (loop === "once") {
-      // Aquí podrías disparar un evento para reiniciar el progreso a 0
+      // Bucle once: podrías reiniciar progreso externamente
       return;
     }
 
-    // 1. Determinar cuál es la siguiente canción
-    let nextTrack: playerTrackProps | null = null;
-    let newQueue = [...store.queue];
-    let newUpcoming = [...store.upcoming];
-    let newHistory = [...store.history, current];
+    let nextTrackId: string | null = null;
+    let newQueueIds = [...store.queueIds];
+    let newUpcomingIds = [...store.upcomingIds];
+    let newHistoryIds = [...store.historyIds, currentId];
 
-    if (store.queue.length > 1) {
-      // Caso normal: Hay más canciones en la cola (mezclada o no)
-      nextTrack = store.queue[1];
-      newQueue = store.queue.slice(1);
+    if (store.queueIds.length > 1) {
+      nextTrackId = store.queueIds[1];
+      newQueueIds = store.queueIds.slice(1);
     } else if (loop === "all") {
-      // Caso Loop All: Reconstruimos la cola desde el historial
-      const fullCycle = [...store.history, current];
-      nextTrack = fullCycle[0];
-      newQueue = fullCycle;
-      newHistory = [];
-    } else if (store.upcoming.length > 0) {
-      // Caso Upcoming: No hay más en cola, pero hay sugerencias
-      nextTrack = store.upcoming[0];
-      newQueue = [nextTrack];
-      newUpcoming = store.upcoming.slice(1);
+      const fullCycle = [...store.historyIds, currentId];
+      nextTrackId = fullCycle[0];
+      newQueueIds = fullCycle;
+      newHistoryIds = [];
+    } else if (store.upcomingIds.length > 0) {
+      nextTrackId = store.upcomingIds[0];
+      newQueueIds = [nextTrackId];
+      newUpcomingIds = store.upcomingIds.slice(1);
     }
 
-    // 2. Si no hay siguiente canción, terminamos
-    if (!nextTrack) return;
+    if (!nextTrackId) return;
 
-    // 3. ACTUALIZACIÓN DEL SNAPSHOT (Crucial para que ShuffleOff funcione)
+    // Actualizamos snapshot si estamos en shuffle
     let newSnapshot = store.snapshot;
     if (store.snapshot) {
-      // Si estamos en shuffle, el snapshot debe reflejar que el track actual
-      // ya pasó al historial para que al apagar el shuffle la posición sea correcta.
       newSnapshot = {
-        history: [...store.snapshot.history, current],
-        queue: store.snapshot.queue.filter((t) => t.id !== current.id),
+        historyIds: [...store.snapshot.historyIds, currentId],
+        queueIds: store.snapshot.queueIds.filter((id) => id !== currentId),
       };
     }
 
-    // 4. Aplicar cambios al estado
-    setDuration(nextTrack.duration);
+    // Actualizamos el progreso usando el caché
+    const nextTrack = store.getTrackFromCache(nextTrackId);
+    if (nextTrack) setDuration(nextTrack.duration);
+
     set({
-      currentTrack: nextTrack,
-      queue: newQueue,
-      history: newHistory,
-      upcoming: newUpcoming,
-      snapshot: newSnapshot, // Mantenemos la integridad del orden original
+      currentTrackId: nextTrackId,
+      queueIds: newQueueIds,
+      historyIds: newHistoryIds,
+      upcomingIds: newUpcomingIds,
+      snapshot: newSnapshot,
     });
   },
 
   prev: () => {
     const store = get();
-    const last = store.history.at(-1);
-    if (!last) return;
-    setDuration(last.duration);
+    const lastId = store.historyIds.at(-1);
+
+    if (!lastId) return;
+
+    const lastTrack = store.getTrackFromCache(lastId);
+    if (lastTrack) setDuration(lastTrack.duration);
+
     set({
-      currentTrack: last,
-      history: store.history.slice(0, -1),
-      queue: [last, ...store.queue], // volverlo a poner como current implica recrear queue
+      currentTrackId: lastId,
+      historyIds: store.historyIds.slice(0, -1),
+      queueIds: [lastId, ...store.queueIds],
     });
   },
 
   setUpcoming: (tracks) => {
     if (tracks.length === 0) return;
-    set({ upcoming: tracks });
+    const store = get();
+    // Guardamos las canciones completas en el caché
+    store.addTracksToCache(tracks);
+    // Y guardamos solo sus IDs en upcoming
+    set({ upcomingIds: tracks.map((t) => t.id) });
   },
 
   shuffleOn: () => {
     const store = get();
-    if (!store.currentTrack) return;
+    if (!store.currentTrackId) return;
+
     set({
       snapshot: {
-        history: [...store.history],
-        queue: [...store.queue],
+        historyIds: [...store.historyIds],
+        queueIds: [...store.queueIds],
       },
     });
 
-    const current = store.currentTrack;
-
-    const pool = [...store.history, ...store.queue.slice(1)];
-
-    const mixed = shuffle(pool);
+    const currentId = store.currentTrackId;
+    const pool = [...store.historyIds, ...store.queueIds.slice(1)];
+    const mixed = shuffle(pool); // Barajamos solo IDs
 
     set({
-      history: [],
-      queue: [current, ...mixed],
+      historyIds: [],
+      queueIds: [currentId, ...mixed],
     });
   },
 
   shuffleOff: () => {
     const store = get();
-    if (!store.snapshot || !store.currentTrack) return;
+    if (!store.snapshot || !store.currentTrackId) return;
 
-    const { history: oldHistory, queue: oldQueue } = store.snapshot;
-    const currentId = store.currentTrack.id;
+    const { historyIds: oldHistory, queueIds: oldQueue } = store.snapshot;
+    const currentId = store.currentTrackId;
 
-    // Unimos todo el orden original para encontrar dónde estamos parados
     const fullOriginalList = [...oldHistory, ...oldQueue];
-    const currentIndex = fullOriginalList.findIndex((t) => t.id === currentId);
+    const currentIndex = fullOriginalList.indexOf(currentId);
 
     if (currentIndex === -1) {
-      // Si por alguna razón el track actual no estaba en el snapshot (ej. cambió por upcoming)
-      set({
-        snapshot: null,
-        // Mantenemos lo que hay pero limpiamos el snapshot
-      });
+      set({ snapshot: null });
       return;
     }
 
-    // Re-seccionamos la lista original basada en la posición actual
-    const newHistory = fullOriginalList.slice(0, currentIndex);
-    const newQueue = fullOriginalList.slice(currentIndex);
+    const newHistoryIds = fullOriginalList.slice(0, currentIndex);
+    const newQueueIds = fullOriginalList.slice(currentIndex);
 
     set({
-      history: newHistory,
-      queue: newQueue,
-      snapshot: null, // Limpiamos el snapshot para que el próximo shuffle sea limpio
+      historyIds: newHistoryIds,
+      queueIds: newQueueIds,
+      snapshot: null,
     });
   },
-  updateTrackMetadata: (trackId, metadata) => {
-    const { currentTrack, queue, history, upcoming } = get();
 
-    // 1. Clonamos y actualizamos la Queue (incluye el current si está ahí)
-    const newQueue = queue.map((track) =>
-      track.id === trackId ? { ...track, ...metadata } : track,
-    );
+  updateTrackMetadata: (trackId, metadata) =>
+    set((state) => {
+      // ¡Mira qué limpio! Solo actualizamos un lugar.
+      const track = state.trackCache.get(trackId);
+      if (!track) return state;
 
-    // 2. Actualizamos el CurrentTrack si coincide
-    const newCurrentTrack =
-      currentTrack?.id === trackId ? { ...currentTrack, ...metadata } : currentTrack;
+      const nextCache = new Map(state.trackCache);
+      nextCache.set(trackId, { ...track, ...metadata });
 
-    // 3. Actualizamos el Historial
-    const newHistory = history.map((track) =>
-      track.id === trackId ? { ...track, ...metadata } : track,
-    );
+      return { trackCache: nextCache };
+    }),
 
-    // 4. Actualizamos Upcoming (Sugerencias)
-    const newUpcoming = upcoming.map((track) =>
-      track.id === trackId ? { ...track, ...metadata } : track,
-    );
-
-    // Aplicamos todos los cambios de una sola vez para evitar re-renders innecesarios
-    set({
-      currentTrack: newCurrentTrack,
-      queue: newQueue,
-      history: newHistory,
-      upcoming: newUpcoming,
-    });
-  },
-  reset: () => set({ ...initialState }),
+  reset: () => set({ ...initialState, trackCache: new Map() }), // Asegurarse de limpiar el caché
 }));

@@ -2,7 +2,6 @@
 import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import { useNavigation } from "@/shared/client/hooks/useNavigation";
 import { useNavigationStore } from "@/store/navigationStore";
-import { useAsideStore } from "@/store/asideStore";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
@@ -10,11 +9,12 @@ import { MatSound } from "@components/ui/icons/MatSound";
 import { authClient } from "@/lib/auth-client";
 import { Search } from "./Search";
 import { User } from "./User";
+import { useAppUIStore } from "@/store/appUIStore";
 
 export function Header({ initialSession }: { initialSession: any }) {
   const pathname = usePathname();
   const push = useNavigationStore((s) => s.push);
-  const { isExpanded } = useAsideStore();
+  const { asideIsExpanded } = useAppUIStore();
   const { data: session } = authClient.useSession();
   const currentSession = session || initialSession;
   useEffect(() => {
@@ -32,12 +32,12 @@ export function Header({ initialSession }: { initialSession: any }) {
         <Link
           href={"/"}
           className={`flex items-center justify-center transition-all duration-200 w-12 h-12 ml-3 ${
-            !isExpanded ? "pointer-events-none group-hover:pointer-events-auto" : ""
+            !asideIsExpanded ? "pointer-events-none group-hover:pointer-events-auto" : ""
           }`}
         >
           <MatSound
             className={`w-10 h-10 transition-opacity duration-200 ${
-              isExpanded ? "opacity-100" : "opacity-100 group-hover:opacity-0"
+              asideIsExpanded ? "opacity-100" : "opacity-100 group-hover:opacity-0"
             }`}
           />
         </Link>
@@ -46,7 +46,7 @@ export function Header({ initialSession }: { initialSession: any }) {
 
   if (isMobile || isAdminPage) return null;
 
-  const asideWidth = isExpanded ? 288 : 80;
+  const asideWidth = asideIsExpanded ? 288 : 80;
   const spacing = 28;
   const headerLeft = asideWidth + spacing;
   const headerWidth = `calc(100vw - ${asideWidth}px - ${spacing}px)`;

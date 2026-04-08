@@ -10,7 +10,7 @@ interface CustomFiles {
   disabled?: boolean;
   children?: ReactNode;
 }
-export function CustomAvatarFile({
+export function CustomEditCoverFile({
   title,
   name,
   onChange,
