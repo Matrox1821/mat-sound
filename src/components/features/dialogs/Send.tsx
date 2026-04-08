@@ -1,4 +1,5 @@
 "use client";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
 import Link from "next/link";
 import { Dialog } from "primereact/dialog";
 import { useState } from "react";
@@ -26,6 +27,7 @@ const socials = [
 
 export function Send({ link, title }: { link: string; title?: string }) {
   const [visible, setVisible] = useState(false);
+  const { message } = useToast();
 
   return (
     <div>
@@ -65,13 +67,25 @@ export function Send({ link, title }: { link: string; title?: string }) {
                 <span className="w-[30ch] overflow-hidden text-ellipsis whitespace-nowrap ">
                   {link}
                 </span>
-                <button className="bg-accent-950 text-background p-1 rounded-md cursor-pointer hover:bg-accent-950/90">
+                <button
+                  className="bg-accent-950 text-background p-1 rounded-md cursor-pointer hover:bg-accent-950/90"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(link);
+                    message("Copiado al portapapeles");
+                    setVisible(false);
+                  }}
+                >
                   Copiar
                 </button>
               </span>
               <nav className="flex gap-3">
                 {socials.map(({ href, to, Icon }) => (
-                  <Link href={`${href(link)} ${title}`} target="_blank" key={to}>
+                  <Link
+                    href={`${href(link)} ${title}`}
+                    target="_blank"
+                    key={to}
+                    onClick={() => setVisible(false)}
+                  >
                     {Icon}
                   </Link>
                 ))}

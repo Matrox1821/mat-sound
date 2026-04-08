@@ -10,6 +10,7 @@ export type OptionItem = {
   image?: React.ReactNode;
   iconPosition?: "left" | "right";
   as?: "button" | "div";
+  closeOnClick?: boolean;
 };
 
 export function DropdownMenu({
@@ -24,7 +25,6 @@ export function DropdownMenu({
   optionsPanelClassName?: string;
 }) {
   const op = useRef<OverlayPanel>(null);
-
   return (
     <div>
       <button
@@ -33,7 +33,7 @@ export function DropdownMenu({
         }`}
         onClick={(e) => op.current?.toggle(e)}
       >
-        <i className={`text-xl text-content-900 pi ${iconClassName}`} />
+        <i className={`text-xl text-content-900 pi ${iconClassName} cursor-pointer`} />
       </button>
 
       <OverlayPanel
@@ -54,7 +54,10 @@ export function DropdownMenu({
             return (
               <Component
                 key={i}
-                onClick={option.onClick}
+                onClick={(e) => {
+                  if (option.onClick) option.onClick();
+                  if (option.closeOnClick) op.current?.toggle(e);
+                }}
                 className={`w-full p-2 flex items-center gap-3 hover:bg-background-950 rounded-md transition-colors text-sm text-start ${
                   option.className || ""
                 }`}

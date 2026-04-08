@@ -101,7 +101,7 @@ export function Playlist({
                     {/*   <span>{track.artist.name}</span> */}
                   </div>
                 </div>
-                <span className="text-background-200/70 group-hover:opacity-0 absolute right-2">
+                <span className="text-background-200/70 group-hover:hidden  absolute right-2">
                   {formatTime(track.duration)}
                 </span>
                 <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -115,6 +115,7 @@ export function Playlist({
                           await navigator.clipboard.writeText(`${GET_URL}tracks/${track.id}`);
                           message("Copiado al portapapeles");
                         },
+                        closeOnClick: true,
                       },
                     ]}
                   />

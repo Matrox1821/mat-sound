@@ -12,37 +12,20 @@ export function Save({ playlist: playlistData }: { playlist: PlaylistService | n
   const { error: toastError, message } = useToast();
   if (!playlistData) return;
 
-  const playlist = {
-    id: playlistData?.id,
-    name: playlistData.name,
-    cover: playlistData.cover,
-    tracks: new Map(
-      playlistData.tracks.map((track) => [
-        track.id,
-        {
-          id: track.id,
-          name: track.name,
-          cover: track.cover,
-          artists: new Map(track.artists.map(({ id, name, avatar }) => [id, { id, name, avatar }])),
-        },
-      ]),
-    ),
-  };
-
-  const isSaved = isPlaylistInCollection(playlist.id);
+  const isSaved = isPlaylistInCollection(playlistData.id);
 
   const handleSave = async (e: any) => {
     e.stopPropagation();
     e.preventDefault();
 
     startTransition(async () => {
-      togglePlaylistInCollection(playlist);
+      togglePlaylistInCollection(playlistData);
       try {
-        await togglePlaylist(playlist);
+        await togglePlaylist(playlistData);
         message(`${isSaved ? "Eliminado de la colección." : "Agregado a la colección."}`);
       } catch {
         toastError("No tienes una sesión iniciada.");
-        togglePlaylistInCollection(playlist);
+        togglePlaylistInCollection(playlistData);
       }
     });
   };

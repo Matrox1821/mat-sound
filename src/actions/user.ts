@@ -166,7 +166,6 @@ export async function getUserPlaylists(): Promise<
       tracks: { select: { track: { select: { id: true, cover: true } } } },
     },
   });
-
   return playlists.map((p) => ({
     id: p.id,
     name: p.name,
