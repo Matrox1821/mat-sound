@@ -12,8 +12,12 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export const getPlaylistsToUserContent = async (username: string): Promise<PlaylistCard[]> => {
-  const playlists = await getUserPlaylists({ username });
+export const getPlaylistsToUserContent = async (): Promise<PlaylistCard[] | null> => {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session || !session.user.username) return null;
+
+  const playlists = await getUserPlaylists({ username: session.user.username });
   if (!playlists) {
     throw new CustomError({
       errors: [

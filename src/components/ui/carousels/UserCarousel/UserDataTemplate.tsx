@@ -11,7 +11,7 @@ export const UserDataTemplate = (data: MediaCard) => {
         href={data.href}
       >
         <figure className="w-full aspect-square relative">
-          {data.type !== "playlist" ? (
+          {data.type !== "playlists" ? (
             <SafeImage
               src={data.image && data.image.md}
               alt={data.title}
@@ -24,6 +24,7 @@ export const UserDataTemplate = (data: MediaCard) => {
           ) : (
             <PlaylistImage
               trackImages={(data.images && data.images?.length > 0 && data.images) || null}
+              image={data.image ? data.image.md : null}
               size={160}
               quality={100}
               className={`!w-full !h-full `}
@@ -39,7 +40,7 @@ export const UserDataTemplate = (data: MediaCard) => {
             {data.title}
           </h2>
           <span className="m-0 leading-5 font-normal text-sm text-content-600/70">
-            <span>{data.type === "track" && data.artists && data.artists[0]?.name}</span>
+            <span>{data.type === "tracks" && data.artists && data.artists[0]?.name}</span>
           </span>
         </span>
       </Link>

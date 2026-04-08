@@ -41,7 +41,7 @@ export interface BaseMediaCard {
   id: string;
   title: string;
   href: string;
-  image?: ImageSizes;
+  image?: ImageSizes | null;
   images?: ImageSizes[] | null;
 }
 

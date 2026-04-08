@@ -1,4 +1,3 @@
-import { ImageSizes } from "@/types/common.types";
 import { UserPlaylistRepository } from "@shared-types/playlist.types";
 import { PlaylistCard, TrackCard, UserFavoritesRepository } from "@shared-types/user.types";
 
@@ -11,9 +10,7 @@ export const mapPlaylistsToMediaCard = ({
     type: "playlists",
     id: playlist.id,
     title: playlist.name,
-    image: playlist.cover
-      ? ({ sm: playlist.cover, md: playlist.cover, lg: playlist.cover } as ImageSizes)
-      : undefined,
+    image: playlist.cover,
     images: playlist.tracks.map(({ track }) => track.cover),
     href: `/playlists/${playlist.id}`,
   }));

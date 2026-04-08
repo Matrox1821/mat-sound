@@ -4,12 +4,13 @@ import { headers } from "next/headers";
 import { UserCarousel } from "@components/ui/carousels/UserCarousel";
 import { Cover } from "../components/Cover";
 import { CoverInfo } from "../components/CoverInfo";
+import { getPlaylistsToUserContent } from "@/shared/server/user/user.service";
 export default async function UserPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return;
   const userPromise = userApi.getUser(session?.user.username);
 
-  const playlistsPromise = userApi.getPlaylists(session?.user.username);
+  const playlistsPromise = getPlaylistsToUserContent();
   const favoritesPromise = userApi.getFavorites(session?.user.username);
   return (
     <section className="w-full z-20 h-full flex flex-col relative md:bg-background md:transition-[heigth] md:duration-200 focus-visible:outline-0">

@@ -10,7 +10,7 @@ export interface UserPlaylistRepository {
   playlists: {
     id: string;
     name: string;
-    cover: string | null;
+    cover: ImageSizes | null;
     tracks: {
       track: {
         id: string;
