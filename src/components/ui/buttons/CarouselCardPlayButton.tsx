@@ -2,7 +2,7 @@
 import { usePlayerStore } from "@/store/playerStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { useProgressStore } from "@/store/progressStore";
-import { useUIStore } from "@/store/activeStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { Pause } from "@components/ui/icons/playback/Pause";
 import { Play } from "@components/ui/icons/playback/Play";
@@ -15,13 +15,14 @@ interface CarouselCardPlayButtonProps {
 }
 
 export const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
-  const { currentTrack, setTrack, setUpcoming, setPlayingFrom, reset } = usePlayerStore(
+  const { getCurrentTrack, setTrack, setUpcoming, setPlayingFrom, reset } = usePlayerStore(
     (state) => state,
   );
+  const currentTrack = getCurrentTrack();
   const { error } = useToast();
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
-  const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
+  const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
   function isContentTrack(
     track: ContentElement | TrackById,
   ): track is ContentElement & { type: "tracks" } {

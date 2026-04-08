@@ -2,20 +2,40 @@
 import { Play } from "@components/ui/icons/playback/Play";
 import { RightMenuIcon } from "@components/ui/icons/playback/RightMenu";
 import { SafeImage } from "@components/ui/images/SafeImage";
-import { useUIStore } from "@/store/activeStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { playerTrackProps } from "@shared-types/track.types";
 import Link from "next/link";
 import { Sidebar } from "primereact/sidebar";
+
 export const RightMenu = () => {
   const { playerRightMenuIsActive, setPlayerRightMenuIsActive, setPlayerScreenIsActive } =
-    useUIStore();
-  const { history, currentTrack, queue, playingFrom, upcoming, setPlayingFrom } = usePlayerStore();
+    useAppUIStore();
 
-  const newListQueue = queue;
+  // 1. Traemos los Ids y la función para buscar en caché
+  const {
+    historyIds,
+    queueIds,
+    upcomingIds,
+    getCurrentTrack,
+    getTrackFromCache,
+    addTracksToCache,
+    playingFrom,
+    setPlayingFrom,
+  } = usePlayerStore();
 
+  const currentTrack = getCurrentTrack();
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
+
+  // Transformamos los IDs en objetos para poder mapearlos en el render
+  const historyTracks = historyIds
+    .map((id) => getTrackFromCache(id))
+    .filter((track): track is playerTrackProps => !!track);
+
+  const queueTracks = queueIds
+    .map((id) => getTrackFromCache(id))
+    .filter((track): track is playerTrackProps => !!track);
 
   const handleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -25,82 +45,65 @@ export const RightMenu = () => {
     e.stopPropagation();
     e.preventDefault();
 
-    // 1. Validación básica
     if (!track.song) return;
 
-    // 2. Lógica de Toggle (Play/Pause)
     if (track.id === currentTrack?.id) {
-      if (isPlaying) {
-        pause();
-      } else {
-        play();
-      }
+      isPlaying ? pause() : play();
       return;
     }
 
-    // 3. Lógica de Movimiento de Estados
-    let newHistory = [...history];
-    let newQueue = [...queue];
-    let newUpcoming = [...upcoming];
-
-    switch (from) {
-      case "history":
-        // Si clickeo en el historial (ej: el 3)
-        // h:[1,2,3,4] -> ct:3, q:[3,4,5,6...], h:[1,2]
-        const hIndex = history.findIndex((t) => t.id === track.id);
-        if (hIndex !== -1) {
-          newHistory = history.slice(0, hIndex);
-          // La nueva queue es lo que sacamos de history + la queue vieja
-          newQueue = [...history.slice(hIndex), ...queue];
-        }
-        break;
-
-      case "queue":
-        // Si clickeo en la cola (ej: el 7)
-        // q:[5,6,7,8] -> ct:7, q:[7,8], h:[...prev, 5,6]
-        const qIndex = queue.findIndex((t) => t.id === track.id);
-        if (qIndex !== -1) {
-          const passedToHistory = queue.slice(0, qIndex);
-          newHistory = [...history, ...passedToHistory];
-          newQueue = queue.slice(qIndex);
-        }
-        break;
-
-      case "upcoming":
-        // Si clickeo en upcoming (ej: el 12)
-        // Todo lo anterior (history + queue) pasa al history
-        const uIndex = upcoming.findIndex((t) => t.id === track.id);
-        if (uIndex !== -1) {
-          newHistory = [...history, ...queue, ...upcoming.slice(0, uIndex)];
-          newQueue = [upcoming[uIndex]];
-          newUpcoming = upcoming.slice(uIndex + 1);
-        }
-        break;
-
-      case "recomendations":
-        // Reset total y nueva lista
-        // En este caso 'track' es la primera y 'upcoming' serían las demás
-        newHistory = [];
-        newQueue = [track];
-        // Aquí asumo que si viene de recomendaciones, querrás setear las demás como upcoming
-        // Si tienes una lista de recomendaciones completa, pásala aquí
-        newUpcoming = [];
+    // 2. Diccionario de acciones adaptado a IDs
+    const listActions = {
+      history: () => {
+        const hIndex = historyIds.indexOf(track.id);
+        if (hIndex === -1) return null;
+        return {
+          historyIds: historyIds.slice(0, hIndex),
+          queueIds: [...historyIds.slice(hIndex), ...queueIds],
+        };
+      },
+      queue: () => {
+        const qIndex = queueIds.indexOf(track.id);
+        if (qIndex === -1) return null;
+        return {
+          historyIds: [...historyIds, ...queueIds.slice(0, qIndex)],
+          queueIds: queueIds.slice(qIndex),
+        };
+      },
+      upcoming: () => {
+        const uIndex = upcomingIds.indexOf(track.id);
+        if (uIndex === -1) return null;
+        return {
+          historyIds: [...historyIds, ...queueIds, ...upcomingIds.slice(0, uIndex)],
+          queueIds: [upcomingIds[uIndex]],
+          upcomingIds: upcomingIds.slice(uIndex + 1),
+        };
+      },
+      recomendations: () => {
         setPlayingFrom("");
-        break;
+        return {
+          historyIds: [],
+          queueIds: [track.id],
+          upcomingIds: [],
+        };
+      },
+    };
+
+    if (from && listActions[from]) {
+      const newStates = listActions[from]();
+
+      if (newStates) {
+        // Aseguramos que el track clickeado esté en el caché por si viene de recomendaciones
+        addTracksToCache([track]);
+
+        // Actualizamos el store usando la nueva convención de nombres
+        usePlayerStore.setState({
+          currentTrackId: track.id,
+          ...newStates,
+        });
+        play();
+      }
     }
-
-    // 4. Aplicar cambios al store
-    // Usamos setTrack para actualizar currentTrack y la Queue reconstruida
-    // Nota: Tu setTrack actual hace un slice interno, quizás prefieras
-    // una acción custom o ajustar los estados manualmente con 'set'
-    usePlayerStore.setState({
-      history: newHistory,
-      queue: newQueue,
-      currentTrack: track,
-      upcoming: newUpcoming,
-    });
-
-    play();
   };
 
   return (
@@ -116,6 +119,7 @@ export const RightMenu = () => {
       >
         <RightMenuIcon className="w-7 h-7" />
       </button>
+
       <Sidebar
         visible={playerRightMenuIsActive}
         position="right"
@@ -128,21 +132,20 @@ export const RightMenu = () => {
         <h3 className="text-[15px] text-content-950/90 font-semibold py-6"> Reproducir cola</h3>
 
         <section className="h-[calc(100vh-238px)] overflow-y-scroll">
-          {history.length !== 0 && (
+          {/* HISTORY LIST */}
+          {historyTracks.length !== 0 && (
             <ul>
-              {history.map((track) => (
+              {historyTracks.map((track) => (
                 <li
                   key={track.id}
                   className="flex gap-4 hover:[&>button>.play]:!flex hover:[&>button>img]:!brightness-25 hover:bg-background-800 p-2 rounded-xl"
                 >
                   <button
                     className="relative h-12 w-12 flex items-center justify-center cursor-pointer"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                      handleClick(e, track, "history");
-                    }}
+                    onClick={(e) => handleClick(e, track, "history")}
                   >
                     <SafeImage
-                      src={track.cover && track.cover.lg}
+                      src={track.cover?.lg}
                       alt={track.name}
                       width={48}
                       height={48}
@@ -172,23 +175,24 @@ export const RightMenu = () => {
               ))}
             </ul>
           )}
+
           <span className="text-[12px] text-background-200 uppercase font-semibold">
             Reproduciendo desde: {playingFrom}
           </span>
+
+          {/* CURRENT TRACK */}
           {currentTrack && (
             <div
               className={`flex gap-4 hover:[&>button>.play]:!flex hover:[&>button>img]:!brightness-25 hover:bg-background-800 p-2 rounded-xl ${
-                history.length > 0 ? "my-10" : "mb-8"
+                historyTracks.length > 0 ? "my-10" : "mb-8"
               }`}
             >
               <button
                 className="relative h-12 w-12 flex items-center justify-center cursor-pointer"
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  handleClick(e, currentTrack);
-                }}
+                onClick={(e) => handleClick(e, currentTrack)}
               >
                 <SafeImage
-                  src={currentTrack.cover && currentTrack.cover.lg}
+                  src={currentTrack.cover?.lg}
                   alt={currentTrack.name}
                   width={48}
                   height={48}
@@ -216,24 +220,26 @@ export const RightMenu = () => {
               </span>
             </div>
           )}
+
           <span className="text-[12px] text-background-200 uppercase font-semibold">
             A continuación:
           </span>
-          {newListQueue.slice(1, -1).length !== 0 && (
+
+          {/* QUEUE LIST */}
+          {/* Mantenemos tu .slice(1, -1) original, pero aplicándolo a queueTracks */}
+          {queueTracks.slice(1, -1).length !== 0 && (
             <ul>
-              {newListQueue.slice(1, -1).map((track) => (
+              {queueTracks.slice(1, -1).map((track) => (
                 <li
                   key={track.id}
                   className="flex gap-4 hover:[&>button>.play]:!flex hover:[&>button>img]:!brightness-25 hover:bg-background-800 p-2 rounded-xl"
                 >
                   <button
                     className="relative h-12 w-12 flex items-center justify-center cursor-pointer"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                      handleClick(e, track, "queue");
-                    }}
+                    onClick={(e) => handleClick(e, track, "queue")}
                   >
                     <SafeImage
-                      src={track.cover && track.cover.lg}
+                      src={track.cover?.lg}
                       alt={track.name}
                       width={48}
                       height={48}

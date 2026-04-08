@@ -39,8 +39,8 @@ export const getTracks = async ({
 };
 
 export async function getRandomTracksIds(
-  limit = 5,
-  excludeId: string[] | null = null,
+  limit: number,
+  excludeId: string[] | null,
 ): Promise<{ id: string }[]> {
   const idsToExclude = Array.isArray(excludeId) ? excludeId : excludeId ? [excludeId] : [];
 
@@ -61,8 +61,8 @@ export async function getRandomTracksIds(
 }
 
 export async function getRandomTracksIdsByGenre(
-  limit = 5,
-  excludeId: string | string[] | null = null,
+  limit: number,
+  excludeId: string | string[] | null,
   genresIds?: string[],
 ): Promise<{ id: string }[]> {
   const idsToExclude = Array.isArray(excludeId) ? excludeId : excludeId ? [excludeId] : [];

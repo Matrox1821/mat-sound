@@ -6,7 +6,7 @@ import { usePlayerStore } from "@/store/playerStore";
 
 export const useAudioController = (audioRef: RefObject<HTMLAudioElement | null>) => {
   const { isPlaying, volume } = usePlaybackStore();
-  const songUrl = usePlayerStore((state) => state.currentTrack?.song);
+  const songUrl = usePlayerStore((state) => state.getCurrentTrack()?.song);
 
   useEffect(() => {
     const el = audioRef.current;

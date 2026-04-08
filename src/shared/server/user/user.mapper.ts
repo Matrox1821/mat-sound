@@ -7,7 +7,7 @@ export const mapPlaylistsToMediaCard = ({
   userPlaylists: UserPlaylistRepository;
 }): PlaylistCard[] => {
   return userPlaylists.playlists.map((playlist) => ({
-    type: "playlist",
+    type: "playlists",
     id: playlist.id,
     title: playlist.name,
     image: playlist.cover,
@@ -22,7 +22,7 @@ export const mapFavoritesToMediaCard = ({
   userFavorites: UserFavoritesRepository;
 }): TrackCard[] => {
   return userFavorites.likes.map(({ track }) => ({
-    type: "track",
+    type: "tracks",
     id: track.id,
     title: track.name,
     image: track.cover,

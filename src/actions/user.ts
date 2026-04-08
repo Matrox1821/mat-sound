@@ -10,6 +10,7 @@ import {
   CollectionAlbum,
   CollectionPlaylist,
   CollectionTrack,
+  PlaylistDetails,
   UserCollection,
 } from "@/types/user.types";
 
@@ -57,7 +58,7 @@ export async function updateUserServer(currentState: any, formData: FormData) {
     });
 
     if (!exists) {
-      if (!session?.user || !newUser) throw new Error("Ek usuario no existe o no esta logueado");
+      if (!session?.user || !newUser) throw new Error("El usuario no existe o no esta logueado");
     }
     const avatar = await handleAvatarUpload(newUser.avatar, userId);
     await prisma.user.update({
@@ -165,7 +166,6 @@ export async function getUserPlaylists(): Promise<
       tracks: { select: { track: { select: { id: true, cover: true } } } },
     },
   });
-
   return playlists.map((p) => ({
     id: p.id,
     name: p.name,
@@ -356,7 +356,7 @@ export async function getUserCollection(): Promise<UserCollection[]> {
       const { _count, artists, cover, ...rest } = album;
       return {
         ...rest,
-        type: "album",
+        type: "albums",
         tracksCount: _count.tracks,
         addedAt: addedAt,
         cover: parseImageSizes(cover),
@@ -370,7 +370,7 @@ export async function getUserCollection(): Promise<UserCollection[]> {
       const { _count, tracks, ...rest } = playlist;
       return {
         ...rest,
-        type: "playlist",
+        type: "playlists",
         tracksCount: _count.tracks,
         addedAt,
         cover: parseImageSizes(playlist.cover),
@@ -380,7 +380,7 @@ export async function getUserCollection(): Promise<UserCollection[]> {
     ...tracks.map(({ track, addedAt }) => {
       return {
         ...track,
-        type: "track",
+        type: "tracks",
         addedAt,
         cover: parseImageSizes(track.cover),
         artists: track.artists.map((artist) => {
@@ -394,6 +394,39 @@ export async function getUserCollection(): Promise<UserCollection[]> {
   ].sort((a, b) => +b.addedAt - +a.addedAt);
 
   return newCollections;
+}
+export async function togglePlaylistInCollection(playlist: PlaylistDetails) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const userId = session.user.id;
+
+  const exists = await prisma.collection.findFirst({
+    where: { userId, playlists: { some: { playlistId: playlist.id } } },
+  });
+
+  if (exists) {
+    await prisma.collection.update({
+      where: {
+        userId,
+      },
+      data: {
+        playlists: { deleteMany: { playlistId: playlist.id } },
+      },
+    });
+  } else {
+    await prisma.collection.update({
+      where: { userId },
+      data: {
+        playlists: {
+          create: {
+            playlistId: playlist.id,
+            addedAt: new Date(),
+          },
+        },
+      },
+    });
+  }
 }
 
 export async function getUserAlbumsCollection(): Promise<UserCollection[]> {
@@ -443,7 +476,7 @@ export async function getUserAlbumsCollection(): Promise<UserCollection[]> {
       const { _count, artists, cover, ...rest } = album;
       return {
         ...rest,
-        type: "album",
+        type: "albums",
         tracksCount: _count.tracks,
         addedAt: addedAt,
         cover: parseImageSizes(cover),
@@ -503,7 +536,7 @@ export async function getUserTracksCollection(): Promise<UserCollection[]> {
     .map(({ track, addedAt }) => {
       return {
         ...track,
-        type: "track",
+        type: "tracks",
         addedAt,
         cover: parseImageSizes(track.cover),
         artists: track.artists.map((artist) => {
@@ -566,7 +599,7 @@ export async function getUserPlaylistsCollection(): Promise<UserCollection[]> {
       const { _count, tracks, ...rest } = playlist;
       return {
         ...rest,
-        type: "playlist",
+        type: "playlists",
         tracksCount: _count.tracks,
         addedAt,
         cover: parseImageSizes(playlist.cover),

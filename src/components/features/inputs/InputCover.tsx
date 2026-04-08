@@ -1,5 +1,5 @@
 "use client";
-import { CustomAvatarFile } from "@/components/ui/customInputs/CustomAvatarFile";
+import { CustomEditCoverFile } from "@/components/ui/customInputs/CustomEditCoverFile";
 import {
   ImageCrop,
   ImageCropApply,
@@ -27,13 +27,17 @@ interface ImageCropper {
   setIsCropping: (value: boolean) => void;
   defaultImage?: string | null;
   isCropping: boolean;
+  title: string;
+  inputName: string;
 }
 
-export const InputUserAvatar = ({
+export const InputCover = ({
   defaultImage = "",
   onChange,
   setIsCropping,
   isCropping,
+  title,
+  inputName,
 }: ImageCropper) => {
   const [file, setFile] = useState<File | null>(null);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
@@ -68,10 +72,10 @@ export const InputUserAvatar = ({
   return (
     <>
       <div className="flex !h-22 w-full bg-background rounded-md border border-background-200/50 p-3 items-center gap-4">
-        <CustomAvatarFile
+        <CustomEditCoverFile
           key={inputKey}
-          title="Editar foto de perfil"
-          name="avatarImage"
+          title={title}
+          name={inputName}
           defaultImage={defaultImage}
           onChange={handleFileChange}
         >
@@ -84,7 +88,7 @@ export const InputUserAvatar = ({
               width={30}
             />
           )}
-        </CustomAvatarFile>
+        </CustomEditCoverFile>
       </div>
 
       {file && isCropping && (

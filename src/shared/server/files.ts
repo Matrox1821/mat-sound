@@ -149,3 +149,48 @@ export const resizeAvatarUser = async ({ file, id }: { file: File | null; id: st
 
   return { buffer: risizedBuffer, dbPath: dbPath, r2Path: r2Path };
 };
+
+export const resizeCoverPlaylist = async ({
+  file,
+  id,
+}: {
+  file: File | null;
+  id: string;
+}): Promise<ImageVariant | null> => {
+  if (!file) return null;
+
+  const sizes = {
+    sm: 300,
+    md: 800,
+    lg: 1600,
+  };
+  const result: ImageVariant = {
+    dbPath: { sm: "", md: "", lg: "" },
+    r2Path: { sm: "", md: "", lg: "" },
+    buffer: { sm: null, md: null, lg: null },
+  };
+
+  if (!file) return result;
+  const buffer = await file.arrayBuffer();
+
+  await Promise.all(
+    Object.entries(sizes).map(async ([key, size]) => {
+      const dbPath =
+        GET_BUCKET_URL +
+        formatR2FilePath({ type: "playlist", id, size: key as "sm" | "md" | "lg" });
+      const r2Path = formatR2FilePath({
+        type: "playlist",
+        id,
+        size: key as "sm" | "md" | "lg",
+      });
+
+      const risizedBuffer = await sharp(buffer).clone().resize(size).toFormat("webp").toBuffer();
+
+      result.buffer[key as "sm" | "md" | "lg"] = risizedBuffer;
+      result.dbPath![key as "sm" | "md" | "lg"] = dbPath;
+      result.r2Path![key as "sm" | "md" | "lg"] = r2Path;
+    }),
+  );
+
+  return result;
+};

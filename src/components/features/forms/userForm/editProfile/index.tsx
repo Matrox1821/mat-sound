@@ -7,7 +7,7 @@ import { UserData } from "@shared-types/user.types";
 import { toUpdateUserFormData } from "@/shared/formData/userForm";
 import { updateUserServer } from "@/actions/user";
 import { CustomInputAdminForm } from "@components/features/inputs/CustomInputAdminForm";
-import { InputUserAvatar } from "@/components/features/inputs/InputUserAvatar";
+import { InputCover } from "@/components/features/inputs/InputCover";
 
 export const maUserToEditFormData = (user: UserData): UserFormData => {
   return {
@@ -20,8 +20,8 @@ export const maUserToEditFormData = (user: UserData): UserFormData => {
 };
 
 export function EditUserForm({ user }: { user: UserData }) {
-  const parsedTrack = maUserToEditFormData(user);
-  const [formData, setFormData] = useState<UserFormData>(parsedTrack);
+  const parsedUser = maUserToEditFormData(user);
+  const [formData, setFormData] = useState<UserFormData>(parsedUser);
   const [isCropping, setIsCropping] = useState(false);
 
   const { createEntity, success } = useCreateEntity({
@@ -58,11 +58,13 @@ export function EditUserForm({ user }: { user: UserData }) {
       noValidate
     >
       <article className="flex flex-col text-sm gap-6">
-        <InputUserAvatar
+        <InputCover
           onChange={(val: any) => handleChange("avatar", val)}
           defaultImage={user.avatar ? `${user.avatar}?t=${user.updatedAt}` : null}
           setIsCropping={setIsCropping}
           isCropping={isCropping}
+          title={"Editar foto de perfil"}
+          inputName={"avatarCover"}
         />
         <CustomInputAdminForm
           title="Nombre de usuario:"

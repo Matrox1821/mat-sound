@@ -1,5 +1,7 @@
 const GET_URL =
-  process.env.NODE_ENV === "production" ? "https://mat-sound.vercel.app/" : "http://localhost:3000";
+  process.env.NODE_ENV === "production"
+    ? "https://mat-sound.vercel.app/"
+    : "http://localhost:3000/";
 
 const MAX_SIZE_MOBILE = 768;
 

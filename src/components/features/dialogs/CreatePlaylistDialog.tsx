@@ -1,7 +1,7 @@
 "use client";
 import { createPlaylist as createUserPlaylist } from "@/actions/user";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { useCreatePlaylistDialogStore } from "@/store/createPlaylistDialogStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaylistStore } from "@/store/playlistStore";
 import { Dialog as PrimeReactDialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
@@ -14,7 +14,7 @@ export function CreatePlaylistDialog() {
     { name: "Privada", icon: "pi-lock" },
     { name: "Pública", icon: "pi-globe" },
   ];
-  const { isVisible, setIsVisible, trackId } = useCreatePlaylistDialogStore();
+  const { playlistDialog, togglePlaylistDialog } = useAppUIStore();
   const [selectedVisibility, setSelectedVisibility] = useState(options[0]);
   const [value, setValue] = useState("");
   const createPlaylist = usePlaylistStore((state) => state.createPlaylist);
@@ -30,10 +30,10 @@ export function CreatePlaylistDialog() {
 
     startTransition(async () => {
       try {
-        const playlist = await createUserPlaylist(value, trackId);
+        const playlist = await createUserPlaylist(value, playlistDialog.trackId);
         toastSuccess(`Playlist "${value}" creada con éxito`);
         createPlaylist(playlist.id, playlist.name);
-        setIsVisible(false);
+        togglePlaylistDialog();
         setValue("");
       } catch {
         toastError("No se pudo crear la playlist");
@@ -66,9 +66,9 @@ export function CreatePlaylistDialog() {
   return (
     <PrimeReactDialog
       className="!border-0"
-      visible={isVisible}
+      visible={playlistDialog.isVisible}
       modal
-      onHide={() => setIsVisible(false)}
+      onHide={() => togglePlaylistDialog()}
       closeIcon={true}
       content={({ hide }) => (
         <div

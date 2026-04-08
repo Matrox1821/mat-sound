@@ -3,7 +3,7 @@ import { Pause } from "@components/ui/icons/playback/Pause";
 import { Play } from "@components/ui/icons/playback/Play";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { formatTime } from "@/shared/utils/helpers";
-import { useUIStore } from "@/store/activeStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import Link from "next/link";
@@ -22,14 +22,16 @@ export default function PopularTracks({
   artist: ArtistServer | null;
   upcomingList?: ArtistTracks[] | null;
 }) {
-  const { setTrack, currentTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
+  const { setTrack, getCurrentTrack, setPlayingFrom, setUpcoming } = usePlayerStore(
+    (state) => state,
+  );
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
-  const { playerBarIsActive, activePlayerBar } = useUIStore((state) => state);
+  const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
   const { error } = useToast();
   const [tracksList, setTracksList] = useState<playerTrackProps[] | null>(
     tracks?.slice(0, 5) || null,
   );
-
+  const currentTrack = getCurrentTrack();
   if (!tracks || !artist || !tracksList || !tracksList.length) return;
 
   const playTrack = (e: any, track: playerTrackProps) => {

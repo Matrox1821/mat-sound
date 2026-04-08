@@ -27,7 +27,7 @@ export function CoverInfoSkeleton() {
 }
 export function ContentSkeleton() {
   return (
-    <div className="absolute top-[calc(5/12*100vh)] z-30 left-0 w-full flex flex-col focus:none p-8 gap-8">
+    <div className="absolute top-[calc(1/2*100vh)] z-30 left-0 w-full flex flex-col focus:none p-8 gap-8">
       <div className="flex gap-8 max-xl:flex-col lg:flex lg:gap-10 max-lg:w-11/12 max-xl:w-11/12 xl:w-10/12">
         <div className="flex flex-col gap-8 lg:w-11/12 ">
           <Skeleton className="!h-8 !w-32" />

@@ -11,6 +11,8 @@ const getArtistById = async (id: string, userId?: string): Promise<ArtistServer 
       GET_URL + "/api/artists/" + id,
       "GET",
       null,
+      false,
+      300,
     );
     if (response.errors?.length || !response.data) {
       throw new Error(response.message || "Error en la petición");
@@ -46,7 +48,13 @@ const getTracksByArtistId = async ({
     const response = await handleCustomApiRequest<{
       recommended?: ArtistTracks[] | undefined;
       tracks: ArtistTracks[];
-    }>(GET_URL + "/api/artists/" + id + "/tracks" + "?" + params.toString(), "GET", null);
+    }>(
+      GET_URL + "/api/artists/" + id + "/tracks" + "?" + params.toString(),
+      "GET",
+      null,
+      false,
+      300,
+    );
     if (response.errors?.length || !response.data) {
       throw new Error(response.message || "Error en la petición");
     }

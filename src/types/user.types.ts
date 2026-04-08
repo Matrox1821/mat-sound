@@ -41,14 +41,14 @@ export interface BaseMediaCard {
   id: string;
   title: string;
   href: string;
-  image?: ImageSizes;
+  image?: ImageSizes | null;
   images?: ImageSizes[] | null;
 }
 
 export type MediaCard = TrackCard | AlbumCard | ArtistCard | PlaylistCard;
 
 export interface TrackCard extends BaseMediaCard {
-  type: "track";
+  type: "tracks";
   artists: { id: string; name: string; avatar: ImageSizes }[];
   duration: number;
   lyrics: string | null;
@@ -60,7 +60,7 @@ export interface TrackCard extends BaseMediaCard {
 }
 
 export interface AlbumCard extends BaseMediaCard {
-  type: "album";
+  type: "albums";
   artists: { id: string; name: string; avatar: ImageSizes }[];
   releaseDate?: string;
   playData?: {
@@ -70,12 +70,12 @@ export interface AlbumCard extends BaseMediaCard {
 }
 
 export interface ArtistCard extends BaseMediaCard {
-  type: "artist";
+  type: "artists";
   verified: boolean;
 }
 
 export interface PlaylistCard extends BaseMediaCard {
-  type: "playlist";
+  type: "playlists";
   /* trackCount: number; */
   playData?: {
     contextId: string;
@@ -84,7 +84,7 @@ export interface PlaylistCard extends BaseMediaCard {
 }
 
 export interface CollectionTrack {
-  type: "track";
+  type: "tracks";
   id: string;
   name: string;
   cover: ImageSizes;
@@ -96,7 +96,7 @@ export interface CollectionTrack {
   addedAt: Date;
 }
 export interface CollectionAlbum {
-  type: "album";
+  type: "albums";
   id: string;
   name: string;
   cover: ImageSizes;
@@ -109,7 +109,7 @@ export interface CollectionAlbum {
   addedAt: Date;
 }
 export interface CollectionPlaylist {
-  type: "playlist";
+  type: "playlists";
   id: string;
   name: string;
   cover?: ImageSizes;
@@ -123,3 +123,84 @@ export interface CollectionPlaylist {
 }
 
 export type UserCollection = CollectionTrack | CollectionAlbum | CollectionPlaylist;
+
+export interface CollectionRepository {
+  id: string;
+  name: never;
+  playlists: {
+    playlist: {
+      id: string;
+      name: string;
+      cover: ImageSizes;
+      tracks: {
+        track: {
+          id: string;
+          name: string;
+          cover: ImageSizes;
+          artists: {
+            id: string;
+            name: string;
+          }[];
+        };
+      }[];
+      addedAt: never;
+    };
+  }[];
+  cover: never;
+  tracks: {
+    track: {
+      id: string;
+      name: string;
+      cover: ImageSizes;
+      artists: {
+        id: string;
+        name: string;
+      }[];
+    };
+    addedAt: Date;
+  }[];
+  albums: {
+    album: {
+      id: string;
+      name: string;
+      cover: ImageSizes;
+      artists: {
+        id: string;
+        name: string;
+      }[];
+    };
+    addedAt: Date;
+  }[];
+}
+
+export interface TrackDetails {
+  id: string;
+  name: string;
+  cover: ImageSizes;
+  artists: ArtistDetails[];
+}
+
+export interface PlaylistDetails {
+  id: string;
+  name: string;
+  cover: ImageSizes | null; // El cover propio de la playlist
+  tracks: TrackDetails[];
+}
+
+export interface ArtistDetails {
+  id: string;
+  name: string;
+}
+
+export interface AlbumDetails {
+  id: string;
+  name: string;
+  cover: ImageSizes;
+  artists: ArtistDetails[];
+}
+
+export interface CollectionService {
+  tracks: Map<string, TrackDetails>;
+  albums: Map<string, AlbumDetails>;
+  playlists: Map<string, PlaylistDetails>;
+}

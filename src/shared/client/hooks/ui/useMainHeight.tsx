@@ -1,9 +1,9 @@
 "use client";
-import { useUIStore } from "@/store/activeStore";
+import { useAppUIStore } from "@/store/appUIStore";
 import { useEffect } from "react";
 
 export const useMainHeight = () => {
-  const { playerBarIsActive } = useUIStore((state) => state);
+  const { playerBarIsActive } = useAppUIStore((state) => state);
 
   useEffect(() => {
     if (!playerBarIsActive) return;

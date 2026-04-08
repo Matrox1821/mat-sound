@@ -17,6 +17,8 @@ import {
 import { PlaylistsHydrator } from "@components/hydrators/PlaylistsHidrator";
 import { FollowHydrator } from "@components/hydrators/FollowHydrator";
 import { UserAvatarHydrator } from "@/components/hydrators/UserAvatarHydrator";
+import { getCollection } from "@/shared/server/user/user.service";
+import { CollectionHydrator } from "@/components/hydrators/CollectionHydator";
 
 export const metadata: Metadata = {
   title: "Mat Sound",
@@ -33,6 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const playlists = getUserPlaylists();
   const artistFolloingIds = getUserArtistFollowingIds();
   const userAvatarPromise = getUserAvatar();
+  const collection = getCollection();
   return (
     <html lang="es" className={nunitoSans.className}>
       <body className="bg-background h-screen w-screen">
@@ -40,7 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <LikeHydrator likedIds={likedIds} />
         <PlaylistsHydrator playlists={playlists} />
         <FollowHydrator artistFolloingIds={artistFolloingIds} />
-
+        <CollectionHydrator collection={collection} />
         {children}
         <Player />
         <Toaster theme="dark" richColors className="!h-6 " position="top-center" />
