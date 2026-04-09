@@ -1,14 +1,22 @@
 "use server";
 
-import { trackAdminApi } from "@/queryFn/admin/trackApi";
-import { deleteTrackById } from "@/shared/server/track/track.service";
+import { parseTrackFormData, parseUpdatedTrackFormData } from "@/shared/formData/trackForm";
+import {
+  createTrack,
+  createTracksBulk,
+  deleteTrackById,
+  updateTrack,
+} from "@/shared/server/track/track.service";
+import { trackBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 import { revalidatePath } from "next/cache";
+import z from "zod";
 
 export async function createTrackServer(currentState: any, formData: FormData) {
   try {
-    const track = await trackAdminApi.createTrack(formData);
+    const body = parseTrackFormData(formData);
+    const track = await createTrack(body);
 
-    if (track.errors.length !== 0) return { errors: [track.errors], success: false };
+    if (!track) throw new Error();
 
     return { success: true, errors: [] };
   } catch {
@@ -17,7 +25,8 @@ export async function createTrackServer(currentState: any, formData: FormData) {
 }
 export async function updateTrackServer(currentState: any, formData: FormData) {
   try {
-    const track = await trackAdminApi.updateTrack(formData);
+    const body = parseUpdatedTrackFormData(formData);
+    const track = await updateTrack(body);
     if (!track) {
       throw new Error("Error en la edición");
     }
@@ -41,13 +50,19 @@ export async function deleteTrackServer(id: string) {
     };
   }
 }
+const requestSchema = z.object({
+  artistId: z.string().uuid("ID de artista inválido"),
+  albumId: z.string().uuid("ID de álbum inválido"),
+  tracks: z.array(trackBulkSchema).min(1, "Debes incluir al menos un track"),
+});
 export async function createTracksBulkServer(data: {
   artistId: string;
   albumId: string;
   tracks: any[];
 }) {
   try {
-    const response = await trackAdminApi.createTracksBulk(data);
+    const validation = requestSchema.safeParse(data);
+    const response = await createTracksBulk(validation);
 
     if (response) {
       revalidatePath("/admin/track");

@@ -1,12 +1,12 @@
 import { FormDialog } from "@components/features/dialogs/FormDialog";
 import { Paginator } from "@components/features/paginator";
-import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";
 import { BulkDialog } from "@components/features/dialogs/BulkDialog";
 import { ArtistsTable } from "@components/features/tables/apiTables/ArtistsTable";
 import { BulkArtistUpload } from "../components/BulkArtistUpload";
 import { SearchFilter } from "../components/SearchFilter";
+import { getArtistsByPage, getArtistsPaginationInfo } from "@/shared/server/artist/artist.service";
 
 export default async function Page({
   searchParams,
@@ -14,13 +14,13 @@ export default async function Page({
   searchParams?: Promise<{ artistNameFilter?: string; page?: string; rows?: string }>;
 }) {
   const params = await searchParams;
-  const page = params?.page;
-  const rows = params?.rows;
+  const page = params?.page ? +params.page : 1;
+  const rows = params?.rows ? +params.rows : 6;
   const query = params?.artistNameFilter;
 
-  const paginationInfo = artistAdminApi.getArtistsPaginationInfo({ query });
+  const paginationInfo = getArtistsPaginationInfo({ query });
 
-  const data = artistAdminApi.getArtistsByPage({ page, rows, query });
+  const data = getArtistsByPage({ page, rows, query });
   return (
     <main className="w-full h-screen bg-background">
       <section className="w-full h-1/6 flex items-center justify-evenly">

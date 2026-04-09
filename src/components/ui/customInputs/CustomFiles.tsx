@@ -124,7 +124,7 @@ const ImagesPreview = ({
     <div
       className={
         previewImages.length !== 0 || previewImage !== ""
-          ? `imagePreviewScroll ${previewImageStyle}`
+          ? `imagePreviewScroll ${previewImageStyle} relative`
           : ""
       }
     >
@@ -136,7 +136,7 @@ const ImagesPreview = ({
             key={index}
             src={image}
             alt=""
-            className="!w-16 !h-16 !object-cover !rounded-xs"
+            className="w-16! !h-16 !object-cover !rounded-xs relative"
           />
         ))
       ) : previewImage !== "" ? (
@@ -145,7 +145,7 @@ const ImagesPreview = ({
           height={64}
           src={previewImage}
           alt=""
-          className="!w-16 !h-16 !object-cover !rounded-xs"
+          className="!w-16 !h-16 !object-cover !rounded-xs relative"
         />
       ) : (
         <div className="w-22 h-22 object-cover rounded-xs" />

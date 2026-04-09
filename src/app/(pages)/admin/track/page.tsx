@@ -1,13 +1,14 @@
 import { FormDialog } from "@components/features/dialogs/FormDialog";
 import { Paginator } from "@components/features/paginator";
 import { TracksTable } from "@components/features/tables/apiTables/TrackTable";
-import { genreAdminApi } from "@/queryFn/admin/genreApi";
-import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";
 import { BulkDialog } from "@components/features/dialogs/BulkDialog";
 import { BulkTrackUpload } from "../components/BulkTrackUpload";
 import { SearchFilter } from "../components/SearchFilter";
+import { getGenres } from "@/shared/server/genre/genre.repository";
+import { getTracksPaginationInfo } from "@/shared/server/track/track.service";
+import { getTracksByPagination } from "@/shared/server/track/track.repository";
 
 export default async function Page({
   searchParams,
@@ -21,26 +22,26 @@ export default async function Page({
   }>;
 }) {
   const params = await searchParams;
-  const page = params?.page;
-  const rows = params?.rows;
+  const page = params?.page ? +params?.page : 1;
+  const rows = params?.rows ? +params?.rows : 6;
   const artistName = params?.artistNameFilter;
   const albumName = params?.albumNameFilter;
   const trackName = params?.trackNameFilter;
 
-  const paginationInfo = trackAdminApi.getTracksPaginationInfo({
+  const paginationInfo = getTracksPaginationInfo({
     artistName,
     albumName,
     trackName,
   });
 
-  const tracks = trackAdminApi.getTracksByPage({
+  const tracks = getTracksByPagination({
     page,
     rows,
     artistName,
     albumName,
     trackName,
   });
-  const genres = genreAdminApi.getGenres();
+  const genres = getGenres();
 
   return (
     <main className="w-full h-screen bg-background">

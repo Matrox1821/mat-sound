@@ -44,7 +44,7 @@ export const validateArtistUniqueness = async ({
 export const getArtistsPaginationInfo = async ({
   query = "",
 }: {
-  query: string;
+  query?: string;
 }): Promise<{
   amount: number;
   pages: number;
@@ -72,7 +72,7 @@ export const getArtistsByPage = async ({
 }: {
   page: number;
   rows: number;
-  query: string;
+  query?: string;
 }): Promise<ArtistByPagination[]> => {
   return await getArtistsByPagination({ page, rows, query });
 };

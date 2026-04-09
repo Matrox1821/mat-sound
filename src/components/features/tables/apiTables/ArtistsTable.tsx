@@ -13,10 +13,10 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 
 export function ArtistsTable({
   data,
-  rows = "6",
+  rows = 6,
 }: {
   data: Promise<ArtistByPagination[] | null>;
-  rows?: string;
+  rows?: number;
 }) {
   const artists = use(data);
   const { message, error } = useToast();
@@ -29,7 +29,7 @@ export function ArtistsTable({
     }
     return filled;
   };
-  const filledArtists = fillEmptyRows(artists, Number(rows));
+  const filledArtists = fillEmptyRows(artists, rows);
 
   const handleDelete = async (id: string, name: string) => {
     try {
@@ -105,7 +105,7 @@ export function ArtistsTable({
   const imageBodyTemplate = (artist: any) => {
     if (artist.name !== "")
       return (
-        <div className="w-[45px] h-[45px] flex items-center justify-center">
+        <div className="w-[45px] h-[45px] flex items-center justify-center relative">
           <SafeImage
             src={artist.avatar && artist.avatar.sm}
             alt={artist.name}

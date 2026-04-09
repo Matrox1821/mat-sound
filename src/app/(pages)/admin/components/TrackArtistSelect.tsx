@@ -1,13 +1,13 @@
 "use client";
 import { SelectInput } from "@components/features/inputs/SelectInput";
-import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { useEffect, useState } from "react";
+import { getArtistsData } from "@/shared/server/artist/artist.repository";
 
 export function TrackArtistSelect({ onChange }: { onChange: (value: string) => void }) {
   const [artists, setArtists] = useState<any>(null);
 
   useEffect(() => {
-    artistAdminApi.getArtists().then((data: any) => setArtists(data));
+    getArtistsData().then((data: any) => setArtists(data));
   }, []);
 
   return (

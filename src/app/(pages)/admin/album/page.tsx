@@ -1,12 +1,13 @@
 import { FormDialog } from "@components/features/dialogs/FormDialog";
 import { Paginator } from "@components/features/paginator";
-import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Suspense } from "react";
 import { BulkDialog } from "@components/features/dialogs/BulkDialog";
 import { AlbumsTable } from "@components/features/tables/apiTables/AlbumsTable";
 import { SearchFilter } from "../components/SearchFilter";
 import { BulkAlbumUpload } from "../components/BulkAlbumUpload";
+import { getAlbumsPaginationInfo } from "@/shared/server/album/album.service";
+import { getAlbumsByPagination } from "@/shared/server/album/album.repository";
 
 export default async function Page({
   searchParams,
@@ -19,14 +20,14 @@ export default async function Page({
   }>;
 }) {
   const params = await searchParams;
-  const page = params?.page;
-  const rows = params?.rows;
+  const page = params?.page ? +params?.page : 1;
+  const rows = params?.rows ? +params?.rows : 6;
   const artistName = params?.artistNameFilter;
   const albumName = params?.albumNameFilter;
 
-  const paginationInfo = albumAdminApi.getAlbumsPaginationInfo({ artistName, albumName });
+  const paginationInfo = getAlbumsPaginationInfo({ artistName, albumName });
 
-  const data = albumAdminApi.getAlbumsByPage({ page, rows, artistName, albumName });
+  const data = getAlbumsByPagination({ page, rows, artistName, albumName });
   return (
     <main className="w-full h-screen bg-background">
       <section className="w-full h-1/6 flex items-center justify-evenly">
