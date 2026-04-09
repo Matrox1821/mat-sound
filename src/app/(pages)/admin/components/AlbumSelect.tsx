@@ -1,7 +1,7 @@
 "use client";
 import { SelectInput } from "@components/features/inputs/SelectInput";
-import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { useEffect, useState } from "react";
+import { getAlbums } from "@/shared/server/album/album.service";
 
 export function AlbumSelect({
   onChange,
@@ -15,11 +15,7 @@ export function AlbumSelect({
     if (!artistId) return;
 
     if (artistId.length > 0) {
-      albumAdminApi.getAlbumsByArtistsId(artistId).then((data) => setAlbums(data));
-
-      albumAdminApi.getAlbumsByArtistsId(artistId).then((data: any) => {
-        setAlbums(data);
-      });
+      getAlbums(artistId).then((data) => setAlbums(data));
     }
   }, [artistId]);
 

@@ -2,8 +2,8 @@
 import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
 import { OrderAlbumInput } from "@components/features/inputs/OrderInAlbumInput";
 import { SelectInput } from "@components/features/inputs/SelectInput";
-import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { useEffect, useState, useRef } from "react";
+import { getTracks } from "@/shared/server/track/track.service";
 
 export function SecondStep({ onChange }: { onChange: (field: any, value: any) => void }) {
   const [selectedArtists, setSelectedArtists] = useState<any[]>([]);
@@ -22,8 +22,7 @@ export function SecondStep({ onChange }: { onChange: (field: any, value: any) =>
     onChange("artists", ids);
 
     if (ids.length > 0) {
-      trackAdminApi
-        .getTracksByArtistsId(ids)
+      getTracks(ids)
         .then((fetchedTracks) => {
           setTracks(fetchedTracks || []);
 

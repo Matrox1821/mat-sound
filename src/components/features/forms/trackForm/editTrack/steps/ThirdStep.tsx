@@ -2,8 +2,8 @@
 import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
 import { OrderAlbumInput } from "@components/features/inputs/OrderInAlbumInput";
 import { SelectInput } from "@components/features/inputs/SelectInput";
-import { albumAdminApi } from "@/queryFn/admin/albumApi";
 import { useEffect, useState } from "react";
+import { getAlbums } from "@/shared/server/album/album.service";
 
 export function ThirdStep({
   onChange,
@@ -29,20 +29,21 @@ export function ThirdStep({
     const ids = selectedArtists.map((a) => a.id);
 
     if (ids.length > 0) {
-      albumAdminApi
-        .getAlbumsByArtistsId(ids)
+      getAlbums(ids)
         .then((fetchedAlbums) => {
           setAlbums(fetchedAlbums || []);
 
           // Limpiar de los elegidos aquellos que ya no pertenecen a los artistas actuales
           setChosenAlbums((prev) =>
-            prev.filter((chosen) => fetchedAlbums.some((a: any) => a.id === chosen.id)),
+            prev.filter(
+              (chosen) => fetchedAlbums && fetchedAlbums.some((a: any) => a.id === chosen.id),
+            ),
           );
         })
         .catch((err) => console.error("Error cargando álbumes:", err));
     } else {
-      setAlbums((prev) => (prev.length > 0 ? [] : prev));
-      setChosenAlbums((prev) => (prev.length > 0 ? [] : prev));
+      /*  setAlbums((prev) => (prev.length > 0 ? [] : prev));
+      setChosenAlbums((prev) => (prev.length > 0 ? [] : prev)); */
     }
   }, [selectedArtists]);
 
@@ -87,7 +88,7 @@ export function ThirdStep({
       </div>
 
       {/* 3. SELECT DE ÁLBUMES (Dependiente de los artistas) */}
-      <div className="space-y-4">
+      <div className="space-y-4 relative">
         <SelectInput
           data={albums}
           name="albumsId"

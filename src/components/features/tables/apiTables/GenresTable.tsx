@@ -9,10 +9,10 @@ import { deleteGenreServer } from "@/actions/genre";
 
 export function GenresTable({
   data,
-  rows = "6",
+  rows = 6,
 }: {
   data: Promise<{ name: string; id: string }[] | null>;
-  rows?: string;
+  rows?: number;
 }) {
   const genres = use(data);
   const { message, error } = useToast();
@@ -55,7 +55,7 @@ export function GenresTable({
     });
   };
 
-  const capitalizedGenres = fillEmptyRows(capitalizeWords(genres), Number(rows));
+  const capitalizedGenres = fillEmptyRows(capitalizeWords(genres), rows);
 
   const deleteBodyTemplate = (genre: any) => {
     if (!genre.name) return <div className="h-[46px]" />;

@@ -13,10 +13,10 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 
 export function AlbumsTable({
   data,
-  rows = "6",
+  rows = 6,
 }: {
   data: Promise<AlbumByPagination[] | null>;
-  rows?: string;
+  rows?: number;
 }) {
   const albums = use(data);
   const { message, error } = useToast();
@@ -32,7 +32,7 @@ export function AlbumsTable({
 
     return filled;
   };
-  const filledAlbums = fillEmptyRows(albums, Number(rows));
+  const filledAlbums = fillEmptyRows(albums, rows);
 
   const handleDelete = async ({ id, name }: { id: string; name: string }) => {
     try {
@@ -106,14 +106,16 @@ export function AlbumsTable({
   const imageBodyTemplate = (album: any) => {
     if (album.name !== "")
       return (
-        <SafeImage
-          src={album.cover && album.cover.sm}
-          alt={album.name}
-          height={45}
-          width={45}
-          loading="lazy"
-          className="!rounded-sm !w-[45px] !h-[45px]"
-        />
+        <figure className="relative">
+          <SafeImage
+            src={album.cover && album.cover.sm}
+            alt={album.name}
+            height={45}
+            width={45}
+            loading="lazy"
+            className="!rounded-sm !w-[45px] !h-[45px]"
+          />
+        </figure>
       );
 
     return null;

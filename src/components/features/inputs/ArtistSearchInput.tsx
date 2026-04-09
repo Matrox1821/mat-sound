@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { SafeImage } from "@components/ui/images/SafeImage";
+import { getArtistsData } from "@/shared/server/artist/artist.repository";
 
 export function ArtistSearchInput({
   onSelect,
@@ -18,7 +18,7 @@ export function ArtistSearchInput({
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (query.length > 1) {
-        const data = await artistAdminApi.getArtists(query);
+        const data = await getArtistsData(query);
         setResults(data);
         setIsOpen(true);
       } else {
@@ -56,7 +56,7 @@ export function ArtistSearchInput({
           {results.map((artist) => (
             <li
               key={artist.id}
-              className="p-3 hover:bg-background-800 cursor-pointer flex items-center gap-3 border-b border-background-800 last:border-none"
+              className="p-3 hover:bg-background-800 cursor-pointer flex items-center gap-3 border-b border-background-800 last:border-none relative"
               onClick={() => {
                 onSelect(artist);
                 setQuery(""); // Limpiar buscador tras seleccionar

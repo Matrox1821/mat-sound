@@ -15,6 +15,7 @@ import { useAppUIStore } from "@/store/appUIStore";
 import { playerTrackProps, TrackById } from "@/types/track.types";
 import { Pause } from "@/components/ui/icons/playback/Pause";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
+import Link from "next/link";
 
 export function Playlist({
   playlistPromise,
@@ -57,7 +58,7 @@ export function Playlist({
       play();
     }
   };
-
+  console.log(playlist);
   return (
     <section className="bg-background">
       {tracks.length > 0 ? (
@@ -98,7 +99,17 @@ export function Playlist({
                   </figure>
                   <div>
                     <h3>{track.name}</h3>
-                    {/*   <span>{track.artist.name}</span> */}
+                    {track.artists &&
+                      track.artists.length > 0 &&
+                      track.artists.map(({ name, id }: any) => (
+                        <Link
+                          href={`/artists/${id}`}
+                          key={id}
+                          className="hover:underline text-sm text-content-900/80"
+                        >
+                          {name}
+                        </Link>
+                      ))}
                   </div>
                 </div>
                 <span className="text-background-200/70 group-hover:hidden  absolute right-2">

@@ -13,11 +13,11 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 
 export function TracksTable({
   data,
-  rows = "6",
+  rows = 6,
   genres,
 }: {
   data: Promise<TrackByPagination[] | null>;
-  rows?: string;
+  rows?: number;
   genres: Promise<{ name: string; id: string }[] | null>;
 }) {
   const tracks = use(data);
@@ -33,7 +33,7 @@ export function TracksTable({
 
     return filled;
   };
-  const filledTrack = fillEmptyRows(tracks, Number(rows));
+  const filledTrack = fillEmptyRows(tracks, rows);
 
   const handleDelete = async ({ id, name }: { id: string; name: string }) => {
     try {
@@ -109,14 +109,16 @@ export function TracksTable({
   const imageBodyTemplate = (track: any) => {
     if (track.name !== "")
       return (
-        <SafeImage
-          src={track.cover && track.cover.sm}
-          alt={track.name}
-          height={45}
-          width={45}
-          loading="lazy"
-          className="!rounded-sm !w-[45px] !h-[45px]"
-        />
+        <figure className="relative">
+          <SafeImage
+            src={track.cover && track.cover.sm}
+            alt={track.name}
+            height={45}
+            width={45}
+            loading="lazy"
+            className="!rounded-sm !w-[45px] !h-[45px] "
+          />
+        </figure>
       );
 
     return null;

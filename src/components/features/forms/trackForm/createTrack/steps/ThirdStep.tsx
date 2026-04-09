@@ -1,9 +1,9 @@
 "use client";
 import { OrderAlbumInput } from "@components/features/inputs/OrderInAlbumInput";
 import { SelectInput } from "@components/features/inputs/SelectInput";
-import { albumAdminApi } from "@/queryFn/admin/albumApi";
-import { artistAdminApi } from "@/queryFn/admin/artistApi";
 import { useEffect, useState } from "react";
+import { getArtistsData } from "@/shared/server/artist/artist.repository";
+import { getAlbums } from "@/shared/server/album/album.service";
 
 interface Element {
   cover?: { sm: string };
@@ -20,12 +20,12 @@ export function ThirdStep({ onChange }: { onChange: (field: any, value: any) => 
   const [chosenAlbums, setChosenAlbums] = useState<Element[]>([]);
 
   useEffect(() => {
-    artistAdminApi.getArtists().then((data: any) => setArtists(data));
+    getArtistsData().then((data: any) => setArtists(data));
   }, []);
 
   useEffect(() => {
     if (artistsId.length > 0) {
-      albumAdminApi.getAlbumsByArtistsId(artistsId).then((data) => setAlbums(data));
+      getAlbums(artistsId).then((data) => setAlbums(data));
     }
   }, [artistsId]);
   return (

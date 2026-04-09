@@ -2,8 +2,8 @@
 import { ArtistSearchInput } from "@components/features/inputs/ArtistSearchInput";
 import { OrderAlbumInput } from "@components/features/inputs/OrderInAlbumInput";
 import { SelectInput } from "@components/features/inputs/SelectInput";
-import { trackAdminApi } from "@/queryFn/admin/trackApi";
 import { useEffect, useState, useRef } from "react";
+import { getTracks } from "@/shared/server/track/track.service";
 
 export function SecondStep({
   formData,
@@ -25,7 +25,7 @@ export function SecondStep({
   useEffect(() => {
     if (albumArtists?.length > 0) {
       const ids = albumArtists.map((a) => a.id);
-      trackAdminApi.getTracksByArtistsId(ids).then((fetched) => {
+      getTracks(ids).then((fetched) => {
         setTracks(fetched || []);
       });
     }
@@ -42,7 +42,7 @@ export function SecondStep({
     onChange("artists", ids);
 
     if (ids.length > 0) {
-      trackAdminApi.getTracksByArtistsId(ids).then((fetchedTracks) => {
+      getTracks(ids).then((fetchedTracks) => {
         setTracks(fetchedTracks || []);
 
         setChosenTracks((prev) => {

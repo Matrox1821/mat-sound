@@ -1,10 +1,11 @@
 import { FormDialog } from "@components/features/dialogs/FormDialog";
 import { GenresTable } from "@components/features/tables/apiTables/GenresTable";
 import { Paginator } from "@components/features/paginator";
-import { genreAdminApi } from "@/queryFn/admin/genreApi";
 import { ProgressSpinner } from "primereact/progressspinner";
 
 import { Suspense } from "react";
+import { getGenresByPagination } from "@/shared/server/genre/genre.repository";
+import { getGenresPaginationInfo } from "@/shared/server/genre/genre.service";
 
 export default async function Page({
   searchParams,
@@ -12,12 +13,12 @@ export default async function Page({
   searchParams?: Promise<{ query?: string; page?: string; rows?: string }>;
 }) {
   const params = await searchParams;
-  const page = params?.page;
-  const rows = params?.rows;
+  const page = params?.page ? +params.page : 1;
+  const rows = params?.rows ? +params.rows : 6;
 
-  const paginationInfo = genreAdminApi.getGenresPaginationInfo();
+  const paginationInfo = getGenresPaginationInfo();
 
-  const data = genreAdminApi.getGenresByPagination({ page, rows });
+  const data = getGenresByPagination({ page, rows });
 
   return (
     <main className="w-full h-screen bg-background">

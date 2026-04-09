@@ -82,31 +82,24 @@ export function EditAlbumForm({ album }: { album: AlbumByPagination }) {
       <article className="flex flex-col items-end">
         {/* <h2 className="text-lg">{stepTitles[0]}</h2> */}
 
-        <FirstStep onChange={handleChange} formData={formData} cover={album.cover?.sm} />
-        <div className="flex pt-4 justify-between gap-4 ">
-          <button
-            className="bg-accent-950/20 border border-accent-950/50 p-4 text-white hover:bg-accent-950/25 cursor-pointer font-bold rounded-md flex"
-            type="submit"
-          >
-            Guardar cambios
-          </button>
-        </div>
-        {/*  <Stepper
+        <Stepper
           ref={stepperRef}
           style={{ flexBasis: "5rem" }}
           className="[&>.p-stepper-panels]:!pb-0 [&>div>div>span>section]:!h-[420px] [&>div>div>span>section]:!overflow-y-auto"
-          >
+        >
           <StepperPanel header={stepTitles[0]}>
-          <button
-            className="flex gap-2 items-center bg-background-700 p-4 rounded-md cursor-pointer"
-            type="button"
-            onClick={() => {
-              stepperRef.current.nextCallback();
-              setStep(step + 1);
-            }}
-          >
-            Siguiente<i className="pi pi-arrow-right"></i>
-          </button>
+            <FirstStep onChange={handleChange} formData={formData} cover={album.cover?.sm} />
+
+            <button
+              className="flex gap-2 items-center bg-background-700 p-4 rounded-md cursor-pointer"
+              type="button"
+              onClick={() => {
+                stepperRef.current.nextCallback();
+                setStep(step + 1);
+              }}
+            >
+              Siguiente<i className="pi pi-arrow-right"></i>
+            </button>
           </StepperPanel>
           <StepperPanel header={stepTitles[1]}>
             <SecondStep
@@ -126,15 +119,17 @@ export function EditAlbumForm({ album }: { album: AlbumByPagination }) {
               >
                 <i className="pi pi-arrow-left"></i>Atrás
               </button>
-              <button
-                className="bg-accent-950/20 border border-accent-950/50 p-4 text-white hover:bg-accent-950/25 cursor-pointer font-bold rounded-md flex"
-                type="submit"
-              >
-                Guardar cambios
-              </button>
+              <div className="flex pt-4 justify-between gap-4 ">
+                <button
+                  className="bg-accent-950/20 border border-accent-950/50 p-4 text-white hover:bg-accent-950/25 cursor-pointer font-bold rounded-md flex"
+                  type="submit"
+                >
+                  Guardar cambios
+                </button>
+              </div>
             </div>
           </StepperPanel>
-        </Stepper> */}
+        </Stepper>
       </article>
     </form>
   );

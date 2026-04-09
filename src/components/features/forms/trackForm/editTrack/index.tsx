@@ -88,7 +88,7 @@ export function EditTrackForm({
       redirect("/admin/track");
     }
     if (errors.length !== 0) {
-      Object.entries(errors).forEach(([key, value]) => {
+      Object.entries(errors).forEach(([key, _value]) => {
         error(key);
       });
     }

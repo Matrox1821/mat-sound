@@ -1,13 +1,19 @@
 "use server";
 
-import { artistAdminApi } from "@/queryFn/admin/artistApi";
+import { parseArtistFormData, parseUpdateArtistFormData } from "@/shared/formData/artistForm";
+import {
+  createArtist,
+  createArtistsBulk,
+  updateArtist,
+} from "@/shared/server/artist/artist.repository";
 import { deleteArtistById } from "@/shared/server/artist/artist.service";
 import { revalidatePath } from "next/cache";
 
 export async function createArtistServer(currentState: any, formData: FormData) {
   try {
-    const artist = await artistAdminApi.createArtist(formData);
-    if (artist.errors.length !== 0) return { errors: [artist.errors], success: false };
+    const body = parseArtistFormData(formData);
+    const artist = createArtist(body);
+    if (!artist) throw new Error();
     return { success: true, errors: [] };
   } catch {
     return { errors: [{ message: "Unknown error" }], success: false };
@@ -31,8 +37,9 @@ export async function deleteArtistServer(id: string) {
 
 export async function updateArtistServer(currentState: any, formData: FormData) {
   try {
-    const artist = await artistAdminApi.updateArtist(formData);
-    if (artist.errors.length !== 0) return { errors: [artist.errors], success: false };
+    const data = parseUpdateArtistFormData(formData);
+    const artist = await updateArtist(data);
+    if (!artist) throw new Error();
     return { success: true, errors: [] };
   } catch {
     return { errors: [{ message: "Unknown error" }], success: false };
@@ -41,7 +48,7 @@ export async function updateArtistServer(currentState: any, formData: FormData) 
 
 export async function createArtistsBulkServer(data: any) {
   try {
-    const response = await artistAdminApi.createArtistsBulk(data);
+    const response = await createArtistsBulk(data);
 
     if (response) {
       revalidatePath("/admin/artist");

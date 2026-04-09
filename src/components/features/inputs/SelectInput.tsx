@@ -130,13 +130,15 @@ export function SelectInput({
                         : "bg-background-900 border-background-800 hover:border-background-400"
                     }`}
                 >
-                  <SafeImage
-                    width={40}
-                    height={40}
-                    src={source && source.sm}
-                    alt={item.name}
-                    className="!w-10 !h-10 !rounded !shadow-sm !object-cover !flex-shrink-0"
-                  />
+                  <figure className="relative">
+                    <SafeImage
+                      width={40}
+                      height={40}
+                      src={source && source.sm}
+                      alt={item.name}
+                      className="!w-10 !h-10 !rounded !shadow-sm !object-cover !flex-shrink-0"
+                    />
+                  </figure>
                   <div className="flex flex-col overflow-hidden">
                     <span
                       className={`text-sm font-medium truncate ${isSelected ? "text-white" : "text-background-50"}`}

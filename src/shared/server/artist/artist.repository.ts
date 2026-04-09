@@ -8,6 +8,13 @@ import {
 import { ImageSizes } from "@shared-types/common.types";
 import { ArtistFormData } from "@shared-types/form.types";
 import { prisma } from "@config/db";
+import { addImagePathsToArtist, validateArtistUniqueness } from "./artist.service";
+import { CustomError } from "@/types/error.type";
+import { HttpStatusCode } from "@/types/httpStatusCode";
+import { handleAvatarResizeAndUpload, uploadCovers, uploadMainCover } from "./artist.storage";
+import { rollbackArtistCreation } from "./artist.rollback";
+import z from "zod";
+import { artistBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 
 export const getArtistById = async ({
   id,
@@ -165,6 +172,9 @@ export const updateArtistImages = async ({
 };
 
 export const createArtist = async (body: ArtistFormData) => {
+  /*  */
+  await validateArtistUniqueness({ name: body.name });
+
   const newArtist = await prisma.artist.create({
     data: {
       name: body.name,
@@ -181,7 +191,46 @@ export const createArtist = async (body: ArtistFormData) => {
     },
     select: { id: true, name: true },
   });
-  return newArtist;
+  if (!newArtist)
+    throw new CustomError({
+      errors: [{ message: "The artist has not been created" }],
+      msg: "The artist has not been created",
+      httpStatusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
+    });
+  const { id } = newArtist;
+
+  const avatar = body.avatar && (await handleAvatarResizeAndUpload(body.avatar, id));
+
+  const mainCoverPath = body.mainCover && (await uploadMainCover(body.mainCover, id));
+  const coversPath =
+    body.covers && body.covers?.length > 0 && (await uploadCovers(body.covers, id));
+
+  const artist = await addImagePathsToArtist({
+    artistId: id,
+    paths: {
+      avatar: avatar ? avatar.dbPath : null,
+      covers: coversPath || null,
+      mainCover: mainCoverPath || null,
+    },
+  });
+
+  if (
+    artist &&
+    (avatar?.avatarUploads.length === 0 ||
+      (coversPath && coversPath?.length === 0) ||
+      !mainCoverPath)
+  ) {
+    await rollbackArtistCreation({
+      artistId: id,
+      buffer: avatar ? avatar.buffer : null,
+      r2Path: avatar ? avatar.r2Path : null,
+      coversPath: coversPath || null,
+      covers: body.covers,
+      mainCoverFile: body.mainCover,
+      mainCoverPath,
+    });
+  }
+  return artist;
 };
 
 export const updateArtistGenre = async ({
@@ -329,4 +378,87 @@ export const getArtistTracks = async ({
       }),
     },
   })) as unknown as ArtistTracksRepository[];
+};
+
+export const updateArtist = async (artistData: ArtistFormData) => {
+  const { id, avatar, covers, mainCover, followers, ...rest } = artistData;
+  if (!id) return null;
+  const mainCoverPath = await uploadMainCover(mainCover, id);
+  const coversPath = await uploadCovers(covers, id);
+  const avatarResized = await handleAvatarResizeAndUpload(avatar, id);
+
+  await addImagePathsToArtist({
+    artistId: id,
+    paths: {
+      avatar: avatarResized.dbPath,
+      covers: coversPath,
+      mainCover: mainCoverPath,
+    },
+  });
+
+  const artist = await prisma.artist.update({
+    where: { id },
+    data: { ...rest, followersDefault: followers },
+  });
+  return artist;
+};
+
+export const getArtistsData = async (searchTerm?: string) => {
+  const artists = await prisma.artist.findMany({
+    where: searchTerm
+      ? {
+          name: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        }
+      : {},
+    orderBy: { name: "asc" },
+    take: searchTerm ? 15 : undefined,
+  });
+  return artists;
+};
+
+export const createArtistsBulk = async (body: any) => {
+  const validation = z.array(artistBulkSchema).safeParse(body);
+
+  if (!validation.success) {
+    throw new CustomError({
+      errors: validation.error.issues,
+      msg: "Invalid data format",
+      httpStatusCode: HttpStatusCode.BAD_REQUEST,
+    });
+  }
+
+  const results = await Promise.all(
+    validation.data.map(async (artist) => {
+      const artistExist = await artistIsExists({ name: artist.name });
+      if (artistExist) return;
+      return prisma.artist.create({
+        data: {
+          name: artist.name,
+          description: artist.description,
+          listeners: artist.listeners,
+          isVerified: artist.isVerified,
+          followersDefault: artist.followers,
+          genres: {
+            connectOrCreate: artist.genres.map((genreName) => ({
+              where: { name: genreName },
+              create: { name: genreName },
+            })),
+          },
+        },
+      });
+    }),
+  );
+
+  if (results.length === 0) {
+    throw new CustomError({
+      errors: [{ message: "No artists were created" }],
+      msg: "The artists have not been created",
+      httpStatusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
+    });
+  }
+
+  return results;
 };

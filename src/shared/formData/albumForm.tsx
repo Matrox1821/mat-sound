@@ -56,6 +56,12 @@ export const toUpdateAlbumFormData = (data: AlbumFormData): FormData => {
   form.append("name", data.name);
   form.append("releaseDate", data.releaseDate.toString());
 
+  if (data.artists) {
+    data.artists.forEach((id) => {
+      form.append("artists", id);
+    });
+  }
+
   return form;
 };
 
@@ -65,5 +71,6 @@ export function parseUpdatedAlbumFormData(formData: FormData): AlbumFormData {
     name: formData.get("name") as string,
     cover: formData.get("cover") as File | null,
     releaseDate: formData.get("releaseDate") as string,
+    artists: formData.getAll("artists") as string[],
   };
 }

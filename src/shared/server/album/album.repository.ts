@@ -172,7 +172,7 @@ export const albumIsExists = async ({
   return !!isExists;
 };
 
-export const createAlbum = async (
+export const createAlbumRepo = async (
   body: AlbumFormData,
 ): Promise<{
   name: string;
