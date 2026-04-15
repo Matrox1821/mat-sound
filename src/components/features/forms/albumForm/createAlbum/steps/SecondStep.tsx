@@ -27,8 +27,8 @@ export function SecondStep({ onChange }: { onChange: (field: any, value: any) =>
           setTracks(fetchedTracks || []);
 
           setChosenTracks((prev) => {
-            const filtered = prev.filter((chosen) =>
-              fetchedTracks.some((t: any) => t.id === chosen.id),
+            const filtered = prev.filter(
+              (chosen) => fetchedTracks && fetchedTracks.some((t: any) => t.id === chosen.id),
             );
             return filtered.length === prev.length ? prev : filtered;
           });
