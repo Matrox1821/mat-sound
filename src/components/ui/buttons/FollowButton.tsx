@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { toggleFollow as toggleFollowAction } from "@/actions/user";
+import { toggleFollow as toggleFollowAction } from "@/actions/user/following";
 import { useFollowStore } from "@/store/followStore";
 
 interface FollowButtonProps {

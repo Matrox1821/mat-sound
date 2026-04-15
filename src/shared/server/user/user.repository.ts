@@ -64,6 +64,7 @@ export const getUserFavorites = async ({
               },
             },
           },
+          take: 12,
           orderBy: {
             likedAt: "asc",
           },

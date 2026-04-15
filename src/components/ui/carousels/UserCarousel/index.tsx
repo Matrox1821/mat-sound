@@ -6,15 +6,21 @@ import { UserDataTemplate } from "./UserDataTemplate";
 
 export function UserCarousel({
   dataPromise,
+  userPromise,
+  currentUser,
   title,
 }: {
   dataPromise: Promise<MediaCard[] | null>;
+  userPromise: Promise<any>;
+  currentUser?: string | null;
   title: string;
 }) {
   const data = use(dataPromise);
+  const user = use(userPromise ?? Promise.resolve([]));
+
   const numVisible = 8;
   if (!data) return;
-
+  if (currentUser && user.username !== currentUser) return null;
   return (
     <div className="card w-full !relative flex flex-col gap-8">
       <h2 className="text-2xl font-semibold">{title}</h2>

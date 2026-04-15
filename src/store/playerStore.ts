@@ -43,6 +43,15 @@ interface PlayerState {
   prev: () => void;
   shuffleOn: () => void;
   shuffleOff: () => void;
+  playShufflePlaylistOn: ({
+    tracks,
+    from,
+    upcoming,
+  }: {
+    tracks: playerTrackProps[];
+    from: string;
+    upcoming?: playerTrackProps[] | null;
+  }) => void;
   reset: () => void;
   updateTrackMetadata: (trackId: string, metadata: Partial<playerTrackProps>) => void;
 
@@ -211,6 +220,31 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     });
   },
 
+  playShufflePlaylistOn: ({ tracks, from, upcoming }) => {
+    const mixed = shuffle(tracks.map(({ id }) => id));
+    const { setDuration } = useProgressStore.getState();
+
+    get().addTracksToCache(tracks ? tracks : []);
+    get().addTracksToCache(upcoming ? upcoming : []);
+
+    setDuration(tracks.find(({ id }) => id === mixed[0])?.duration || 0);
+    const indexTrack = tracks.findIndex(({ id }) => id === mixed[0]);
+    const { toggleShuffle } = usePlaybackStore.getState();
+    toggleShuffle();
+    if (upcoming) set({ upcomingIds: upcoming.map((t) => t.id) });
+    set({
+      snapshot: {
+        historyIds: tracks.map(({ id }) => id).slice(0, indexTrack),
+        queueIds: tracks.map(({ id }) => id).slice(indexTrack),
+      },
+
+      historyIds: [],
+      currentTrackId: mixed[0],
+      queueIds: [...mixed],
+      playingFrom: from,
+    });
+  },
+
   shuffleOff: () => {
     const store = get();
     if (!store.snapshot || !store.currentTrackId) return;
@@ -238,7 +272,6 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
   updateTrackMetadata: (trackId, metadata) =>
     set((state) => {
-      // ¡Mira qué limpio! Solo actualizamos un lugar.
       const track = state.trackCache.get(trackId);
       if (!track) return state;
 
@@ -248,5 +281,5 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       return { trackCache: nextCache };
     }),
 
-  reset: () => set({ ...initialState, trackCache: new Map() }), // Asegurarse de limpiar el caché
+  reset: () => set({ ...initialState, trackCache: new Map() }),
 }));

@@ -39,15 +39,18 @@ export function CollectionCard({ element }: { element: UserCollection }) {
               {/* <CarouselCardPlayButton playlist={playlist} /> */}
             </figure>
             {element.type !== "tracks" && (
+              <span className="bg-background/50 rounded-lg p-2 text-[10px] absolute right-2 top-2 uppercase">
+                {element.type.slice(0, -1)}
+              </span>
+            )}
+            {element.type !== "tracks" && (
               <span className="bg-background/50 rounded-lg p-2 text-xs absolute right-2 bottom-2">
                 {element.tracksCount} canciones
               </span>
             )}
           </div>
         </div>
-
         <h3 className="text-xl font-medium">{element.name}</h3>
-        <h3 className="text-xl font-medium"></h3>
       </Link>
     </li>
   );

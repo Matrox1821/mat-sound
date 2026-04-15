@@ -130,7 +130,7 @@ export function Playlist({
                       },
                     ]}
                   />
-                  <LikeButton trackId={track.id} />
+                  <LikeButton track={track} />
                   <PlaylistSelector track={track} />
                 </div>
               </li>

@@ -19,10 +19,7 @@ export function User({ initialSession }: { initialSession: any }) {
 
   const [state, formAction] = useActionState(signoutFormValidation, initialState);
   const op = useRef<OverlayPanel>(null);
-  const options = [
-    { label: "Perfil", href: `/user/${initialSession.user.username}` },
-    { label: "Configuración", href: `/user/settings` },
-  ];
+  const options = [{ label: "Perfil", href: `/user/${initialSession.user.username}` }];
 
   useEffect(() => {
     if (state.success) {

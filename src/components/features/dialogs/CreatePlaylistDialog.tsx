@@ -1,5 +1,5 @@
 "use client";
-import { createPlaylist as createUserPlaylist } from "@/actions/user";
+import { createPlaylist as createUserPlaylist } from "@/actions/user/playlist";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaylistStore } from "@/store/playlistStore";

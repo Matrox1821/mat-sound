@@ -12,12 +12,10 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export const getPlaylistsToUserContent = async (): Promise<PlaylistCard[] | null> => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session || !session.user.username) return null;
-
-  const playlists = await getUserPlaylists({ username: session.user.username });
+export const getPlaylistsToUserContent = async (
+  username: string,
+): Promise<PlaylistCard[] | null> => {
+  const playlists = await getUserPlaylists({ username });
   if (!playlists) {
     throw new CustomError({
       errors: [
@@ -96,4 +94,12 @@ export const getCollection = async (): Promise<CollectionService | null> => {
     albums: albumMap,
     playlists: playlistMap,
   };
+};
+
+export const getFavorites = async () => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session || !session.user.username) return null;
+  const userLibrary = await getUserFavorites({ username: session.user.username });
+
+  return userLibrary;
 };

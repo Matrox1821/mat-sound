@@ -3,7 +3,7 @@ import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { useCollectionStore } from "@/store/collectionStore";
 import { PlaylistService } from "@/types/playlist.types";
 import { useTransition } from "react";
-import { togglePlaylistInCollection as togglePlaylist } from "@/actions/user";
+import { togglePlaylistInCollection as togglePlaylist } from "@/actions/user/collection";
 export function Save({ playlist: playlistData }: { playlist: PlaylistService | null }) {
   const { isPlaylistInCollection, hydrated, togglePlaylistInCollection } = useCollectionStore(
     (s) => s,

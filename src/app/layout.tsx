@@ -8,17 +8,15 @@ import { Poppins } from "next/font/google";
 import { Toaster } from "sonner";
 import { CreatePlaylistDialog } from "@components/features/dialogs/CreatePlaylistDialog";
 import { LikeHydrator } from "@components/hydrators/LikeHydrator";
-import {
-  getUserArtistFollowingIds,
-  getUserAvatar,
-  getUserLikedTrackIds,
-  getUserPlaylists,
-} from "@/actions/user";
+import { getUserAvatar } from "@/actions/user";
 import { PlaylistsHydrator } from "@components/hydrators/PlaylistsHidrator";
 import { FollowHydrator } from "@components/hydrators/FollowHydrator";
 import { UserAvatarHydrator } from "@/components/hydrators/UserAvatarHydrator";
 import { getCollection } from "@/shared/server/user/user.service";
 import { CollectionHydrator } from "@/components/hydrators/CollectionHydator";
+import { getUserLikedTracks } from "@/actions/user/like";
+import { getUserPlaylists } from "@/actions/user/playlist";
+import { getUserArtistFollowingIds } from "@/actions/user/following";
 
 export const metadata: Metadata = {
   title: "Mat Sound",
@@ -31,7 +29,7 @@ const nunitoSans = Poppins({
 });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const likedIds = getUserLikedTrackIds();
+  const likedTracks = getUserLikedTracks();
   const playlists = getUserPlaylists();
   const artistFolloingIds = getUserArtistFollowingIds();
   const userAvatarPromise = getUserAvatar();
@@ -40,7 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="es" className={nunitoSans.className}>
       <body className="bg-background h-screen w-screen">
         <UserAvatarHydrator userAvatarPromise={userAvatarPromise} />
-        <LikeHydrator likedIds={likedIds} />
+        <LikeHydrator likedTracks={likedTracks} />
         <PlaylistsHydrator playlists={playlists} />
         <FollowHydrator artistFolloingIds={artistFolloingIds} />
         <CollectionHydrator collection={collection} />

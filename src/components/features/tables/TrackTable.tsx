@@ -16,7 +16,7 @@ import { playerTrackProps } from "@shared-types/track.types";
 
 interface TrackTableProps {
   tracks: playerTrackProps[];
-  upcomingTracks?: playerTrackProps[];
+  upcomingTracks?: playerTrackProps[] | null;
   showCover?: boolean;
   playingFromLabel: string;
 }
@@ -101,13 +101,13 @@ export function TrackTable({
                 </td>
 
                 {showCover && (
-                  <td className="w-12">
+                  <td className="w-12 relative">
                     <SafeImage
-                      src={track.cover.sm}
+                      src={track.cover && track.cover.sm}
                       alt=""
                       width={40}
                       height={40}
-                      className="rounded-md object-cover"
+                      className="rounded-md object-cover relative"
                     />
                   </td>
                 )}
@@ -154,7 +154,7 @@ export function TrackTable({
 
                 <td className="rounded-r-xl">
                   <div className="flex items-center gap-4">
-                    <LikeButton trackId={track.id} />
+                    <LikeButton track={track} />
                     <PlaylistSelector track={track} />
                   </div>
                 </td>
