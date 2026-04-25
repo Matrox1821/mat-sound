@@ -12,7 +12,7 @@ export const SaveInPlaylist = ({
 }: {
   playlistName: string;
   playlistId: string;
-  track: { id: string; cover: ImageSizes };
+  track: { id: string; cover: ImageSizes | null };
 }) => {
   const [isPending, startTransition] = useTransition();
   const { error: toastError, message } = useToast();
