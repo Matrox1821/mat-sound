@@ -57,7 +57,6 @@ export const Template = (data: MediaCard) => {
               (data.type === "albums" &&
                 data.artists &&
                 data.artists.map(({ id, name, avatar }, i) => {
-                  console.log();
                   if (data.artists.length > i + 1)
                     return (
                       <span key={id} className="flex gap-2">

@@ -37,7 +37,6 @@ export function TrackTable({
   const handlePlay = (e: any, track: playerTrackProps) => {
     e.stopPropagation();
     if (!playerBarIsActive) activePlayerBar();
-    console.log(currentTrack);
     if (track.id === currentTrack?.id) {
       if (isPlaying) {
         pause();

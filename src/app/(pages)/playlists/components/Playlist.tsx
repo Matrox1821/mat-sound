@@ -58,7 +58,6 @@ export function Playlist({
       play();
     }
   };
-  console.log(playlist);
   return (
     <section className="bg-background">
       {tracks.length > 0 ? (
