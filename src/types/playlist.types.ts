@@ -1,3 +1,4 @@
+import { JsonValue } from "@prisma/client/runtime/client";
 import { ImageSizes } from "./common.types";
 import { playerTrackProps } from "./track.types";
 
@@ -20,7 +21,7 @@ export interface UserPlaylistRepository {
       tracks: {
         track: playerTrackProps;
       }[];
-      cover: ImageSizes;
+      cover: JsonValue | null;
     };
   }[];
 }
