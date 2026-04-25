@@ -1,4 +1,5 @@
 import { ImageSizes } from "./common.types";
+import { playerTrackProps } from "./track.types";
 
 export interface PlaylistTrackReference {
   track: {
@@ -8,15 +9,19 @@ export interface PlaylistTrackReference {
 }
 export interface UserPlaylistRepository {
   playlists: {
-    id: string;
-    name: string;
-    cover: ImageSizes | null;
-    tracks: {
-      track: {
-        id: string;
-        cover: ImageSizes;
+    playlist: {
+      id: string;
+      user: {
+        displayUsername: string;
+        username: string;
+        avatar: string | null;
       };
-    }[];
+      name: string;
+      tracks: {
+        track: playerTrackProps;
+      }[];
+      cover: ImageSizes;
+    };
   }[];
 }
 export interface PlaylistRepository {

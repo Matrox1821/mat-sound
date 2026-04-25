@@ -1,46 +1,7 @@
+import { TrackFull } from "@/shared/server/track/track.select";
 import { ArtistBase } from "./artist.types";
-import { ImageSizes } from "./common.types";
-
-export interface ArtistContentService {
-  type: "artists";
-  name: string;
-  id: string;
-  avatar: ImageSizes | null;
-}
-
-export interface AlbumContentService {
-  id: string;
-  name: string;
-  cover: ImageSizes | null;
-  type: "albums";
-  artists: ArtistBase[];
-}
-
-export interface TrackContentService {
-  type: "tracks";
-  id: string;
-  name: string;
-  cover: ImageSizes | null;
-  song: string;
-  releaseDate: Date;
-  duration: number;
-  lyrics: string | null;
-  reproductions: number;
-  likes: number;
-  artists: ArtistBase[];
-  albums: TrackAlbumRelation[];
-}
-
-export interface ContentTrack extends Omit<TrackContentService, "recommendedTracks"> {
-  recommendedTracks: TrackContentService[];
-}
-
-export type ContentElement =
-  | ContentTrack
-  | AlbumContentService
-  | ArtistContentService
-  | PlaylistContentService;
-
+import { ContentType, ImageSizes } from "./common.types";
+import { playerTrackProps } from "./track.types";
 //Repo
 
 export interface AlbumBase {
@@ -75,17 +36,69 @@ export interface TrackContentRepository {
   };
 }
 
-export interface PlaylistContentService {
-  id: string;
-  name: string;
-  cover?: ImageSizes;
-  tracks?: { id: string; name: string; cover: ImageSizes }[];
-  type: "playlists";
-}
-
 export interface PlaylistContentRepository {
   id: string;
   name: string;
   cover?: ImageSizes;
-  tracks?: { track: { id: string; name: string; cover: ImageSizes } }[];
+  tracks?: { track: TrackFull }[];
+}
+
+export interface BaseMediaCard {
+  id: string;
+  title: string;
+  href: string;
+  image?: ImageSizes | null;
+  images?: ImageSizes[] | null;
+  tracks?: playerTrackProps[] | null;
+}
+
+export type MediaCard = TrackCard | AlbumCard | ArtistCard | PlaylistCard;
+
+export interface TrackCard extends BaseMediaCard {
+  type: "tracks";
+  artists: { id: string; name: string; avatar: ImageSizes | null }[];
+  song: string | null;
+  duration: number;
+  lyrics: string | null;
+  reproductions: number;
+  likes: number;
+  name: string;
+}
+
+export interface AlbumCard extends BaseMediaCard {
+  type: "albums";
+  artists: { id: string; name: string; avatar: ImageSizes | null }[];
+  releaseDate?: string;
+}
+
+export interface ArtistCard extends BaseMediaCard {
+  type: "artists";
+}
+
+export interface PlaylistCard extends BaseMediaCard {
+  type: "playlists";
+  user: { username: string; name: string; avatar: string | null };
+}
+
+export interface CarouselContentProps {
+  remove?: {
+    artistId?: string;
+    albumId?: string;
+    trackId?: string;
+    playlistId?: string;
+  };
+  options?: {
+    limit?: number;
+    isRecomendation?: boolean;
+    type?: ContentType[];
+  };
+  searchBy?: {
+    type: "album" | "track" | "artist" | "playlist" | "username";
+    id: string;
+  };
+  forCurrentUser?: boolean;
+}
+
+export interface CarouselComponentProps extends CarouselContentProps {
+  title?: string;
 }

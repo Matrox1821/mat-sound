@@ -3,6 +3,7 @@
 import { UserPlaylistRepository } from "@shared-types/playlist.types";
 import { CollectionRepository, UserFavoritesRepository } from "@shared-types/user.types";
 import { prisma } from "@config/db";
+import { trackFullSelect } from "../track/track.select";
 
 export const getUserPlaylists = async ({
   username = "",
@@ -11,21 +12,26 @@ export const getUserPlaylists = async ({
 }): Promise<UserPlaylistRepository | null> => {
   if (username === "") return null;
   try {
-    const response = await prisma.user.findUnique({
-      where: { username },
+    const user = await prisma.user.findUnique({ where: { username } });
+    if (!user) return null;
+
+    const response = await prisma.collection.findUnique({
+      where: { userId: user.id },
       select: {
         playlists: {
           select: {
-            id: true,
-            cover: true,
-            name: true,
-            tracks: {
-              select: { track: { select: { id: true, cover: true } } },
-              take: 4,
+            playlist: {
+              select: {
+                id: true,
+                cover: true,
+                name: true,
+                tracks: { select: { track: { select: trackFullSelect } } },
+                user: { select: { username: true, displayUsername: true, avatar: true } },
+              },
             },
           },
           orderBy: {
-            createdAt: "asc",
+            addedAt: "asc",
           },
         },
       },
@@ -49,19 +55,7 @@ export const getUserFavorites = async ({
         likes: {
           include: {
             track: {
-              select: {
-                id: true,
-                name: true,
-                cover: true,
-                song: true,
-                duration: true,
-                lyrics: true,
-                reproductions: true,
-                _count: {
-                  select: { likes: true },
-                },
-                artists: { select: { id: true, avatar: true, name: true } },
-              },
+              select: trackFullSelect,
             },
           },
           take: 12,

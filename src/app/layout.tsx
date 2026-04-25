@@ -17,6 +17,7 @@ import { CollectionHydrator } from "@/components/hydrators/CollectionHydator";
 import { getUserLikedTracks } from "@/actions/user/like";
 import { getUserPlaylists } from "@/actions/user/playlist";
 import { getUserArtistFollowingIds } from "@/actions/user/following";
+import { InitPlayerHydrator } from "@/components/hydrators/InitPlayerHydrator";
 
 export const metadata: Metadata = {
   title: "Mat Sound",
@@ -42,6 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <PlaylistsHydrator playlists={playlists} />
         <FollowHydrator artistFolloingIds={artistFolloingIds} />
         <CollectionHydrator collection={collection} />
+        <InitPlayerHydrator />
         {children}
         <Player />
         <Toaster theme="dark" richColors className="!h-6 " position="top-center" />

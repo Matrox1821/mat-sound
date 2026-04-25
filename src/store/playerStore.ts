@@ -18,12 +18,19 @@ function setDuration(duration: number) {
   return useProgressStore.getState().setDuration(duration);
 }
 
+export interface FetchUpcomingContext {
+  playingFrom: { from: string; href: string } | null;
+  currentTrackId: string;
+  upcomingIds: string[]; // los que ya tenemos (para no repetir)
+  historyIds: string[];
+}
+
 interface PlayerState {
   // --- FUENTE DE LA VERDAD ---
   trackCache: Map<string, playerTrackProps>;
 
   // --- ORDEN Y ESTADO (Solo IDs) ---
-  playingFrom: string;
+  playingFrom: { from: string; href: string } | null;
   currentTrackId: string | null;
   historyIds: string[];
   queueIds: string[];
@@ -32,9 +39,14 @@ interface PlayerState {
     historyIds: string[];
     queueIds: string[];
   } | null;
-
+  _isFetchingUpcoming: boolean;
+  // Config del fetcher (se inyecta una vez al inicializar)
+  _fetchUpcoming: ((context: FetchUpcomingContext) => Promise<playerTrackProps[]>) | null;
+  setFetchUpcoming: (fn: (ctx: FetchUpcomingContext) => Promise<playerTrackProps[]>) => void;
+  // Trigger manual (útil para testing o forzar recarga)
+  refillUpcoming: () => Promise<void>;
   // --- ACCIONES ---
-  setPlayingFrom: (info: string) => void;
+  setPlayingFrom: ({ from, href }: { from: string; href: string }) => void;
   /** Agrega pistas al caché interno sin alterar las listas de reproducción */
   addTracksToCache: (tracks: playerTrackProps[]) => void;
   setTrack: (track: playerTrackProps, queue?: playerTrackProps[]) => void;
@@ -49,7 +61,7 @@ interface PlayerState {
     upcoming,
   }: {
     tracks: playerTrackProps[];
-    from: string;
+    from: { from: string; href: string } | null;
     upcoming?: playerTrackProps[] | null;
   }) => void;
   reset: () => void;
@@ -61,7 +73,7 @@ interface PlayerState {
 }
 
 const initialState = {
-  playingFrom: "",
+  playingFrom: null,
   currentTrackId: null,
   historyIds: [],
   queueIds: [],
@@ -72,8 +84,9 @@ const initialState = {
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
   ...initialState,
-
-  setPlayingFrom: (info) => set({ playingFrom: info }),
+  _fetchUpcoming: null,
+  _isFetchingUpcoming: false,
+  setPlayingFrom: ({ from, href }) => set({ playingFrom: { from, href } }),
 
   // Helper interno para popular el diccionario
   addTracksToCache: (tracks) =>
@@ -127,7 +140,6 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     if (!currentId) return;
 
     if (loop === "once") {
-      // Bucle once: podrías reiniciar progreso externamente
       return;
     }
 
@@ -161,7 +173,6 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       };
     }
 
-    // Actualizamos el progreso usando el caché
     const nextTrack = store.getTrackFromCache(nextTrackId);
     if (nextTrack) setDuration(nextTrack.duration);
 
@@ -172,6 +183,39 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       upcomingIds: newUpcomingIds,
       snapshot: newSnapshot,
     });
+
+    if (newUpcomingIds.length <= 5) {
+      get().refillUpcoming();
+    }
+  },
+
+  setFetchUpcoming: (fn) => set({ _fetchUpcoming: fn }),
+
+  refillUpcoming: async () => {
+    const store = get();
+
+    if (!store._fetchUpcoming || !store.currentTrackId) return;
+    if (store.upcomingIds.length > 10) return;
+    if (store._isFetchingUpcoming) return;
+    set({ _isFetchingUpcoming: true });
+
+    try {
+      const newTracks = await store._fetchUpcoming({
+        playingFrom: store.playingFrom,
+        currentTrackId: store.currentTrackId,
+        upcomingIds: store.upcomingIds,
+        historyIds: store.historyIds,
+      });
+
+      if (newTracks.length === 0) return;
+
+      store.addTracksToCache(newTracks);
+      set((state) => ({
+        upcomingIds: [...state.upcomingIds, ...newTracks.map((t) => t.id)],
+      }));
+    } finally {
+      set({ _isFetchingUpcoming: false });
+    }
   },
 
   prev: () => {

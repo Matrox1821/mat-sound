@@ -126,26 +126,25 @@ export interface TrackByPagination {
 
 export interface playerTrackProps {
   id: string;
-  cover: ImageSizes;
+  cover: ImageSizes | null;
   name: string;
-  song: string;
+  song: string | null;
   duration: number;
   reproductions: number;
-  releaseDate: string;
+  releaseDate: Date;
   likes: number;
-  lyrics: string;
+  lyrics: string | null;
   albums?:
     | {
         name: string;
         id: string;
-        cover: ImageSizes;
       }[]
     | null;
   artists?:
     | {
         name: string;
         id: string;
-        avatar: ImageSizes;
+        avatar: ImageSizes | null;
       }[]
     | null;
 }

@@ -5,16 +5,11 @@ import { useAppUIStore } from "@/store/appUIStore";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { Pause } from "@components/ui/icons/playback/Pause";
 import { Play } from "@components/ui/icons/playback/Play";
-import { ContentElement } from "@shared-types/content.types";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { TrackById } from "@shared-types/track.types";
 import { useEffect } from "react";
+import { MediaCard } from "@/types/content.types";
 
-interface CarouselCardPlayButtonProps {
-  track: ContentElement | TrackById;
-}
-
-export const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
+export const PlayButton = ({ data }: { data: MediaCard }) => {
   const { getCurrentTrack, setTrack, setPlayingFrom, reset, refillUpcoming } = usePlayerStore(
     (state) => state,
   );
@@ -22,28 +17,33 @@ export const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) =
   const { error } = useToast();
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
-  function isContentTrack(
-    track: ContentElement | TrackById,
-  ): track is ContentElement & { type: "tracks" } {
-    return "type" in track && track.type === "tracks";
-  }
+
   useEffect(() => {
     if (!currentTrack) return;
     refillUpcoming();
   }, [currentTrack, refillUpcoming]);
 
-  if (isContentTrack(track) && track.type !== "tracks") {
-    return null;
-  }
   /*   const parsedTracks = isContentTrack(track)
     ? track.recommendedTracks?.map((newTrack) => parseTrackByPlayer(newTrack))
     : []; */
-  const parsedTrack = parseTrackByPlayer(track);
+  let parsedTrack = null,
+    parsedQueue = null,
+    playingFrom = "MIX";
+  if (data.type === "tracks") {
+    parsedTrack = parseTrackByPlayer(data);
+    playingFrom = data.title;
+    parsedQueue = [parsedTrack];
+  }
+  if (data.tracks && data.tracks.length > 0) {
+    parsedTrack = parseTrackByPlayer(data.tracks[0]);
+    parsedQueue = data.tracks.map((track: any) => parseTrackByPlayer(track));
+    playingFrom = data.title;
+  }
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-
+    if (!parsedTrack) return;
     if (!parsedTrack.song) {
       error("No existe una pista de audio para reproducir.");
       return;
@@ -58,19 +58,23 @@ export const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) =
       }
     } else {
       reset();
-      setTrack(parsedTrack, [parsedTrack]);
-      setPlayingFrom(parsedTrack.name);
+      setTrack(parsedTrack, parsedQueue || []);
+      setPlayingFrom({ from: playingFrom, href: `${data.type}/${data.id}` });
       refillUpcoming();
       play();
     }
   };
-
+  if (!parsedTrack) return;
   return (
     <button
       onClick={handleClick}
-      className={`${parsedTrack.song ? "cursor-pointer" : "cursor-not-allowed"} play-button z-20 w-10 h-10 bg-background-950/90 opacity-0 absolute bottom-1 right-2 bg-primary text-white rounded-full p-2 hover:bg-primary/80 transition-colors`}
+      className={`${parsedTrack.song ? "cursor-pointer" : "cursor-not-allowed"} play-button z-20  bg-background-950/90 opacity-0 absolute bg-primary text-white rounded-full p-2 hover:bg-primary/80 transition-colors ${data.type === "artists" ? "w-2/4 h-2/4 bottom-7 right-9 flex items-center justify-center" : "w-10 h-10 bottom-1 right-2"}`}
     >
-      {parsedTrack.id === currentTrack?.id ? isPlaying ? <Pause /> : <Play /> : <Play />}
+      {parsedTrack.id === currentTrack?.id && isPlaying ? (
+        <Pause className={`${data.type === "artists" ? "w-3/4 h-3/4" : ""}`} />
+      ) : (
+        <Play className={`${data.type === "artists" ? "w-3/4 h-3/4" : ""}`} />
+      )}
     </button>
   );
 };

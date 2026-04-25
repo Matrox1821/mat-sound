@@ -1,83 +1,71 @@
+"use server";
 import { prisma } from "@config/db";
 import { Prisma } from "../../../../generated/prisma/client";
-import { ArtistBase } from "@shared-types/artist.types";
+import { TrackFull, trackFullSelect } from "../track/track.select";
 import {
-  AlbumContentRepository,
-  TrackContentRepository,
-  PlaylistContentRepository,
-} from "@shared-types/content.types";
+  albumContentSelect,
+  playlistContentSelect,
+  artistContentSelect,
+  AlbumContentRaw,
+  PlaylistContentRaw,
+  ArtistContentRaw,
+} from "./content.select";
+
+export const getTracksForContent = async (ids: string[]): Promise<TrackFull[]> => {
+  return prisma.track.findMany({
+    where: { id: { in: ids } },
+    select: trackFullSelect,
+  });
+};
+
+export const getRandomTracksIds = async (
+  limit: number,
+  excludeIds: string[] | null,
+): Promise<{ id: string }[]> => {
+  const exclude = excludeIds ?? [];
+  const excludeCondition =
+    exclude.length > 0
+      ? Prisma.sql`AND id NOT IN (SELECT unnest(${exclude}::uuid[]))`
+      : Prisma.empty;
+
+  return prisma.$queryRaw<{ id: string }[]>`
+    SELECT id
+    FROM track
+    WHERE song IS NOT NULL
+    AND song <> ''
+    ${excludeCondition}
+    ORDER BY RANDOM()
+    LIMIT ${limit};
+  `;
+};
 
 export const getAlbumsForContent = async (
   limit: number,
-  find?: { by: "artists" | "tracks" | "albums" | "playlists" | "none"; id?: string },
-): Promise<AlbumContentRepository[]> => {
-  const filters: Record<string, Prisma.AlbumWhereInput> = {
-    artist: { artists: { some: { id: find?.id } } },
-    track: { tracks: { some: { track: { id: find?.id } } } },
+  filter?: { by: "artist" | "track"; id: string },
+): Promise<AlbumContentRaw[]> => {
+  const filterMap: Record<string, Prisma.AlbumWhereInput> = {
+    artist: { artists: { some: { id: filter?.id } } },
+    track: { tracks: { some: { track: { id: filter?.id } } } },
   };
-  const where = find?.by && filters[find.by] && find?.id ? filters[find.by] : {};
-  const albums = await prisma.album.findMany({
+  const where = filter ? (filterMap[filter.by] ?? {}) : {};
+
+  return prisma.album.findMany({
     take: limit,
     where,
-    select: {
-      id: true,
-      name: true,
-      cover: true,
-      artists: {
-        select: { id: true, avatar: true, name: true },
-      },
-    },
+    select: albumContentSelect,
   });
-  return albums as unknown as AlbumContentRepository[];
 };
 
-export const getArtistsForContent = async (limit?: number): Promise<ArtistBase[]> => {
-  return (await prisma.artist.findMany({
-    ...(limit && { take: limit }),
-    select: { id: true, name: true, avatar: true },
-  })) as unknown as ArtistBase[];
+export const getArtistsForContent = async (limit?: number): Promise<ArtistContentRaw[]> => {
+  return prisma.artist.findMany({
+    ...(limit !== undefined && { take: limit }),
+    select: artistContentSelect,
+  });
 };
 
-export const getPlaylistsForContent = async (
-  limit: number,
-): Promise<PlaylistContentRepository[]> => {
-  return (await prisma.playlist.findMany({
+export const getPlaylistsForContent = async (limit: number): Promise<PlaylistContentRaw[]> => {
+  return prisma.playlist.findMany({
     take: limit,
-    select: {
-      id: true,
-      name: true,
-      cover: true,
-      tracks: { select: { track: { select: { cover: true, id: true, name: true } } }, take: 4 },
-    },
-  })) as unknown as PlaylistContentRepository[];
-};
-
-export const getTracksForContent = async ({
-  limit,
-  ids,
-}: {
-  limit: number;
-  ids: string[];
-}): Promise<TrackContentRepository[]> => {
-  return (await prisma.track.findMany({
-    take: limit,
-    where: { id: { in: ids } },
-    select: {
-      id: true,
-      name: true,
-      cover: true,
-      song: true,
-      duration: true,
-      reproductions: true,
-      releaseDate: true,
-      lyrics: true,
-      _count: { select: { likes: true } },
-      artists: {
-        select: { name: true, id: true, avatar: true },
-      },
-      albums: {
-        select: { order: true, disk: true, album: { select: { id: true, name: true } } },
-      },
-    },
-  })) as unknown as TrackContentRepository[];
+    select: playlistContentSelect,
+  });
 };

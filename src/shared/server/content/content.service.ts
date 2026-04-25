@@ -2,111 +2,52 @@
 import { CustomError } from "@shared-types/error.type";
 import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import {
-  mapAlbumsToContent,
-  mapArtistsToContent,
-  mapPlaylistToContent,
-  mapTrackToContent,
+  mapTrackToMediaCard,
+  mapAlbumRawToMediaCard,
+  mapArtistRawToMediaCard,
+  mapPlaylistRawToMediaCard,
 } from "./content.mapper";
-import { getRandomTracksIds } from "../track/track.repository";
 import {
+  getRandomTracksIds,
   getAlbumsForContent,
   getArtistsForContent,
   getPlaylistsForContent,
   getTracksForContent,
 } from "./content.repository";
-import {
-  ContentElement,
-  ContentTrack,
-  AlbumContentService,
-  ArtistContentService,
-} from "@shared-types/content.types";
+import { MediaCard, TrackCard } from "@shared-types/content.types";
 
-export const getArtistsForDiscovery = async (limit: number): Promise<ArtistContentService[]> => {
-  const artists = await getArtistsForContent(limit);
-  if (!artists || artists.length === 0) {
-    throw new CustomError({
-      errors: [
-        {
-          message: "No artists were found to display in the content section.",
-        },
-      ],
-      msg: "Empty artist list",
-      httpStatusCode: HttpStatusCode.NOT_FOUND,
-    });
-  }
-  return mapArtistsToContent(artists);
-};
-
-export const getAlbumsForDiscovery = async (limit: number): Promise<AlbumContentService[]> => {
-  const albums = await getAlbumsForContent(limit);
-  if (!albums || albums.length === 0) {
-    throw new CustomError({
-      errors: [
-        {
-          message: "No albums were found to display in the content section.",
-        },
-      ],
-      msg: "Empty album list",
-      httpStatusCode: HttpStatusCode.NOT_FOUND,
-    });
-  }
-  return mapAlbumsToContent(albums);
-};
-
-export const getTracksForDiscovery = async (
+const getTracksForDiscovery = async (
   limit: number,
-  userId?: string,
-  filter?: any,
-): Promise<ContentTrack[] | null> => {
-  const discoveryBaseIds = await getRandomTracksIds(
+  filter?: { by: string; id: string | null },
+): Promise<TrackCard[]> => {
+  const baseIds = await getRandomTracksIds(
     limit,
-    filter?.by === "tracks" ? filter.id : null,
+    filter?.by === "tracks" && filter.id ? [filter.id] : null,
   );
-  const mainIds = discoveryBaseIds.map((t) => t.id);
+  const mainIds = baseIds.map((t) => t.id);
 
-  const recommendationsResponses = await Promise.all(
-    mainIds.map((id) => getRandomTracksIds(5, [id])),
-  );
-  const recsMap = mainIds.reduce(
-    (acc, id, i) => {
-      acc[id] = recommendationsResponses[i].map((r) => r.id);
-      return acc;
-    },
-    {} as Record<string, string[]>,
-  );
-  const allNeededIds = [
-    ...new Set([...mainIds, ...recommendationsResponses.flat().map((r) => r.id)]),
-  ];
+  const recommendationResults = await Promise.all(mainIds.map((id) => getRandomTracksIds(5, [id])));
 
-  const allTracksRaw = await getTracksForContent({
-    limit: allNeededIds.length,
-    ids: allNeededIds,
-  });
+  const allIds = [...new Set([...mainIds, ...recommendationResults.flat().map((r) => r.id)])];
+  const allTracks = await getTracksForContent(allIds);
 
-  if (!allTracksRaw || allTracksRaw.length === 0) {
+  if (!allTracks.length) {
     throw new CustomError({
       msg: "Could not populate discovery section.",
       httpStatusCode: HttpStatusCode.NOT_FOUND,
     });
   }
 
-  const rawResults = mainIds.map((id) => {
-    const mainTrack = allTracksRaw.find((t) => t.id === id);
-    if (!mainTrack) return null;
+  const trackMap = new Map(allTracks.map((t) => [t.id, t]));
 
-    const recommendedIds = recsMap[id] || [];
+  return mainIds
+    .map((id) => {
+      const main = trackMap.get(id);
+      if (!main) return null;
 
-    const recommendedTracks = allTracksRaw
-      .filter((t) => recommendedIds.includes(t.id))
-      .map((t) => mapTrackToContent(t));
-
-    return {
-      ...mapTrackToContent(mainTrack),
-      recommendedTracks,
-    } as ContentTrack;
-  });
-
-  return rawResults.filter((track): track is ContentTrack => track !== null);
+      return mapTrackToMediaCard(main);
+    })
+    .filter((t): t is TrackCard => t !== null);
 };
 
 export const getContent = async ({
@@ -115,45 +56,39 @@ export const getContent = async ({
   filter = "none",
   filterId,
   idToRemove,
-  userId,
 }: {
   type?: string[];
   limit?: number;
   filter?: "artists" | "tracks" | "albums" | "playlists" | "none";
   filterId?: string;
   idToRemove?: string;
-  userId?: string;
-}): Promise<ContentElement[]> => {
-  // 1. Creamos un array de promesas para ejecutar todas las fuentes en paralelo
-  const promises: Promise<ContentElement[]>[] = [];
+}): Promise<MediaCard[]> => {
+  const promises: Promise<MediaCard[]>[] = [];
 
   if (type.includes("tracks")) {
+    promises.push(getTracksForDiscovery(limit, { by: filter, id: filterId ?? null }));
+  }
+  if (type.includes("albums")) {
+    promises.push(getAlbumsForContent(limit).then((data) => data.map(mapAlbumRawToMediaCard)));
+  }
+  if (type.includes("artists")) {
+    promises.push(getArtistsForContent(limit).then((data) => data.map(mapArtistRawToMediaCard)));
+  }
+  if (type.includes("playlists")) {
     promises.push(
-      getTracksForDiscovery(limit, userId, { by: filter, id: filterId }).then((data) => data ?? []),
+      getPlaylistsForContent(limit).then((data) =>
+        data.map((newData) => mapPlaylistRawToMediaCard(newData)),
+      ),
     );
   }
 
-  if (type.includes("albums")) {
-    promises.push(getAlbumsForDiscovery(limit).then((data) => data ?? []));
-  }
-
-  if (type.includes("artists")) {
-    promises.push(getArtistsForDiscovery(limit).then((data) => data ?? []));
-  }
-
-  if (type.includes("playlists")) {
-    promises.push(getPlaylistsForContent(limit).then((data) => mapPlaylistToContent(data ?? [])));
-  }
-
-  // 2. Esperamos a que todas las fuentes respondan
   const results = await Promise.all(promises);
-  let elements: ContentElement[] = results.flat();
+  let elements = results.flat();
 
-  // 3. Validamos si hay resultados
   if (elements.length === 0) {
     throw new CustomError({
-      errors: [{ message: "The search returned no results. No elements were found." }],
-      msg: "The search returned no results. No elements were found.",
+      errors: [{ message: "The search returned no results." }],
+      msg: "The search returned no results.",
       httpStatusCode: HttpStatusCode.NOT_FOUND,
     });
   }
