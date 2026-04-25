@@ -16,7 +16,7 @@ export const useMediaSession = (
         artist: currentTrack.artists ? currentTrack.artists[0].name : "",
         artwork: [
           {
-            src: currentTrack.cover.sm,
+            src: currentTrack.cover?.sm || "",
             sizes: "512x512",
             type: "image/jpeg",
           },
