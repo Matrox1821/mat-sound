@@ -2,12 +2,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function CollectionNav({ username }: { username?: string | null }) {
+export function CollectionNav() {
   const pathname = usePathname();
   const links = [
-    { label: "Mejores Resultados", href: "all" },
+    { label: "Todo", href: "all" },
     { label: "Playlists", href: "playlists" },
-    { label: "Canciones", href: "tracks" },
+    /* { label: "Canciones", href: "tracks" }, */
     { label: "Álbumes", href: "albums" },
   ];
   return (
@@ -20,7 +20,7 @@ export function CollectionNav({ username }: { username?: string | null }) {
               : ``
           }`}
           key={i}
-          href={`${link.href === "all" ? `/user/${username}/collection` : `/user/${username}/collection/${link.href}`}`}
+          href={`${link.href === "all" ? `/user/collection` : `/user/collection/${link.href}`}`}
         >
           <span>{link.label}</span>
         </Link>

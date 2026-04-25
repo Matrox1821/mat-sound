@@ -4,7 +4,13 @@ import { EditUserForm } from "@/components/features/forms/userForm/editProfile";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { use } from "react";
 
-export function Cover({ userPromise }: { userPromise: Promise<any> }) {
+export function Cover({
+  userPromise,
+  currentUser,
+}: {
+  userPromise: Promise<any>;
+  currentUser?: string | null;
+}) {
   const user = use(userPromise);
   if (!user) return;
   return (
@@ -42,20 +48,18 @@ export function Cover({ userPromise }: { userPromise: Promise<any> }) {
           className="!object-cover !w-full !h-full !blur-2xl absolute"
         />
         <div className="absolute w-10/12 h-full flex flex-col items-center justify-between py-6 z-50">
-          <div className="relative z-10 invisible">
-            <EditProfile>
-              <EditUserForm user={user} />
-            </EditProfile>
-          </div>
-          {user.biography && (
-            <p className="h-30 w-full mx-12 bg-background/40 backdrop-blur-xl p-3 overflow-y-auto rounded-xl border border-background-500/40 z-20">
-              {user.biography}
-            </p>
-          )}
+          <div className="relative z-10 invisible h-10 w-3" />
+          <p className="h-30 w-full mx-12 bg-background/40 backdrop-blur-xl p-3 overflow-y-auto rounded-xl border border-background-500/40 z-20">
+            {user.biography && user.biography}
+          </p>
           <div className="relative z-10">
-            <EditProfile>
-              <EditUserForm user={user} />
-            </EditProfile>
+            {user.username === currentUser ? (
+              <EditProfile>
+                <EditUserForm user={user} />
+              </EditProfile>
+            ) : (
+              <div className="relative z-10 invisible h-15 w-3" />
+            )}
           </div>
         </div>
       </span>

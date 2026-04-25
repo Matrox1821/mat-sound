@@ -1,33 +1,32 @@
+import { playerTrackProps } from "@/types/track.types";
 import { create } from "zustand";
 
 interface LikeState {
-  likedTrackIds: Set<string>;
+  likedTracks: playerTrackProps[]; // Única fuente de verdad
   hydrated: boolean;
-  hydrate: (ids: string[]) => void;
-  toggleLike: (id: string) => void;
-  isLiked: (id: string) => boolean;
+  hydrate: (tracks: playerTrackProps[]) => void;
+  toggleLike: (trackOrId: playerTrackProps) => void;
 }
 
-export const useLikeStore = create<LikeState>((set, get) => ({
-  likedTrackIds: new Set(),
+export const useLikeStore = create<LikeState>((set) => ({
+  likedTracks: [],
   hydrated: false,
 
-  hydrate: (ids) =>
-    set({
-      likedTrackIds: new Set(ids),
-      hydrated: true,
-    }),
+  hydrate: (tracks) => set({ likedTracks: tracks, hydrated: true }),
 
-  toggleLike: (id) =>
+  toggleLike: (payload) =>
     set((state) => {
-      const next = new Set(state.likedTrackIds);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return { likedTrackIds: next };
-    }),
+      const id = payload.id;
+      const isLiked = state.likedTracks.some((t) => t.id === id);
 
-  isLiked: (id) => get().likedTrackIds.has(id),
+      if (isLiked) {
+        return { likedTracks: state.likedTracks.filter((t) => t.id !== id) };
+      } else {
+        return { likedTracks: [...state.likedTracks, payload] };
+      }
+    }),
 }));
+
+// SELECTOR: Esto es lo que usaría tu botón para ser ultra rápido
+export const useIsLiked = (trackId: string) =>
+  useLikeStore((state) => state.likedTracks.some((t) => t.id === trackId));

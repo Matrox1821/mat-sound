@@ -1,9 +1,9 @@
 import { useTransition } from "react";
 import { Bookmark } from "../icons/Bookmark";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { togglePlaylist } from "@/actions/user";
 import { usePlaylistStore } from "@/store/playlistStore";
 import { ImageSizes } from "@shared-types/common.types";
+import { togglePlaylist } from "@/actions/user/playlist";
 
 export const SaveInPlaylist = ({
   playlistName,

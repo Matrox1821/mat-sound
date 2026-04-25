@@ -60,7 +60,7 @@ const CurrentMusicWidget = ({
             {track.name}
           </Link>
           <div className="flex gap-2 items-center">
-            <LikeButton trackId={track.id} />
+            <LikeButton track={track} />
             <PlaylistSelector track={track} />
           </div>
         </div>

@@ -72,6 +72,18 @@ export const getTracksWithoutTrackById = async ({
   return await getTracksByIds({ trackIds: ids.map(({ id }) => id) });
 };
 
+export const getTracksByRecomendations = async ({
+  limit,
+  excludeId,
+}: {
+  limit: number;
+  excludeId: string[] | null;
+}) => {
+  const tracksIds = await getRandomTracksIds(limit, excludeId);
+  const tracks = tracksIds.map(async ({ id }) => await getTrackById({ trackId: id }));
+  return tracks;
+};
+
 export const getTrackWithRecommendationsService = async ({
   limit,
   trackIds,
@@ -203,7 +215,6 @@ export const getTracks = async (tracksId?: string | string[]) => {
 export const updateTrack = async (body: TrackFormData) => {
   const track = await getTrackById({ trackId: body.id });
   if (!track) return null;
-  console.log(body);
   const song_path = body.song && (await uploadSong(body.song, track.id));
   let updatedTrack: any = track;
   if (song_path) {

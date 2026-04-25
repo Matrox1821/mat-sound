@@ -1,7 +1,7 @@
-import { getUserTracksCollection } from "@/actions/user";
-import { CollectionGrid } from "../../../components/collection/CollectionGrid";
 import { Suspense } from "react";
-import { GridSkeleton } from "../../../components/collection/GridSkeleton";
+import { GridSkeleton } from "../../components/collection/GridSkeleton";
+import { CollectionGrid } from "../../components/collection/CollectionGrid";
+import { getUserTracksCollection } from "@/actions/user/collection";
 
 export default async function CollectionFavoritesPage() {
   const userCollection = getUserTracksCollection();

@@ -3,19 +3,20 @@
 import { useTransition } from "react";
 import { Heart } from "../icons/Heart";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { toggleLike as toggleLikeAction } from "@/actions/user";
-import { useLikeStore } from "@/store/likeStore";
+import { toggleLike as toggleLikeAction } from "@/actions/user/like";
+import { useIsLiked, useLikeStore } from "@/store/likeStore";
+import { playerTrackProps } from "@/types/track.types";
 
 interface LikeButtonProps {
-  trackId: string;
+  track: playerTrackProps;
 }
 
-export function LikeButton({ trackId }: LikeButtonProps) {
+export function LikeButton({ track }: LikeButtonProps) {
   const [isPending, startTransition] = useTransition();
   const { error: toastError } = useToast();
 
   const hydrated = useLikeStore((s) => s.hydrated);
-  const isLiked = useLikeStore((s) => s.isLiked(trackId));
+  const isLiked = useIsLiked(track.id);
   const toggleLike = useLikeStore((s) => s.toggleLike);
 
   if (!hydrated) {
@@ -28,14 +29,14 @@ export function LikeButton({ trackId }: LikeButtonProps) {
 
     startTransition(async () => {
       // optimistic
-      toggleLike(trackId);
+      toggleLike(track);
 
       try {
-        await toggleLikeAction(trackId);
+        await toggleLikeAction(track.id);
       } catch {
         toastError("No tienes una sesión iniciada.");
         // rollback
-        toggleLike(trackId);
+        toggleLike(track);
       }
     });
   };
