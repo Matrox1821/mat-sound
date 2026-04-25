@@ -34,6 +34,7 @@ export function AlbumTable({
                 <TrackTable
                   tracks={diskTracks}
                   playingFromLabel={album.name}
+                  playingFromHref={`albums/${album.id}`}
                   upcomingTracks={
                     recommendedTracks && recommendedTracks.map((t) => parseTrackByPlayer(t))
                   }

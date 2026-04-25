@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 export interface TrackData {
   id: string;
-  cover: ImageSizes;
+  cover: ImageSizes | null;
 }
 
 export interface PlaylistDetails {

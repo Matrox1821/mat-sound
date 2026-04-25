@@ -58,7 +58,12 @@ export function ArtistContent({
   return (
     <article className="z-30 top-[calc(1/2*100vh)] left-0 w-full flex flex-col focus:none p-8 gap-8 relative bg-background">
       <section className="flex gap-4 items-center">
-        <PlayButton tracksList={tracks} upcomingList={upcoming} artistName={artist?.name || ""} />
+        <PlayButton
+          tracksList={tracks}
+          upcomingList={upcoming}
+          artistName={artist?.name || ""}
+          artistId={artist?.id || ""}
+        />
         <Sample newTrack={newTrack} />
         {artist && <FollowButton artistId={artist.id} />}
       </section>

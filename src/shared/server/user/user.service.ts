@@ -1,3 +1,4 @@
+"use server";
 import { CustomError } from "@shared-types/error.type";
 import { getUserCollection, getUserFavorites, getUserPlaylists } from "./user.repository";
 import { HttpStatusCode } from "@shared-types/httpStatusCode";
@@ -5,16 +6,18 @@ import { mapFavoritesToMediaCard, mapPlaylistsToMediaCard } from "./user.mapper"
 import {
   AlbumDetails,
   CollectionService,
-  PlaylistCard,
   PlaylistDetails,
   TrackDetails,
 } from "@shared-types/user.types";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { MediaCard } from "@/types/content.types";
 
-export const getPlaylistsToUserContent = async (
-  username: string,
-): Promise<PlaylistCard[] | null> => {
+export const getPlaylistsToUserContent = async ({
+  username,
+}: {
+  username: string;
+}): Promise<MediaCard[]> => {
   const playlists = await getUserPlaylists({ username });
   if (!playlists) {
     throw new CustomError({

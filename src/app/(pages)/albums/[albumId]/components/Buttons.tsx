@@ -21,10 +21,14 @@ export function PlayButton({
   currently,
   tracksList,
   upcoming,
+  albumName,
+  albumId,
 }: {
   currently: any | null;
   tracksList: any[] | null;
   upcoming: any[] | null;
+  albumName: string;
+  albumId: string;
 }) {
   const { setTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
   const { play } = usePlaybackStore((state) => state);
@@ -41,7 +45,7 @@ export function PlayButton({
     if (!playerBarIsActive) activePlayerBar();
     setTrack(track, tracks);
     setDuration(track.duration);
-    setPlayingFrom(track.name);
+    setPlayingFrom({ from: albumName, href: `album/${albumId}` });
     if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
     play();
   };
@@ -60,9 +64,13 @@ export function PlayButton({
 export function RandButton({
   tracksList,
   upcoming,
+  albumName,
+  albumId,
 }: {
   tracksList: any[] | null;
   upcoming: any[] | null;
+  albumName: string;
+  albumId: string;
 }) {
   const { setTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
   const { play } = usePlaybackStore((state) => state);
@@ -84,7 +92,7 @@ export function RandButton({
     setTrack(track, tracks);
     setDuration(track.duration);
     if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
-    setPlayingFrom(track.name);
+    setPlayingFrom({ from: albumName, href: `album/${albumId}` });
     play();
   };
 

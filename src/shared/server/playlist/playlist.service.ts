@@ -20,7 +20,6 @@ export async function getPlaylist({
 
   const recommendedTracksIds = await getRandomTracksIds(20, tracksIds);
 
-  console.log(recommendedTracksIds);
   const recommendedTracks = await getTracksByIds({
     trackIds: recommendedTracksIds.map(({ id }) => id),
   });

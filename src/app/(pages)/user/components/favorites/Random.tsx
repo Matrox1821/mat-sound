@@ -6,11 +6,9 @@ import { usePlayerStore } from "@/store/playerStore";
 import { Shuffle } from "@/components/ui/icons/playback/Shuffle";
 
 export function Random({
-  playlistName,
   tracksList,
   upcoming,
 }: {
-  playlistName: string;
   tracksList: any[] | null;
   upcoming: any[] | null;
 }) {
@@ -25,10 +23,10 @@ export function Random({
     e.stopPropagation();
     e.preventDefault();
     if (!playerBarIsActive) activePlayerBar();
-    if (playingFrom !== playlistName) {
+    if (playingFrom?.from !== "Favorites") {
       playShufflePlaylistOn({
         tracks,
-        from: playlistName,
+        from: { from: "Favorites", href: `user/favorites` },
         upcoming: upcoming?.map((newTrack) => parseTrackByPlayer(newTrack)),
       });
       if (!isPlaying) togglePlay();

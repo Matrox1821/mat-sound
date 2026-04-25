@@ -54,11 +54,10 @@ export function Playlist({
         setTrack(track, newTracks);
       }
 
-      setPlayingFrom(playlist.name);
+      setPlayingFrom({ from: playlist.name, href: `playlists/${playlist.id}` });
       play();
     }
   };
-  console.log(playlist);
   return (
     <section className="bg-background">
       {tracks.length > 0 ? (

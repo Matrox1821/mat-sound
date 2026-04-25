@@ -14,7 +14,7 @@ export enum AMOUNTS {
 }
 
 //types
-export type ContentType = "albums" | "tracks" | "artists" | "playlists" | "none";
+export type ContentType = "albums" | "tracks" | "artists" | "playlists" | "all";
 
 export type LoopMode = "none" | "all" | "one";
 

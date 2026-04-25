@@ -13,6 +13,7 @@ import { ScreenPlaylistMenu } from "../options/ScreenPlaylistMenu";
 import { PlaylistSelector } from "@components/features/inputs/PlaylistSelector";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { playerTrackProps } from "@shared-types/track.types";
+import { GET_URL } from "@/shared/utils/constants";
 
 export function DesktopPlayer() {
   const { getCurrentTrack, playingFrom } = usePlayerStore();
@@ -39,8 +40,9 @@ const CurrentMusicWidget = ({
   playingFrom,
 }: {
   track: playerTrackProps;
-  playingFrom: string;
+  playingFrom: { from: string; href: string } | null;
 }) => {
+  if (!playingFrom) return;
   return (
     <div className="flex items-center gap-4 w-1/5 h-full py-[6px]">
       <SafeImage
@@ -52,7 +54,7 @@ const CurrentMusicWidget = ({
       />
       <div
         className={`flex flex-col h-full ${
-          playingFrom !== "" ? "justify-between" : "justify-center gap-2"
+          playingFrom.from !== "" ? "justify-between" : "justify-center gap-2"
         }`}
       >
         <div className="flex items-center gap-2">
@@ -76,7 +78,10 @@ const CurrentMusicWidget = ({
           ))}
         {playingFrom && (
           <span className="text-[11px] font-semibold text-background-300 uppercase">
-            Reproduciendo desde: {playingFrom}
+            Reproduciendo desde:{" "}
+            <Link className="hover:underline" href={`${GET_URL}${playingFrom.href}`}>
+              {playingFrom.from}
+            </Link>
           </span>
         )}
       </div>

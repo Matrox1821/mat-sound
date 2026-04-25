@@ -43,7 +43,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ artistI
             <Carousel
               title="Álbumes"
               options={{ type: ["albums"] }}
-              filter={{ type: "artists", id: (await artistPromise)?.id || "" }}
+              searchBy={{ type: "artist", id: (await artistPromise)?.id || "" }}
             />
           }
         />

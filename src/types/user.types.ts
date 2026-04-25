@@ -37,52 +37,6 @@ export interface UserData {
   updatedAt: Date;
 }
 
-export interface BaseMediaCard {
-  id: string;
-  title: string;
-  href: string;
-  image?: ImageSizes | null;
-  images?: ImageSizes[] | null;
-}
-
-export type MediaCard = TrackCard | AlbumCard | ArtistCard | PlaylistCard;
-
-export interface TrackCard extends BaseMediaCard {
-  type: "tracks";
-  artists: { id: string; name: string; avatar: ImageSizes }[];
-  duration: number;
-  lyrics: string | null;
-  reproductions: number;
-  likes: number;
-  playData?: {
-    trackId: string;
-  };
-}
-
-export interface AlbumCard extends BaseMediaCard {
-  type: "albums";
-  artists: { id: string; name: string; avatar: ImageSizes }[];
-  releaseDate?: string;
-  playData?: {
-    contextId: string;
-    contextType: "album";
-  };
-}
-
-export interface ArtistCard extends BaseMediaCard {
-  type: "artists";
-  verified: boolean;
-}
-
-export interface PlaylistCard extends BaseMediaCard {
-  type: "playlists";
-  /* trackCount: number; */
-  playData?: {
-    contextId: string;
-    contextType: "playlist";
-  };
-}
-
 export interface CollectionTrack {
   type: "tracks";
   id: string;

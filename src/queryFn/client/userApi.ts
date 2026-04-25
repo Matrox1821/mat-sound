@@ -1,7 +1,8 @@
 import { handleCustomApiRequest } from "@/shared/client/clientShared";
 import { GET_URL } from "@/shared/utils/constants";
+import { MediaCard } from "@/types/content.types";
 import { UserFormData } from "@/types/form.types";
-import { MediaCard, UserData } from "@shared-types/user.types";
+import { UserData } from "@shared-types/user.types";
 
 const validateUserAndFetch = async ({
   username,

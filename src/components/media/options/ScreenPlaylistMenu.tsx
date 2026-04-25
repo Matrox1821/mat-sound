@@ -12,7 +12,6 @@ import Link from "next/link";
 import { Sidebar } from "primereact/sidebar";
 import { Fragment, RefObject, useState } from "react";
 import { SafeImage } from "@components/ui/images/SafeImage";
-import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { Pause } from "@components/ui/icons/playback/Pause";
 import { playerTrackProps } from "@shared-types/track.types";
 
@@ -20,7 +19,6 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
   const [showQueue, setShowQueue] = useState(true);
   const [showRecomendations, setShowRecomendations] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
-  const { error } = useToast();
 
   const { playerScreenIsActive, setPlayerScreenIsActive, setPlayerRightMenuIsActive } =
     useAppUIStore();
@@ -36,7 +34,6 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
     getTrackFromCache,
     addTracksToCache,
     playingFrom,
-    setPlayingFrom,
   } = usePlayerStore();
 
   const currentTrack = getCurrentTrack();
@@ -112,7 +109,6 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
         newHistoryIds = [];
         newQueueIds = [track.id];
         newUpcomingIds = [];
-        setPlayingFrom("Recommendations");
         break;
     }
 
@@ -277,7 +273,7 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
                   <Queue
                     currentTrack={currentTrack}
                     history={historyTracks}
-                    playingFrom={playingFrom}
+                    playingFrom={playingFrom?.from || ""}
                     queue={queueTracks}
                     upcoming={upcomingTracks}
                     setPlayerScreenIsActive={setPlayerScreenIsActive}

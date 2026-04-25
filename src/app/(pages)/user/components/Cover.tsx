@@ -23,7 +23,7 @@ export function Cover({
           fill
           priority
           quality={50}
-          className="!object-cover !w-full !h-full !blur-2xl"
+          className="object-cover! w-full! h-full! blur-2xl! relative!"
         />
       </span>
       <span className="h-full w-full relative">
