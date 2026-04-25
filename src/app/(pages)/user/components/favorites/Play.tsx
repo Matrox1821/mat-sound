@@ -8,12 +8,10 @@ import { useProgressStore } from "@/store/progressStore";
 import { Pause } from "@/components/ui/icons/playback/Pause";
 
 export function Play({
-  playlistName,
   currently,
   tracksList,
   upcoming,
 }: {
-  playlistName: string;
   currently: any | null;
   tracksList: any[] | null;
   upcoming: any[] | null;
@@ -31,12 +29,13 @@ export function Play({
     e.stopPropagation();
     e.preventDefault();
     if (!playerBarIsActive) activePlayerBar();
-    if (isPlaying && playingFrom === playlistName) {
+    if (isPlaying && playingFrom?.from === "Favorites") {
       togglePlay();
     } else {
       setTrack(track, tracks);
       setDuration(track.duration);
-      setPlayingFrom(playlistName);
+      setPlayingFrom({ from: "Favorites", href: `user/favorites` });
+
       if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
       togglePlay();
     }
@@ -47,7 +46,7 @@ export function Play({
       className="flex bg-linear-200 from-accent-500/90 via-20% via-accent-700/60  to-95% to-contrast-900 text-white font-semibold p-2 rounded-xl gap-1 cursor-pointer hover:brightness-85 transition-[filter] duration-200 items-center shadow-md"
       onClick={togglePlayPlaylist}
     >
-      {isPlaying && playingFrom === playlistName ? (
+      {isPlaying && playingFrom?.from === "Favorites" ? (
         <Pause height={28} width={28} />
       ) : (
         <PlayIcon height={28} width={28} />

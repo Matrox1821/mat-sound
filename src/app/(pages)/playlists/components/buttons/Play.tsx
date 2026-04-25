@@ -12,8 +12,10 @@ export function Play({
   currently,
   tracksList,
   upcoming,
+  playlistId,
 }: {
   playlistName: string;
+  playlistId: string;
   currently: any | null;
   tracksList: any[] | null;
   upcoming: any[] | null;
@@ -31,12 +33,12 @@ export function Play({
     e.stopPropagation();
     e.preventDefault();
     if (!playerBarIsActive) activePlayerBar();
-    if (isPlaying && playingFrom === playlistName) {
+    if (isPlaying && playingFrom?.from === playlistName) {
       togglePlay();
     } else {
       setTrack(track, tracks);
       setDuration(track.duration);
-      setPlayingFrom(playlistName);
+      setPlayingFrom({ from: playlistName, href: `playlists/${playlistId}` });
       if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
       togglePlay();
     }
@@ -47,7 +49,7 @@ export function Play({
       className="flex bg-content-900 text-background font-semibold p-4 rounded-full gap-2 cursor-pointer hover:brightness-70 transition-[filter] duration-200"
       onClick={togglePlayPlaylist}
     >
-      {isPlaying && playingFrom === playlistName ? (
+      {isPlaying && playingFrom?.from === playlistName ? (
         <Pause height={34} width={34} />
       ) : (
         <PlayIcon height={34} width={34} />

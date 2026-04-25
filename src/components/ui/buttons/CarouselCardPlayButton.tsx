@@ -5,26 +5,22 @@ import { useAppUIStore } from "@/store/appUIStore";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { Pause } from "@components/ui/icons/playback/Pause";
 import { Play } from "@components/ui/icons/playback/Play";
-import { ContentElement } from "@shared-types/content.types";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { TrackById } from "@shared-types/track.types";
 import { useEffect } from "react";
+import { MediaCard } from "@/types/content.types";
 
 interface CarouselCardPlayButtonProps {
-  track: ContentElement | TrackById;
+  track: MediaCard | TrackById;
 }
 
 export const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) => {
-  const { getCurrentTrack, setTrack, setPlayingFrom, reset, refillUpcoming } = usePlayerStore(
-    (state) => state,
-  );
+  const { getCurrentTrack, setTrack, reset, refillUpcoming } = usePlayerStore((state) => state);
   const currentTrack = getCurrentTrack();
   const { error } = useToast();
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
-  function isContentTrack(
-    track: ContentElement | TrackById,
-  ): track is ContentElement & { type: "tracks" } {
+  function isContentTrack(track: MediaCard | TrackById): track is MediaCard & { type: "tracks" } {
     return "type" in track && track.type === "tracks";
   }
   useEffect(() => {
@@ -59,7 +55,7 @@ export const CarouselCardPlayButton = ({ track }: CarouselCardPlayButtonProps) =
     } else {
       reset();
       setTrack(parsedTrack, [parsedTrack]);
-      setPlayingFrom(parsedTrack.name);
+      /*   setPlayingFrom({from:parsedTrack.name}); */
       refillUpcoming();
       play();
     }

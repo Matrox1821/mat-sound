@@ -34,6 +34,7 @@ export function FavoritesTable() {
         showCover
         playingFromLabel="Favoritos"
         upcomingTracks={upcoming}
+        playingFromHref={`user/favorites`}
       />
     </article>
   );

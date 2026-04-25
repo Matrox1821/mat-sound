@@ -9,12 +9,14 @@ import { ArtistTracks } from "@shared-types/artist.types";
 
 export function PlayButton({
   tracksList,
-  artistName,
   upcomingList,
+  artistName,
+  artistId,
 }: {
   tracksList: ArtistTracks[] | null;
   upcomingList?: ArtistTracks[] | null;
-  artistName: string | null;
+  artistName: string;
+  artistId: string;
 }) {
   const { setTrack, getCurrentTrack, setPlayingFrom, playingFrom, setUpcoming } = usePlayerStore(
     (state) => state,
@@ -31,7 +33,7 @@ export function PlayButton({
     e.preventDefault();
 
     if (!playerBarIsActive) activePlayerBar();
-    if (tracks[0].id === currentTrack?.id || artistName === playingFrom) {
+    if (tracks[0].id === currentTrack?.id || artistName === playingFrom?.from) {
       if (isPlaying) {
         pause();
       } else {
@@ -39,7 +41,7 @@ export function PlayButton({
       }
     } else {
       setTrack(tracks[0], tracks);
-      setPlayingFrom(artistName || "");
+      setPlayingFrom({ from: artistName, href: `artists/${artistId}` });
       if (upcomingList) {
         const upcoming = upcomingList.map((newTrack) => parseTrackByPlayer(newTrack));
         setUpcoming(upcoming);
@@ -53,7 +55,7 @@ export function PlayButton({
       className="rounded-full bg-accent-950 w-14 h-14 cursor-pointer hover:scale-105 hover:bg-accent-900 flex items-center justify-center"
       onClick={playAlbum}
     >
-      {artistName === playingFrom && isPlaying ? (
+      {playingFrom && artistName === playingFrom.from && isPlaying ? (
         <Pause className="text-background-950 h-7 w-7" />
       ) : (
         <Play className="text-background-950 h-7 w-7 ml-[1px]" />

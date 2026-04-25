@@ -72,10 +72,14 @@ export function CoverInfo({
             currently={album?.tracks![0].track || null}
             tracksList={album.tracks.map(({ track }) => track) || null}
             upcoming={recommendedTracks}
+            albumName={album.name}
+            albumId={album.id}
           />
           <RandButton
             tracksList={album.tracks.map(({ track }) => track) || null}
             upcoming={recommendedTracks}
+            albumName={album.name}
+            albumId={album.id}
           />
         </div>
       ) : (

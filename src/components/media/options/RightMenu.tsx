@@ -22,7 +22,6 @@ export const RightMenu = () => {
     getTrackFromCache,
     addTracksToCache,
     playingFrom,
-    setPlayingFrom,
   } = usePlayerStore();
 
   const currentTrack = getCurrentTrack();
@@ -80,7 +79,6 @@ export const RightMenu = () => {
         };
       },
       recomendations: () => {
-        setPlayingFrom("");
         return {
           historyIds: [],
           queueIds: [track.id],
@@ -177,7 +175,7 @@ export const RightMenu = () => {
           )}
 
           <span className="text-[12px] text-background-200 uppercase font-semibold">
-            Reproduciendo desde: {playingFrom}
+            Reproduciendo desde: {playingFrom?.from}
           </span>
 
           {/* CURRENT TRACK */}

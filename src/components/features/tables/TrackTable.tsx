@@ -19,6 +19,7 @@ interface TrackTableProps {
   upcomingTracks?: playerTrackProps[] | null;
   showCover?: boolean;
   playingFromLabel: string;
+  playingFromHref: string;
 }
 
 export function TrackTable({
@@ -26,6 +27,7 @@ export function TrackTable({
   upcomingTracks,
   showCover,
   playingFromLabel,
+  playingFromHref,
 }: TrackTableProps) {
   const { setTrack, setUpcoming, getCurrentTrack, setPlayingFrom } = usePlayerStore();
   const { isPlaying, play, pause } = usePlaybackStore();
@@ -50,7 +52,7 @@ export function TrackTable({
         setTrack(track, tracks);
       }
 
-      setPlayingFrom(playingFromLabel);
+      setPlayingFrom({ from: playingFromLabel, href: playingFromHref });
       play();
     }
   };

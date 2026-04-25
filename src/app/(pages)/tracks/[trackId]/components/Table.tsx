@@ -27,6 +27,7 @@ export function SingleTrackTable({
           <TrackTable
             tracks={[mainTrack]}
             playingFromLabel={mainTrack.name}
+            playingFromHref={`tracks/${track.id}`}
             upcomingTracks={suggestedTracks}
           />
         </section>

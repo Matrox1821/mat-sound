@@ -30,6 +30,7 @@ export function AsideButtons({
         currently={playlist.tracks[0]}
         upcoming={upcoming}
         playlistName={playlist.name}
+        playlistId={playlist.id}
       />
       <Send
         link={`${GET_URL}playlists/${playlist.id}`}

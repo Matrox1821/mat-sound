@@ -29,13 +29,8 @@ export function AsideButtons() {
   }, [tracksFromStore]);
   return (
     <div className="flex gap-4 items-center">
-      <Play
-        tracksList={tracksFromStore}
-        currently={tracksFromStore[0]}
-        upcoming={upcoming}
-        playlistName={"likes"}
-      />
-      <Random tracksList={tracksFromStore} upcoming={upcoming} playlistName={"likes"} />
+      <Play tracksList={tracksFromStore} currently={tracksFromStore[0]} upcoming={upcoming} />
+      <Random tracksList={tracksFromStore} upcoming={upcoming} />
     </div>
   );
 }

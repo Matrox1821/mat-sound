@@ -50,7 +50,7 @@ export default function PopularTracks({
       }
     } else {
       setTrack(track, tracks);
-      setPlayingFrom(artist.name);
+      setPlayingFrom({ from: artist.name, href: `artists/${artist.id}` });
       if (upcomingList) {
         const upcoming = upcomingList?.map((track) => parseTrackByPlayer(track));
         setUpcoming(upcoming);
