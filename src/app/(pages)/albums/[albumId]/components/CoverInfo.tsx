@@ -6,6 +6,8 @@ import { PlayButton, RandButton } from "./Buttons";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { AlbumById } from "@shared-types/album.types";
 import { TrackById } from "@shared-types/track.types";
+import { Send } from "@/components/features/dialogs/Send";
+import { SaveInCollection } from "@/components/ui/buttons/SaveAlbumInCollection";
 
 export function CoverInfo({
   albumPromise,
@@ -21,26 +23,30 @@ export function CoverInfo({
   return (
     <section className="flex flex-col justify-end items-start gap-12 z-30 relative h-[calc(1/2*100vh)] pb-4">
       <div className="w-full flex gap-4 relative">
-        <SafeImage
-          src={album.cover && album.cover.sm}
-          alt={album.name}
-          width={1080}
-          height={1080}
-          loading="lazy"
-          className="!object-cover !w-60 !h-60 !rounded-md"
-        />
+        <figure className="relative">
+          <SafeImage
+            src={album.cover && album.cover.sm}
+            alt={album.name}
+            width={1080}
+            height={1080}
+            loading="lazy"
+            className="!object-cover !w-60 !h-60 !rounded-md"
+          />
+        </figure>
         <div className="flex flex-col items-start justify-center gap-3">
           <h2 className="text-3xl font-bold">{album.name}</h2>
           {album.artists &&
             album.artists.map((artist) => (
-              <span className="flex items-center gap-2" key={artist.id}>
-                <SafeImage
-                  src={artist.avatar && artist.avatar.sm}
-                  alt={artist.name}
-                  width={40}
-                  height={40}
-                  className="!object-cover !w-6 !h-6 !rounded-full"
-                />
+              <span className="flex items-center gap-2 relative" key={artist.id}>
+                <figure className="relative">
+                  <SafeImage
+                    src={artist.avatar && artist.avatar.sm}
+                    alt={artist.name}
+                    width={40}
+                    height={40}
+                    className="!object-cover !w-6 !h-6 !rounded-full"
+                  />
+                </figure>
                 <Link className="hover:underline" href={`/artist/${artist.id}`}>
                   {artist.name}
                 </Link>
@@ -80,6 +86,13 @@ export function CoverInfo({
             upcoming={recommendedTracks}
             albumName={album.name}
             albumId={album.id}
+          />
+          <SaveInCollection album={album} />
+          <Send
+            link={`albums/${album.id}`}
+            title={`Escucha ${album.name} de ${album.artists[0].name}`}
+            className="flex  text-content-950 font-semibold rounded-lg gap-2 cursor-pointer hover:brightness-130 transition-[filter] duration-200 "
+            svgClassName="h-10!"
           />
         </div>
       ) : (

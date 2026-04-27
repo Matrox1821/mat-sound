@@ -2,6 +2,7 @@
 import { auth } from "@/lib/auth";
 import { ImageSizes } from "@/types/common.types";
 import {
+  AlbumDetails,
   CollectionAlbum,
   CollectionPlaylist,
   CollectionTrack,
@@ -150,6 +151,39 @@ export async function togglePlaylistInCollection(playlist: PlaylistDetails) {
         playlists: {
           create: {
             playlistId: playlist.id,
+            addedAt: new Date(),
+          },
+        },
+      },
+    });
+  }
+}
+export async function toggleAlbumInCollection(album: AlbumDetails) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const userId = session.user.id;
+
+  const exists = await prisma.collection.findFirst({
+    where: { userId, albums: { some: { albumId: album.id } } },
+  });
+
+  if (exists) {
+    await prisma.collection.update({
+      where: {
+        userId,
+      },
+      data: {
+        albums: { deleteMany: { albumId: album.id } },
+      },
+    });
+  } else {
+    await prisma.collection.update({
+      where: { userId },
+      data: {
+        albums: {
+          create: {
+            albumId: album.id,
             addedAt: new Date(),
           },
         },

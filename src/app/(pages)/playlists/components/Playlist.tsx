@@ -4,11 +4,8 @@ import { SafeImage } from "@/components/ui/images/SafeImage";
 import { Play } from "@/components/ui/icons/playback/Play";
 import { formatTime } from "@/shared/utils/helpers";
 import { PlaylistService } from "@/types/playlist.types";
-import { DropdownMenu } from "@/components/features/menus/DropdownMenu";
 import { LikeButton } from "@/components/ui/buttons/LikeButton";
 import { PlaylistSelector } from "@/components/features/inputs/PlaylistSelector";
-import { useToast } from "@/shared/client/hooks/ui/useToast";
-import { GET_URL } from "@/shared/utils/constants";
 import { usePlayerStore } from "@/store/playerStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { useAppUIStore } from "@/store/appUIStore";
@@ -16,6 +13,7 @@ import { playerTrackProps, TrackById } from "@/types/track.types";
 import { Pause } from "@/components/ui/icons/playback/Pause";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import Link from "next/link";
+import { Send } from "@/components/features/dialogs/Send";
 
 export function Playlist({
   playlistPromise,
@@ -27,7 +25,6 @@ export function Playlist({
   const { setTrack, setUpcoming, getCurrentTrack, setPlayingFrom } = usePlayerStore();
   const { isPlaying, play, pause } = usePlaybackStore();
   const { playerBarIsActive, activePlayerBar } = useAppUIStore();
-  const { message } = useToast();
   const currentTrack = getCurrentTrack();
 
   if (!playlistResponse) return null;
@@ -115,19 +112,9 @@ export function Playlist({
                   {formatTime(track.duration)}
                 </span>
                 <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <DropdownMenu
-                    options={[
-                      {
-                        label: "Compartir link",
-                        image: <i className="pi pi-share-alt" />,
-                        iconPosition: "left",
-                        onClick: async () => {
-                          await navigator.clipboard.writeText(`${GET_URL}tracks/${track.id}`);
-                          message("Copiado al portapapeles");
-                        },
-                        closeOnClick: true,
-                      },
-                    ]}
+                  <Send
+                    link={`tracks/${track.id}`}
+                    title={`Escucha ${track.name} ${track.artists[0]?.name ? "de " + track.artists[0].name : ""} `}
                   />
                   <LikeButton track={track} />
                   <PlaylistSelector track={track} />
