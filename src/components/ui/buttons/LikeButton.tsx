@@ -9,7 +9,7 @@ import { playerTrackProps } from "@/types/track.types";
 
 interface LikeButtonProps {
   track: playerTrackProps;
-  className: string;
+  className?: string;
 }
 
 export function LikeButton({ track, className }: LikeButtonProps) {
