@@ -6,13 +6,11 @@ import { formatTime } from "@/shared/utils/helpers";
 import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
-import { DropdownMenu } from "../menus/DropdownMenu";
-import { GET_URL } from "@/shared/utils/constants";
-import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { PlaylistSelector } from "@components/features/inputs/PlaylistSelector";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { LikeButton } from "@components/ui/buttons/LikeButton";
 import { playerTrackProps } from "@shared-types/track.types";
+import { Send } from "../dialogs/Send";
 
 interface TrackTableProps {
   tracks: playerTrackProps[];
@@ -32,7 +30,6 @@ export function TrackTable({
   const { setTrack, setUpcoming, getCurrentTrack, setPlayingFrom } = usePlayerStore();
   const { isPlaying, play, pause } = usePlaybackStore();
   const { playerBarIsActive, activePlayerBar } = useAppUIStore();
-  const { message } = useToast();
   const currentTrack = getCurrentTrack();
   const handlePlay = (e: any, track: playerTrackProps) => {
     e.stopPropagation();
@@ -137,20 +134,10 @@ export function TrackTable({
                 <td className="text-sm text-background-400">{formatTime(track.duration)}</td>
 
                 <td className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <DropdownMenu
-                    options={[
-                      {
-                        label: "Compartir link",
-                        image: <i className="pi pi-share-alt" />,
-                        iconPosition: "left",
-                        onClick: async () => {
-                          await navigator.clipboard.writeText(`${GET_URL}tracks/${track.id}`);
-                          message("Copiado al portapapeles");
-                        },
-                      },
-                    ]}
+                  <Send
+                    link={`tracks/${track.id}`}
+                    title={`Escucha ${track.name} ${track.artists && track.artists[0]?.name ? "de " + track.artists[0].name : ""} `}
                   />
-                  {/* <button className="pi pi-ellipsis-h cursor-pointer hover:text-white pt-[6px]" /> */}
                 </td>
 
                 <td className="rounded-r-xl">

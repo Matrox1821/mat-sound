@@ -4,7 +4,6 @@ import { Play } from "./Play";
 import { EditPlaylist } from "@/components/features/dialogs/Edit";
 import { EditPlaylistForm } from "@/components/features/forms/playlistForm/editPlaylist";
 import { Send } from "@/components/features/dialogs/Send";
-import { GET_URL } from "@/shared/utils/constants";
 import { Save } from "./Save";
 import { TrackById } from "@/types/track.types";
 
@@ -33,8 +32,10 @@ export function AsideButtons({
         playlistId={playlist.id}
       />
       <Send
-        link={`${GET_URL}playlists/${playlist.id}`}
+        link={`playlists/${playlist.id}`}
         title={`Escucha la playlist ${playlist.name}!`}
+        className="bg-background-100/20! w-10! h-10! text-white!"
+        svgClassName="h-8 pr-0.5 pt-0.5"
       />
     </div>
   );

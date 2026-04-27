@@ -17,7 +17,7 @@ export function MainCover({
   const { album } = albumResponse;
   return (
     <figure className="w-full h-[calc(1/2*100vh)] absolute top-0 left-0 z-20 flex items-center justify-center after:content-[''] after:w-full after:h-[calc(1/2*100vh)] after:absolute after:left-0 after:top-0 after:bg-linear-to-t after:from-background/90 after:to-background-950/30">
-      <span className="h-full w-full overflow-hidden">
+      <span className="h-full w-full overflow-hidden relative">
         <SafeImage
           src={album.cover && album.cover.lg}
           alt={album.name}
@@ -27,7 +27,7 @@ export function MainCover({
           className="!object-cover !w-full !h-full !blur-2xl !relative"
         />
       </span>
-      <span className="h-full w-full ">
+      <span className="h-full w-full relative">
         <SafeImage
           src={album.cover && album.cover.lg}
           alt={album.name}
@@ -37,7 +37,7 @@ export function MainCover({
           className="!object-cover !w-full !h-full !relative"
         />
       </span>
-      <span className="h-full w-full overflow-hidden">
+      <span className="h-full w-full overflow-hidden relative">
         <SafeImage
           src={album.cover && album.cover.lg}
           alt={album.name}

@@ -45,7 +45,7 @@ export function PlayButton({
     if (!playerBarIsActive) activePlayerBar();
     setTrack(track, tracks);
     setDuration(track.duration);
-    setPlayingFrom({ from: albumName, href: `album/${albumId}` });
+    setPlayingFrom({ from: albumName, href: `albums/${albumId}` });
     if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
     play();
   };

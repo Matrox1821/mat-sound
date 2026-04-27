@@ -1,5 +1,7 @@
 "use client";
+import { Send as SendIcon } from "@/components/ui/icons/Send";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
+import { GET_URL } from "@/shared/utils/constants";
 import Link from "next/link";
 import { Dialog } from "primereact/dialog";
 import { useState } from "react";
@@ -25,7 +27,17 @@ const socials = [
   },
 ];
 
-export function Send({ link, title }: { link: string; title?: string }) {
+export function Send({
+  link,
+  title,
+  className,
+  svgClassName,
+}: {
+  link: string;
+  title?: string;
+  className?: string;
+  svgClassName?: string;
+}) {
   const [visible, setVisible] = useState(false);
   const { message } = useToast();
 
@@ -33,9 +45,9 @@ export function Send({ link, title }: { link: string; title?: string }) {
     <div>
       <button
         onClick={() => setVisible(true)}
-        className="!border-none !text-white cursor-pointer flex flex-col items-center justify-center gap-2 bg-background-100/20 w-10 h-10 rounded-full"
+        className={`!border-none !text-white/90 cursor-pointer flex flex-col items-center justify-center rounded-full ${className}`}
       >
-        <i className="pi pi-send !text-lg" />
+        <SendIcon className={`h-5 ${svgClassName}`} />
       </button>
       <Dialog
         className="!border-0"
@@ -65,12 +77,12 @@ export function Send({ link, title }: { link: string; title?: string }) {
             <div className="px-4 py-2 flex flex-col gap-4">
               <span className="border border-accent-50/30  py-4 px-4 rounded-2xl flex items-center gap-2 ">
                 <span className="w-[30ch] overflow-hidden text-ellipsis whitespace-nowrap ">
-                  {link}
+                  {GET_URL + link}
                 </span>
                 <button
                   className="bg-accent-950 text-background p-1 rounded-md cursor-pointer hover:bg-accent-950/90"
                   onClick={async () => {
-                    await navigator.clipboard.writeText(link);
+                    await navigator.clipboard.writeText(GET_URL + link);
                     message("Copiado al portapapeles");
                     setVisible(false);
                   }}
@@ -81,7 +93,7 @@ export function Send({ link, title }: { link: string; title?: string }) {
               <nav className="flex gap-3">
                 {socials.map(({ href, to, Icon }) => (
                   <Link
-                    href={`${href(link)} ${title}`}
+                    href={`${href(GET_URL + link)} ${title}`}
                     target="_blank"
                     key={to}
                     onClick={() => setVisible(false)}

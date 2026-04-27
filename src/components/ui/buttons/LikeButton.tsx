@@ -9,9 +9,10 @@ import { playerTrackProps } from "@/types/track.types";
 
 interface LikeButtonProps {
   track: playerTrackProps;
+  className: string;
 }
 
-export function LikeButton({ track }: LikeButtonProps) {
+export function LikeButton({ track, className }: LikeButtonProps) {
   const [isPending, startTransition] = useTransition();
   const { error: toastError } = useToast();
 
@@ -47,7 +48,7 @@ export function LikeButton({ track }: LikeButtonProps) {
       disabled={isPending}
       className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full h-2 w-5 transition-all hover:opacity-75  ${
         isLiked ? "text-accent-950" : "text-content-900"
-      }`}
+      } ${className}`}
     >
       <Heart isFilled={isLiked} className="h-5" />
     </button>
