@@ -10,6 +10,7 @@ export function Nav() {
     { label: "Artistas", href: "artists" },
     { label: "Canciones", href: "tracks" },
     { label: "Álbumes", href: "albums" },
+    { label: "Playlists", href: "playlists" },
   ];
   return (
     <nav className="flex items-center h-12 gap-5">

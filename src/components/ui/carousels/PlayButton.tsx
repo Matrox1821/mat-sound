@@ -23,9 +23,6 @@ export const PlayButton = ({ data }: { data: MediaCard }) => {
     refillUpcoming();
   }, [currentTrack, refillUpcoming]);
 
-  /*   const parsedTracks = isContentTrack(track)
-    ? track.recommendedTracks?.map((newTrack) => parseTrackByPlayer(newTrack))
-    : []; */
   let parsedTrack = null,
     parsedQueue = null,
     playingFrom = "MIX";
