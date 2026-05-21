@@ -4,18 +4,15 @@ import { useAppUIStore } from "@/store/appUIStore";
 import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { Shuffle } from "@/components/ui/icons/playback/Shuffle";
+import { useRefillUpcoming } from "@/shared/client/hooks/player/useRefillUpcoming";
 
-export function Random({
-  tracksList,
-  upcoming,
-}: {
-  tracksList: any[] | null;
-  upcoming: any[] | null;
-}) {
-  const { playingFrom, playShufflePlaylistOn } = usePlayerStore((state) => state);
+export function Random({ tracksList }: { tracksList: any[] | null }) {
+  const { playShufflePlaylistOn, refillUpcoming, getCurrentTrack, reset } = usePlayerStore(
+    (state) => state,
+  );
   const { togglePlay, isPlaying } = usePlaybackStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
-
+  useRefillUpcoming({ refillUpcoming, currentTrack: !!getCurrentTrack() });
   if (!tracksList) return null;
 
   const tracks = tracksList.map((newTrack) => parseTrackByPlayer(newTrack));
@@ -23,14 +20,14 @@ export function Random({
     e.stopPropagation();
     e.preventDefault();
     if (!playerBarIsActive) activePlayerBar();
-    if (playingFrom?.from !== "Favorites") {
-      playShufflePlaylistOn({
-        tracks,
-        from: { from: "Favorites", href: `user/favorites` },
-        upcoming: upcoming?.map((newTrack) => parseTrackByPlayer(newTrack)),
-      });
-      if (!isPlaying) togglePlay();
-    }
+    reset();
+    playShufflePlaylistOn({
+      tracks,
+      from: { from: "Favorites", href: `user/favorites` },
+    });
+
+    refillUpcoming();
+    if (!isPlaying) togglePlay();
   };
 
   return (

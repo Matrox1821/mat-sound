@@ -11,28 +11,33 @@ import { SafeImage } from "@components/ui/images/SafeImage";
 import { LikeButton } from "@components/ui/buttons/LikeButton";
 import { playerTrackProps } from "@shared-types/track.types";
 import { Send } from "../dialogs/Send";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
+import { useRefillUpcoming } from "@/shared/client/hooks/player/useRefillUpcoming";
 
 interface TrackTableProps {
   tracks: playerTrackProps[];
-  upcomingTracks?: playerTrackProps[] | null;
   showCover?: boolean;
-  playingFromLabel: string;
-  playingFromHref: string;
+  playingFrom: { from: string; href: string };
 }
 
-export function TrackTable({
-  tracks,
-  upcomingTracks,
-  showCover,
-  playingFromLabel,
-  playingFromHref,
-}: TrackTableProps) {
-  const { setTrack, setUpcoming, getCurrentTrack, setPlayingFrom } = usePlayerStore();
+export function TrackTable({ tracks, showCover, playingFrom }: TrackTableProps) {
+  const { setTrack, refillUpcoming, getCurrentTrack, setPlayingFrom, reset } = usePlayerStore();
   const { isPlaying, play, pause } = usePlaybackStore();
   const { playerBarIsActive, activePlayerBar } = useAppUIStore();
   const currentTrack = getCurrentTrack();
-  const handlePlay = (e: any, track: playerTrackProps) => {
+  const { error } = useToast();
+  useRefillUpcoming({ refillUpcoming, currentTrack: !!getCurrentTrack() });
+  if (!tracks || !tracks[0]) return;
+
+  const handlePlay = (e: React.MouseEvent<HTMLButtonElement>, track: playerTrackProps) => {
     e.stopPropagation();
+    e.preventDefault();
+
+    if (!track || !track.song) {
+      error("No existe una pista de audio para reproducir.");
+      return;
+    }
+
     if (!playerBarIsActive) activePlayerBar();
     if (track.id === currentTrack?.id) {
       if (isPlaying) {
@@ -41,18 +46,13 @@ export function TrackTable({
         play();
       }
     } else {
-      if (upcomingTracks) {
-        setTrack(track, []);
-        setUpcoming(upcomingTracks);
-      } else {
-        setTrack(track, tracks);
-      }
-
-      setPlayingFrom({ from: playingFromLabel, href: playingFromHref });
+      reset();
+      setTrack(track, tracks || []);
+      setPlayingFrom(playingFrom);
+      refillUpcoming();
       play();
     }
   };
-
   return (
     <table className="w-full border-separate border-spacing-y-1">
       <thead>

@@ -1,12 +1,9 @@
-import { JsonValue } from "@prisma/client/runtime/client";
 import { TrackFull } from "../track/track.select";
 import { AlbumContentRaw, PlaylistContentRaw, ArtistContentRaw } from "./content.select";
 import { TrackCard, AlbumCard, ArtistCard, PlaylistCard } from "@shared-types/content.types";
 import { ImageSizes } from "@/types/common.types";
-export const asImageSizes = (value: JsonValue): ImageSizes | null => {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  return value as unknown as ImageSizes;
-};
+import { asImageSizes } from "@/shared/utils/helpers";
+
 export const mapTrackToMediaCard = (track: TrackFull): TrackCard => ({
   type: "tracks",
   id: track.id,

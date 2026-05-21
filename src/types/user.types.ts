@@ -1,4 +1,6 @@
+import { TrackFull } from "@/shared/server/track/track.select";
 import { ImageSizes } from "./common.types";
+import { playerTrackProps } from "./track.types";
 
 export interface UserFavoritesRepository {
   likes: {
@@ -80,27 +82,19 @@ export type UserCollection = CollectionTrack | CollectionAlbum | CollectionPlayl
 
 export interface CollectionRepository {
   id: string;
-  name: never;
+  name: string;
   playlists: {
     playlist: {
       id: string;
       name: string;
       cover: ImageSizes;
       tracks: {
-        track: {
-          id: string;
-          name: string;
-          cover: ImageSizes;
-          artists: {
-            id: string;
-            name: string;
-          }[];
-        };
+        track: TrackFull;
       }[];
-      addedAt: never;
     };
+    addedAt: Date;
   }[];
-  cover: never;
+  cover?: ImageSizes;
   tracks: {
     track: {
       id: string;
@@ -122,6 +116,7 @@ export interface CollectionRepository {
         id: string;
         name: string;
       }[];
+      tracks: { track: TrackFull }[];
     };
     addedAt: Date;
   }[];
@@ -132,13 +127,15 @@ export interface TrackDetails {
   name: string;
   cover: ImageSizes;
   artists: ArtistDetails[];
+  addedAt: Date;
 }
 
 export interface PlaylistDetails {
   id: string;
   name: string;
   cover: ImageSizes | null; // El cover propio de la playlist
-  tracks: TrackDetails[];
+  tracks: playerTrackProps[];
+  addedAt: Date;
 }
 
 export interface ArtistDetails {
@@ -151,6 +148,8 @@ export interface AlbumDetails {
   name: string;
   cover: ImageSizes;
   artists: ArtistDetails[];
+  tracks: playerTrackProps[];
+  addedAt: Date;
 }
 
 export interface CollectionService {

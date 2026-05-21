@@ -5,21 +5,13 @@ import { use } from "react";
 import { PlayButton, RandButton } from "./Buttons";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { AlbumById } from "@shared-types/album.types";
-import { TrackById } from "@shared-types/track.types";
 import { Send } from "@/components/features/dialogs/Send";
 import { SaveInCollection } from "@/components/ui/buttons/SaveAlbumInCollection";
+import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 
-export function CoverInfo({
-  albumPromise,
-}: {
-  albumPromise: Promise<{
-    album: AlbumById;
-    recommendedTracks: TrackById[];
-  } | null>;
-}) {
-  const albumResponse = use(albumPromise);
-  if (!albumResponse) return null;
-  const { album, recommendedTracks } = albumResponse;
+export function CoverInfo({ albumPromise }: { albumPromise: Promise<AlbumById | null> }) {
+  const album = use(albumPromise);
+  if (!album) return null;
   return (
     <section className="flex flex-col justify-end items-start gap-12 z-30 relative h-[calc(1/2*100vh)] pb-4">
       <div className="w-full flex gap-4 relative">
@@ -77,17 +69,17 @@ export function CoverInfo({
           <PlayButton
             currently={album?.tracks![0].track || null}
             tracksList={album.tracks.map(({ track }) => track) || null}
-            upcoming={recommendedTracks}
             albumName={album.name}
             albumId={album.id}
           />
           <RandButton
             tracksList={album.tracks.map(({ track }) => track) || null}
-            upcoming={recommendedTracks}
             albumName={album.name}
             albumId={album.id}
           />
-          <SaveInCollection album={album} />
+          <SaveInCollection
+            album={{ ...album, tracks: album.tracks.map(({ track }) => parseTrackByPlayer(track)) }}
+          />
           <Send
             link={`albums/${album.id}`}
             title={`Escucha ${album.name} de ${album.artists[0].name}`}

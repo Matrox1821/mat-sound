@@ -5,7 +5,6 @@ import "primeicons/primeicons.css";
 import { Header } from "@components/layout/header/index";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { userApi } from "@/queryFn/client/userApi";
 import { Aside } from "@components/layout/aside/index";
 
 export default async function DashboardLayout({
@@ -16,12 +15,11 @@ export default async function DashboardLayout({
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  const promise = userApi.getCollection(session?.user.username || "");
 
   return (
     <PrimeReactProvider>
       <div className="md:!w-screen md:!h-screen flex relative" id="root">
-        <Aside userCollectionPromise={promise} username={session?.user.username} />
+        <Aside username={session?.user.username} />
         <main className="w-full overflow-y-auto overflow-x-hidden h-full focus:border-0 focus:outline-0 relative">
           <Header initialSession={session} />
           {children}

@@ -121,6 +121,7 @@ export function CreatePlaylistDialog() {
                 type="submit"
                 onClick={(e) => {
                   handleCreate(e);
+                  togglePlaylistDialog();
                   hide(e);
                 }}
                 disabled={value === "" || isPending}

@@ -1,13 +1,13 @@
 import { Suspense } from "react";
-import { albumApi } from "@/queryFn/client/albumApi";
 import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "./components/Skeleton";
 import { MainCover } from "./components/MainCover";
 import { CoverInfo } from "./components/CoverInfo";
 import { AlbumTable } from "./components/Table";
+import { getAlbumDataById } from "@/shared/server/album/album.service";
 
 export default async function AlbumPage({ params }: { params: Promise<{ albumId: string }> }) {
   const { albumId } = await params;
-  const albumPromise = albumApi.getAlbumById(albumId);
+  const albumPromise = getAlbumDataById(albumId);
 
   return (
     <section className="w-full z-20 h-full md:relative md:bg-background md:transition-[heigth] md:duration-200 overflow-y-auto focus-visible:outline-0">

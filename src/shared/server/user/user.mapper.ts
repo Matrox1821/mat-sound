@@ -1,12 +1,9 @@
+import { asImageSizes } from "@/shared/utils/helpers";
 import { ImageSizes } from "@/types/common.types";
 import { PlaylistCard, TrackCard } from "@/types/content.types";
-import { JsonValue } from "@prisma/client/runtime/client";
 import { UserPlaylistRepository } from "@shared-types/playlist.types";
 import { UserFavoritesRepository } from "@shared-types/user.types";
-export const asImageSizes = (value: JsonValue): ImageSizes | null => {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  return value as unknown as ImageSizes;
-};
+
 export const mapPlaylistsToMediaCard = ({
   userPlaylists,
 }: {

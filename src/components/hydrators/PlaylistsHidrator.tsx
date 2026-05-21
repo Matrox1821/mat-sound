@@ -1,6 +1,7 @@
 "use client";
 
 import { usePlaylistStore } from "@/store/playlistStore";
+import { playerTrackProps } from "@/types/track.types";
 import { ImageSizes } from "@shared-types/common.types";
 import { use, useEffect } from "react";
 
@@ -12,7 +13,8 @@ export function PlaylistsHydrator({
       id: string;
       name: string;
       cover?: ImageSizes | null;
-      tracks: { id: string; cover: ImageSizes }[];
+      tracks: playerTrackProps[];
+      addedAt: Date;
     }[]
   >;
 }) {

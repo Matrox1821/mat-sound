@@ -7,6 +7,12 @@ import { InputCover } from "@/components/features/inputs/InputCover";
 import { PlaylistFormData, PlaylistService } from "@/types/playlist.types";
 import { toUpdatePlaylistFormData } from "@/shared/formData/playlistForm";
 import { updatePlaylistServer } from "@/actions/playlist";
+import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
+import { deletePlaylist } from "@/actions/user/playlist";
+import { GET_URL } from "@/shared/utils/constants";
+import { usePlaylistStore } from "@/store/playlistStore";
+import { useCollectionStore } from "@/store/collectionStore";
 
 export const mapPlaylistToEditFormData = (playlist: PlaylistService): PlaylistFormData => {
   return {
@@ -20,7 +26,9 @@ export function EditPlaylistForm({ playlist }: { playlist: PlaylistService }) {
   const parsedPlaylist = mapPlaylistToEditFormData(playlist);
   const [formData, setFormData] = useState<PlaylistFormData>(parsedPlaylist);
   const [isCropping, setIsCropping] = useState(false);
-
+  const { message, error } = useToast();
+  const playlistStore = usePlaylistStore();
+  const collectionStore = useCollectionStore();
   const { createEntity, success } = useCreateEntity({
     toFormData: toUpdatePlaylistFormData,
     serverAction: updatePlaylistServer,
@@ -48,6 +56,31 @@ export function EditPlaylistForm({ playlist }: { playlist: PlaylistService }) {
       redirect(`/playlists/${playlist.id}`);
     }
   }, [success, playlist]);
+
+  const handleDelete = async ({ id, name }: { id: string; name: string }) => {
+    try {
+      await deletePlaylist(id);
+      message(`Playlist [ ${name} ] eliminado.`);
+      playlistStore.removePlaylist(id);
+      collectionStore.removePlaylist(id);
+    } catch {
+      error(`Error al eliminar [ ${name} ]`);
+      return;
+    }
+    redirect(GET_URL + "/");
+  };
+
+  const confirm = async ({ event, id, name }: { event: any; id: string; name: string }) => {
+    confirmPopup({
+      target: event.currentTarget,
+      message: "Quieres eliminar este album?",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+      accept: () => handleDelete({ id, name }),
+    });
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -76,6 +109,16 @@ export function EditPlaylistForm({ playlist }: { playlist: PlaylistService }) {
           className="flex pt-4 gap-4 w-full justify-end"
           style={{ display: isCropping ? "none" : "flex" }}
         >
+          <div>
+            <ConfirmPopup />
+            <button
+              type="button"
+              className="p-4 bg-red-500/20 border border-red-500 rounded-lg flex items-center justify-center cursor-pointer hover:bg-red-500/10 font-semibold"
+              onClick={(event: any) => confirm({ event, id: playlist.id, name: playlist.name })}
+            >
+              Borrar Playlist
+            </button>
+          </div>
           <button
             className="bg-accent-950/20 border border-accent-950/50 p-4 text-white hover:bg-accent-950/25 cursor-pointer font-semibold rounded-md"
             type="submit"

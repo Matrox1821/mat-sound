@@ -17,14 +17,16 @@ export function CoverInfo({ artistPromise }: { artistPromise: Promise<ArtistServ
           </span>
         )}
         <div className="flex items-center gap-4">
-          <SafeImage
-            src={artist.avatar && artist.avatar.md}
-            alt={artist.name}
-            width={100}
-            height={100}
-            className="!h-16 !w-16 !rounded-full !content-cover"
-            priority
-          />
+          <figure className="relative">
+            <SafeImage
+              src={artist.avatar && artist.avatar.md}
+              alt={artist.name}
+              width={100}
+              height={100}
+              className="!h-16 !w-16 !rounded-full !content-cover"
+              priority
+            />
+          </figure>
           <h1 className="text-5xl font-black">{artist.name}</h1>
         </div>
         <span className="text-xl font-normal">

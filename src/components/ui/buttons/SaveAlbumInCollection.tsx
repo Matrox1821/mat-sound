@@ -2,10 +2,20 @@ import { useTransition } from "react";
 import { Bookmark } from "../icons/Bookmark";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { useCollectionStore } from "@/store/collectionStore";
-import { AlbumById } from "@/types/album.types";
 import { toggleAlbumInCollection } from "@/actions/user/collection";
+import { ArtistBase } from "@/types/artist.types";
+import { playerTrackProps } from "@/types/track.types";
+import { AlbumBase } from "@/types/album.types";
 
-export const SaveInCollection = ({ album }: { album: AlbumById }) => {
+export interface AlbumByCollection extends AlbumBase {
+  trackCount: number;
+  releaseDate: Date;
+  duration: number;
+  artists: ArtistBase[];
+  tracks: playerTrackProps[];
+}
+
+export const SaveInCollection = ({ album }: { album: AlbumByCollection }) => {
   const [isPending, startTransition] = useTransition();
   const { error: toastError, message } = useToast();
 
@@ -20,16 +30,16 @@ export const SaveInCollection = ({ album }: { album: AlbumById }) => {
     e.preventDefault();
 
     startTransition(async () => {
-      toggleAlbumInCollectionStore(album);
+      toggleAlbumInCollectionStore({ ...album, addedAt: new Date() });
 
       try {
-        await toggleAlbumInCollection(album);
+        await toggleAlbumInCollection({ ...album, addedAt: new Date() });
         message(
           `${isAlbumInCollection ? "Eliminado de la collección" : "Agregado a la collección"}`,
         );
       } catch {
         toastError("No tienes una sesión iniciada.");
-        toggleAlbumInCollectionStore(album);
+        toggleAlbumInCollectionStore({ ...album, addedAt: new Date() });
       }
     });
   };

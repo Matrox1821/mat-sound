@@ -72,11 +72,5 @@ const validateUserAndFetchMediaCard = async ({
 
 export const userApi = {
   getUser: (username?: string | null) => validateUserAndFetch({ username }),
-  getFavorites: (username?: string | null) =>
-    validateUserAndFetchMediaCard({ username, endpoint: "/favorites" }),
-  getCollection: (username?: string | null) =>
-    validateUserAndFetchMediaCard({ username, endpoint: "/collection" }),
-  getPlaylists: (username?: string | null) =>
-    validateUserAndFetchMediaCard({ username, endpoint: "/playlists" }),
   updateProfile: (username: string, data: UserFormData) => updateProfile(username, data),
 };

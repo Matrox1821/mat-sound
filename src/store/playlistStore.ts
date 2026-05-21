@@ -1,17 +1,14 @@
+import { playerTrackProps } from "@/types/track.types";
 import { ImageSizes } from "@shared-types/common.types";
 import { create } from "zustand";
-
-export interface TrackData {
-  id: string;
-  cover: ImageSizes | null;
-}
 
 export interface PlaylistDetails {
   id: string;
   name: string;
   cover: ImageSizes | null;
   // 1. Cambiamos el Map por un Array
-  tracks: TrackData[];
+  tracks: playerTrackProps[];
+  addedAt: Date;
 }
 
 interface PlaylistState {
@@ -22,10 +19,11 @@ interface PlaylistState {
       id: string;
       name: string;
       cover?: ImageSizes | null;
-      tracks: TrackData[];
+      tracks: playerTrackProps[];
+      addedAt: Date;
     }[],
   ) => void;
-  toggleTrackInPlaylist: (playlistId: string, track: TrackData) => void;
+  toggleTrackInPlaylist: (playlistId: string, track: playerTrackProps) => void;
   isTrackInPlaylist: (playlistId: string, trackId: string) => boolean;
   isPlaylistInStore: (playlistId: string) => boolean;
   createPlaylist: (id: string, name: string) => void;
@@ -48,6 +46,7 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
         cover: p.cover ?? null,
         // 2. Simplemente guardamos el array
         tracks: [...p.tracks],
+        addedAt: p.addedAt,
       });
     });
     set({ playlists: next, hydrated: true });
@@ -61,7 +60,7 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
 
       // 3. Usamos findIndex para saber si la pista ya está en el array
       const trackIndex = playlist.tracks.findIndex((t) => t.id === track.id);
-      let updatedTracks: TrackData[];
+      let updatedTracks: playerTrackProps[];
 
       if (trackIndex !== -1) {
         // Si existe, la eliminamos filtrando el array
@@ -89,7 +88,7 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
       if (state.playlists.has(id)) return state;
       const next = new Map(state.playlists);
       // 5. Inicializamos tracks como un array vacío
-      next.set(id, { id, name, cover: null, tracks: [] });
+      next.set(id, { id, name, cover: null, tracks: [], addedAt: new Date() });
       return { playlists: next };
     }),
 
