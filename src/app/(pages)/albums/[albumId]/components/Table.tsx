@@ -2,20 +2,11 @@
 import { TrackTable } from "@components/features/tables/TrackTable";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 import { AlbumById } from "@shared-types/album.types";
-import { TrackById } from "@shared-types/track.types";
 import { use } from "react";
 
-export function AlbumTable({
-  albumPromise,
-}: {
-  albumPromise: Promise<{
-    album: AlbumById;
-    recommendedTracks: TrackById[];
-  } | null>;
-}) {
-  const albumResponse = use(albumPromise);
-  if (!albumResponse) return null;
-  const { album, recommendedTracks } = albumResponse;
+export function AlbumTable({ albumPromise }: { albumPromise: Promise<AlbumById | null> }) {
+  const album = use(albumPromise);
+  if (!album) return null;
   let disks: any[] = [];
   if (album.tracks && album.tracks.length > 0)
     disks = [...new Set(album.tracks.map((t) => t.disk))].sort((a, b) => a - b);
@@ -33,11 +24,7 @@ export function AlbumTable({
               {diskTracks ? (
                 <TrackTable
                   tracks={diskTracks}
-                  playingFromLabel={album.name}
-                  playingFromHref={`albums/${album.id}`}
-                  upcomingTracks={
-                    recommendedTracks && recommendedTracks.map((t) => parseTrackByPlayer(t))
-                  }
+                  playingFrom={{ from: album.name, href: `albums/${album.id}` }}
                 />
               ) : null}
             </section>

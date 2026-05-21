@@ -7,20 +7,15 @@ import { useDevice } from "@/shared/client/hooks/ui/useDevice";
 import { usePathname } from "next/navigation";
 import { UserCollection } from "./UserCollection";
 import { useAppUIStore } from "@/store/appUIStore";
+import { authClient } from "@/lib/auth-client";
 
-export function Aside({
-  userCollectionPromise,
-  username,
-}: {
-  userCollectionPromise: Promise<any>;
-  username?: string | null;
-}) {
+export function Aside({ username }: { username?: string | null }) {
   const { isMobile } = useDevice();
   const pathname = usePathname();
   const { asideIsExpanded, setAsideIsExpanded } = useAppUIStore();
   const isAdminPage = pathname.split("/").includes("admin");
   const isAuthPage = ["signin", "signup"].some((p) => pathname.includes(p));
-
+  const session = authClient.useSession();
   if (isMobile || isAuthPage) return null;
 
   return (
@@ -82,7 +77,7 @@ export function Aside({
             <UserNavigation isExpanded={asideIsExpanded} pathname={pathname} username={username} />
           )}
           {/* <Suspense fallback={<CollectionSkeleton isExpanded={isExpanded} />}> */}
-          <UserCollection isExpanded={asideIsExpanded} promise={userCollectionPromise} />
+          {session.data?.user && <UserCollection isExpanded={asideIsExpanded} />}
           {/* </Suspense> */}
         </nav>
       </div>

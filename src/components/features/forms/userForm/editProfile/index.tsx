@@ -8,6 +8,7 @@ import { toUpdateUserFormData } from "@/shared/formData/userForm";
 import { updateUserServer } from "@/actions/user";
 import { CustomInputAdminForm } from "@components/features/inputs/CustomInputAdminForm";
 import { InputCover } from "@/components/features/inputs/InputCover";
+import { useUserAvatarStore } from "@/store/userAvatarStore";
 
 export const maUserToEditFormData = (user: UserData): UserFormData => {
   return {
@@ -23,8 +24,8 @@ export function EditUserForm({ user }: { user: UserData }) {
   const parsedUser = maUserToEditFormData(user);
   const [formData, setFormData] = useState<UserFormData>(parsedUser);
   const [isCropping, setIsCropping] = useState(false);
-
-  const { createEntity, success } = useCreateEntity({
+  const { hydrate } = useUserAvatarStore();
+  const { createEntity, success, data } = useCreateEntity({
     toFormData: toUpdateUserFormData,
     serverAction: updateUserServer,
     successMessage: "Perfil editado con éxito",
@@ -48,9 +49,10 @@ export function EditUserForm({ user }: { user: UserData }) {
 
   useEffect(() => {
     if (success) {
+      if (data?.avatar) hydrate({ avatar: data.avatar, updatedAt: data?.updatedAt });
       redirect(`/user/${user.username}`);
     }
-  }, [success, formData.avatar, user]);
+  }, [success, formData.avatar, user, data, hydrate]);
   return (
     <form
       onSubmit={handleSubmit}

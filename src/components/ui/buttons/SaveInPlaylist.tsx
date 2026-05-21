@@ -4,6 +4,7 @@ import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { usePlaylistStore } from "@/store/playlistStore";
 import { ImageSizes } from "@shared-types/common.types";
 import { togglePlaylist } from "@/actions/user/playlist";
+import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 
 export const SaveInPlaylist = ({
   playlistName,
@@ -18,6 +19,7 @@ export const SaveInPlaylist = ({
   const { error: toastError, message } = useToast();
 
   const hydrated = usePlaylistStore((s) => s.hydrated);
+
   const isTrackInPlaylist = usePlaylistStore((s) => s.isTrackInPlaylist(playlistId, track.id));
   const toggleTrackInPlaylist = usePlaylistStore((s) => s.toggleTrackInPlaylist);
 
@@ -26,13 +28,13 @@ export const SaveInPlaylist = ({
     e.preventDefault();
 
     startTransition(async () => {
-      toggleTrackInPlaylist(playlistId, track);
+      toggleTrackInPlaylist(playlistId, parseTrackByPlayer(track));
       try {
         await togglePlaylist(playlistId, track.id);
         message(`${isTrackInPlaylist ? "Eliminado de" : "Agregado a"} ${playlistName}`);
       } catch {
         toastError("No tienes una sesión iniciada.");
-        toggleTrackInPlaylist(playlistId, track);
+        toggleTrackInPlaylist(playlistId, parseTrackByPlayer(track));
       }
     });
   };

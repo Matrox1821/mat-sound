@@ -4,6 +4,9 @@ import { headers } from "next/headers";
 
 import { prisma } from "@config/db";
 import { ImageSizes } from "@/types/common.types";
+import { playerTrackProps } from "@/types/track.types";
+import { trackFullSelect } from "@/shared/server/track/track.select";
+import { asImageSizes } from "@/shared/utils/helpers";
 
 export async function createPlaylist(name: string, trackId?: string) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -41,7 +44,8 @@ export async function getUserPlaylists(): Promise<
     id: string;
     name: string;
     cover?: ImageSizes | null;
-    tracks: { id: string; cover: ImageSizes }[];
+    tracks: playerTrackProps[];
+    addedAt: Date;
   }[]
 > {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -56,20 +60,57 @@ export async function getUserPlaylists(): Promise<
       id: true,
       name: true,
       cover: true,
-      tracks: { select: { track: { select: { id: true, cover: true } } } },
+      tracks: { select: { track: { select: trackFullSelect } } },
+      createdAt: true,
     },
   });
   return playlists.map((p) => ({
     id: p.id,
     name: p.name,
     cover: p.cover,
-    tracks: p.tracks.map(({ track }) => ({ id: track.id, cover: track.cover })),
+    tracks:
+      p.tracks?.map(({ track }) => {
+        const { cover, _count, artists, albums, ...rest } = track;
+        return {
+          ...rest,
+          cover: asImageSizes(cover),
+          likes: _count.likes,
+          artists: artists.map(({ id, name, avatar }) => ({
+            id,
+            name,
+            avatar: asImageSizes(avatar),
+          })),
+          albums: albums.map(({ album }) => ({
+            id: album.id,
+            name: album.name,
+          })),
+        };
+      }) ?? null,
+    addedAt: p.createdAt,
   })) as unknown as {
     id: string;
     name: string;
     cover?: ImageSizes | null;
-    tracks: { id: string; cover: ImageSizes }[];
+    tracks: playerTrackProps[];
+    addedAt: Date;
   }[];
+}
+
+export async function deletePlaylist(playlistId: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const userId = session.user.id;
+
+  const playlist = await prisma.playlist.findFirst({
+    where: { id: playlistId, userId },
+  });
+
+  if (!playlist) throw new Error("Forbidden");
+
+  await prisma.playlist.delete({
+    where: { id: playlistId },
+  });
 }
 
 export async function togglePlaylist(playlistId: string, trackId: string) {

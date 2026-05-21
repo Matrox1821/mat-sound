@@ -13,6 +13,7 @@ interface PlaybackState {
   setVolume: (volume: number) => void;
   play: () => void;
   pause: () => void;
+  setShuffle: (shuffle: boolean) => void;
 }
 const initialState = {
   isPlaying: false,
@@ -29,4 +30,5 @@ export const usePlaybackStore = create<PlaybackState>((set) => ({
   setVolume: (volume: number) => set({ volume }),
   setLoopMode: (loopMode) => set({ loopMode }),
   toggleShuffle: () => set((state) => ({ isShuffled: !state.isShuffled })),
+  setShuffle: (shuffle: boolean) => set(() => ({ isShuffled: shuffle })),
 }));

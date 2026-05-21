@@ -7,6 +7,7 @@ import { usePlayerStore } from "@/store/playerStore";
 import { useProgressStore } from "@/store/progressStore";
 import { useState } from "react";
 import { useAppUIStore } from "@/store/appUIStore";
+import { useRefillUpcoming } from "@/shared/client/hooks/player/useRefillUpcoming";
 
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
@@ -20,20 +21,21 @@ function shuffleArray<T>(array: T[]): T[] {
 export function PlayButton({
   currently,
   tracksList,
-  upcoming,
   albumName,
   albumId,
 }: {
   currently: any | null;
   tracksList: any[] | null;
-  upcoming: any[] | null;
   albumName: string;
   albumId: string;
 }) {
-  const { setTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
+  const { setTrack, setPlayingFrom, refillUpcoming, getCurrentTrack } = usePlayerStore(
+    (state) => state,
+  );
   const { play } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
+  useRefillUpcoming({ refillUpcoming, currentTrack: !!getCurrentTrack() });
 
   if (!currently || !tracksList) return null;
 
@@ -46,7 +48,7 @@ export function PlayButton({
     setTrack(track, tracks);
     setDuration(track.duration);
     setPlayingFrom({ from: albumName, href: `albums/${albumId}` });
-    if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
+    refillUpcoming();
     play();
   };
 
@@ -63,20 +65,21 @@ export function PlayButton({
 
 export function RandButton({
   tracksList,
-  upcoming,
   albumName,
   albumId,
 }: {
   tracksList: any[] | null;
-  upcoming: any[] | null;
   albumName: string;
   albumId: string;
 }) {
-  const { setTrack, setPlayingFrom, setUpcoming } = usePlayerStore((state) => state);
+  const { setTrack, setPlayingFrom, refillUpcoming, getCurrentTrack } = usePlayerStore(
+    (state) => state,
+  );
   const { play } = usePlaybackStore((state) => state);
   const { setDuration } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
   const [random] = useState(() => Math.random());
+  useRefillUpcoming({ refillUpcoming, currentTrack: !!getCurrentTrack() });
 
   if (!tracksList) return null;
 
@@ -91,7 +94,7 @@ export function RandButton({
 
     setTrack(track, tracks);
     setDuration(track.duration);
-    if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
+    refillUpcoming();
     setPlayingFrom({ from: albumName, href: `album/${albumId}` });
     play();
   };

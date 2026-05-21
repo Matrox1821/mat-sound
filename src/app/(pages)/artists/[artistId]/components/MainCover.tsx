@@ -8,13 +8,15 @@ export function MainCover({ artistPromise }: { artistPromise: Promise<ArtistServ
   if (!artist) return;
   return (
     <figure className="w-full h-[calc(1/2*100vh)] absolute top-0 left-0 z-20 flex items-center justify-center object-cover">
-      <SafeImage
-        src={artist.mainCover}
-        alt={artist?.name}
-        width={2160}
-        height={1080}
-        className="!opacity-80 !object-cover !w-full !h-full !text-transparent !bg-background"
-      />
+      <figure className="relative">
+        <SafeImage
+          src={artist.mainCover}
+          alt={artist?.name}
+          width={2160}
+          height={1080}
+          className="!opacity-80 !object-cover !w-full !h-full !text-transparent !bg-background"
+        />
+      </figure>
     </figure>
   );
 }

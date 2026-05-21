@@ -1,5 +1,11 @@
-import { AMOUNTS } from "@shared-types/common.types";
+import { JsonValue } from "@prisma/client/runtime/client";
+import { AMOUNTS, ImageSizes } from "@shared-types/common.types";
 import { RefObject } from "react";
+
+export const asImageSizes = (value: JsonValue): ImageSizes | null => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  return value as unknown as ImageSizes;
+};
 
 export function shuffleArray<T>(array: T[]): T[] {
   const result = [...array]; // no mutamos el original

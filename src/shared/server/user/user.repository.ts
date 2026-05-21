@@ -101,12 +101,7 @@ export const getUserCollection = async (userId: string): Promise<CollectionRepos
                 take: 4,
                 select: {
                   track: {
-                    select: {
-                      id: true,
-                      name: true,
-                      cover: true,
-                      artists: { select: { id: true, name: true } },
-                    },
+                    select: trackFullSelect,
                   },
                 },
               },
@@ -123,6 +118,7 @@ export const getUserCollection = async (userId: string): Promise<CollectionRepos
               cover: true,
               name: true,
               artists: { select: { id: true, name: true } },
+              tracks: { select: { track: { select: trackFullSelect } } },
             },
           },
         },

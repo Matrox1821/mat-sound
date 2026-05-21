@@ -8,18 +8,14 @@ import {
   playlistWithTracksSelect,
   SearchEntity,
 } from "./search.select";
-import { JsonValue } from "@prisma/client/runtime/client";
 import { ImageSizes } from "@/types/common.types";
+import { asImageSizes } from "@/shared/utils/helpers";
 
 interface RankedId {
   id: string;
   rank: number;
   priority: number;
 }
-const asImageSizes = (value: JsonValue): ImageSizes | null => {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  return value as unknown as ImageSizes;
-};
 export async function searchRepository(
   q: string,
   entity: SearchEntity = "all",

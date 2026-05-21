@@ -4,6 +4,7 @@ import {
   countAlbums,
   createAlbumRepo,
   deleteAlbum,
+  getAlbumById,
   getAlbumsByPagination,
   updateAlbumCover,
 } from "./album.repository";
@@ -196,4 +197,9 @@ export const createAlbumsBulk = async (
   if (results.length === 0) return null;
 
   return results;
+};
+
+export const getAlbumDataById = async (id: string) => {
+  const album = await getAlbumById(id);
+  return album;
 };

@@ -106,12 +106,12 @@ export default function PopularTracks({
                     )}
                   </button>
                 </td>
-                <td>
+                <td className="relative">
                   <SafeImage
                     src={track.cover && track.cover.sm}
                     alt={track.name}
-                    width={100}
-                    height={100}
+                    width={40}
+                    height={40}
                     className="!w-10 !h-10 !rounded-md"
                   />
                 </td>

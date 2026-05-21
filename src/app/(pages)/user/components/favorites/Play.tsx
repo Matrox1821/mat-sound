@@ -6,21 +6,22 @@ import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { useProgressStore } from "@/store/progressStore";
 import { Pause } from "@/components/ui/icons/playback/Pause";
+import { useRefillUpcoming } from "@/shared/client/hooks/player/useRefillUpcoming";
 
 export function Play({
   currently,
   tracksList,
-  upcoming,
 }: {
   currently: any | null;
   tracksList: any[] | null;
-  upcoming: any[] | null;
 }) {
-  const { setTrack, setPlayingFrom, setUpcoming, playingFrom } = usePlayerStore((state) => state);
+  const { setTrack, setPlayingFrom, refillUpcoming, playingFrom, getCurrentTrack, reset } =
+    usePlayerStore((state) => state);
   const { togglePlay, isPlaying } = usePlaybackStore((state) => state);
-  const { setDuration } = useProgressStore((state) => state);
+  const { setDuration, setCurrentTime } = useProgressStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
 
+  useRefillUpcoming({ refillUpcoming, currentTrack: !!getCurrentTrack() });
   if (!currently || !tracksList) return null;
 
   const track = parseTrackByPlayer(currently);
@@ -29,16 +30,14 @@ export function Play({
     e.stopPropagation();
     e.preventDefault();
     if (!playerBarIsActive) activePlayerBar();
-    if (isPlaying && playingFrom?.from === "Favorites") {
-      togglePlay();
-    } else {
-      setTrack(track, tracks);
-      setDuration(track.duration);
-      setPlayingFrom({ from: "Favorites", href: `user/favorites` });
+    reset();
+    setTrack(track, tracks);
+    setDuration(track.duration);
 
-      if (upcoming) setUpcoming(upcoming.map((newTrack) => parseTrackByPlayer(newTrack)));
-      togglePlay();
-    }
+    setCurrentTime(0);
+    setPlayingFrom({ from: "Favorites", href: `user/favorites` });
+    refillUpcoming();
+    if (!isPlaying) togglePlay();
   };
 
   return (

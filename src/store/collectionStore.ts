@@ -18,6 +18,8 @@ interface CollectionState {
   togglePlaylistInCollection: (playlist: PlaylistDetails) => void;
   toggleAlbumInCollection: (album: AlbumDetails) => void;
 
+  removePlaylist: (playlistId: string) => void;
+
   isTrackInCollection: (id: string) => boolean;
   isPlaylistInCollection: (id: string) => boolean;
   isAlbumInCollection: (id: string) => boolean;
@@ -64,7 +66,12 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
       }
       return { playlists: next };
     }),
-
+  removePlaylist: (id: string) =>
+    set((state) => {
+      const next = new Map(state.playlists);
+      next.delete(id);
+      return { playlists: next };
+    }),
   toggleAlbumInCollection: (album) =>
     set((state) => {
       const next = new Map(state.albums);

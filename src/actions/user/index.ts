@@ -22,7 +22,7 @@ export async function updateUserServer(currentState: any, formData: FormData) {
       if (!session?.user || !newUser) throw new Error("El usuario no existe o no esta logueado");
     }
     const avatar = await handleAvatarUpload(newUser.avatar, userId);
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: {
         id: userId,
       },
@@ -33,7 +33,10 @@ export async function updateUserServer(currentState: any, formData: FormData) {
         updatedAt: new Date(),
       },
     });
-    return { success: true, errors: [] };
+    return {
+      success: true,
+      data: { avatar: updatedUser.avatar, updatedAt: updatedUser.updatedAt },
+    };
   } catch (error: any) {
     return { errors: [{ message: error.message }], success: false };
   }

@@ -58,11 +58,9 @@ interface PlayerState {
   playShufflePlaylistOn: ({
     tracks,
     from,
-    upcoming,
   }: {
     tracks: playerTrackProps[];
     from: { from: string; href: string } | null;
-    upcoming?: playerTrackProps[] | null;
   }) => void;
   reset: () => void;
   updateTrackMetadata: (trackId: string, metadata: Partial<playerTrackProps>) => void;
@@ -264,18 +262,17 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     });
   },
 
-  playShufflePlaylistOn: ({ tracks, from, upcoming }) => {
+  playShufflePlaylistOn: ({ tracks, from }) => {
     const mixed = shuffle(tracks.map(({ id }) => id));
     const { setDuration } = useProgressStore.getState();
 
     get().addTracksToCache(tracks ? tracks : []);
-    get().addTracksToCache(upcoming ? upcoming : []);
 
     setDuration(tracks.find(({ id }) => id === mixed[0])?.duration || 0);
     const indexTrack = tracks.findIndex(({ id }) => id === mixed[0]);
-    const { toggleShuffle } = usePlaybackStore.getState();
-    toggleShuffle();
-    if (upcoming) set({ upcomingIds: upcoming.map((t) => t.id) });
+    const { setShuffle } = usePlaybackStore.getState();
+    setShuffle(true);
+    get().refillUpcoming();
     set({
       snapshot: {
         historyIds: tracks.map(({ id }) => id).slice(0, indexTrack),
@@ -325,5 +322,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       return { trackCache: nextCache };
     }),
 
-  reset: () => set({ ...initialState, trackCache: new Map() }),
+  reset: () =>
+    set(() => {
+      const { setLoopMode, setShuffle } = usePlaybackStore.getState();
+      const { setDuration, setCurrentTime } = useProgressStore.getState();
+      setLoopMode("none");
+      setShuffle(false);
+      setDuration(0);
+      setCurrentTime(0);
+      return { ...initialState, trackCache: new Map() };
+    }),
 }));
