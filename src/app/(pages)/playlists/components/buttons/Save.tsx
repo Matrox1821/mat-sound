@@ -4,6 +4,7 @@ import { useCollectionStore } from "@/store/collectionStore";
 import { PlaylistService } from "@/types/playlist.types";
 import { useTransition } from "react";
 import { togglePlaylistInCollection as togglePlaylist } from "@/actions/user/collection";
+import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 export function Save({ playlist: playlistData }: { playlist: PlaylistService | null }) {
   const { isPlaylistInCollection, hydrated, togglePlaylistInCollection } = useCollectionStore(
     (s) => s,
@@ -18,14 +19,22 @@ export function Save({ playlist: playlistData }: { playlist: PlaylistService | n
     e.stopPropagation();
     e.preventDefault();
 
+    const playlistToCollection = {
+      cover: playlistData.cover,
+      id: playlistData.id,
+      name: playlistData.name,
+      tracks: playlistData.tracks.map((t) => parseTrackByPlayer(t)),
+      addedAt: new Date(),
+    };
+
     startTransition(async () => {
-      togglePlaylistInCollection(playlistData);
+      togglePlaylistInCollection(playlistToCollection);
       try {
-        await togglePlaylist(playlistData);
+        await togglePlaylist(playlistToCollection);
         message(`${isSaved ? "Eliminado de la colección." : "Agregado a la colección."}`);
       } catch {
         toastError("No tienes una sesión iniciada.");
-        togglePlaylistInCollection(playlistData);
+        togglePlaylistInCollection(playlistToCollection);
       }
     });
   };
