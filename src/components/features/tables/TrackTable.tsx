@@ -20,8 +20,9 @@ interface TrackTableProps {
   playingFrom: { from: string; href: string };
 }
 
-export function TrackTable({ tracks, showCover, playingFrom }: TrackTableProps) {
-  const { setTrack, refillUpcoming, getCurrentTrack, setPlayingFrom, reset } = usePlayerStore();
+export function TrackTable({ tracks, showCover, playingFrom: newPlayingFrom }: TrackTableProps) {
+  const { setTrack, refillUpcoming, getCurrentTrack, setPlayingFrom, reset, playingFrom } =
+    usePlayerStore();
   const { isPlaying, play, pause } = usePlaybackStore();
   const { playerBarIsActive, activePlayerBar } = useAppUIStore();
   const currentTrack = getCurrentTrack();
@@ -39,7 +40,7 @@ export function TrackTable({ tracks, showCover, playingFrom }: TrackTableProps) 
     }
 
     if (!playerBarIsActive) activePlayerBar();
-    if (track.id === currentTrack?.id) {
+    if (track.id === currentTrack?.id && playingFrom?.from === newPlayingFrom.from) {
       if (isPlaying) {
         pause();
       } else {
@@ -48,7 +49,7 @@ export function TrackTable({ tracks, showCover, playingFrom }: TrackTableProps) 
     } else {
       reset();
       setTrack(track, tracks || []);
-      setPlayingFrom(playingFrom);
+      setPlayingFrom(newPlayingFrom);
       refillUpcoming();
       play();
     }

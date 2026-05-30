@@ -38,6 +38,7 @@
     "@tailwindcss/postcss": "^4.0.6",
     "bcryptjs": "^3.0.2",
     "better-auth": "^1.4.10",
+    "db": "link:..\\generated\\prisma",
     "dotenv": "^17.2.3",
     "jsonwebtoken": "^9.0.2",
     "next": "16.1.1",

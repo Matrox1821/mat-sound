@@ -156,18 +156,20 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
         <div className="relative h-full w-full">
           {currentTrack && (
             <div className="absolute inset-0 z-0 overflow-hidden transition-opacity duration-500 ease-in-out">
-              <SafeImage
-                src={currentTrack.cover && currentTrack.cover.lg}
-                alt=""
-                width={1200}
-                height={1200}
-                className="!object-cover !w-full !h-full"
-                style={{
-                  filter: "blur(30px) brightness(0.1)",
-                  transform: "scale(1.1)",
-                }}
-                quality={75}
-              />
+              <figure className="relative">
+                <SafeImage
+                  src={currentTrack.cover && currentTrack.cover.lg}
+                  alt=""
+                  width={1200}
+                  height={1200}
+                  className="!object-cover !w-full !h-full"
+                  style={{
+                    filter: "blur(30px) brightness(0.1)",
+                    transform: "scale(1.1)",
+                  }}
+                  quality={75}
+                />
+              </figure>
             </div>
           )}
           <div className="relative z-10">
@@ -188,7 +190,7 @@ export const ScreenPlaylistMenu = ({ audioRef }: { audioRef: RefObject<HTMLAudio
                   <Link
                     href={`/tracks/${currentTrack?.id}`}
                     onClick={() => setPlayerScreenIsActive(false)}
-                    className="w-full"
+                    className="w-full relative"
                   >
                     <SafeImage
                       src={currentTrack.cover && currentTrack.cover.lg}
@@ -330,13 +332,15 @@ const Queue = ({
                   handleClick(e, track, "history");
                 }}
               >
-                <SafeImage
-                  src={track.cover && track.cover.lg}
-                  alt={track.name}
-                  width={48}
-                  height={48}
-                  className="!rounded-sm !opacity-60 !transition-[filter] !duration-200"
-                />
+                <figure className="relative">
+                  <SafeImage
+                    src={track.cover && track.cover.lg}
+                    alt={track.name}
+                    width={48}
+                    height={48}
+                    className="!rounded-sm !opacity-60 !transition-[filter] !duration-200"
+                  />
+                </figure>
                 <Play className="play absolute hidden z-50 opacity-95" />
               </button>
               <span className="flex flex-col h-full justify-evenly w-4/5 opacity-60">
@@ -378,13 +382,15 @@ const Queue = ({
             }}
             className="relative h-12 w-12 flex items-center justify-center cursor-pointer "
           >
-            <SafeImage
-              src={currentTrack.cover && currentTrack.cover.lg}
-              alt={currentTrack.name}
-              width={48}
-              height={48}
-              className="!rounded-sm !transition-[filter] !duration-200"
-            />
+            <figure className="relative">
+              <SafeImage
+                src={currentTrack.cover && currentTrack.cover.lg}
+                alt={currentTrack.name}
+                width={48}
+                height={48}
+                className="!rounded-sm !transition-[filter] !duration-200"
+              />
+            </figure>
             {isPlaying ? (
               <Play className="play absolute hidden z-50" />
             ) : (
@@ -433,13 +439,15 @@ const Queue = ({
                     handleClick(e, track, "queue");
                   }}
                 >
-                  <SafeImage
-                    src={track.cover && track.cover.lg}
-                    alt={track.name}
-                    width={48}
-                    height={48}
-                    className="!rounded-sm !transition-[filter] !duration-200"
-                  />
+                  <figure className="relative">
+                    <SafeImage
+                      src={track.cover && track.cover.lg}
+                      alt={track.name}
+                      width={48}
+                      height={48}
+                      className="!rounded-sm !transition-[filter] !duration-200"
+                    />
+                  </figure>
                   <Play className="play absolute hidden z-50 " />
                 </button>
                 <span className="flex flex-col h-full justify-evenly w-4/5 ">
@@ -489,13 +497,15 @@ const Queue = ({
                   handleClick(e, track, "upcoming");
                 }}
               >
-                <SafeImage
-                  src={track.cover && track.cover.lg}
-                  alt={track.name}
-                  width={48}
-                  height={48}
-                  className="rounded-sm "
-                />
+                <figure className="relative">
+                  <SafeImage
+                    src={track.cover && track.cover.lg}
+                    alt={track.name}
+                    width={48}
+                    height={48}
+                    className="rounded-sm "
+                  />
+                </figure>
                 <Play className="play !absolute !hidden !z-50 " />
               </button>
               <span className="flex flex-col h-full justify-evenly w-4/5 ">

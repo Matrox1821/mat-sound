@@ -1,21 +1,17 @@
 "use client";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { formatTime, parseNumberListeners } from "@/shared/utils/helpers";
-import { TrackWithRecommendations } from "@shared-types/track.types";
+import { TrackById } from "@shared-types/track.types";
 import Link from "next/link";
 import { use } from "react";
 import { PlayButton } from "./PlayButton";
 import { Send } from "@/components/features/dialogs/Send";
 import { LikeButton } from "@/components/ui/buttons/LikeButton";
+import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
 
-export function CoverInfo({
-  trackPromise,
-}: {
-  trackPromise: Promise<TrackWithRecommendations[] | null>;
-}) {
-  const pageTrack = use(trackPromise);
-  if (!pageTrack || !pageTrack[0]) return;
-  const track = pageTrack[0];
+export function CoverInfo({ trackPromise }: { trackPromise: Promise<TrackById | null> }) {
+  const track = use(trackPromise);
+  if (!track) return;
   return (
     <article className="flex flex-col justify-end items-start gap-8 z-30 relative h-[calc(1/2*100vh)] pb-4">
       <section className="w-full flex gap-4 relative">
@@ -69,8 +65,11 @@ export function CoverInfo({
 
       {track.song ? (
         <div className="flex gap-4">
-          <PlayButton track={track} upcoming={track.recommendedTracks} />
-          <LikeButton track={track} className="flex cursor-pointer h-10!" />
+          <PlayButton
+            track={track}
+            playingFrom={{ from: track.name, href: `tracks/${track.id}` }}
+          />
+          <LikeButton track={parseTrackByPlayer(track)} className="flex cursor-pointer h-10!" />
           <Send
             link={`tracks/${track.id}`}
             title={`Escucha ${track.name} de ${track.artists[0].name}`}

@@ -59,3 +59,24 @@ export async function getUserAvatar() {
 
   return user;
 }
+
+export async function getUser(username: string | null) {
+  if (!username) return null;
+  const userLibrary = await prisma.user.findUnique({
+    where: { username },
+    select: {
+      id: true,
+      biography: true,
+      displayUsername: true,
+      avatar: true,
+      location: true,
+      _count: { select: { following: true, followedBy: true } },
+      username: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!userLibrary) return null;
+  const { _count, ...user } = userLibrary;
+  return { ...user, following: _count.following, followedBy: _count.followedBy };
+}

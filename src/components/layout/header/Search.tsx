@@ -69,7 +69,7 @@ export function Search() {
       <IconField iconPosition="left">
         <InputIcon className="pi pi-search" />
         <InputText
-          placeholder="Search"
+          placeholder="Buscar"
           className="!rounded-full !h-10 !shadow-md !border-background-800/65 w-[400px] transition-[width] duration-300 focus-visible:!border-accent-900/60 !bg-background-900"
           value={query}
           onChange={handleChange}

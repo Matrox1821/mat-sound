@@ -45,13 +45,15 @@ const CurrentMusicWidget = ({
   if (!playingFrom) return;
   return (
     <div className="flex items-center gap-4 w-1/5 h-full py-[6px]">
-      <SafeImage
-        src={track.cover && track.cover.sm}
-        alt={track.name}
-        width={64}
-        height={64}
-        className="!rounded-md !h-full !w-auto"
-      />
+      <figure className="relative">
+        <SafeImage
+          src={track.cover && track.cover.sm}
+          alt={track.name}
+          width={64}
+          height={64}
+          className="!rounded-md !h-full !w-auto"
+        />
+      </figure>
       <div
         className={`flex flex-col h-full ${
           playingFrom.from !== "" ? "justify-between" : "justify-center gap-2"

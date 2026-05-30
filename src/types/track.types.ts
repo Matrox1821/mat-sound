@@ -90,10 +90,6 @@ export interface TrackMapped {
   likes: number;
 }
 
-export interface TrackWithRecommendations extends TrackMapped {
-  recommendedTracks: TrackMapped[];
-}
-
 export interface TrackByPagination {
   name: string;
   id: string;

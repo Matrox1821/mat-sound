@@ -9,7 +9,7 @@ export default async function SearchPlaylistsPage({
   const { q } = await searchParams;
   const resultsPromise = searchAction(q, "playlists");
   return (
-    <section className="h-10/12 overflow-y-scroll ">
+    <section className="w-full overflow-y-auto mb-6 pr-2">
       <Results resultsPromise={resultsPromise} />
     </section>
   );
