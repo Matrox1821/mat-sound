@@ -18,6 +18,6 @@ export const mapArtistTracks = (
 
 export const mapArtist = (artist: ArtistRepository | null): ArtistServer | null => {
   if (!artist) return null;
-  const { _count, followersDefault, followers, ...newArtist } = artist;
-  return { ...newArtist, followers: followersDefault + _count.followers, isFollowing: !!followers };
+  const { _count, followersDefault, ...newArtist } = artist;
+  return { ...newArtist, followers: followersDefault + _count.followers };
 };

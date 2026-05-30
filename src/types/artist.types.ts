@@ -92,7 +92,6 @@ export interface ArtistRepository {
 }
 export interface ArtistServer {
   followers: number;
-  isFollowing: boolean;
   name: string;
   id: string;
   listeners: number;
