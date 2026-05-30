@@ -8,6 +8,7 @@ import {
   getFavoritesToUserContent,
   getPlaylistsToUserContent,
 } from "@/shared/server/user/user.service";
+import { Carousel } from "@/components/ui/carousels";
 export default async function UserPage({ params }: { params: Promise<{ username: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   const { username } = await params;
@@ -25,6 +26,11 @@ export default async function UserPage({ params }: { params: Promise<{ username:
       <article className="pl-18 pt-12 h-full pb-40 flex flex-col gap-12">
         <CarouselClient dataPromise={playlistsPromise} title="Playlists" />
         <CarouselClient dataPromise={favoritesPromise} title="Favoritos" />
+        <Carousel
+          options={{ isRecomendation: true, limit: 12, type: ["all"] }}
+          forCurrentUser
+          title="Recomendaciones"
+        />
       </article>
     </section>
   );

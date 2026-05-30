@@ -10,13 +10,14 @@ import { authClient } from "@/lib/auth-client";
 import { Search } from "./Search";
 import { User } from "./User";
 import { useAppUIStore } from "@/store/appUIStore";
+import {} from "better-auth/client";
 
 export function Header({ initialSession }: { initialSession: any }) {
   const pathname = usePathname();
   const push = useNavigationStore((s) => s.push);
   const { asideIsExpanded } = useAppUIStore();
   const { data: session } = authClient.useSession();
-  const currentSession = session || initialSession;
+  const currentSession = session || initialSession || null;
   useEffect(() => {
     if (pathname) push(pathname);
   }, [pathname, push]);

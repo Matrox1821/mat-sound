@@ -27,6 +27,7 @@ export function UserCollection({ isExpanded }: { isExpanded: boolean }) {
       ...Array.from(albums.values()).map((a) => ({ ...a, type: "albums" as const })),
     ];
   }, [storePlaylists, collectionPlaylists, albums]);
+  if (items.length === 0) return;
   return (
     <div className="mt-8 flex flex-col gap-1 border-t border-background-800/60 pt-4">
       <p

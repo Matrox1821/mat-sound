@@ -1,14 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    resolveAlias: {
+      "@prisma/client": "@prisma/client",
+    },
+  },
+
   experimental: {
     turbopackFileSystemCacheForDev: true,
+
     serverActions: {
       bodySizeLimit: "5mb",
     },
     viewTransition: true,
   },
-  serverExternalPackages: ["sharp"],
+  serverExternalPackages: ["sharp", "@prisma/client", "@prisma/extension-accelerate"],
   images: {
     remotePatterns: [
       {
