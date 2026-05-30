@@ -9,8 +9,8 @@ export default async function SearchAlbumsPage({
   const { q } = await searchParams;
   const resultsPromise = searchAction(q, "albums");
   return (
-    <article>
+    <section className="w-full overflow-y-auto mb-6 pr-2">
       <Results resultsPromise={resultsPromise} />
-    </article>
+    </section>
   );
 }

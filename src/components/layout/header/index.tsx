@@ -86,7 +86,7 @@ export function Header({ initialSession }: { initialSession: any }) {
           <>
             <a
               href={"/signup"}
-              className="!h-10 !px-6 !rounded-full !bg-transparent !border-[1px] !border-background-700/70 hover:!bg-background-800/50 !text-background-50 !font-semibold flex items-center transition-colors duration-100"
+              className="!h-10 !px-6 !rounded-full !border-[1px] !border-background-700/70 bg-background-700/20 backdrop-blur-2xl hover:!bg-background-800/50 !text-background-50 !font-semibold flex items-center transition-colors duration-100"
             >
               Registrarse
             </a>
