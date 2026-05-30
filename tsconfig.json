@@ -25,7 +25,7 @@
       "@app/*": ["./src/app/*"],
       "@api/*": ["./src/app/api/*"],
       "@components/*": ["./src/components/*"],
-      "@config/*": ["./prisma/lib/*"],
+      "@config/*": ["./prisma/*"],
       "@auth": ["./auth.ts"]
     }
   },
