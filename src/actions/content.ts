@@ -41,7 +41,9 @@ const resolveUsername = async (
   });
 };
 
-export const getCarouselContent = async (props: CarouselContentProps): Promise<MediaCard[]> => {
+export const getCarouselContent = async (
+  props: CarouselContentProps,
+): Promise<MediaCard[] | null> => {
   const { remove, options, searchBy, forCurrentUser = false } = props;
 
   const isUserContent = forCurrentUser || searchBy?.type === "username";
@@ -56,11 +58,6 @@ export const getCarouselContent = async (props: CarouselContentProps): Promise<M
 
     if (type === "playlists") return getPlaylistsToUserContent({ username });
     if (type === "tracks") return getFavoritesToUserContent({ username });
-
-    throw new CustomError({
-      msg: `Unsupported user content type: "${type}"`,
-      httpStatusCode: HttpStatusCode.BAD_REQUEST,
-    });
   }
 
   return getContent({

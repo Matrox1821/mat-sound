@@ -32,11 +32,6 @@ export function CarouselClient({
   const data = use(dataPromise);
   const [ready, setReady] = useState(false);
 
-  /* const { isMobile, size } = useDevice();
-    const content = use(data);
-    if (!content) return;
-    const slidesPerViewAmount = slidesPerView(isMobile, size); */
-
   useEffect(() => {
     const raf = requestAnimationFrame(() => {
       window.dispatchEvent(new Event("resize"));
@@ -45,7 +40,7 @@ export function CarouselClient({
     return () => cancelAnimationFrame(raf);
   }, []);
   const numVisible = 8;
-  if (!data) return;
+  if (!data || data.length === 0) return;
   return (
     <section className={`card w-full !relative flex flex-col gap-8`}>
       {!ready ? (

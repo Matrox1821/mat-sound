@@ -66,10 +66,21 @@ export const getContent = async ({
   const promises: Promise<MediaCard[]>[] = [];
 
   if (type.includes("tracks")) {
-    promises.push(getTracksForDiscovery(limit, { by: filter, id: filterId ?? null }));
+    const dataFilter =
+      filter !== "none" && filterId
+        ? { by: filter as "artists" | "tracks" | "albums", id: filterId }
+        : undefined;
+
+    promises.push(getTracksForDiscovery(limit, dataFilter));
   }
   if (type.includes("albums")) {
-    promises.push(getAlbumsForContent(limit).then((data) => data.map(mapAlbumRawToMediaCard)));
+    const albumFilter =
+      filter !== "none" && filterId
+        ? { by: filter as "artist" | "track", id: filterId }
+        : undefined;
+    promises.push(
+      getAlbumsForContent(limit, albumFilter).then((data) => data.map(mapAlbumRawToMediaCard)),
+    );
   }
   if (type.includes("artists")) {
     promises.push(getArtistsForContent(limit).then((data) => data.map(mapArtistRawToMediaCard)));

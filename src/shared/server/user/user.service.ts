@@ -1,7 +1,5 @@
 "use server";
-import { CustomError } from "@shared-types/error.type";
 import { getUserCollection, getUserFavorites, getUserPlaylists } from "./user.repository";
-import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { mapFavoritesToMediaCard, mapPlaylistsToMediaCard } from "./user.mapper";
 import {
   AlbumDetails,
@@ -18,35 +16,15 @@ export const getPlaylistsToUserContent = async ({
   username,
 }: {
   username: string;
-}): Promise<MediaCard[]> => {
+}): Promise<MediaCard[] | null> => {
   const playlists = await getUserPlaylists({ username });
-  if (!playlists) {
-    throw new CustomError({
-      errors: [
-        {
-          message: "No artists were found to display in the content section.",
-        },
-      ],
-      msg: "Empty artist list",
-      httpStatusCode: HttpStatusCode.NOT_FOUND,
-    });
-  }
+  if (!playlists) return null;
   return mapPlaylistsToMediaCard({ userPlaylists: playlists });
 };
 
 export const getFavoritesToUserContent = async ({ username }: { username: string }) => {
   const favorites = await getUserFavorites({ username });
-  if (!favorites) {
-    throw new CustomError({
-      errors: [
-        {
-          message: "No artists were found to display in the content section.",
-        },
-      ],
-      msg: "Empty artist list",
-      httpStatusCode: HttpStatusCode.NOT_FOUND,
-    });
-  }
+  if (!favorites) return null;
   return mapFavoritesToMediaCard({ userFavorites: favorites });
 };
 

@@ -1,10 +1,11 @@
 "use client";
 import { signinFormValidation } from "@/actions/auth";
+import { PasswordVisibility } from "@/components/ui/icons/PasswordVisibility";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { type FormSigninState } from "@/shared/utils/schemas/validations";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 const initialState: FormSigninState = {
   success: false,
   message: undefined,
@@ -16,6 +17,7 @@ const initialState: FormSigninState = {
 };
 export default function SigninForm() {
   const [state, formAction, pending] = useActionState(signinFormValidation, initialState);
+  const [showPass, setShowPass] = useState(false);
   const { success, error } = useToast();
   useEffect(() => {
     if (state.success) {
@@ -28,7 +30,7 @@ export default function SigninForm() {
   }, [state, success, error]);
   return (
     <form
-      className="bg-background-950 w-[500px] rounded-2xl p-12 flex flex-col gap-12"
+      className="bg-background-950 w-[500px] rounded-2xl p-12 flex flex-col gap-10"
       action={formAction}
     >
       <h1 className="text-3xl">Iniciar Sesión</h1>
@@ -38,6 +40,7 @@ export default function SigninForm() {
             id="email"
             name="email"
             className="!w-full !bg-background-800/40 !border-background-50/30"
+            defaultValue={state.data?.email}
           />
           <label htmlFor="email">Email</label>
         </FloatLabel>
@@ -53,13 +56,22 @@ export default function SigninForm() {
         </div>
       </div>
       <div>
-        <FloatLabel>
+        <FloatLabel className="relative">
           <InputText
             id="password"
             name="password"
             className="!w-full !bg-background-800/40 !border-background-50/30"
+            type={showPass ? "text" : "password"}
+            defaultValue={state.data?.password}
           />
           <label htmlFor="password">Contraseña</label>
+          <button
+            className=" absolute! h-full top-0 right-0 flex-col justify-end pr-3 pb-1 cursor-pointer"
+            onClick={() => setShowPass(!showPass)}
+            type="button"
+          >
+            <PasswordVisibility isHidden={showPass} className="h-8 w-6 fill-background-50/70" />
+          </button>
         </FloatLabel>
         <div className="px-2">
           {state.errors &&

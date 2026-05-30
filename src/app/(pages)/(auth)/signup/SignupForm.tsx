@@ -1,10 +1,11 @@
 "use client";
 import { signupFormValidation } from "@/actions/auth";
+import { PasswordVisibility } from "@/components/ui/icons/PasswordVisibility";
+import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { type FormSignupState } from "@/shared/utils/schemas/validations";
-import { redirect } from "next/navigation";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 const initialState: FormSignupState = {
   success: false,
@@ -19,12 +20,23 @@ const initialState: FormSignupState = {
 };
 export default function SignupForm() {
   const [state, formAction] = useActionState(signupFormValidation, initialState);
+  const [showPass, setShowPass] = useState(false);
+
+  const [showConfirmedPass, setShowConfirmedPass] = useState(false);
+  const { success, error } = useToast();
+
   useEffect(() => {
-    if (state.success) redirect("/signin");
-  }, [state.success]);
+    if (state.success) {
+      success("Has creado tu sesión correctamente");
+      window.location.href = "/";
+    }
+    if (state.errors) {
+      error("Hubo un problema al crear tu sesión");
+    }
+  }, [state, success, error]);
   return (
     <form
-      className="bg-background-950 w-[500px] rounded-2xl p-12 flex flex-col gap-12"
+      className="bg-background-950 w-[500px] rounded-2xl p-12 flex flex-col gap-10 "
       action={formAction}
     >
       <h1 className="text-3xl">Regístrate</h1>
@@ -34,6 +46,7 @@ export default function SignupForm() {
             id="username"
             name="username"
             className="!w-full !bg-background-800/40 !border-background-50/30"
+            defaultValue={state.data?.username}
           />
           <label htmlFor="username">Nombre de Usuario</label>
         </FloatLabel>
@@ -54,6 +67,7 @@ export default function SignupForm() {
             id="email"
             name="email"
             className="!w-full !bg-background-800/40 !border-background-50/30"
+            defaultValue={state.data?.email}
           />
           <label htmlFor="email">Email</label>
         </FloatLabel>
@@ -74,19 +88,28 @@ export default function SignupForm() {
             id="password"
             name="password"
             className="!w-full !bg-background-800/40 !border-background-50/30"
+            type={showPass ? "text" : "password"}
+            defaultValue={state.data?.password}
           />
           <label htmlFor="password">Contraseña</label>
+          <button
+            className=" absolute! h-full top-0 right-0 flex-col justify-end pr-3 pb-1 cursor-pointer"
+            onClick={() => setShowPass(!showPass)}
+            type="button"
+          >
+            <PasswordVisibility isHidden={showPass} className="h-8 w-6 fill-background-50/70" />
+          </button>
         </FloatLabel>
-        <div className="px-2">
+        <ul className="px-8 list-disc!">
           {state.errors &&
             state.errors.password &&
             state.errors.password.length > 0 &&
             state.errors.password.map((error) => (
-              <span className="text-sm text-red-400/80" key={error}>
+              <li className="text-sm text-red-400/80 list-disc!" key={error}>
                 {error}
-              </span>
+              </li>
             ))}
-        </div>
+        </ul>
       </div>
       <div>
         <FloatLabel>
@@ -94,8 +117,20 @@ export default function SignupForm() {
             id="confirm-password"
             name="confirm-password"
             className="!w-full !bg-background-800/40 !border-background-50/30"
+            type={showConfirmedPass ? "text" : "password"}
+            defaultValue={state.data?.confirmPassword}
           />
           <label htmlFor="confirm-password">Confirmar contraseña</label>
+          <button
+            className=" absolute! h-full top-0 right-0 flex-col justify-end pr-3 pb-1 cursor-pointer"
+            onClick={() => setShowConfirmedPass(!showConfirmedPass)}
+            type="button"
+          >
+            <PasswordVisibility
+              isHidden={showConfirmedPass}
+              className="h-8 w-6 fill-background-50/70"
+            />
+          </button>
         </FloatLabel>
         <div className="px-2">
           {state.errors &&

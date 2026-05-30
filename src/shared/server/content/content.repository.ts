@@ -43,11 +43,12 @@ export const getAlbumsForContent = async (
   limit: number,
   filter?: { by: "artist" | "track"; id: string },
 ): Promise<AlbumContentRaw[]> => {
-  const filterMap: Record<string, Prisma.AlbumWhereInput> = {
-    artist: { artists: { some: { id: filter?.id } } },
-    track: { tracks: { some: { track: { id: filter?.id } } } },
-  };
-  const where = filter ? (filterMap[filter.by] ?? {}) : {};
+  const where: Prisma.AlbumWhereInput = filter
+    ? ({
+        artist: { artists: { some: { id: filter.id } } },
+        track: { tracks: { some: { track: { id: filter.id } } } },
+      }[filter.by] ?? {})
+    : {};
 
   return prisma.album.findMany({
     take: limit,
