@@ -16,13 +16,7 @@ import { rollbackArtistCreation } from "./artist.rollback";
 import z from "zod";
 import { artistBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 
-export const getArtistById = async ({
-  id,
-  userId,
-}: {
-  id: string;
-  userId?: string | null;
-}): Promise<ArtistRepository | null> => {
+export const getArtistById = async ({ id }: { id: string }): Promise<ArtistRepository | null> => {
   if (!id) return null;
 
   return (await prisma.artist.findUnique({
@@ -46,17 +40,6 @@ export const getArtistById = async ({
           followers: true,
         },
       },
-      followers: userId
-        ? {
-            where: {
-              userId: userId,
-            },
-            select: {
-              userId: true,
-            },
-            take: 1,
-          }
-        : false,
     },
   })) as unknown as ArtistRepository;
 };
@@ -318,11 +301,9 @@ export const getArtistTracks = async ({
   id,
   limit,
   orderBy,
-  userId,
 }: {
   id?: string;
   limit: number;
-  userId: string | null;
   orderBy: Record<
     string,
     | "desc"
@@ -353,29 +334,13 @@ export const getArtistTracks = async ({
       reproductions: true,
       lyrics: true,
       genres: { select: { id: true, name: true } },
-      likes: userId
-        ? {
-            where: {
-              userId: userId,
-            },
-            select: {
-              userId: true,
-            },
-            take: 1,
-          }
-        : false,
+
       _count: {
         select: { likes: true },
       },
       albums: {
         select: { album: { select: { id: true, name: true, cover: true } } },
       },
-      ...(userId && {
-        playlists: {
-          where: { playlist: { userId: userId } },
-          select: { playlist: { select: { id: true } } },
-        },
-      }),
     },
   })) as unknown as ArtistTracksRepository[];
 };

@@ -1,20 +1,12 @@
 "use client";
 import { use } from "react";
 import { parseTrackByPlayer } from "@/shared/client/parsers/trackParser";
-import { TrackWithRecommendations } from "@shared-types/track.types";
+import { TrackById } from "@shared-types/track.types";
 import { TrackTable } from "@components/features/tables/TrackTable";
 
-export function SingleTrackTable({
-  trackPromise,
-  tracksPromise,
-}: {
-  trackPromise: Promise<TrackWithRecommendations[] | null>;
-  tracksPromise: Promise<TrackWithRecommendations[] | null>;
-}) {
-  const pageTrack = use(trackPromise);
-  const tracksData = use(tracksPromise);
-  if (!pageTrack || !pageTrack[0] || !tracksData) return null;
-  const track = pageTrack[0];
+export function SingleTrackTable({ trackPromise }: { trackPromise: Promise<TrackById | null> }) {
+  const track = use(trackPromise);
+  if (!track) return null;
   const mainTrack = parseTrackByPlayer(track);
   return (
     <article className="w-full h-full relative p-8 flex flex-col gap-8 px-26 bg-background">

@@ -1,14 +1,13 @@
 import { Suspense } from "react";
-import { trackApi } from "@/queryFn/client/trackApi";
 import { CoverInfoSkeleton, MainCoverSkeleton, TableSkeleton } from "./components/Skeleton";
 import { MainCover } from "./components/MainCover";
 import { CoverInfo } from "./components/CoverInfo";
 import { SingleTrackTable } from "./components/Table";
+import { getTrackById } from "@/shared/server/track/track.repository";
 
 export default async function TrackPage({ params }: { params: Promise<{ trackId: string }> }) {
   const { trackId } = await params;
-  const trackPromise = trackApi.getTrackById(trackId);
-  const tracksPromise = trackApi.getTracksExceptId(trackId, 20);
+  const trackPromise = getTrackById({ trackId });
 
   return (
     <section className="w-full z-20 h-full flex flex-col md:bg-background md:transition-[heigth] md:duration-200 overflow-y-auto overflow-x-hidden focus-visible:outline-0 relative">
@@ -21,7 +20,7 @@ export default async function TrackPage({ params }: { params: Promise<{ trackId:
         </Suspense>
       </article>
       <Suspense fallback={<TableSkeleton />}>
-        <SingleTrackTable trackPromise={trackPromise} tracksPromise={tracksPromise} />
+        <SingleTrackTable trackPromise={trackPromise} />
       </Suspense>
     </section>
   );

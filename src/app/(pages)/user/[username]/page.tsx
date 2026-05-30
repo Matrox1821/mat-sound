@@ -1,4 +1,3 @@
-import { userApi } from "@/queryFn/client/userApi";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { CarouselClient } from "@/components/ui/carousels/CarouselClient";
@@ -9,11 +8,12 @@ import {
   getPlaylistsToUserContent,
 } from "@/shared/server/user/user.service";
 import { Carousel } from "@/components/ui/carousels";
+import { getUser } from "@/actions/user";
 export default async function UserPage({ params }: { params: Promise<{ username: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   const { username } = await params;
   if (!session || !username) return;
-  const userPromise = userApi.getUser(username);
+  const userPromise = getUser(username);
 
   const playlistsPromise = getPlaylistsToUserContent({ username });
   const favoritesPromise = getFavoritesToUserContent({ username });

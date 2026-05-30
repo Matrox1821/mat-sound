@@ -8,30 +8,30 @@ import { usePlaybackStore } from "@/store/playbackStore";
 import { usePlayerStore } from "@/store/playerStore";
 import Link from "next/link";
 import { useState } from "react";
-import { ArtistServer, ArtistTracks } from "@shared-types/artist.types";
+import { ArtistServer } from "@shared-types/artist.types";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { playerTrackProps } from "@shared-types/track.types";
+import { useRefillUpcoming } from "@/shared/client/hooks/player/useRefillUpcoming";
 
 export default function PopularTracks({
   tracks,
   artist,
-  upcomingList,
 }: {
   tracks: playerTrackProps[] | null;
   artist: ArtistServer | null;
-  upcomingList?: ArtistTracks[] | null;
 }) {
-  const { setTrack, getCurrentTrack, setPlayingFrom, setUpcoming } = usePlayerStore(
-    (state) => state,
-  );
+  const { setTrack, refillUpcoming, getCurrentTrack, setPlayingFrom, playingFrom, reset } =
+    usePlayerStore();
+
   const { isPlaying, play, pause } = usePlaybackStore((state) => state);
   const { playerBarIsActive, activePlayerBar } = useAppUIStore((state) => state);
+  const currentTrack = getCurrentTrack();
   const { error } = useToast();
+  useRefillUpcoming({ refillUpcoming, currentTrack: !!getCurrentTrack() });
   const [tracksList, setTracksList] = useState<playerTrackProps[] | null>(
     tracks?.slice(0, 5) || null,
   );
-  const currentTrack = getCurrentTrack();
   if (!tracks || !artist || !tracksList || !tracksList.length) return;
 
   const playTrack = (e: any, track: playerTrackProps) => {
@@ -42,19 +42,17 @@ export default function PopularTracks({
       return;
     }
     if (!playerBarIsActive) activePlayerBar();
-    if (track.id === currentTrack?.id) {
+    if (track.id === currentTrack?.id && playingFrom?.from === `populares de ${artist.name}`) {
       if (isPlaying) {
         pause();
       } else {
         play();
       }
     } else {
-      setTrack(track, tracks);
-      setPlayingFrom({ from: artist.name, href: `artists/${artist.id}` });
-      if (upcomingList) {
-        const upcoming = upcomingList?.map((track) => parseTrackByPlayer(track));
-        setUpcoming(upcoming);
-      }
+      reset();
+      setTrack(track, tracks || []);
+      setPlayingFrom({ from: `populares de ${artist.name}`, href: `artists/${artist.id}` });
+      refillUpcoming();
       play();
     }
   };

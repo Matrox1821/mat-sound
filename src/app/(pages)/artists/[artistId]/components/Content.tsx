@@ -18,14 +18,8 @@ export function ArtistContent({
   albumsCarousel,
 }: {
   artistPromise: Promise<ArtistServer | null>;
-  popularTracksPromise: Promise<{
-    recommended?: ArtistTracks[] | undefined;
-    tracks: ArtistTracks[];
-  } | null>;
-  newTrackPromise: Promise<{
-    recommended?: ArtistTracks[] | undefined;
-    tracks: ArtistTracks[];
-  } | null>;
+  popularTracksPromise: Promise<ArtistTracks[] | null>;
+  newTrackPromise: Promise<ArtistTracks[] | null>;
   albumsCarousel: React.ReactNode;
 }) {
   const artist = use(artistPromise);
@@ -34,22 +28,21 @@ export function ArtistContent({
 
   const tracks =
     popularTracks &&
-    (popularTracks.tracks?.map((track) => ({
+    (popularTracks.map((track) => ({
       ...track,
       artists: [{ name: artist?.name, id: artist?.id, avatar: artist?.avatar }],
     })) as ArtistTracks[]);
 
   const newTrack =
     newTrackData &&
-    (newTrackData.tracks?.map((track) => ({
+    (newTrackData?.map((track) => ({
       ...track,
       artists: [{ name: artist?.name, id: artist?.id, avatar: artist?.avatar }],
     })) as ArtistTracks[]);
 
   const upcoming =
     popularTracks &&
-    popularTracks.recommended &&
-    (popularTracks.recommended.map((track) => ({
+    (popularTracks.map((track) => ({
       ...track,
       artists: [{ name: artist?.name, id: artist?.id, avatar: artist?.avatar }],
     })) as ArtistTracks[]);
@@ -69,7 +62,7 @@ export function ArtistContent({
       </section>
       <section className="flex gap-8 max-xl:flex-col lg:flex lg:gap-10 max-lg:w-11/12 max-xl:w-11/12 xl:w-10/12">
         <Suspense fallback={<div>Cargando...</div>}>
-          <PopularTracks tracks={parsedTracks || null} upcomingList={upcoming} artist={artist} />
+          <PopularTracks tracks={parsedTracks || null} artist={artist} />
         </Suspense>
         <NewArtistTrack
           newTrack={newTrack}

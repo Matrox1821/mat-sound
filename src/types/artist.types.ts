@@ -50,11 +50,6 @@ export interface ArtistTracksRepository {
     id: string;
     name: string;
   }[];
-  likes?: {
-    userId: string;
-    trackId: string;
-    likedAt: Date;
-  }[];
 }
 
 export interface ArtistTracks {
@@ -94,11 +89,6 @@ export interface ArtistRepository {
   socials: ImageSizes;
   covers: string[];
   followersDefault: number;
-  followers: {
-    userId: string;
-    artistId: string;
-    followedAt: Date;
-  }[];
 }
 export interface ArtistServer {
   followers: number;

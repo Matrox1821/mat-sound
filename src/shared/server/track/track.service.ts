@@ -3,7 +3,6 @@ import {
   countTracks,
   deleteTrack,
   getRandomTracksIds,
-  getTracks as getTracksRepo,
   getTracksByIds,
   getTracksByPagination,
   trackIsExists,
@@ -12,8 +11,6 @@ import {
 } from "./track.repository";
 import { CustomError } from "@shared-types/error.type";
 import { HttpStatusCode } from "@shared-types/httpStatusCode";
-import { mapTrack } from "./track.mapper";
-import { TrackWithRecommendations } from "@shared-types/track.types";
 import { TrackFormData } from "@/types/form.types";
 import { handleTrackResizeAndUpload, uploadSong } from "./track.storage";
 import { GET_BUCKET_URL } from "@/shared/utils/constants";
@@ -82,62 +79,6 @@ export const getTracksByRecomendations = async ({
   const tracksIds = await getRandomTracksIds(limit, excludeId);
   const tracks = tracksIds.map(async ({ id }) => await getTrackById({ trackId: id }));
   return tracks;
-};
-
-export const getTrackWithRecommendationsService = async ({
-  limit,
-  trackIds,
-}: {
-  limit: number;
-  trackIds: string[];
-}): Promise<TrackWithRecommendations[]> => {
-  const targetTrackIds = trackIds.slice(0, limit);
-
-  const randomIdsResponses = await Promise.all(
-    targetTrackIds.map((id) => getRandomTracksIds(5, [id])),
-  );
-
-  const recommendationsMap = targetTrackIds.reduce(
-    (acc, id, i) => {
-      acc[id] = randomIdsResponses[i].map((r) => r.id);
-      return acc;
-    },
-    {} as Record<string, string[]>,
-  );
-
-  const allNeededIds = [
-    ...new Set([...targetTrackIds, ...randomIdsResponses.flat().map((r) => r.id)]),
-  ];
-
-  const allTracksRaw = await getTracksRepo({
-    limit: allNeededIds.length,
-    ids: allNeededIds,
-  });
-
-  if (!allTracksRaw || allTracksRaw.length === 0) {
-    throw new CustomError({
-      errors: [{ message: "No tracks found for the given IDs." }],
-      msg: "Tracks retrieval failed",
-      httpStatusCode: HttpStatusCode.NOT_FOUND,
-    });
-  }
-
-  return targetTrackIds
-    .map((mainId) => {
-      const mainTrack = allTracksRaw.find((t) => t.id === mainId);
-      if (!mainTrack) return null;
-
-      const recommendedIds = recommendationsMap[mainId] || [];
-      const recommendedTracks = allTracksRaw
-        .filter((t) => recommendedIds.includes(t.id))
-        .map((t) => mapTrack(t));
-
-      return {
-        ...mapTrack(mainTrack),
-        recommendedTracks,
-      };
-    })
-    .filter(Boolean);
 };
 
 export const createTrack = async (body: TrackFormData) => {

@@ -1,12 +1,14 @@
 "use server";
 
 import { parseArtistFormData, parseUpdateArtistFormData } from "@/shared/formData/artistForm";
+import { mapArtist } from "@/shared/server/artist/artist.mapper";
 import {
   createArtist,
   createArtistsBulk,
+  getArtistById,
   updateArtist,
 } from "@/shared/server/artist/artist.repository";
-import { deleteArtistById } from "@/shared/server/artist/artist.service";
+import { deleteArtistById, getSortedArtistTracks } from "@/shared/server/artist/artist.service";
 import { revalidatePath } from "next/cache";
 
 export async function createArtistServer(currentState: any, formData: FormData) {
@@ -60,4 +62,27 @@ export async function createArtistsBulkServer(data: any) {
     console.error("Error en Server Action:", err);
     return { success: false, error: "Error de conexión con la API." };
   }
+}
+
+export async function getArtist(id: string) {
+  return mapArtist(await getArtistById({ id }));
+}
+
+export async function getArtistTracks({
+  id,
+  sort = "releasedate",
+  order = "desc",
+  limit = 10,
+}: {
+  id: string;
+  sort: string;
+  order: "asc" | "desc";
+  limit: number;
+}) {
+  return await getSortedArtistTracks({
+    id,
+    limit,
+    order,
+    sort,
+  });
 }
