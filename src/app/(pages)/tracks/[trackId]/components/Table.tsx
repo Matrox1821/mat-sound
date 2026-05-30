@@ -16,7 +16,6 @@ export function SingleTrackTable({
   if (!pageTrack || !pageTrack[0] || !tracksData) return null;
   const track = pageTrack[0];
   const mainTrack = parseTrackByPlayer(track);
-  const suggestedTracks = tracksData.map((t) => parseTrackByPlayer(t));
   return (
     <article className="w-full h-full relative p-8 flex flex-col gap-8 px-26 bg-background">
       {mainTrack.song ? (
@@ -26,9 +25,7 @@ export function SingleTrackTable({
           </h2>
           <TrackTable
             tracks={[mainTrack]}
-            playingFromLabel={mainTrack.name}
-            playingFromHref={`tracks/${track.id}`}
-            upcomingTracks={suggestedTracks}
+            playingFrom={{ from: mainTrack.name, href: `tracks/${track.id}` }}
           />
         </section>
       ) : (
