@@ -3,10 +3,13 @@ import { CustomInputAdminForm } from "@components/features/inputs/CustomInputAdm
 import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { redirect } from "next/navigation";
 import { useActionState, useEffect } from "react";
-import { loginAdminAction, loginAdminInitialState } from "@/actions/admin";
-
+import { loginAdminAction } from "@/actions/admin";
+const initialState = {
+  success: false,
+  errors: [],
+};
 export default function AdminSigninForm() {
-  const [state, formAction] = useActionState(loginAdminAction, loginAdminInitialState);
+  const [state, formAction] = useActionState(loginAdminAction, initialState);
   const { error: toastError, success } = useToast();
 
   useEffect(() => {

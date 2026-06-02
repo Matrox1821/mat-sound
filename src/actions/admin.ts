@@ -13,11 +13,6 @@ type ActionState = {
   errors: { message: string }[];
 };
 
-const initialState: ActionState = {
-  success: false,
-  errors: [],
-};
-
 export async function loginAdminAction(
   _prevState: ActionState,
   formData: FormData,
@@ -44,7 +39,6 @@ export async function loginAdminAction(
   }
 }
 
-export { initialState as loginAdminInitialState };
 export async function getTotalData(): Promise<{
   tracks: number;
   albums: number;
