@@ -10,7 +10,7 @@ import {
 } from "./album.repository";
 import { CustomError } from "@shared-types/error.type";
 import { HttpStatusCode } from "@shared-types/httpStatusCode";
-import { AlbumBase } from "@shared-types/album.types";
+import { AlbumBase, ParsedAlbumSearchParams } from "@shared-types/album.types";
 import { AlbumFormData } from "@/types/form.types";
 import { handleCoverResizeAndUpload } from "./album.storage";
 import { prisma } from "@config/db";
@@ -66,13 +66,11 @@ export const validateAlbumUniqueness = async ({ name, id }: { id?: string; name?
 };
 
 export const getAlbumsByPage = async ({
-  page,
-  rows,
+  params,
 }: {
-  page: number;
-  rows: number;
+  params: ParsedAlbumSearchParams;
 }): Promise<AlbumBase[]> => {
-  return (await getAlbumsByPagination({ page, rows })) as unknown as AlbumBase[];
+  return (await getAlbumsByPagination({ params })) as unknown as AlbumBase[];
 };
 
 export const createAlbum = async (body: AlbumFormData) => {
