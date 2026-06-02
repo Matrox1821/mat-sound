@@ -276,18 +276,12 @@ export const createTracksBulk = async (
 };
 
 export async function getTracksLast30Days() {
-  // since: medianoche de hace 29 días en AR
   const since = new Date();
   since.setDate(since.getDate() - 29);
   since.setHours(0, 0, 0, 0);
 
   const rows = await getTrackCountsPerDay(since);
-  console.log("rows raw:", rows);
-  console.log(
-    "rowMap keys:",
-    rows.map((r) => r.day),
-  );
-  // day ya viene como 'YYYY-MM-DD', sin conversiones
+
   const rowMap = new Map(rows.map((r) => [r.day, Number(r.count)]));
 
   return Array.from({ length: 30 }, (_, i) => {
