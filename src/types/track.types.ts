@@ -2,6 +2,35 @@ import { ImageSizes } from "./common.types";
 import { ArtistBase } from "./artist.types";
 import { AlbumBase } from "./album.types";
 
+export interface TrackSearchParams {
+  artistNameFilter?: string;
+  albumNameFilter?: string;
+  trackNameFilter?: string;
+  page?: string;
+  rows?: string;
+  "no-song"?: string;
+  "no-image"?: string;
+  "no-genres"?: string;
+  "no-reproductions"?: string;
+  "no-lyrics"?: string;
+  "no-artist"?: string;
+  "no-album"?: string;
+}
+export interface ParsedTrackSearchParams {
+  artistName?: string;
+  albumName?: string;
+  trackName?: string;
+  page: number;
+  rows: number;
+  noSong?: boolean;
+  noImage?: boolean;
+  noGenres?: boolean;
+  noReproductions?: boolean;
+  noLyrics?: boolean;
+  noArtist?: boolean;
+  noAlbum?: boolean;
+}
+
 export interface TrackGenre {
   id: string;
   name: string;

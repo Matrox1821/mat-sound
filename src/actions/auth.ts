@@ -15,9 +15,9 @@ import z from "zod";
 
 export async function adminSigninFormValidation(prevState: any, formData: FormData) {
   try {
-    const email = formData.get("email"),
+    const username = formData.get("username"),
       password = formData.get("password");
-    const user = await signinAdminUser({ email, password });
+    const user = await signinAdminUser({ username, password });
     if ((user.errors && user.errors.length !== 0) || !user) throw new Error();
 
     const userStringify = JSON.stringify(user.user);
