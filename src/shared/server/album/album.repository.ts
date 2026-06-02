@@ -1,6 +1,11 @@
 import { prisma } from "@config/db";
 import { Prisma } from "../../../../generated/prisma/client";
-import { AlbumById, AlbumByPagination, type AlbumWithArtists } from "@shared-types/album.types";
+import {
+  AlbumById,
+  AlbumByPagination,
+  ParsedAlbumSearchParams,
+  type AlbumWithArtists,
+} from "@shared-types/album.types";
 import { mapAlbumDetails } from "./album.mapper";
 import { ImageSizes } from "@shared-types/common.types";
 import { AlbumFormData } from "@shared-types/form.types";
@@ -113,28 +118,26 @@ export const deleteAlbum = async (
 };
 
 export const getAlbumsByPagination = async ({
-  page,
-  rows,
-  artistName = "",
-  albumName = "",
+  params,
 }: {
-  page: number;
-  rows: number;
-  artistName?: string;
-  albumName?: string;
+  params: ParsedAlbumSearchParams;
 }): Promise<AlbumByPagination[]> => {
+  const { page, rows, artistName, albumName, noCover, noArtists, noTracks } = params;
+
+  const where: Prisma.AlbumWhereInput = {
+    ...(albumName && {
+      name: { contains: albumName, mode: "insensitive" as const },
+    }),
+    ...(artistName && {
+      artists: { some: { name: { contains: artistName, mode: "insensitive" as const } } },
+    }),
+    ...(noCover && { cover: { equals: Prisma.DbNull } }),
+    ...(noArtists && { artists: { none: {} } }),
+    ...(noTracks && { tracks: { none: {} } }),
+  };
+
   return (await prisma.album.findMany({
-    where: {
-      ...(albumName !== "" && {
-        name: {
-          contains: albumName,
-          mode: "insensitive",
-        },
-      }),
-      ...(artistName !== "" && {
-        artists: { some: { name: { contains: artistName, mode: "insensitive" } } },
-      }),
-    },
+    where,
     skip: (page - 1) * rows,
     take: rows,
     select: {
@@ -286,3 +289,21 @@ export const deleteAlbumById = async (id: string): Promise<{ name: string; id: s
     });
   });
 };
+
+export const allAlbumsCounter = async (): Promise<number> => {
+  return await prisma.album.count();
+};
+
+export async function getRecentAlbums() {
+  return prisma.album.findMany({
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      cover: true,
+      releaseDate: true,
+      artists: { select: { id: true, name: true } },
+    },
+  });
+}

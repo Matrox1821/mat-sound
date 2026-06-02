@@ -34,8 +34,8 @@ model Album {
   id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
   cover       Json?
-  releaseDate DateTime            @default(now()) @map("release_date") @db.Date
-  createdAt   DateTime            @default(now()) @map("created_at") @db.Date
+  releaseDate DateTime            @default(now()) @map("release_date") @db.Timestamp
+  createdAt   DateTime            @default(now()) @map("created_at") @db.Timestamp
   updatedAt   DateTime            @updatedAt @map("updated_at")
   collections AlbumOnCollection[]
   tracks      TrackOnAlbum[]
@@ -51,11 +51,11 @@ model Track {
   name          String
   cover         Json?
   song          String?
-  releaseDate   DateTime            @default(now()) @map("release_date") @db.Date
+  releaseDate   DateTime            @default(now()) @map("release_date") @db.Timestamp
   duration      Int
   lyrics        String?
   reproductions Int                 @default(0)
-  createdAt     DateTime            @default(now()) @map("created_at") @db.Date
+  createdAt     DateTime            @default(now()) @map("created_at") @db.Timestamp
   updatedAt     DateTime            @updatedAt @map("updated_at")
   history       History[]
   likes         Like[]
@@ -72,7 +72,7 @@ model Track {
 model Genre {
   id      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name    String   @unique
-  addedAt DateTime @default(now()) @map("added_at") @db.Date
+  addedAt DateTime @default(now()) @map("added_at") @db.Timestamp
   albums  Album[]  @relation("AlbumToGenre")
   artists Artist[] @relation("ArtistToGenre")
   tracks  Track[]  @relation("GenreToTrack")
@@ -95,7 +95,7 @@ model TrackOnAlbum {
 model TrackOnPlaylist {
   trackId    String   @map("track_id") @db.Uuid
   playlistId String   @map("playlist_id") @db.Uuid
-  addedAt    DateTime @default(now()) @map("added_at") @db.Date
+  addedAt    DateTime @default(now()) @map("added_at") @db.Timestamp
   playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
   track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
@@ -107,7 +107,7 @@ model TrackOnPlaylist {
 model AlbumOnCollection {
   albumId      String     @map("album_id") @db.Uuid
   collectionId String     @map("collection_id") @db.Uuid
-  addedAt      DateTime   @default(now()) @map("added_at") @db.Date
+  addedAt      DateTime   @default(now()) @map("added_at") @db.Timestamp
   album        Album      @relation(fields: [albumId], references: [id], onDelete: Cascade)
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
@@ -118,7 +118,7 @@ model AlbumOnCollection {
 model TrackOnCollection {
   trackId      String     @map("track_id") @db.Uuid
   collectionId String     @map("collection_id") @db.Uuid
-  addedAt      DateTime   @default(now()) @map("added_at") @db.Date
+  addedAt      DateTime   @default(now()) @map("added_at") @db.Timestamp
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   track        Track      @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
@@ -129,7 +129,7 @@ model TrackOnCollection {
 model PlaylistOnCollection {
   playlistId   String     @map("playlist_id") @db.Uuid
   collectionId String     @map("collection_id") @db.Uuid
-  addedAt      DateTime   @default(now()) @map("added_at") @db.Date
+  addedAt      DateTime   @default(now()) @map("added_at") @db.Timestamp
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   playlist     Playlist   @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 
@@ -151,7 +151,7 @@ model Collection {
 model Follow {
   userId     String   @map("user_id") @db.Uuid
   artistId   String   @map("artist_id") @db.Uuid
-  followedAt DateTime @default(now()) @map("followed_at") @db.Date
+  followedAt DateTime @default(now()) @map("followed_at") @db.Timestamp
   artist     Artist   @relation(fields: [artistId], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -162,7 +162,7 @@ model Follow {
 model Like {
   userId  String   @map("user_id") @db.Uuid
   trackId String   @map("track_id") @db.Uuid
-  likedAt DateTime @default(now()) @map("liked_at") @db.Date
+  likedAt DateTime @default(now()) @map("liked_at") @db.Timestamp
   track   Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -176,7 +176,7 @@ model Playlist {
   name        String
   cover       Json?
   userId      String                 @map("user_id") @db.Uuid
-  createdAt   DateTime               @default(now()) @map("created_at") @db.Date
+  createdAt   DateTime               @default(now()) @map("created_at") @db.Timestamp
   updatedAt   DateTime               @updatedAt @map("updated_at")
   user        User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   collections PlaylistOnCollection[]

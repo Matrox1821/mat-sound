@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForDev: true,
 
     serverActions: {
-      bodySizeLimit: "5mb",
+      bodySizeLimit: "10mb",
     },
     viewTransition: true,
   },

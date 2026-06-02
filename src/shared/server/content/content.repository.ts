@@ -10,6 +10,7 @@ import {
   PlaylistContentRaw,
   ArtistContentRaw,
 } from "./content.select";
+import { ImageSizes } from "@/types/common.types";
 
 export const getTracksForContent = async (ids: string[]): Promise<TrackFull[]> => {
   return prisma.track.findMany({
@@ -70,3 +71,40 @@ export const getPlaylistsForContent = async (limit: number): Promise<PlaylistCon
     select: playlistContentSelect,
   });
 };
+type RawActivityItem = {
+  id: string;
+  name: string;
+  cover: ImageSizes;
+  type: "artist" | "album" | "track";
+  created_at: Date;
+  extra: string | null;
+};
+
+export async function getRecentActivity() {
+  return prisma.$queryRaw<RawActivityItem[]>(Prisma.sql`
+    SELECT id, name, avatar AS cover, 'artist' AS type, created_at,
+           listeners::text AS extra
+    FROM artist
+
+    UNION ALL
+
+    SELECT a.id, a.name, a.cover, 'album' AS type, a.created_at,
+           STRING_AGG(ar.name, ', ') AS extra
+    FROM album a
+    LEFT JOIN "_AlbumToArtist" aa ON aa."A" = a.id
+    LEFT JOIN artist ar ON ar.id = aa."B"
+    GROUP BY a.id, a.name, a.cover, a.created_at
+
+    UNION ALL
+
+    SELECT t.id, t.name, t.cover, 'track' AS type, t.created_at,
+           STRING_AGG(ar.name, ', ') AS extra
+    FROM track t
+    LEFT JOIN "_ArtistToTrack" att ON att."B" = t.id
+    LEFT JOIN artist ar ON ar.id = att."A"
+    GROUP BY t.id, t.name, t.cover, t.created_at
+
+    ORDER BY created_at DESC
+    LIMIT 15
+  `);
+}

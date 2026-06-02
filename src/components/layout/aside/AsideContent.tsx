@@ -9,7 +9,10 @@ export const AdminNavigation = ({ isExpanded, pathname }: any) => (
         key={link.label}
         {...link}
         isExpanded={isExpanded}
-        isActive={pathname.split("/").includes(link.label.toLowerCase())}
+        isActive={
+          pathname.split("/").includes(link.label.toLowerCase()) ||
+          (pathname as string).endsWith(link.href)
+        }
         visual={<i className={`${link.icon} text-xl flex-shrink-0`}></i>}
       />
     ))}

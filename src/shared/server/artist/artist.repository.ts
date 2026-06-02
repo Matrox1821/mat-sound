@@ -4,6 +4,7 @@ import {
   ArtistByPagination,
   ArtistRepository,
   ArtistTracksRepository,
+  ParsedArtistSearchParams,
 } from "@shared-types/artist.types";
 import { ImageSizes } from "@shared-types/common.types";
 import { ArtistFormData } from "@shared-types/form.types";
@@ -15,6 +16,7 @@ import { handleAvatarResizeAndUpload, uploadCovers, uploadMainCover } from "./ar
 import { rollbackArtistCreation } from "./artist.rollback";
 import z from "zod";
 import { artistBulkSchema } from "@/shared/utils/schemas/bulkValidations";
+import { Prisma } from "../../../../generated/prisma/client";
 
 export const getArtistById = async ({ id }: { id: string }): Promise<ArtistRepository | null> => {
   if (!id) return null;
@@ -64,37 +66,54 @@ export const getArtists = async (
   }[];
 };
 
-export const countArtists = async ({ query = "" }: { query?: string }): Promise<number> => {
+export const countArtists = async (params: ParsedArtistSearchParams): Promise<number> => {
+  const { artistName } = params;
   return await prisma.artist.count({
     where: {
-      ...(query !== "" && {
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
+      ...(artistName && {
+        name: { contains: artistName, mode: "insensitive" as const },
       }),
     },
   });
 };
 
 export const getArtistsByPagination = async ({
-  page,
-  rows,
-  query = "",
+  params,
 }: {
-  page: number;
-  rows: number;
-  query?: string;
+  params: ParsedArtistSearchParams;
 }): Promise<ArtistByPagination[]> => {
+  const {
+    artistName,
+    page,
+    rows,
+    noAvatar,
+    noMainCover,
+    noDescription,
+    noIsVerified,
+    noRegionalListeners,
+    noSocials,
+    noCovers,
+    noAlbums,
+    noTracks,
+  } = params;
+
+  const where: Prisma.ArtistWhereInput = {
+    ...(artistName && {
+      name: { contains: artistName, mode: "insensitive" as const },
+    }),
+    ...(noAvatar && { avatar: { equals: Prisma.DbNull } }),
+    ...(noMainCover && { mainCover: null }),
+    ...(noDescription && { description: null }),
+    ...(noIsVerified && { isVerified: false }),
+    ...(noRegionalListeners && { regionalListeners: { equals: Prisma.DbNull } }),
+    ...(noSocials && { socials: { equals: Prisma.DbNull } }),
+    ...(noCovers && { covers: { isEmpty: true } }),
+    ...(noAlbums && { albums: { none: {} } }),
+    ...(noTracks && { tracks: { none: {} } }),
+  };
+
   return (await prisma.artist.findMany({
-    where: {
-      ...(query !== "" && {
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
-      }),
-    },
+    where,
     skip: (page - 1) * rows,
     take: rows,
   })) as unknown as ArtistByPagination[];
@@ -427,3 +446,15 @@ export const createArtistsBulk = async (body: any) => {
 
   return results;
 };
+
+export const allArtistsCounter = async (): Promise<number> => {
+  return await prisma.artist.count();
+};
+
+export async function getRecentArtists() {
+  return prisma.artist.findMany({
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    select: { id: true, name: true, avatar: true, isVerified: true, listeners: true },
+  });
+}

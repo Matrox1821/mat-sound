@@ -1,6 +1,26 @@
 import { ImageSizes } from "./common.types";
 import { ArtistBase } from "./artist.types";
 
+export interface AlbumSearchParams {
+  artistNameFilter?: string;
+  albumNameFilter?: string;
+  page?: string;
+  rows?: string;
+  "no-cover"?: string;
+  "no-artists"?: string;
+  "no-tracks"?: string;
+}
+
+export interface ParsedAlbumSearchParams {
+  artistName?: string;
+  albumName?: string;
+  page: number;
+  rows: number;
+  noCover: boolean;
+  noArtists: boolean;
+  noTracks: boolean;
+}
+
 export interface AlbumBase {
   id: string;
   name: string;

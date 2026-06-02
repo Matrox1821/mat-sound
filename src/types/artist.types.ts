@@ -1,5 +1,35 @@
 import { ImageSizes } from "./common.types";
 
+export interface ArtistSearchParams {
+  artistNameFilter?: string;
+  page?: string;
+  rows?: string;
+  "no-avatar"?: string;
+  "no-main-cover"?: string;
+  "no-description"?: string;
+  "no-is-verified"?: string;
+  "no-regional-listeners"?: string;
+  "no-socials"?: string;
+  "no-covers"?: string;
+  "no-albums"?: string;
+  "no-tracks"?: string;
+}
+
+export interface ParsedArtistSearchParams {
+  artistName?: string;
+  page: number;
+  rows: number;
+  noAvatar: boolean;
+  noMainCover: boolean;
+  noDescription: boolean;
+  noIsVerified: boolean;
+  noRegionalListeners: boolean;
+  noSocials: boolean;
+  noCovers: boolean;
+  noAlbums: boolean;
+  noTracks: boolean;
+}
+
 export interface ArtistBase {
   id: string;
   name: string;

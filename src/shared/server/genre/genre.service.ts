@@ -1,6 +1,6 @@
 "use server";
 import { CustomError } from "@shared-types/error.type";
-import { countGenres, deleteGenre } from "./genre.repository";
+import { countGenres, deleteGenre, getGenreDistributionFromDB } from "./genre.repository";
 import { HttpStatusCode } from "@shared-types/httpStatusCode";
 
 const GENRES_PER_PAGES = 6;
@@ -23,3 +23,14 @@ export const deleteGenreById = async ({ id }: { id: string }) => {
     });
   }
 };
+export async function getGenreDistribution() {
+  const genres = await getGenreDistributionFromDB();
+  const sorted = [...genres].sort((a, b) => b._count.tracks - a._count.tracks).slice(0, 8);
+  const maxTracks = sorted[0]?._count.tracks ?? 1;
+  return sorted.map((g) => ({
+    id: g.id,
+    name: g.name,
+    tracks: g._count.tracks,
+    percentage: Math.round((g._count.tracks / maxTracks) * 100),
+  }));
+}

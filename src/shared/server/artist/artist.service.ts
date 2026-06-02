@@ -11,7 +11,7 @@ import { CustomError } from "@shared-types/error.type";
 import { HttpStatusCode } from "@shared-types/httpStatusCode";
 import { GET_BUCKET_URL } from "@/shared/utils/constants";
 import { ImageSizes } from "@shared-types/common.types";
-import { ArtistByPagination } from "@shared-types/artist.types";
+import { ArtistByPagination, ParsedArtistSearchParams } from "@shared-types/artist.types";
 import { mapArtistTracks } from "./artist.mapper";
 
 const ARTISTS_PER_PAGES = 6;
@@ -40,15 +40,10 @@ export const validateArtistUniqueness = async ({
   return existingArtist;
 };
 
-export const getArtistsPaginationInfo = async ({
-  query = "",
-}: {
-  query?: string;
-}): Promise<{
-  amount: number;
-  pages: number;
-}> => {
-  const amount = await countArtists({ query });
+export const getArtistsPaginationInfo = async (
+  params: ParsedArtistSearchParams,
+): Promise<{ amount: number; pages: number }> => {
+  const amount = await countArtists(params);
   const pages = Math.ceil(amount / ARTISTS_PER_PAGES);
   return { amount, pages };
 };
@@ -65,15 +60,11 @@ export const deleteArtistById = async ({ id }: { id: string }) => {
 };
 
 export const getArtistsByPage = async ({
-  page,
-  rows,
-  query = "",
+  params,
 }: {
-  page: number;
-  rows: number;
-  query?: string;
+  params: ParsedArtistSearchParams;
 }): Promise<ArtistByPagination[]> => {
-  return await getArtistsByPagination({ page, rows, query });
+  return await getArtistsByPagination({ params });
 };
 
 export const addImagePathsToArtist = async ({

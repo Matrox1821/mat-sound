@@ -3,7 +3,12 @@
 import { prisma } from "@config/db";
 import { updateArtistGenre } from "../artist/artist.repository";
 import { updateAlbumGenre } from "../album/album.repository";
-import { TrackById, TrackByPagination, TrackWithRelations } from "@shared-types/track.types";
+import {
+  ParsedTrackSearchParams,
+  TrackById,
+  TrackByPagination,
+  TrackWithRelations,
+} from "@shared-types/track.types";
 import { ImageSizes } from "@shared-types/common.types";
 import { TrackFormData } from "@shared-types/form.types";
 import { Prisma } from "../../../../generated/prisma/client";
@@ -206,35 +211,50 @@ export const countTracks = async ({
 };
 
 export const getTracksByPagination = async ({
-  page,
-  rows,
-  artistName = "",
-  albumName = "",
-  trackName = "",
+  params,
 }: {
-  page: number;
-  rows: number;
-  artistName?: string;
-  albumName?: string;
-  trackName?: string;
+  params: ParsedTrackSearchParams;
 }): Promise<TrackByPagination[]> => {
+  const {
+    trackName,
+    artistName,
+    albumName,
+    page,
+    rows,
+    noSong,
+    noImage,
+    noGenres,
+    noReproductions,
+    noLyrics,
+    noArtist,
+    noAlbum,
+  } = params;
+  const where: Prisma.TrackWhereInput = {
+    ...(trackName && {
+      name: {
+        contains: trackName,
+        mode: "insensitive" as const,
+      },
+    }),
+    ...(artistName && {
+      artists: { some: { name: { contains: artistName, mode: "insensitive" as const } } },
+    }),
+    ...(albumName && {
+      albums: {
+        some: { album: { name: { contains: albumName, mode: "insensitive" as const } } },
+      },
+    }),
+    ...(noSong && { song: null }),
+    ...(noImage && { cover: { equals: Prisma.DbNull } }),
+    ...(noLyrics && { lyrics: null }),
+    ...(noGenres && { genres: { none: {} } }),
+    ...(noArtist && { artists: { none: {} } }),
+    ...(noAlbum && { albums: { none: {} } }),
+    ...(noReproductions && { reproductions: 0 }),
+  };
+
   return (await prisma.track.findMany({
-    where: {
-      ...(trackName !== "" && {
-        name: {
-          contains: trackName,
-          mode: "insensitive",
-        },
-      }),
-      ...(artistName !== "" && {
-        artists: { some: { name: { contains: artistName, mode: "insensitive" } } },
-      }),
-      ...(albumName !== "" && {
-        albums: {
-          some: { album: { name: { contains: albumName, mode: "insensitive" } } },
-        },
-      }),
-    },
+    where,
     skip: (page - 1) * rows,
     take: rows,
     select: {
@@ -419,3 +439,44 @@ export const updateTrack = async (
 
   return track;
 };
+export const allTracksCounter = async (): Promise<number> => {
+  return await prisma.track.count();
+};
+
+export async function getTrackCountsPerDay(since: Date): Promise<{ day: string; count: bigint }[]> {
+  return prisma.$queryRaw`
+    SELECT
+      TO_CHAR(created_at AT TIME ZONE 'America/Argentina/Buenos_Aires', 'YYYY-MM-DD') AS day,
+      COUNT(*) AS count
+    FROM track
+    WHERE created_at >= ${since}
+    GROUP BY 1
+    ORDER BY 1
+  `;
+}
+export async function getRecentTracks() {
+  return prisma.track.findMany({
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      cover: true,
+      duration: true,
+      artists: { select: { id: true, name: true } },
+    },
+  });
+}
+export async function getTopTracks() {
+  return prisma.track.findMany({
+    take: 5,
+    orderBy: { reproductions: "desc" },
+    select: {
+      id: true,
+      name: true,
+      cover: true,
+      reproductions: true,
+      artists: { select: { id: true, name: true } },
+    },
+  });
+}

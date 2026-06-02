@@ -43,7 +43,7 @@ export const genreIsExist = async (genre: string): Promise<boolean> => {
 };
 
 export const createGenre = async (
-  genre: string
+  genre: string,
 ): Promise<{
   id: string;
   name: string;
@@ -66,3 +66,16 @@ export const deleteGenre = async ({
 }> => {
   return prisma.genre.delete({ where: { id }, select: { id: true, name: true } });
 };
+export const allGenresCounter = async (): Promise<number> => {
+  return await prisma.genre.count();
+};
+export async function getGenreDistributionFromDB() {
+  return prisma.genre.findMany({
+    take: 8,
+    select: {
+      id: true,
+      name: true,
+      _count: { select: { tracks: true } },
+    },
+  });
+}

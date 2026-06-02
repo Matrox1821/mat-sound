@@ -8,6 +8,8 @@ import {
   trackIsExists,
   updateTrackResourses,
   getTrackById,
+  getTrackCountsPerDay,
+  getTopTracks,
 } from "./track.repository";
 import { CustomError } from "@shared-types/error.type";
 import { HttpStatusCode } from "@shared-types/httpStatusCode";
@@ -17,6 +19,7 @@ import { GET_BUCKET_URL } from "@/shared/utils/constants";
 import { deleteFileToBucket } from "../files";
 import { prisma } from "@config/db";
 import z from "zod";
+import { ParsedTrackSearchParams } from "@/types/track.types";
 
 const TRACKS_PER_PAGES = 6;
 
@@ -35,27 +38,19 @@ export const getTracksPaginationInfo = async ({
 };
 
 export const getTracksByPaginationService = async ({
-  page,
-  rows,
-  artistName = "",
-  albumName = "",
-  trackName = "",
+  params,
 }: {
-  page: number;
-  rows: number;
-  artistName?: string;
-  albumName?: string;
-  trackName?: string;
+  params: ParsedTrackSearchParams;
 }) => {
-  return await getTracksByPagination({ page, rows, artistName, albumName, trackName });
+  return await getTracksByPagination({ params });
 };
 
 export const deleteTrackById = async ({ id }: { id: string }) => {
   await deleteTrack(id);
 };
 
-export const getTracksByPage = async ({ page, rows }: { page: number; rows: number }) => {
-  return await getTracksByPagination({ page, rows });
+export const getTracksByPage = async ({ params }: { params: ParsedTrackSearchParams }) => {
+  return await getTracksByPagination({ params });
 };
 
 export const getTracksWithoutTrackById = async ({
@@ -279,3 +274,43 @@ export const createTracksBulk = async (
 
   return results;
 };
+
+export async function getTracksLast30Days() {
+  // since: medianoche de hace 29 días en AR
+  const since = new Date();
+  since.setDate(since.getDate() - 29);
+  since.setHours(0, 0, 0, 0);
+
+  const rows = await getTrackCountsPerDay(since);
+  console.log("rows raw:", rows);
+  console.log(
+    "rowMap keys:",
+    rows.map((r) => r.day),
+  );
+  // day ya viene como 'YYYY-MM-DD', sin conversiones
+  const rowMap = new Map(rows.map((r) => [r.day, Number(r.count)]));
+
+  return Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (29 - i));
+    date.setHours(0, 0, 0, 0);
+
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+    return {
+      day: date.getDate().toString(),
+      month: date.toLocaleDateString("es-AR", { month: "long" }),
+      monthIndex: date.getMonth(),
+      tracks: rowMap.get(key) ?? 0,
+    };
+  });
+}
+export async function getTopTracksService() {
+  const tracks = await getTopTracks();
+  const max = tracks[0]?.reproductions ?? 1;
+  return tracks.map((t: any) => ({
+    ...t,
+    cover: t.cover as { sm: string } | null,
+    percentage: Math.round((t.reproductions / max) * 100),
+  }));
+}
