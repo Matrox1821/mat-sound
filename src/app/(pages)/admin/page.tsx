@@ -1,4 +1,4 @@
-import { getTotalData, getRecentData } from "@/actions/adminHome";
+import { getTotalData, getRecentData } from "@/actions/admin";
 import { DataCounter } from "./components/home/DataCounter";
 import { Chart } from "./components/home/Chart";
 import { getTopTracksService, getTracksLast30Days } from "@/shared/server/track/track.service";
