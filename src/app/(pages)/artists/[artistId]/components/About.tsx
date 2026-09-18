@@ -153,6 +153,7 @@ export function About({ artist }: { artist: ArtistServer | null }) {
                       <SafeImage
                         className="!rounded-full !w-8 !h-8"
                         src={artist.avatar && artist.avatar.sm}
+                        fetchPriority="high"
                         alt={artist.name}
                         width={16}
                         height={16}

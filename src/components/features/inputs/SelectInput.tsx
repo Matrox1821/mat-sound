@@ -41,31 +41,26 @@ export function SelectInput({
     }
   }, [initialElements]);
 
-  useEffect(() => {
-    if (callback) callback(value, elements);
-  }, [value, elements]); // Eliminado callback de dependencias para evitar loops si el padre no usa useCallback
-
   const toggleElement = (item: Element) => {
     const isSelected = elements.find((e) => e.id === item.id);
+    let newElements: Element[];
 
     if (isSelected) {
-      // Remover
-      const newElements = elements.filter((e) => e.id !== item.id);
-      setElements(newElements);
-      setValue(newElements.map((e) => e.id));
-      setValueWithName(newElements.map((e) => ({ id: e.id, name: e.name })));
+      newElements = elements.filter((e) => e.id !== item.id);
     } else {
-      // Agregar
-      if (isMultiple) {
-        setElements((prev) => [...prev, item]);
-        setValue((prev) => [...prev, item.id]);
-        setValueWithName((prev) => [...prev, { id: item.id, name: item.name }]);
-      } else {
-        setElements([item]);
-        setValue([item.id]);
-        setValueWithName([{ id: item.id, name: item.name }]);
-      }
+      newElements = isMultiple ? [...elements, item] : [item];
     }
+
+    setElements(newElements);
+    setValue(newElements.map((e) => e.id));
+    setValueWithName(newElements.map((e) => ({ id: e.id, name: e.name })));
+
+    // Llamar callback directamente, sin useEffect
+    if (callback)
+      callback(
+        newElements.map((e) => e.id),
+        newElements,
+      );
   };
 
   return (
@@ -123,7 +118,7 @@ export function SelectInput({
                   key={item.id}
                   type="button"
                   onClick={() => toggleElement(item)}
-                  className={`flex items-center gap-3 p-2 rounded-md border transition-all text-left
+                  className={`flex items-center gap-3 p-2 rounded-md border transition-colors text-left
                     ${
                       isSelected
                         ? "bg-accent-900/40 border-accent-800"
@@ -135,6 +130,7 @@ export function SelectInput({
                       width={40}
                       height={40}
                       src={source && source.sm}
+                      fetchPriority="high"
                       alt={item.name}
                       className="!w-10 !h-10 !rounded !shadow-sm !object-cover !flex-shrink-0"
                     />

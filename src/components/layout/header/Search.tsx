@@ -127,6 +127,7 @@ function SearchResultItem({ res, onClose }: { res: MediaCard; onClose: () => voi
         ) : (
           <SafeImage
             src={res.image?.sm}
+            fetchPriority="high"
             alt={res.title}
             height={48}
             width={48}

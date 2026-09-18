@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import { CarouselClient } from "./CarouselClient";
 import { getCarouselContent } from "@/actions/content";
 import { CarouselComponentProps } from "@/types/content.types";
-import { Skeleton } from "primereact/skeleton";
-function CarouselSkeleton({ numVisible }: { numVisible: number }) {
+import { CarouselSkeleton } from "./CarouselSkeleton";
+/* function CarouselSkeleton({ numVisible }: { numVisible: number }) {
   const arr = new Array(numVisible).fill(null);
   return (
     <div className="w-screen overflow-x-visible flex flex-col gap-8">
@@ -20,7 +20,25 @@ function CarouselSkeleton({ numVisible }: { numVisible: number }) {
       </div>
     </div>
   );
+} */
+
+async function CarouselContent({
+  remove,
+  options,
+  searchBy,
+  title,
+  forCurrentUser,
+}: CarouselComponentProps) {
+  const content = await getCarouselContent({
+    forCurrentUser,
+    remove,
+    options,
+    searchBy,
+  });
+
+  return <CarouselClient data={content} title={title} />;
 }
+
 export async function Carousel({
   remove,
   options,
@@ -28,16 +46,16 @@ export async function Carousel({
   title,
   forCurrentUser,
 }: CarouselComponentProps) {
-  const content = getCarouselContent({
-    forCurrentUser,
-    remove,
-    options,
-    searchBy,
-  });
   return (
     <article className="relative w-full flex flex-col pl-4">
-      <Suspense fallback={<CarouselSkeleton numVisible={8} />}>
-        <CarouselClient dataPromise={content} title={title} />
+      <Suspense fallback={<CarouselSkeleton numVisible={8} hasTitle={!!title} />}>
+        <CarouselContent
+          forCurrentUser={forCurrentUser}
+          options={options}
+          remove={remove}
+          searchBy={searchBy}
+          title={title}
+        />
       </Suspense>
     </article>
   );

@@ -48,6 +48,7 @@ const CurrentMusicWidget = ({
       <figure className="relative">
         <SafeImage
           src={track.cover && track.cover.sm}
+          fetchPriority="high"
           alt={track.name}
           width={64}
           height={64}

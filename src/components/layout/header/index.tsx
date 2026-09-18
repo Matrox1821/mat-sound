@@ -32,7 +32,7 @@ export function Header({ initialSession }: { initialSession: any }) {
       <header className="flex h-18 items-center absolute z-10 m-1">
         <Link
           href={"/"}
-          className={`flex items-center justify-center transition-all duration-200 w-12 h-12 ml-3 ${
+          className={`flex items-center justify-center transition-opacity duration-200 w-12 h-12 ml-3 ${
             !asideIsExpanded ? "pointer-events-none group-hover:pointer-events-auto" : ""
           }`}
         >
@@ -54,7 +54,7 @@ export function Header({ initialSession }: { initialSession: any }) {
 
   return (
     <header
-      className="fixed top-0 h-18 flex items-center justify-between z-30 py-10 pr-8 transition-all duration-200"
+      className="fixed top-0 h-18 flex items-center justify-between z-30 py-10 pr-8 transition-[left,width] duration-200"
       style={{
         left: `${headerLeft}px`,
         width: headerWidth,
@@ -84,18 +84,18 @@ export function Header({ initialSession }: { initialSession: any }) {
           <User initialSession={initialSession} />
         ) : (
           <>
-            <a
+            <Link
               href={"/signup"}
               className="!h-10 !px-6 !rounded-full !border-[1px] !border-background-700/70 bg-background-700/20 backdrop-blur-2xl hover:!bg-background-800/50 !text-background-50 !font-semibold flex items-center transition-colors duration-100"
             >
               Registrarse
-            </a>
-            <a
+            </Link>
+            <Link
               href={"/signin"}
               className="flex items-center !h-10 !px-6 !rounded-full bg-content-900/80 hover:!bg-accent-700 hover:brightness-90 !text-background-900 !font-semibold transition-colors duration-100"
             >
               Iniciar sesión
-            </a>
+            </Link>
           </>
         )}
       </div>

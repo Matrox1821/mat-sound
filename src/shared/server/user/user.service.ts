@@ -12,18 +12,18 @@ import { headers } from "next/headers";
 import { MediaCard } from "@/types/content.types";
 import { asImageSizes } from "@/shared/utils/helpers";
 
-export const getPlaylistsToUserContent = async ({
-  username,
-}: {
-  username: string;
-}): Promise<MediaCard[] | null> => {
-  const playlists = await getUserPlaylists({ username });
+export const getPlaylistsToUserContent = async (): Promise<MediaCard[] | null> => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.username) return null;
+  const playlists = await getUserPlaylists({ username: session?.user?.username });
   if (!playlists) return null;
   return mapPlaylistsToMediaCard({ userPlaylists: playlists });
 };
 
-export const getFavoritesToUserContent = async ({ username }: { username: string }) => {
-  const favorites = await getUserFavorites({ username });
+export const getFavoritesToUserContent = async (): Promise<MediaCard[] | null> => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.username) return null;
+  const favorites = await getUserFavorites({ username: session?.user?.username });
   if (!favorites) return null;
   return mapFavoritesToMediaCard({ userFavorites: favorites });
 };

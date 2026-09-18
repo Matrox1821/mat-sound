@@ -14,7 +14,6 @@ export function MainCover({ albumPromise }: { albumPromise: Promise<AlbumById | 
           alt={album.name}
           width={1200}
           height={1200}
-          loading="eager"
           className="!object-cover !w-full !h-full !blur-2xl !relative"
         />
       </span>
@@ -24,7 +23,7 @@ export function MainCover({ albumPromise }: { albumPromise: Promise<AlbumById | 
           alt={album.name}
           width={1200}
           height={1200}
-          loading="eager"
+          fetchPriority="high"
           className="!object-cover !w-full !h-full !relative"
         />
       </span>
@@ -34,7 +33,6 @@ export function MainCover({ albumPromise }: { albumPromise: Promise<AlbumById | 
           alt={album.name}
           width={1200}
           height={1200}
-          loading="eager"
           className="!object-cover !w-full !h-full !blur-2xl !relative"
         />
       </span>

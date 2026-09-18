@@ -63,8 +63,8 @@ const onThrowError = (error: any) => {
       return NextResponse.json(
         generateErrorMessage({
           httpStatusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
-          errors: [{ message: "Email already in use." }],
-          message: "Database Error.",
+          errors: [{ message: "El correo electrónico ya está en uso." }],
+          message: "Error de base de datos.",
         }),
         { status: 500 },
       );

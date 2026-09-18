@@ -24,7 +24,6 @@ export function CoverInfo({ artistPromise }: { artistPromise: Promise<ArtistServ
               width={100}
               height={100}
               className="!h-16 !w-16 !rounded-full !content-cover"
-              priority
             />
           </figure>
           <h1 className="text-5xl font-black">{artist.name}</h1>

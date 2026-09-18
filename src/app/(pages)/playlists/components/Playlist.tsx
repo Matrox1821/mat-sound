@@ -56,7 +56,7 @@ export function Playlist({
     }
   };
   return (
-    <section className="bg-background">
+    <section className={`bg-background ${tracks.length > 0 ? "" : "w-full h-full"}`}>
       {tracks.length > 0 ? (
         <ul className="flex flex-col gap-2 h-screen overflow-auto pr-26 pt-32">
           {tracks.map((track: any) => {
@@ -70,6 +70,7 @@ export function Playlist({
                   <figure className="flex relative items-center justify-center h-12! w-12!">
                     <SafeImage
                       src={track.cover.sm}
+                      fetchPriority="high"
                       alt=""
                       width={40}
                       height={40}
@@ -124,8 +125,8 @@ export function Playlist({
           })}
         </ul>
       ) : (
-        <article className="w-full flex justify-center">
-          <span className="bg-amber-600/20 border border-amber-600/50 p-1 rounded-md text-amber-600 ">
+        <article className="w-full h-full relative">
+          <span className="bg-amber-600/20 border border-amber-600/50 p-1 rounded-md text-amber-600 absolute top-1/4 left-1/3">
             Esta playlist aún no tiene canciones.
           </span>
         </article>

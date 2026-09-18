@@ -155,7 +155,6 @@ const formatR2FilePath = (props: {
   id?: string;
   size?: "sm" | "md" | "lg";
   fileName?: string;
-  extension?: string;
 }): string => {
   const { id, type, fileName, size } = props;
 

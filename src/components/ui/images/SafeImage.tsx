@@ -10,8 +10,7 @@ interface ImageSetter {
   width?: number;
   alt?: string;
   className?: string;
-  loading?: "lazy" | "eager";
-  priority?: boolean;
+  fetchPriority?: "high" | "low" | "auto";
   quality?: number;
   skeleton?: boolean;
   unoptimized?: boolean;
@@ -27,8 +26,7 @@ export const SafeImage = ({
   width,
   alt = "",
   className,
-  loading = "eager",
-  priority,
+  fetchPriority = "high",
   quality,
   unoptimized = false,
   skeleton = true,
@@ -67,18 +65,19 @@ export const SafeImage = ({
         alt={alt}
         height={height}
         width={width}
-        loading={loading}
-        priority={priority}
+        fetchPriority={fetchPriority}
         quality={quality}
         sizes={sizes}
         className={`${className} ${
           isLoading ? "opacity-0 invisible" : "opacity-100 visible transition-opacity duration-300"
         }`}
+        loading="eager"
         onLoad={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);
           setError(true);
         }}
+        priority
         fill={fill}
         unoptimized={unoptimized}
       />

@@ -112,10 +112,10 @@ export function TracksTable({
         <figure className="relative">
           <SafeImage
             src={track.cover && track.cover.sm}
+            fetchPriority="high"
             alt={track.name}
             height={45}
             width={45}
-            loading="lazy"
             className="!rounded-sm !w-[45px] !h-[45px] "
           />
         </figure>

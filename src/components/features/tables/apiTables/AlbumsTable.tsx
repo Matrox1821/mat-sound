@@ -109,10 +109,10 @@ export function AlbumsTable({
         <figure className="relative">
           <SafeImage
             src={album.cover && album.cover.sm}
+            fetchPriority="high"
             alt={album.name}
             height={45}
             width={45}
-            loading="lazy"
             className="!rounded-sm !w-[45px] !h-[45px]"
           />
         </figure>

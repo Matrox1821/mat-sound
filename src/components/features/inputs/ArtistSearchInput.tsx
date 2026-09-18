@@ -65,6 +65,7 @@ export function ArtistSearchInput({
             >
               <SafeImage
                 src={artist.avatar && artist.avatar.sm}
+                fetchPriority="high"
                 className="!w-8 !h-8 !rounded-full !object-cover"
                 alt={artist.name}
                 width={10}

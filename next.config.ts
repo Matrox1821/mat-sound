@@ -11,11 +11,13 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForDev: true,
 
     serverActions: {
-      bodySizeLimit: "10mb",
+      bodySizeLimit: "15mb",
     },
+    proxyClientMaxBodySize: "15mb",
     viewTransition: true,
   },
   serverExternalPackages: ["sharp", "@prisma/client", "@prisma/extension-accelerate"],
+
   images: {
     remotePatterns: [
       {

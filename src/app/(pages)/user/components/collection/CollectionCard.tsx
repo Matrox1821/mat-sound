@@ -6,7 +6,7 @@ import { usePalette } from "react-palette";
 
 export function CollectionCard({ element }: { element: UserCollection }) {
   const playlistImage =
-    element.type === "playlists" && (element.cover?.md || element.tracksCover[0].md);
+    element.type === "playlists" && (element.cover?.md || element.tracksCover[0]?.md || "");
   const image = playlistImage || (element.cover && element.cover.md);
   const { data } = usePalette(image || "");
   return (

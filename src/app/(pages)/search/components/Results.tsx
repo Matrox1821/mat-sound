@@ -21,25 +21,30 @@ export function Results({ resultsPromise }: { resultsPromise: Promise<MediaCard[
           return (
             <li
               key={`${result.id} ${i}`}
-              className="p-2 hover:bg-background-800/40 rounded-md cursor flex flex-col relative group"
+              className="p-2 hover:bg-background-800/40 rounded-md cursor-pointer flex flex-col relative group"
               onClick={() => redirect(`${result.type}/${result.id}`)}
             >
               <div className="flex gap-2">
                 <figure className="relative flex items-center justify-center">
                   {result.type === "playlists" ? (
-                    <PlaylistImage
-                      image={result.image && result.image.sm}
-                      trackImages={result.images}
-                      className={`!h-16 !w-16 !rounded-sm group-hover:brightness-40`}
-                    />
+                    <figure className="relative !h-16 !w-16">
+                      <PlaylistImage
+                        image={result.image && result.image.sm}
+                        trackImages={result.images}
+                        className={`!h-16 !w-16 !rounded-sm group-hover:brightness-40`}
+                      />
+                    </figure>
                   ) : (
-                    <SafeImage
-                      src={result.image && result.image.sm}
-                      alt={result.title}
-                      width={64}
-                      height={64}
-                      className={`!h-16 !w-16 group-hover:brightness-40 ${result.type === "artists" ? "!rounded-full" : "!rounded-sm"}`}
-                    />
+                    <figure className="relative !h-16 !w-16">
+                      <SafeImage
+                        src={result.image && result.image.sm}
+                        fetchPriority="high"
+                        alt={result.title}
+                        width={64}
+                        height={64}
+                        className={`!h-16 !w-16 group-hover:brightness-40 ${result.type === "artists" ? "!rounded-full" : "!rounded-sm"}`}
+                      />
+                    </figure>
                   )}
                   <PlayButton
                     tracks={tracks}

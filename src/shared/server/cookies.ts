@@ -1,5 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
+import { requireAuthenticatedAction } from "./authGuard";
 
 const getCookie = async (cookieKey: string) => {
   try {
@@ -32,19 +33,9 @@ const getCurrentUser = async () => {
   return await getCookie("current_user");
 };
 
-const getSelectedLanguage = async () => {
-  return await getCookie("selected_language");
-};
-
-const getStrikes = async () => {
-  return await getCookie("strikes");
-};
-
-const getLives = async () => {
-  return await getCookie("lives");
-};
-
 const logoutUser = async () => {
+  await requireAuthenticatedAction();
+
   const oneDay = 24 * 60 * 60 * 1000;
   return {
     user: await (
@@ -73,6 +64,7 @@ const logoutUser = async () => {
 
 const deleteCookie = async (cookieKey: string) => {
   try {
+    await requireAuthenticatedAction();
     return await (await cookies()).delete(cookieKey);
   } catch {
     return undefined;
@@ -87,7 +79,4 @@ export {
   getCurrentUser,
   deleteCookie,
   logoutUser,
-  getSelectedLanguage,
-  getLives,
-  getStrikes,
 };

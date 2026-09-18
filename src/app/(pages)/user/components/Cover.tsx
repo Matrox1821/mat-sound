@@ -6,12 +6,13 @@ import { use } from "react";
 
 export function Cover({
   userPromise,
-  currentUser,
+  currentUserPromise,
 }: {
   userPromise: Promise<any>;
-  currentUser?: string | null;
+  currentUserPromise: Promise<string | undefined | null>;
 }) {
   const user = use(userPromise);
+  const currentUser = use(currentUserPromise);
   if (!user) return;
   return (
     <figure className="w-full h-[calc(5/12*100vh)] absolute top-0 left-0 z-20 flex items-center justify-center after:content-[''] after:w-full after:h-[calc(5/12*100vh)] after:absolute after:left-0 after:top-0 after:bg-linear-to-t after:from-background/90 after:to-background-950/30 bg-black">
@@ -20,8 +21,8 @@ export function Cover({
           src={user.avatar ? `${user.avatar}?t=${user.updatedAt}` : null}
           alt={user.name}
           sizes="100vw"
+          fetchPriority="high"
           fill
-          priority
           quality={50}
           className="object-cover! w-full! h-full! blur-2xl! relative!"
         />
@@ -32,7 +33,7 @@ export function Cover({
           alt={user.name}
           sizes="100vw"
           fill
-          priority
+          fetchPriority="high"
           quality={100}
           className="!object-cover !w-full !h-full"
         />
@@ -43,7 +44,7 @@ export function Cover({
           alt={user.name}
           sizes="100vw"
           fill
-          priority
+          fetchPriority="high"
           quality={50}
           className="!object-cover !w-full !h-full !blur-2xl absolute"
         />

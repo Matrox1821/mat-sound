@@ -43,7 +43,7 @@ export const SaveInPlaylist = ({
     <button
       onClick={handleSave}
       disabled={isPending}
-      className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full  transition-all hover:opacity-75 ${
+      className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full transition-opacity duration-200 hover:opacity-75 ${
         isTrackInPlaylist ? "text-accent-950" : "text-content-900"
       }`}
     >

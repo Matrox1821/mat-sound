@@ -46,7 +46,7 @@ export function LikeButton({ track, className }: LikeButtonProps) {
     <button
       onClick={handleLike}
       disabled={isPending}
-      className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full h-2 w-5 transition-all hover:opacity-75  ${
+      className={`like-button cursor-pointer active:scale-110 flex items-center justify-center gap-2 bottom-2 left-2 rounded-full h-2 w-5 transition-opacity hover:opacity-75  ${
         isLiked ? "text-accent-950" : "text-content-900"
       } ${className}`}
     >

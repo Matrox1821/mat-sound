@@ -63,6 +63,7 @@ export function SeeArtistBody({ artist }: { artist: ArtistByPagination }) {
               <figure className="h-22 w-22 border border-background-100/40 flex items-center justify-center rounded-md">
                 <SafeImage
                   src={artist.avatar && artist.avatar.sm}
+                  fetchPriority="high"
                   alt=""
                   width={30}
                   height={30}

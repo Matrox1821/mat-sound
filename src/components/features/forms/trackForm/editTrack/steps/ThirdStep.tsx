@@ -70,7 +70,7 @@ export function ThirdStep({
           {selectedArtists.map((artist) => (
             <div
               key={artist.id}
-              className="flex items-center gap-2 bg-accent-900/20 border-accent-900/50  border  text-blue-100 px-3 py-1.5 rounded-lg transition-all hover:bg-blue-600/30"
+              className="flex items-center gap-2 bg-accent-900/20 border-accent-900/50  border  text-blue-100 px-3 py-1.5 rounded-lg transition-colors hover:bg-blue-600/30"
             >
               <span className="text-sm font-medium">{artist.name}</span>
               <button

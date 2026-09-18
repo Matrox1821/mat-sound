@@ -13,10 +13,10 @@ export const Template = (data: MediaCard) => {
     <li className="!w-full h-full color-content-950 duration-150 gap-2">
       <Link
         className={`w-full h-full flex flex-col color-content-950 duration-150 gap-2 track rounded-lg relative 
-          hover:[&_.play-button]:opacity-100 hover:[&_.play-button]:!transition-all hover:[&_.play-button]:!duration-300 
-          not-hover:[&_.play-button]:!transition-all not-hover:[&_.play-button]:!duration-300
-          hover:[&>figure>img]:!transition-all hover:[&>figure>img]:!duration-200 
-          not-hover:[&>figure>img]:!transition-all not-hover:[&>figure>img]:!duration-200
+          hover:[&_.play-button]:opacity-100 hover:[&_.play-button]:transition-opacity hover:[&_.play-button]:!duration-300 
+          not-hover:[&_.play-button]:transition-opacity not-hover:[&_.play-button]:!duration-300
+          hover:[&>figure>img]:transition-opacity hover:[&>figure>img]:!duration-200 
+          not-hover:[&>figure>img]:transition-opacity not-hover:[&>figure>img]:!duration-200
           ${data.type === "artists" ? "hover:[&>figure>img]:opacity-25! " : "hover:[&_.play-button]:!-translate-y-1"}
           `}
         href={data.href}
@@ -31,7 +31,6 @@ export const Template = (data: MediaCard) => {
               width={160}
               height={160}
               className={`!object-fill !aspect-square !w-full !h-full relative ${data.type === "artists" ? "!rounded-full" : "!rounded-md"}`}
-              loading="lazy"
               quality={50}
             />
           ) : (
@@ -39,7 +38,7 @@ export const Template = (data: MediaCard) => {
               trackImages={(data.images && data.images?.length > 0 && data.images) || null}
               image={data.image ? data.image.md : null}
               size={160}
-              quality={100}
+              quality={75}
               className={`!w-full !h-full `}
             />
           )}
@@ -47,12 +46,10 @@ export const Template = (data: MediaCard) => {
         </figure>
 
         <span className="flex flex-col gap-2">
-          <h2
-            className={`leading-5 text-base font-normal overflow-x-hidden overflow-ellipsis whitespace-nowrap`}
-          >
+          <h2 className="text-base font-normal leading-5 line-clamp-2 h-10" title={data.title}>
             {data.title}
           </h2>
-          <span className="m-0 leading-5 font-normal text-sm text-content-600/70">
+          <span className="m-0 leading-2.5 line-clamp-1 h-5 font-normal text-sm text-content-600/70">
             {data.type === "tracks" ||
               (data.type === "albums" &&
                 data.artists &&
@@ -72,6 +69,7 @@ export const Template = (data: MediaCard) => {
                             <SafeImage
                               alt=""
                               src={avatar?.sm}
+                              fetchPriority="high"
                               className="rounded-full!"
                               height={24}
                               width={24}
@@ -97,6 +95,7 @@ export const Template = (data: MediaCard) => {
                           alt=""
                           className="rounded-full!"
                           src={avatar?.sm}
+                          fetchPriority="high"
                           height={24}
                           width={24}
                         />

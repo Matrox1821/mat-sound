@@ -107,6 +107,7 @@ export default function PopularTracks({
                 <td className="relative">
                   <SafeImage
                     src={track.cover && track.cover.sm}
+                    fetchPriority="high"
                     alt={track.name}
                     width={40}
                     height={40}

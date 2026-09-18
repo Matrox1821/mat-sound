@@ -1,4 +1,5 @@
 "use server";
+import { setLoginCookies } from "@/shared/client/apiShared";
 import { adminService } from "@/shared/server/admin/admin.service";
 import { allAlbumsCounter } from "@/shared/server/album/album.repository";
 import { allArtistsCounter } from "@/shared/server/artist/artist.repository";
@@ -21,8 +22,8 @@ export async function loginAdminAction(
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
-    await adminService.login(username, password);
-
+    const { admin_token, user } = await adminService.login(username, password);
+    await setLoginCookies(user.username, admin_token, true);
     return { success: true, errors: [] };
   } catch (error) {
     if (error instanceof CustomError) {
@@ -45,10 +46,12 @@ export async function getTotalData(): Promise<{
   artists: number;
   genres: number;
 }> {
-  const tracks = await allTracksCounter();
-  const albums = await allAlbumsCounter();
-  const artists = await allArtistsCounter();
-  const genres = await allGenresCounter();
+  const [tracks, albums, artists, genres] = await Promise.all([
+    allTracksCounter(),
+    allAlbumsCounter(),
+    allArtistsCounter(),
+    allGenresCounter(),
+  ]);
 
   return {
     tracks,

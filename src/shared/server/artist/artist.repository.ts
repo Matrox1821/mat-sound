@@ -17,6 +17,7 @@ import { rollbackArtistCreation } from "./artist.rollback";
 import z from "zod";
 import { artistBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 import { Prisma } from "../../../../generated/prisma/client";
+import { requireAuthenticatedAction } from "../authGuard";
 
 export const getArtistById = async ({ id }: { id: string }): Promise<ArtistRepository | null> => {
   if (!id) return null;
@@ -154,6 +155,8 @@ export const updateArtistImages = async ({
   mainCover: string | null;
   covers: string[];
 }> => {
+  await requireAuthenticatedAction();
+
   return (await prisma.artist.update({
     where: {
       id,
@@ -174,6 +177,7 @@ export const updateArtistImages = async ({
 };
 
 export const createArtist = async (body: ArtistFormData) => {
+  await requireAuthenticatedAction();
   /*  */
   await validateArtistUniqueness({ name: body.name });
 
@@ -249,6 +253,8 @@ export const updateArtistGenre = async ({
     addedAt: Date;
   }[];
 }> => {
+  await requireAuthenticatedAction();
+
   const genres = await prisma.genre.findMany({
     where: { artists: { every: { id: artistId } } },
     select: { id: true },
@@ -365,11 +371,15 @@ export const getArtistTracks = async ({
 };
 
 export const updateArtist = async (artistData: ArtistFormData) => {
+  await requireAuthenticatedAction();
   const { id, avatar, covers, mainCover, followers, ...rest } = artistData;
   if (!id) return null;
-  const mainCoverPath = await uploadMainCover(mainCover, id);
-  const coversPath = await uploadCovers(covers, id);
-  const avatarResized = await handleAvatarResizeAndUpload(avatar, id);
+
+  const [mainCoverPath, coversPath, avatarResized] = await Promise.all([
+    uploadMainCover(mainCover, id),
+    uploadCovers(covers, id),
+    handleAvatarResizeAndUpload(avatar, id),
+  ]);
 
   await addImagePathsToArtist({
     artistId: id,

@@ -16,6 +16,7 @@ export function AlbumTable({ albumPromise }: { albumPromise: Promise<AlbumById |
         disks.map((diskNum) => {
           const diskTracks = album.tracks
             ?.filter((t) => t.disk === diskNum)
+            .sort((a, b) => a.order - b.order)
             .map((t) => parseTrackByPlayer(t.track));
 
           return (

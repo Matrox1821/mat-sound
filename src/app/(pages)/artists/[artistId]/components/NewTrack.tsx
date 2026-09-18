@@ -47,6 +47,7 @@ export function NewArtistTrack({
           <span className="absolute flex gap-6 bottom-4 items-center">
             <SafeImage
               src={track.cover && track.cover.sm}
+              fetchPriority="high"
               alt={track.name}
               width={60}
               height={60}

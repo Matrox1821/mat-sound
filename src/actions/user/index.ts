@@ -60,10 +60,11 @@ export async function getUserAvatar() {
   return user;
 }
 
-export async function getUser(username: string | null) {
-  if (!username) return null;
+export async function getUser() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.username) return null;
   const userLibrary = await prisma.user.findUnique({
-    where: { username },
+    where: { username: session.user.username },
     select: {
       id: true,
       biography: true,

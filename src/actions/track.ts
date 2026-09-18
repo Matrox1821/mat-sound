@@ -7,7 +7,7 @@ import {
   deleteTrackById,
   updateTrack,
 } from "@/shared/server/track/track.service";
-import { trackBulkSchema } from "@/shared/utils/schemas/bulkValidations";
+import { TrackBulkInput, trackBulkSchema } from "@/shared/utils/schemas/bulkValidations";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 
@@ -55,10 +55,11 @@ const requestSchema = z.object({
   albumId: z.string().uuid("ID de álbum inválido"),
   tracks: z.array(trackBulkSchema).min(1, "Debes incluir al menos un track"),
 });
+
 export async function createTracksBulkServer(data: {
   artistId: string;
   albumId: string;
-  tracks: any[];
+  tracks: TrackBulkInput[];
 }) {
   try {
     const validation = requestSchema.safeParse(data);

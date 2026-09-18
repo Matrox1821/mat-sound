@@ -4,9 +4,10 @@ import { SelectInput } from "@components/features/inputs/SelectInput";
 import { useEffect, useState } from "react";
 import { getArtistsData } from "@/shared/server/artist/artist.repository";
 import { getAlbums } from "@/shared/server/album/album.service";
+import { ImageSizes } from "@/types/common.types";
 
 interface Element {
-  cover?: { sm: string };
+  cover?: ImageSizes;
   name: string;
   id: string;
   artist?: { name: string };
@@ -29,7 +30,7 @@ export function ThirdStep({ onChange }: { onChange: (field: any, value: any) => 
     }
   }, [artistsId]);
   return (
-    <section className="p-8 w-full">
+    <section className="p-8 w-full flex flex-col gap-10">
       <SelectInput
         data={artists}
         name="artistsId"
@@ -46,10 +47,11 @@ export function ThirdStep({ onChange }: { onChange: (field: any, value: any) => 
         name="albumsId"
         zIndex={30}
         title="Seleccione álbumes"
-        callback={(_, albums: { [key: string]: string }[]) => {
+        callback={(_, albums) => {
           const parsedAlbums: Element[] = albums.map((album) => ({
             id: album.id,
             name: album.name,
+            cover: album.cover,
           }));
 
           setChosenAlbums(parsedAlbums);
