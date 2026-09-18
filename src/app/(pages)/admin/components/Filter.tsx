@@ -53,6 +53,7 @@ export function Filter({ filters }: { filters: { id: string; label: string }[] }
         <button
           className="bg-contrast-800/20 rounded-md p-2 border border-contrast-700 cursor-pointer hover:bg-contrast-800/30 active:scale-102"
           onClick={handleApply}
+          type="button"
         >
           Aplicar filtros
         </button>

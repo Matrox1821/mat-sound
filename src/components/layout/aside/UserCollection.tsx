@@ -42,8 +42,8 @@ export function UserCollection({ isExpanded }: { isExpanded: boolean }) {
         {items.length ? (
           items.map((item) => {
             const visual = (
-              <>
-                <figure className="relative">
+              <div className="rounded-md">
+                <figure className="relative rounded-sm!">
                   {item.type === "playlists" ? (
                     <PlaylistImage
                       trackImages={item.tracks
@@ -56,6 +56,7 @@ export function UserCollection({ isExpanded }: { isExpanded: boolean }) {
                   ) : (
                     <SafeImage
                       src={item.cover?.sm}
+                      fetchPriority="high"
                       alt={item.name}
                       width={40}
                       height={40}
@@ -66,9 +67,9 @@ export function UserCollection({ isExpanded }: { isExpanded: boolean }) {
                 <PlayButton
                   playingFrom={{ from: item.name, href: `${item.type}/${item.id}` }}
                   tracks={item.tracks}
-                  className="top-0 right-0 h-full"
+                  className={`top-0 right-0 h-full ${isExpanded ? "" : "p-0! absolute! left-3"}`}
                 />
-              </>
+              </div>
             );
             return (
               <AsideLink

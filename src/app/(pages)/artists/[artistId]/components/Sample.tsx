@@ -10,6 +10,7 @@ export function Sample({ newTrack }: { newTrack: ArtistTracks[] | null }) {
         <figure className="relative">
           <SafeImage
             src={newTrack[0].cover && newTrack[0].cover.sm}
+            fetchPriority="high"
             alt={newTrack[0].name}
             width={30}
             height={40}

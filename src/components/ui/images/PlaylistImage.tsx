@@ -39,7 +39,15 @@ export const PlaylistImage = ({
         className={`relative rounded-md overflow-hidden bg-black/85 ${className}`}
         style={{ width: size, height: size }}
       >
-        <SafeImage src={src} alt="" fill className="!object-cover" quality={quality} />
+        <SafeImage
+          src={src}
+          alt=""
+          fill
+          fetchPriority="high"
+          sizes={`${size}px`}
+          className="!object-cover"
+          quality={quality}
+        />
       </figure>
     );
   }
@@ -49,7 +57,13 @@ export const PlaylistImage = ({
   let images = trackImages;
   if (images && images.length === 0)
     return (
-      <SafeImage src={""} alt="" height={size / 4} width={size / 4} className={`!object-cover `} />
+      <SafeImage
+        src={""}
+        alt=""
+        height={size / 4}
+        width={size / 4}
+        className={`!object-cover w-full h-full`}
+      />
     );
 
   if (images && images.length < 4)
@@ -67,10 +81,12 @@ export const PlaylistImage = ({
           return (
             <SafeImage
               src={img && img.sm}
+              fetchPriority="high"
               quality={quality}
               alt=""
               height={140}
               width={140}
+              sizes={`${Math.ceil(size / 2)}px`}
               className={`!object-cover !w-full !h-full ${roundedByIndex(i)}`}
               key={i}
             />

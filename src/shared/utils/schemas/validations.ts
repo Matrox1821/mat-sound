@@ -15,11 +15,11 @@ export const SignupFormSchema = z
       .min(6, { message: "La contraseña debe tener al menos 6 caracteres." })
       .regex(/[a-zA-Z]/, { message: "Debe contener al menos una letra." })
       .regex(/[0-9]/, { message: "Debe contener al menos un número." }),
-    confirmPassword: z.string(),
+    repeatedPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.repeatedPassword, {
     message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"],
+    path: ["repeatedPassword"],
   });
 
 export type SigninFormValues = z.infer<typeof SigninFormSchema>;
@@ -30,13 +30,13 @@ export type FormSignupState = {
     username?: string[];
     email?: string[];
     password?: string[];
-    confirmPassword?: string[];
+    repeatedPassword?: string[];
   } | null;
   data?: {
     username?: string;
     email?: string;
     password?: string;
-    confirmPassword?: string;
+    repeatedPassword?: string;
   };
   success?: boolean;
   message?: string;

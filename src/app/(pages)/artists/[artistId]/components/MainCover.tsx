@@ -14,6 +14,7 @@ export function MainCover({ artistPromise }: { artistPromise: Promise<ArtistServ
           alt={artist?.name}
           width={2160}
           height={1080}
+          fetchPriority="high"
           className="!opacity-80 !object-cover !w-full !h-full !text-transparent !bg-background"
         />
       </figure>

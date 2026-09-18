@@ -6,8 +6,9 @@ import { s3Client } from "./s3Client";
 import { GET_BUCKET_URL } from "../utils/constants";
 import { formatR2FilePath } from "../utils/helpers";
 import sharp from "sharp";
+import { Readable } from "stream";
 
-export async function uploadFileToBucket(file: File | Buffer, fileName: string) {
+export async function uploadFileToBucket(file: File | Buffer | Readable, fileName: string) {
   const Key = fileName;
   const Bucket = "mat-sound";
   const ContentType = file instanceof File ? file.type : "image/webp";

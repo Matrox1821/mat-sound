@@ -3,6 +3,7 @@ import { signoutFormValidation } from "@/actions/auth";
 import { User as UserIcon } from "@components/ui/icons/User";
 import { FormSignoutState } from "@/shared/utils/schemas/validations";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { useActionState, useEffect, useRef } from "react";
 import { toast } from "sonner";
@@ -16,6 +17,7 @@ const initialState: FormSignoutState = {
 };
 export function User({ initialSession }: { initialSession: any }) {
   const { avatar, updatedAt } = useUserAvatarStore();
+  const router = useRouter();
 
   const [state, formAction] = useActionState(signoutFormValidation, initialState);
   const op = useRef<OverlayPanel>(null);
@@ -24,9 +26,9 @@ export function User({ initialSession }: { initialSession: any }) {
   useEffect(() => {
     if (state.success) {
       toast("Has cerrado tu sesión");
-      window.location.href = "/";
+      router.push("/");
     }
-  }, [state]);
+  }, [router, state]);
 
   return (
     <>
@@ -39,7 +41,7 @@ export function User({ initialSession }: { initialSession: any }) {
             src={`${avatar}?t=${updatedAt}`}
             sizes="100vw"
             fill
-            priority
+            fetchPriority="high"
             unoptimized
             quality={100}
             className="!w-full !h-full !rounded-full"

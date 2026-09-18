@@ -23,7 +23,7 @@ export function Aside({
             image={playlist.cover && `${playlist.cover.sm}?t=${playlist.updatedAt}`}
             trackImages={playlist.coverListDefault}
             quality={75}
-            className="w-full! h-auto! aspect-square!"
+            className="w-full! h-auto! aspect-square! relative"
           />
         </figure>
         <div className="flex flex-col items-center gap-4">
@@ -33,13 +33,15 @@ export function Aside({
             className="flex gap-2 hover:underline text-sm items-center relative"
           >
             {playlist.user.avatar ? (
-              <SafeImage
-                src={playlist.user.avatar}
-                alt={`${playlist.user.displayUsername} avatar`}
-                height={40}
-                width={40}
-                className="w-6 h-6 rounded-full "
-              />
+              <figure className="relative">
+                <SafeImage
+                  src={playlist.user.avatar}
+                  alt={`${playlist.user.displayUsername} avatar`}
+                  height={40}
+                  width={40}
+                  className="w-6 h-6 rounded-full "
+                />
+              </figure>
             ) : (
               <User className="text-background-50 bg-background-700 rounded-full p-1" />
             )}

@@ -114,7 +114,27 @@ export const deleteAlbum = async (
   name: string;
   id: string;
 }> => {
-  return await prisma.album.delete({ where: { id }, select: { id: true, name: true } });
+  return await prisma.$transaction(async (tx) => {
+    const tracks = await tx.trackOnAlbum.findMany({
+      where: { albumId: id },
+      select: { trackId: true },
+    });
+
+    const trackIds = tracks.map((t) => t.trackId);
+
+    const deletedAlbum = await tx.album.delete({
+      where: { id },
+      select: { id: true, name: true },
+    });
+
+    if (trackIds.length > 0) {
+      await tx.track.deleteMany({
+        where: { id: { in: trackIds } },
+      });
+    }
+
+    return deletedAlbum;
+  });
 };
 
 export const getAlbumsByPagination = async ({

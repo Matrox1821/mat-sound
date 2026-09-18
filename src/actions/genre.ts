@@ -8,14 +8,15 @@ export async function createGenreServer(currentState: any, formData: FormData) {
   try {
     const genres = [formData.getAll("genre") as string[]].flat();
     const parsedGenres = [...new Set(genres)];
-    const genre = parsedGenres.map(async (genre) => {
-      const genreLowerCase = genre.toLocaleLowerCase();
-      const isExist = await genreIsExist(genreLowerCase);
 
-      if (!isExist && genreLowerCase !== "") return await createGenre(genreLowerCase);
-    });
+    await Promise.all(
+      parsedGenres.map(async (genre) => {
+        const genreLowerCase = genre.toLocaleLowerCase();
+        const isExist = await genreIsExist(genreLowerCase);
 
-    if (!genre) throw new Error();
+        if (!isExist && genreLowerCase !== "") await createGenre(genreLowerCase);
+      }),
+    );
 
     return { success: true, errors: [] };
   } catch {

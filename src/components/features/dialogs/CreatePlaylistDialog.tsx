@@ -125,7 +125,7 @@ export function CreatePlaylistDialog() {
                   hide(e);
                 }}
                 disabled={value === "" || isPending}
-                className="bg-content-900/95 text-background-900 font-bold rounded-full w-1/2 h-9 flex items-center justify-center cursor-pointer disabled:!bg-background/60 disabled:cursor-not-allowed transition-all"
+                className="bg-content-900/95 text-background-900 font-bold rounded-full w-1/2 h-9 flex items-center justify-center cursor-pointer disabled:!bg-background/60 disabled:cursor-not-allowed transition-colors"
               >
                 {isPending ? <i className="pi pi-spin pi-spinner text-lg"></i> : "Crear"}
               </button>

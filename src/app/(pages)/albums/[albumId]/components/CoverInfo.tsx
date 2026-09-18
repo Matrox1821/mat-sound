@@ -18,10 +18,10 @@ export function CoverInfo({ albumPromise }: { albumPromise: Promise<AlbumById | 
         <figure className="relative">
           <SafeImage
             src={album.cover && album.cover.sm}
+            fetchPriority="high"
             alt={album.name}
             width={1080}
             height={1080}
-            loading="lazy"
             className="!object-cover !w-60 !h-60 !rounded-md"
           />
         </figure>
@@ -33,6 +33,7 @@ export function CoverInfo({ albumPromise }: { albumPromise: Promise<AlbumById | 
                 <figure className="relative">
                   <SafeImage
                     src={artist.avatar && artist.avatar.sm}
+                    fetchPriority="high"
                     alt={artist.name}
                     width={40}
                     height={40}

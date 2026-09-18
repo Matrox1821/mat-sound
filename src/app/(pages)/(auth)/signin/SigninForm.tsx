@@ -5,6 +5,7 @@ import { useToast } from "@/shared/client/hooks/ui/useToast";
 import { type FormSigninState } from "@/shared/utils/schemas/validations";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
+import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 const initialState: FormSigninState = {
   success: false,
@@ -19,15 +20,16 @@ export default function SigninForm() {
   const [state, formAction, pending] = useActionState(signinFormValidation, initialState);
   const [showPass, setShowPass] = useState(false);
   const { success, error } = useToast();
+  const router = useRouter();
   useEffect(() => {
     if (state.success) {
       success("Has iniciado sesión correctamente");
-      window.location.href = "/";
+      router.push("/");
     }
     if (state.errors) {
       error("Hubo un problema al iniciar sesión");
     }
-  }, [state, success, error]);
+  }, [router, state, success, error]);
   return (
     <form
       className="bg-background-950 w-[500px] rounded-2xl p-12 flex flex-col gap-10"
@@ -87,7 +89,7 @@ export default function SigninForm() {
       <button
         type="submit"
         disabled={pending}
-        className={`bg-background border-[1px] border-background-50/40 py-3 rounded-md text-lg text-background-50 font-semibold  transition-all duration-50  flex items-center justify-center ${pending ? "bg-background/40" : "cursor-pointer hover:bg-background/40"}`}
+        className={`bg-background border-[1px] border-background-50/40 py-3 rounded-md text-lg text-background-50 font-semibold transition-colors duration-150 flex items-center justify-center ${pending ? "bg-background/40" : "cursor-pointer hover:bg-background/40"}`}
       >
         {pending ? <span className="loader"></span> : "Iniciar Sesión"}
       </button>

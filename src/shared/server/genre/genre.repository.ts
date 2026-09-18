@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAuthenticatedAction } from "../authGuard";
 import { prisma } from "@config/db";
 
 export const getGenres = async (): Promise<
@@ -48,6 +49,8 @@ export const createGenre = async (
   id: string;
   name: string;
 }> => {
+  await requireAuthenticatedAction();
+
   return await prisma.genre.create({
     data: {
       name: genre,
@@ -64,6 +67,8 @@ export const deleteGenre = async ({
   id: string;
   name: string;
 }> => {
+  await requireAuthenticatedAction();
+
   return prisma.genre.delete({ where: { id }, select: { id: true, name: true } });
 };
 export const allGenresCounter = async (): Promise<number> => {

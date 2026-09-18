@@ -4,8 +4,10 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { username } from "better-auth/plugins";
 import { v7 as uuidv7 } from "uuid";
+import { GET_URL } from "@/shared/utils/constants";
 
 export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL ?? GET_URL,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -33,6 +35,20 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
       maxAge: 5 * 60,
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          await prisma.collection.create({
+            data: {
+              userId: user.id,
+            },
+          });
+          return;
+        },
+      },
     },
   },
 });

@@ -103,6 +103,7 @@ export function TrackTable({ tracks, showCover, playingFrom: newPlayingFrom }: T
                   <td className="w-12 relative">
                     <SafeImage
                       src={track.cover && track.cover.sm}
+                      fetchPriority="high"
                       alt=""
                       width={40}
                       height={40}

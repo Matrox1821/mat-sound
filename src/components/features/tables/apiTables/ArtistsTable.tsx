@@ -108,10 +108,10 @@ export function ArtistsTable({
         <div className="w-[45px] h-[45px] flex items-center justify-center relative">
           <SafeImage
             src={artist.avatar && artist.avatar.sm}
+            fetchPriority="high"
             alt={artist.name}
             height={45}
             width={45}
-            loading="lazy"
             className="!rounded-sm !w-[45px] !h-[45px]"
           />
         </div>

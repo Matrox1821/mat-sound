@@ -20,12 +20,12 @@ export function Aside({ username }: { username?: string | null }) {
 
   return (
     <aside
-      className={`h-full hidden md:!flex relative bg-background border-r-[1px] border-background-800/60 transition-all duration-200 ${
+      className={`h-full hidden md:!flex relative bg-background border-r-[1px] border-background-800/60 transition-[width] duration-200 ${
         asideIsExpanded ? "w-72" : "w-20"
       }`}
     >
       <div
-        className={`h-full flex flex-col p-4 transition-all duration-200 ${
+        className={`h-full flex flex-col p-4 transition-[width] duration-200 ${
           asideIsExpanded ? "w-72" : "w-20"
         }`}
       >
@@ -36,7 +36,7 @@ export function Aside({ username }: { username?: string | null }) {
             >
               <Link
                 href="/"
-                className={`flex items-center justify-center transition-all duration-200 w-12 h-12 ${
+                className={`flex items-center justify-center transition-opacity duration-200 w-12 h-12 ${
                   !asideIsExpanded ? "pointer-events-none group-hover:pointer-events-auto" : ""
                 }`}
               >
@@ -77,7 +77,7 @@ export function Aside({ username }: { username?: string | null }) {
             <UserNavigation isExpanded={asideIsExpanded} pathname={pathname} username={username} />
           )}
           {/* <Suspense fallback={<CollectionSkeleton isExpanded={isExpanded} />}> */}
-          {session.data?.user && <UserCollection isExpanded={asideIsExpanded} />}
+          {session.data?.user && !isAdminPage && <UserCollection isExpanded={asideIsExpanded} />}
           {/* </Suspense> */}
         </nav>
       </div>

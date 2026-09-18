@@ -1,9 +1,10 @@
 "use client";
+import { ImageSizes } from "@/types/common.types";
 import { SafeImage } from "@components/ui/images/SafeImage";
 import { useState, useEffect, useRef } from "react";
 
 interface Element {
-  cover?: { sm: string };
+  cover?: ImageSizes;
   name: string;
   id: string;
   artist?: { name: string };
@@ -40,27 +41,19 @@ export function OrderAlbumInput({
   }, [initialValues]);
 
   // Notificar al padre solo cuando el valor cambie realmente
-  useEffect(() => {
-    // Evitamos disparar el onChange en el primer render si no hay cambios
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    onChange?.(value);
-  }, [value, onChange]);
-
-  const isDataEmpty = !data || data.length === 0;
-
   const handleInputChange = (id: string, field: "order" | "disk", val: number) => {
-    setValue((prev) => ({
-      ...prev,
+    const updated = {
+      ...value,
       [id]: {
-        disk: field === "disk" ? val : (prev[id]?.disk ?? 1),
-        order: field === "order" ? val : (prev[id]?.order ?? 0),
+        disk: field === "disk" ? val : (value[id]?.disk ?? 1),
+        order: field === "order" ? val : (value[id]?.order ?? 0),
       },
-    }));
+    };
+    setValue(updated);
+    onChange?.(updated);
   };
-
+  const isDataEmpty = !data || data.length === 0;
+  console.log(data);
   return (
     <div style={{ zIndex }} className="flex flex-col gap-4 w-full">
       <h2
@@ -68,9 +61,7 @@ export function OrderAlbumInput({
       >
         {title}
       </h2>
-
       <input value={JSON.stringify(value)} name={name} className="hidden" readOnly />
-
       <div className="flex flex-col gap-2">
         {isDataEmpty ? (
           <div className="p-4 border border-dashed border-background-200/50 rounded-md text-background-200/70 text-sm italic text-center">
@@ -87,6 +78,7 @@ export function OrderAlbumInput({
                   <figure className="relative">
                     <SafeImage
                       src={item.cover && item.cover.sm}
+                      fetchPriority="high"
                       alt={item.name}
                       width={48}
                       height={48}

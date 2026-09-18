@@ -24,7 +24,13 @@ export function PlaylistSelector({ track }: { track: playerTrackProps }) {
               render: () => (
                 <div className="w-full p-2 flex items-center justify-between gap-3 hover:bg-background-950 rounded-md transition-colors group/item">
                   <div className="flex items-center gap-3">
-                    <PlaylistImage trackImages={getImages(id)} size={40} className="!w-10 !h-10" />
+                    <figure className="relative">
+                      <PlaylistImage
+                        trackImages={getImages(id)}
+                        size={40}
+                        className="!w-10 !h-10"
+                      />
+                    </figure>
                     <span className="text-md font-semibold truncate max-w-[100px] overflow-ellipsis text-nowrap">
                       {name}
                     </span>

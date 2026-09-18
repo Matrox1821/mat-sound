@@ -16,7 +16,7 @@ export function CoverInfo({ userPromise }: { userPromise: Promise<UserData | nul
             alt={user.displayUsername}
             sizes="100vw"
             fill
-            priority
+            fetchPriority="high"
             quality={100}
             className="!object-cover !w-60 !h-60 !rounded-lg border border-background-300/40 !relative"
           />

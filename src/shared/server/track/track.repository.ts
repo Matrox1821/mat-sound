@@ -12,6 +12,7 @@ import {
 import { ImageSizes } from "@shared-types/common.types";
 import { TrackFormData } from "@shared-types/form.types";
 import { Prisma } from "../../../../generated/prisma/client";
+import { requireAuthenticatedAction } from "../authGuard";
 
 export const getTracks = async ({
   limit,
@@ -285,6 +286,8 @@ export const deleteTrack = async (
   name: string;
   id: string;
 }> => {
+  await requireAuthenticatedAction();
+
   return await prisma.track.delete({ where: { id }, select: { id: true, name: true } });
 };
 
@@ -306,7 +309,11 @@ export const trackIsExists = async ({
   return !!isExists;
 };
 
-export const createTrack = async (body: TrackFormData): Promise<{ id: string; name: string }> => {
+export const createTrackRepository = async (
+  body: TrackFormData,
+): Promise<{ id: string; name: string }> => {
+  await requireAuthenticatedAction();
+
   const track = await prisma.track.create({
     data: {
       name: body.name,
@@ -368,6 +375,8 @@ export const updateTrackResourses = async ({
   cover?: ImageSizes;
   song?: string;
 }> => {
+  await requireAuthenticatedAction();
+
   return (await prisma.track.update({
     where: {
       id,
@@ -388,6 +397,7 @@ export const updateTrack = async (
   cover?: ImageSizes,
   song?: string,
 ): Promise<{ id: string; name: string } | null> => {
+  await requireAuthenticatedAction();
   if (!body.id) return null;
   const track = await prisma.track.update({
     where: {

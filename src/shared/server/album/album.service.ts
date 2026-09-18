@@ -15,6 +15,7 @@ import { AlbumFormData } from "@/types/form.types";
 import { handleCoverResizeAndUpload } from "./album.storage";
 import { prisma } from "@config/db";
 import z from "zod";
+import { requireAuthenticatedAction } from "@/shared/server/authGuard";
 
 const ALBUMS_PER_PAGES = 6;
 
@@ -74,6 +75,7 @@ export const getAlbumsByPage = async ({
 };
 
 export const createAlbum = async (body: AlbumFormData) => {
+  await requireAuthenticatedAction();
   await validateAlbumUniqueness({ name: body.name });
   const album = await createAlbumRepo(body);
 
@@ -137,6 +139,7 @@ export const getAlbums = async (artistsId?: string | string[]) => {
 };
 
 export const updateAlbum = async (formData: AlbumFormData) => {
+  await requireAuthenticatedAction();
   const { id, cover, releaseDate, artists, tracks: __, tracksOrder: ___, ...data } = formData;
   if (!id) return null;
   if (cover) {
