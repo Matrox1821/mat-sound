@@ -1,0 +1,80 @@
+programa ejemplo
+procesos
+  proceso depositar5Papeles(ES pap: numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    si pap=5
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      repetir 5
+        depositarPapel
+      Pos(av,ca)  
+      LiberarEsquina(50,50) 
+      pap:=0
+  fin
+areas
+  productor1: AreaP(5,1,5,100)
+  consumidor1: AreaP(11,1,11,1)
+  consumidor2: AreaP(12,1,12,1)
+  almacen: AreaC(50,50,50,50)
+robots
+  robot productor
+  variables
+    ca,av,pap:numero
+  comenzar
+    pap:=0
+    repetir 99
+      mientras HayPapelEnLaEsquina
+        tomarPapel
+        pap:=pap+1
+        depositar5Papeles(pap)
+      mover
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      pap:=pap+1
+      depositar5Papeles(pap)
+  fin
+  robot consumidor
+  variables
+    ca,av,pap,tomados,intentos:numero
+  comenzar
+    ca:=PosCa
+    av:=PosAv
+    intentos:=0
+    tomados:=0
+    mientras intentos<8
+      Random(pap,2,5)
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      repetir pap
+        si HayPapelEnLaEsquina
+          tomarPapel
+          tomados:=tomados+1
+      Pos(av,ca)
+      LiberarEsquina(50,50)
+      repetir tomados
+        depositarPapel
+      si pap>tomados
+        intentos:=intentos+1
+      sino
+        intentos:=0
+      tomados:=0
+  fin
+variables
+  p1: productor
+  c1: consumidor
+  c2: consumidor
+comenzar
+  AsignarArea(p1, productor1)
+  AsignarArea(p1, almacen)
+  AsignarArea(c1, consumidor1)
+  AsignarArea(c1, almacen)
+  AsignarArea(c2, consumidor2)
+  AsignarArea(c2, almacen)
+  Iniciar(p1, 5,1)
+  Iniciar(c1, 11,1)
+  Iniciar(c2, 12,1)
+fin
